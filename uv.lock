@@ -5335,7 +5335,7 @@ dev = [
 
 [[package]]
 name = "yyc3-pai"
-version = "0.1.0"
+version = "1.0.2b6"
 source = { editable = "." }
 dependencies = [
     { name = "acme" },

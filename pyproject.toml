@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "yyc3-pai"
-version = "0.1.0"
+version = "1.0.2b6"
 description = "YYC3-Pai (π³) — smarter self-hosted AI assistant for multiple users and agents, built on octop-harness"
 keywords = [
     "ai-assistant",
