@@ -24,10 +24,10 @@ license-upstream: MIT
 | 项 | 状态 | 说明 |
 | --- | --- | --- |
 | Git 硬断开 | ✅ 已执行 | 本地克隆断开 remote，分支 `yyc3/main`，保留完整历史（MIT 合规） |
-| 语言包替换 | ✅ 已执行 | 前端接入 `@yyc3/i18n-core` 语言包体系（第七章） |
-| Anthropic 技能剥离 | 🔄 本次提交 | Phase 0 清单 |
-| 品牌改造（pyproject/CLI/镜像） | ⬜ 待执行 | Phase 1 清单 |
-| 四包 Fork-and-Own | ⬜ 待执行 | 第六章路线 |
+| 语言包替换 | ✅ 已执行 | 前端接入 `@yyc3/i18n-core` 语言包体系（第七章）；npm 3.0.2 回灌后重同步 10/10 真实内容 |
+| Anthropic 技能剥离 | ✅ 已执行 | 提交 `718b114b`，基线 `d88a6bc1`，tag `v0.1.0-yyc3` |
+| 品牌改造（pyproject/CLI/镜像） | ✅ 已执行 | pyproject→`yyc3-pai` v0.1.0、CLI→`pai`、显示串品牌化，uv lock 已同步 |
+| 四包 Fork-and-Own | ✅ 基线建成 | `yyc3-agent-core` monorepo（发行名 yyc3-*、uv sources 接线闭环、LICENSE/NOTICE 合规），基线提交 `98b9802` |
 
 ## 章节索引
 

@@ -2465,164 +2465,6 @@ wheels = [
 ]
 
 [[package]]
-name = "octop"
-version = "1.0.2b6"
-source = { editable = "." }
-dependencies = [
-    { name = "acme" },
-    { name = "apscheduler" },
-    { name = "argon2-cffi" },
-    { name = "boto3" },
-    { name = "click" },
-    { name = "cryptography" },
-    { name = "edge-tts" },
-    { name = "fastapi" },
-    { name = "josepy" },
-    { name = "langchain-core" },
-    { name = "langgraph-checkpoint-postgres" },
-    { name = "lark-oapi" },
-    { name = "ldap3" },
-    { name = "mcp" },
-    { name = "octop-browser" },
-    { name = "octop-gateway" },
-    { name = "octop-harness", extra = ["all"] },
-    { name = "octop-memory" },
-    { name = "openpyxl" },
-    { name = "pillow" },
-    { name = "playwright" },
-    { name = "psycopg", extra = ["binary"] },
-    { name = "pydantic" },
-    { name = "pyjwt" },
-    { name = "pypdf" },
-    { name = "pypinyin" },
-    { name = "python-docx" },
-    { name = "python-pptx" },
-    { name = "questionary" },
-    { name = "rich" },
-    { name = "scalar-fastapi" },
-    { name = "segno" },
-    { name = "uvicorn", extra = ["standard"] },
-    { name = "websockets" },
-    { name = "xlrd" },
-]
-
-[package.optional-dependencies]
-browser = [
-    { name = "playwright" },
-]
-desktop = [
-    { name = "mss" },
-    { name = "pynput" },
-]
-dev = [
-    { name = "build" },
-    { name = "httpx" },
-    { name = "mypy" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "pytest-testmon" },
-    { name = "pytest-xdist" },
-    { name = "ruff" },
-    { name = "xlwt" },
-]
-knowledge-ocr = [
-    { name = "onnxruntime" },
-    { name = "pymupdf" },
-    { name = "rapidocr" },
-]
-local-embedding = [
-    { name = "fastembed" },
-    { name = "huggingface-hub" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "build" },
-    { name = "httpx" },
-    { name = "mypy" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "pytest-testmon" },
-    { name = "pytest-xdist" },
-    { name = "ruff" },
-    { name = "xlwt" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "acme", specifier = ">=5.6.0" },
-    { name = "apscheduler", specifier = ">=3.10,<4" },
-    { name = "argon2-cffi", specifier = ">=23.1" },
-    { name = "boto3", specifier = ">=1.40.61" },
-    { name = "build", marker = "extra == 'dev'", specifier = ">=1.0" },
-    { name = "click", specifier = ">=8.1" },
-    { name = "cryptography", specifier = ">=41" },
-    { name = "edge-tts", specifier = ">=6.1" },
-    { name = "fastapi", specifier = ">=0.110" },
-    { name = "fastembed", marker = "extra == 'local-embedding'", specifier = ">=0.4" },
-    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27" },
-    { name = "huggingface-hub", marker = "extra == 'local-embedding'", specifier = ">=0.20" },
-    { name = "josepy", specifier = ">=2.2.0" },
-    { name = "langchain-core", specifier = ">=1.4.8" },
-    { name = "langgraph-checkpoint-postgres", specifier = ">=2.0" },
-    { name = "lark-oapi", specifier = ">=1.7.3" },
-    { name = "ldap3", specifier = ">=2.9.1" },
-    { name = "mcp", specifier = ">=1.9,<2" },
-    { name = "mss", marker = "extra == 'desktop'", specifier = ">=9.0" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10" },
-    { name = "octop-browser", specifier = ">=1.0.0" },
-    { name = "octop-gateway", specifier = ">=1.0.0" },
-    { name = "octop-harness", extras = ["all"], specifier = ">=1.0.1" },
-    { name = "octop-memory", specifier = ">=1.0.0" },
-    { name = "onnxruntime", marker = "extra == 'knowledge-ocr'", specifier = ">=1.17" },
-    { name = "openpyxl", specifier = ">=3.1" },
-    { name = "pillow", specifier = ">=10.0" },
-    { name = "playwright", specifier = ">=1.40" },
-    { name = "playwright", marker = "extra == 'browser'", specifier = ">=1.40" },
-    { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
-    { name = "pydantic", specifier = ">=2.6,<2.14" },
-    { name = "pyjwt", specifier = ">=2.8" },
-    { name = "pymupdf", marker = "extra == 'knowledge-ocr'", specifier = ">=1.24" },
-    { name = "pynput", marker = "extra == 'desktop'", specifier = ">=1.7" },
-    { name = "pypdf", specifier = ">=5.0" },
-    { name = "pypinyin", specifier = ">=0.53" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1" },
-    { name = "pytest-testmon", marker = "extra == 'dev'", specifier = ">=2.0" },
-    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.6" },
-    { name = "python-docx", specifier = ">=1.2.0" },
-    { name = "python-pptx", specifier = ">=1.0" },
-    { name = "questionary", specifier = ">=2.0" },
-    { name = "rapidocr", marker = "extra == 'knowledge-ocr'", specifier = ">=3.4,<4" },
-    { name = "rich", specifier = ">=13.7" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4" },
-    { name = "scalar-fastapi", specifier = ">=1.0" },
-    { name = "segno", specifier = ">=1.6" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.27" },
-    { name = "websockets", specifier = ">=13.0" },
-    { name = "xlrd", specifier = ">=2.0.1" },
-    { name = "xlwt", marker = "extra == 'dev'", specifier = ">=1.3" },
-]
-provides-extras = ["dev", "browser", "desktop", "local-embedding", "knowledge-ocr"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "build", specifier = ">=1.0" },
-    { name = "httpx", specifier = ">=0.27" },
-    { name = "mypy", specifier = ">=1.10" },
-    { name = "pytest", specifier = ">=8.0" },
-    { name = "pytest-asyncio", specifier = ">=0.23" },
-    { name = "pytest-cov", specifier = ">=4.1" },
-    { name = "pytest-testmon", specifier = ">=2.0" },
-    { name = "pytest-xdist", specifier = ">=3.6" },
-    { name = "ruff", specifier = ">=0.4" },
-    { name = "xlwt", specifier = ">=1.3" },
-]
-
-[[package]]
 name = "octop-browser"
 version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5297,6 +5139,164 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/8f/be/f9f7594e23b5b93affff0318e4593c1920331bcaefda326cabcad94296a1/yarl-1.24.2-cp314-cp314t-win_amd64.whl", hash = "sha256:a7624b1ca46ca5d7b864ef0d2f8efe3091454085ee1855b4e992314529972215", size = 102980, upload-time = "2026-05-19T21:30:59.735Z" },
     { url = "https://files.pythonhosted.org/packages/65/a4/ba80dccd3593ff1f01051a818694d07b58cb8232677ee9a22a5a1f93a9fc/yarl-1.24.2-cp314-cp314t-win_arm64.whl", hash = "sha256:e434a45ce2e7a947f951fc5a8944c8cc080b7e59f9c50ae80fd39107cf88126d", size = 91219, upload-time = "2026-05-19T21:31:01.934Z" },
     { url = "https://files.pythonhosted.org/packages/fd/4d/4b880086bd0d3e034d25647be1d830afc3e3f610e98c4ab3490af6b1b6d5/yarl-1.24.2-py3-none-any.whl", hash = "sha256:2783d9226db8797636cd6896e4de81feed252d1db72265686c9558d97a4d94b9", size = 53576, upload-time = "2026-05-19T21:31:03.909Z" },
+]
+
+[[package]]
+name = "yyc3-pai"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "acme" },
+    { name = "apscheduler" },
+    { name = "argon2-cffi" },
+    { name = "boto3" },
+    { name = "click" },
+    { name = "cryptography" },
+    { name = "edge-tts" },
+    { name = "fastapi" },
+    { name = "josepy" },
+    { name = "langchain-core" },
+    { name = "langgraph-checkpoint-postgres" },
+    { name = "lark-oapi" },
+    { name = "ldap3" },
+    { name = "mcp" },
+    { name = "octop-browser" },
+    { name = "octop-gateway" },
+    { name = "octop-harness", extra = ["all"] },
+    { name = "octop-memory" },
+    { name = "openpyxl" },
+    { name = "pillow" },
+    { name = "playwright" },
+    { name = "psycopg", extra = ["binary"] },
+    { name = "pydantic" },
+    { name = "pyjwt" },
+    { name = "pypdf" },
+    { name = "pypinyin" },
+    { name = "python-docx" },
+    { name = "python-pptx" },
+    { name = "questionary" },
+    { name = "rich" },
+    { name = "scalar-fastapi" },
+    { name = "segno" },
+    { name = "uvicorn", extra = ["standard"] },
+    { name = "websockets" },
+    { name = "xlrd" },
+]
+
+[package.optional-dependencies]
+browser = [
+    { name = "playwright" },
+]
+desktop = [
+    { name = "mss" },
+    { name = "pynput" },
+]
+dev = [
+    { name = "build" },
+    { name = "httpx" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-cov" },
+    { name = "pytest-testmon" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "xlwt" },
+]
+knowledge-ocr = [
+    { name = "onnxruntime" },
+    { name = "pymupdf" },
+    { name = "rapidocr" },
+]
+local-embedding = [
+    { name = "fastembed" },
+    { name = "huggingface-hub" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "build" },
+    { name = "httpx" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-cov" },
+    { name = "pytest-testmon" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "xlwt" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "acme", specifier = ">=5.6.0" },
+    { name = "apscheduler", specifier = ">=3.10,<4" },
+    { name = "argon2-cffi", specifier = ">=23.1" },
+    { name = "boto3", specifier = ">=1.40.61" },
+    { name = "build", marker = "extra == 'dev'", specifier = ">=1.0" },
+    { name = "click", specifier = ">=8.1" },
+    { name = "cryptography", specifier = ">=41" },
+    { name = "edge-tts", specifier = ">=6.1" },
+    { name = "fastapi", specifier = ">=0.110" },
+    { name = "fastembed", marker = "extra == 'local-embedding'", specifier = ">=0.4" },
+    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27" },
+    { name = "huggingface-hub", marker = "extra == 'local-embedding'", specifier = ">=0.20" },
+    { name = "josepy", specifier = ">=2.2.0" },
+    { name = "langchain-core", specifier = ">=1.4.8" },
+    { name = "langgraph-checkpoint-postgres", specifier = ">=2.0" },
+    { name = "lark-oapi", specifier = ">=1.7.3" },
+    { name = "ldap3", specifier = ">=2.9.1" },
+    { name = "mcp", specifier = ">=1.9,<2" },
+    { name = "mss", marker = "extra == 'desktop'", specifier = ">=9.0" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10" },
+    { name = "octop-browser", specifier = ">=1.0.0" },
+    { name = "octop-gateway", specifier = ">=1.0.0" },
+    { name = "octop-harness", extras = ["all"], specifier = ">=1.0.1" },
+    { name = "octop-memory", specifier = ">=1.0.0" },
+    { name = "onnxruntime", marker = "extra == 'knowledge-ocr'", specifier = ">=1.17" },
+    { name = "openpyxl", specifier = ">=3.1" },
+    { name = "pillow", specifier = ">=10.0" },
+    { name = "playwright", specifier = ">=1.40" },
+    { name = "playwright", marker = "extra == 'browser'", specifier = ">=1.40" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
+    { name = "pydantic", specifier = ">=2.6,<2.14" },
+    { name = "pyjwt", specifier = ">=2.8" },
+    { name = "pymupdf", marker = "extra == 'knowledge-ocr'", specifier = ">=1.24" },
+    { name = "pynput", marker = "extra == 'desktop'", specifier = ">=1.7" },
+    { name = "pypdf", specifier = ">=5.0" },
+    { name = "pypinyin", specifier = ">=0.53" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1" },
+    { name = "pytest-testmon", marker = "extra == 'dev'", specifier = ">=2.0" },
+    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.6" },
+    { name = "python-docx", specifier = ">=1.2.0" },
+    { name = "python-pptx", specifier = ">=1.0" },
+    { name = "questionary", specifier = ">=2.0" },
+    { name = "rapidocr", marker = "extra == 'knowledge-ocr'", specifier = ">=3.4,<4" },
+    { name = "rich", specifier = ">=13.7" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4" },
+    { name = "scalar-fastapi", specifier = ">=1.0" },
+    { name = "segno", specifier = ">=1.6" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.27" },
+    { name = "websockets", specifier = ">=13.0" },
+    { name = "xlrd", specifier = ">=2.0.1" },
+    { name = "xlwt", marker = "extra == 'dev'", specifier = ">=1.3" },
+]
+provides-extras = ["dev", "browser", "desktop", "local-embedding", "knowledge-ocr"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "build", specifier = ">=1.0" },
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "mypy", specifier = ">=1.10" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-asyncio", specifier = ">=0.23" },
+    { name = "pytest-cov", specifier = ">=4.1" },
+    { name = "pytest-testmon", specifier = ">=2.0" },
+    { name = "pytest-xdist", specifier = ">=3.6" },
+    { name = "ruff", specifier = ">=0.4" },
+    { name = "xlwt", specifier = ">=1.3" },
 ]
 
 [[package]]
