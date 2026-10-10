@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any
+from urllib.parse import urlparse
 
 REASONING_MODES = frozenset({"auto", "enabled", "disabled"})
 REASONING_ADAPTERS = frozenset(
@@ -38,20 +39,29 @@ def _string_list(value: Any) -> list[str]:
     return [str(item).strip().lower() for item in value if str(item).strip()]
 
 
+def _host_matches(host: str, *domains: str) -> bool:
+    """Exact or dot-boundary subdomain match (never a bare substring)."""
+    return any(host == d or host.endswith("." + d) for d in domains)
+
+
 def _legacy_adapter(model_id: str, *, base_url: str | None) -> str:
     """Choose a conservative adapter for legacy ``reasoning: true`` metadata."""
-    url = (base_url or "").lower()
-    if "openrouter.ai" in url:
+    host = ""
+    if base_url:
+        host = (urlparse(base_url).hostname or "").lower()
+    if _host_matches(host, "openrouter.ai"):
         return "openrouter"
-    if "dashscope" in url or "maas.aliyuncs.com" in url:
+    if _host_matches(host, "dashscope.aliyuncs.com", "dashscope-intl.aliyuncs.com"):
         return "dashscope"
-    if model_id.startswith("deepseek-v4-") and any(
-        host in url for host in ("lkeap.cloud.tencent.com", "tencentmaas.com")
+    if model_id.startswith("deepseek-v4-") and _host_matches(
+        host, "lkeap.cloud.tencent.com", "tencentmaas.com"
     ):
         return "thinking_nested_effort"
-    if any(host in url for host in ("deepseek.com", "bigmodel.cn", "z.ai", "moonshot")):
+    if _host_matches(host, "deepseek.com", "bigmodel.cn", "z.ai", "moonshot.cn", "moonshot.ai"):
         return "thinking"
-    if any(host in url for host in ("openai.com", "generativelanguage.googleapis.com", "groq.com")):
+    if _host_matches(
+        host, "openai.com", "generativelanguage.googleapis.com", "groq.com"
+    ):
         return "openai_reasoning_effort"
     # Existing Octop metadata historically meant an OpenAI-compatible model
     # with a ``thinking`` object. Keep that behaviour for unknown gateways.

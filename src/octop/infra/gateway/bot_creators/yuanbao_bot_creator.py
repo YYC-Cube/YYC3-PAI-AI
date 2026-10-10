@@ -298,7 +298,7 @@ class YuanbaoBotCreator:
 
                     _log_success("poll", "User confirmed, got bot credentials")
                     _log_info("poll", f"  app_key:    {self.app_key}")
-                    _log_info("poll", f"  app_secret: {self.app_secret}")
+                    _log_info("poll", f"  app_secret: {self.app_secret[:4]}****")
                     return True
                 elif status == 3:
                     _log_error("poll", "User cancelled binding")

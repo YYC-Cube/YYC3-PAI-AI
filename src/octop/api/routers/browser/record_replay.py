@@ -253,14 +253,20 @@ async def record_stop_and_generate_skill(
         from octop_browser.record.store import RecordingStore
 
         store = RecordingStore()
-        # Find the recording directory
+        # Find the recording directory (containment guard: recording_id comes
+        # from the request and must not escape the recordings root).
         manifest = store.read_manifest(recording_id)
         if manifest is not None:
             import pathlib
 
-            rec_dir = pathlib.Path(store.recordings_dir) / recording_id
-            skill_path = rec_dir / "draft.skill.md"
-            if skill_path.exists():
+            recordings_root = pathlib.Path(store.recordings_dir).resolve()
+            rec_dir = (recordings_root / recording_id).resolve()
+            skill_path = None
+            if rec_dir.is_relative_to(recordings_root):
+                candidate = rec_dir / "draft.skill.md"
+                if candidate.exists():
+                    skill_path = candidate
+            if skill_path is not None:
                 skill_content = skill_path.read_text(encoding="utf-8")
                 # Derive a skill name from the recording name or ID
                 skill_name = manifest.target.title.strip() or recording_id

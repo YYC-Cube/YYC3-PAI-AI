@@ -194,7 +194,7 @@ def _http_get(
     parsed = urlparse(full_url)
     host = (parsed.netloc or "").lower()
     github_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-    if github_token and "api.github.com" in host:
+    if github_token and host == "api.github.com":
         req.add_header("Authorization", f"Bearer {github_token}")
     retries = _hub_http_retries()
     timeout = _hub_http_timeout()
@@ -207,7 +207,7 @@ def _http_get(
         except HTTPError as e:
             last_error = e
             status = getattr(e, "code", 0) or 0
-            if status == 403 and "api.github.com" in host:
+            if status == 403 and host == "api.github.com":
                 body = ""
                 try:
                     body = e.read().decode("utf-8", errors="ignore")
