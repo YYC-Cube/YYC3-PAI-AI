@@ -1,0 +1,49 @@
+name: 📝 文档改进 | Documentation
+description: 修正或补充文档、图表、示例 Fix or extend docs, diagrams, examples
+title: "[Docs]: "
+labels: ["documentation", "status:needs-triage"]
+body:
+  - type: dropdown
+    id: module
+    attributes:
+      label: 文档位置 | Document Location
+      options:
+        - "mod:00 模版总览 Templates"
+        - "mod:01 理论基础 Theory"
+        - "mod:02 设计实践 Design"
+        - "mod:03 开发工程 DevOps"
+        - "mod:04 质量保障 Quality"
+        - "mod:05 安全合规 Security"
+        - "mod:06 运维监控 Monitoring"
+        - "mod:07 案例分析 Cases"
+        - "mod:08 工具平台 Tooling"
+        - "mod:09 智能演进 Evolution"
+        - "mod:10 研学文库 Library"
+        - "mod:11 模型架构 Model"
+        - "mod:12 企业蓝图 Blueprints"
+        - "mod:13 代码示例 Code examples"
+        - "mod:docs 站点文档 Dev docs"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 类型 | Kind
+      options:
+        - 内容错误 Factual error
+        - 死链/格式 Dead link / formatting
+        - 双语缺失 Missing translation
+        - 图表更新 Diagram update
+        - 内容补充 Content addition
+        - 其他 Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: detail
+    attributes:
+      label: 具体说明 | Details
+      description: 文档路径 + 问题描述 + 建议修改 Doc path + issue + suggested change
+    validations:
+      required: true

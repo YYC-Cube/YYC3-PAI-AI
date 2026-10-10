@@ -1,6 +1,6 @@
-# Agent 后台协作（harness teams + Octop 投递）
+# Agent 后台协作（harness teams + YYC3-Pai 投递）
 
-> **同步互调**（`@` Agent、`ask_agent` sync）见 [agent-call-agent.md](./agent-call-agent.md)。  
+> **同步互调**（`@` Agent、`ask_agent` sync）见 [agent-call-agent.md](./agent-call-agent.md)。
 > 架构说明见 [agent-interop-mailbox.md](./agent-interop-mailbox.md)。
 
 ## 行为
@@ -18,7 +18,7 @@
 
 可选 `user_question`：写入 inbox 消息，供 `compose_followup` 使用。
 
-## Octop 侧保留代码
+## YYC3-Pai 侧保留代码
 
 | 路径 | 职责 |
 |------|------|
@@ -33,4 +33,4 @@
 
 - 前端：用户停留在当前 thread 时，除未读角标外主动 `loadHistory`（或 SSE/WS 通知）。
 - harness：inbox `cancel(job_id)` 暴露给 slash 或管理 API（若需要取消长任务）。
-- 重启后 in-flight 任务丢失（inbox 纯内存）——若需持久化队列，应在 harness 层扩展，而非 octop DB 重复实现。
+- 重启后 in-flight 任务丢失（inbox 纯内存）——若需持久化队列，应在 harness 层扩展，而非 YYC3-Pai DB 重复实现。

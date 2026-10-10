@@ -1,0 +1,87 @@
+name: 🐛 缺陷报告 | Bug Report
+description: 报告一个可复现的缺陷 Report a reproducible defect
+title: "[Bug]: "
+labels: ["bug", "status:needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！请尽量填写完整，便于快速定位。
+        Thanks for reporting! Please fill in as much detail as possible for fast triage.
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: 所属模块 | Module
+      description: 问题发生在哪个目录/组件 Which directory or component
+      options:
+        - "mod:00 模版总览 Templates"
+        - "mod:01 理论基础 Theory"
+        - "mod:02 设计实践 Design"
+        - "mod:03 开发工程 DevOps"
+        - "mod:04 质量保障 Quality"
+        - "mod:05 安全合规 Security"
+        - "mod:06 运维监控 Monitoring"
+        - "mod:07 案例分析 Cases"
+        - "mod:08 工具平台 Tooling"
+        - "mod:09 智能演进 Evolution"
+        - "mod:10 研学文库 Library"
+        - "mod:11 模型架构 Model"
+        - "mod:12 企业蓝图 Blueprints"
+        - "mod:13 代码示例 Code examples"
+        - "mod:infra 基础设施 Infra"
+        - "mod:docs 站点文档 Dev docs"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级 | Priority
+      options:
+        - "priority:critical P0"
+        - "priority:high P1"
+        - "priority:medium P2"
+        - "priority:low P3"
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: 复现步骤 | Reproduction Steps
+      placeholder: |
+        1. 进入 '...'
+        2. 执行 '...'
+        3. 观察到 '...'
+        1. Go to '...'
+        2. Run '...'
+        3. See '...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为 | Expected Behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为 | Actual Behavior
+      description: 如含报错请附日志（脱敏后）Attach sanitized logs if applicable
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 环境信息 | Environment
+      placeholder: |
+        - OS: [e.g. macOS 15]
+        - Python: [e.g. 3.11.6]
+        - Commit: [e.g. abc1234]
+    validations:
+      required: true

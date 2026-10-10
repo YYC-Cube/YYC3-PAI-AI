@@ -1,10 +1,9 @@
 # Architecture
 
-Octop is a self-hosted AI assistant platform for multiple users and agents,
+YYC3-Pai is a self-hosted AI assistant platform for multiple users and agents,
 delivered as a single Python process.
 It glues three reusable libraries — `octop-harness` (LangGraph-based
-chat runtime), `octop-gateway` (IM channel pipeline), and a React
-+ TypeScript dashboard — into one wheel that ships with a CLI, an
+chat runtime), `octop-gateway` (IM channel pipeline), and a React + TypeScript dashboard — into one wheel that ships with a CLI, an
 HTTP/WebSocket API, and a web UI.
 
 > Looking for the contributor-facing navigation guide (module boundaries,
@@ -49,7 +48,7 @@ OctopServer.start()
  ├─ SharedServices (repos + factories)
  ├─ WizardTokenStore                 (5-min TTL setup tokens)
  ├─ ExpertCatalog  / SubagentCatalog (bundled MD libraries)
- ├─ PluginManager.seed_bundled() then load_installed()  (~/.octop/plugins/*; bundled default off)
+ ├─ PluginManager.seed_bundled() then load_installed()  (~/.yyc3-pai/plugins/*; bundled default off)
  ├─ AgentManager (global registry — one per process)
  │    └─ for each agent row: builds HarnessAgentRuntime on demand
  │       ├─ HarnessAgent (LangGraph)
@@ -74,7 +73,7 @@ a separate per-user `AgentManager`. The single global registry
 dispatches to whichever harness runtime matches the row, which keeps
 admin tooling (`/api/admin/*`) and cross-user diagnostics simple.
 
-The dashboard always talks to Octop over `/api` HTTP/WebSocket; the
+The dashboard always talks to YYC3-Pai over `/api` HTTP/WebSocket; the
 React SPA never imports a Python module and never opens the SQLite
 file directly.
 
@@ -83,9 +82,9 @@ file directly.
 Three surfaces share the same agent runtime:
 
 | Surface | Wire | Session key (default) | Notes |
-|---------|------|-----------------------|-------|
+| --------- | ------ | ----------------------- | ------- |
 | Web UI | WebSocket `/api/agents/{aid}/chat/ws` | `<aid>:dashboard:<user_id>:dm` | Dashboard turn endpoint |
-| CLI | Embedded `OctopServer` (REPL) or WebSocket | `<aid>:cli:<user_id>:dm` | `octop chats send` / `chats repl` |
+| CLI | Embedded `OctopServer` (REPL) or WebSocket | `<aid>:cli:<user_id>:dm` | `pai chats send` / `chats repl` |
 | IM channel | gateway `ChannelManager` | `<aid>:<channel_kind>:<platform_session>:<dm\|group>` | See `infra/gateway/process/message_keys.py` |
 | Cron job | APScheduler trigger → `Gateway.push_text_from_session` | row's `session_key` (defaults to `dashboard_key` of the owner) | `task_type=text\|agent` chooses direct-push vs run-AI-then-push |
 
@@ -105,9 +104,9 @@ see `infra/gateway/threads.py` for the full state machine.
 The **control plane** (users, agents, providers, channels, cron,
 sessions, audit, JWT secret) lives in either:
 
-* SQLite — default file under `~/.octop/` (legacy `octop.db` or
++ SQLite — default file under `~/.yyc3-pai/` (`yyc3-pai.db`, or
   `config.json` → `database.sqlite_path`), or
-* PostgreSQL — `config.json` / `OCTOP_DATABASE_*` / Setup wizard database step.
++ PostgreSQL — `config.json` / `YYC3_DATABASE_*` / Setup wizard database step.
 
 Migrations: `src/octop/infra/db/migrations/NNN_*.sql` (SQLite) and
 `NNN_*.pg.sql` (PostgreSQL). Connection PRAGMAs live on the SQLite pool;
@@ -122,8 +121,8 @@ Per-agent workspace files (Markdown, skills, expert templates) are
 read and written through the agent's `BackendWorkspace`
 (`octop.infra.backend` → `octop_harness.backends`). The default
 backend is a `filesystem` adapter rooted at
-`~/.octop/agents/<agent_id>/`; remote backends (S3, COS) are mounted
-on top of the same root_dir and the Octop service never reads
+`~/.yyc3-pai/agents/<agent_id>/`; remote backends (S3, COS) are mounted
+on top of the same root_dir and the YYC3-Pai service never reads
 content files via `Path.write_text` / `read_text` (see
 [agent-backend-file-io.md](./agent-backend-file-io.md) for the full
 rules). Checkpointing, langgraph state, and the
@@ -148,21 +147,21 @@ tool labels from `GET /api/i18n/tools`.
 [agent-interop-mailbox.md](./agent-interop-mailbox.md) for the queue
 contract and [agent-call-agent.md](./agent-call-agent.md) /
 [agent-delegation.md](./agent-delegation.md) for the two user-side
-entry points. Octop's `GlobalProcessor` implements the
+entry points. YYC3-Pai's `GlobalProcessor` implements the
 `TeamProcessor` protocol so replies land back in the parent thread
 checkpoint and are pushed to the dashboard / IM channel by
 `on_reply`.
 
 ## See also
 
-- [AGENTS.md](../AGENTS.md) — module boundaries, hard bans, change workflow
-- [Architecture Decision Records](./adr/) — single-process, no queue (ADR 001)
-- [Configuration](configuration.md) — `~/.octop/` layout + env vars
-- [API reference](api.md) — every route, body, and error
-- [CLI reference](cli.md) — every subcommand
-- [Personas](personas.md) — MBTI templates and the mbti_profiles data module
-- [ACP integration](acp.md) — in/out ACP server and runner tool
-- [Agent interop](agent-interop-mailbox.md),
++ [AGENTS.md](../AGENTS.md) — module boundaries, hard bans, change workflow
++ [Architecture Decision Records](./adr/) — single-process, no queue (ADR 001)
++ [Configuration](configuration.md) — `~/.yyc3-pai/` layout + env vars
++ [API reference](api.md) — every route, body, and error
++ [CLI reference](cli.md) — every subcommand
++ [Personas](personas.md) — MBTI templates and the mbti_profiles data module
++ [ACP integration](acp.md) — in/out ACP server and runner tool
++ [Agent interop](agent-interop-mailbox.md),
   [agent call](agent-call-agent.md),
   [agent delegation](agent-delegation.md)
-- [Agent backend file I/O](agent-backend-file-io.md) — content file rules
++ [Agent backend file I/O](agent-backend-file-io.md) — content file rules

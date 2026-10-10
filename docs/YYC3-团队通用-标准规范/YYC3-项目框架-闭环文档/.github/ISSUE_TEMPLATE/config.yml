@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📮 开发讨论 | Development Discussion
+    url: mailto:dev@yanyucloud.com
+    about: 开发相关问题 Development-related questions
+  - name: 📚 文档咨询 | Docs Support
+    url: mailto:docs@yanyucloud.com
+    about: 文档与知识库问题 Documentation & knowledge base
+  - name: 🛡️ 安全漏洞 | Security Vulnerability
+    url: mailto:sec@yanyucloud.com
+    about: 请勿公开披露，使用私密渠道报告 Do not disclose publicly; use this private channel
+  - name: 🧭 提问建议先读 | Read First
+    url: https://github.com/YanYuCloudCube/YYC3-Prompt-Engineering/blob/main/CONTRIBUTING.md
+    about: 贡献指南与标签规范 Contributing guide & labeling policy

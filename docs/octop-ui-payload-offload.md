@@ -1,6 +1,6 @@
 # octop_ui 大 payload 旁路设计 Spec（artifact 剥离方案）
 
-> 关联 issue：TencentCloud/Octop #1032（bilibili 插件返回结果过大）
+> 关联上游 issue：TencentCloud/Octop #1032（bilibili 插件返回结果过大）
 > 状态：v2 · 三方评审已合入（2026-09-23）
 > 评审：step-5-preview / mimo-v2.6-pro / MiniMax-M3 三方独立审核，一致 **APPROVE WITH CHANGES**，必改项已全部合入本文（评审记录见 `tmp/spec-review-*.log`）。
 > 本文所有论断均经代码阅读 + 运行时 PoC 双重验证（`tmp/verify_offload_poc.py`，真实 LangGraph agent loop，含原地修改模式复验）。
@@ -19,7 +19,7 @@
 这个字符串同时服务四类消费者：
 
 | 消费者 | 需求 | 路径 |
-|---|---|---|
+| --- | --- | --- |
 | LLM 上下文 | 越小越好 | ToolMessage.content 进 state，下次模型调用全量携带 |
 | 历史持久化 | 需要完整数据供回放 | `thread_messages`（recorder 主路径 `message_to_dict`） |
 | Dashboard 实时渲染 | 需要完整 data | WS `tool_result` 帧（`model_dump`） |
@@ -30,8 +30,8 @@
 ## 3. 已验证事实
 
 | # | 事实 | 证据 |
-|---|---|---|
-| F1 | `AgentMiddleware.awrap_tool_call` 可拦截工具结果并替换 ToolMessage（langchain 1.3.18）；只写 sync 版会 NotImplementedError | `langchain/agents/middleware/types.py:756-823`；Octop 先例 `infra/agents/middleware/thread_artifacts.py:186-193` |
+| --- | --- | --- |
+| F1 | `AgentMiddleware.awrap_tool_call` 可拦截工具结果并替换 ToolMessage（langchain 1.3.18）；只写 sync 版会 NotImplementedError | `langchain/agents/middleware/types.py:756-823`；YYC3-Pai 先例 `infra/agents/middleware/thread_artifacts.py:186-193` |
 | F2 | 中间件链组装处可闭包注入 `row`/`ws` | `manager.py:3026-3041`（`ws` 于 `manager.py:2912-2917` 构造） |
 | F3 | 模型请求转换（`convert_to_openai_messages`）不含 artifact 字段，artifact 不进模型上下文 | `langchain_core/messages/utils.py:1653-1680`；PoC [3]；harness 的 memory/compaction 模块均不读 artifact（grep 实证） |
 | F4 | WS 实时帧经 `model_dump()` 序列化，含 artifact；team relay 亦原样透传 | `api/routers/chat/sse.py:9-21`、`ws.py:70-75`、`teams/team_manager.py:754-773`；PoC [5] |
@@ -69,7 +69,7 @@
    - `result.content = 去掉 data 的 envelope + "data_ref": "artifact"`；
 4. 任何异常：记 warning + METRICS 计数，原样返回。
 
-**挂载位置**：追加到 `agent_middleware` 列表**末尾（最内层）**，在 `manager.py:3026-3041` 组装。理由：langchain 语义「列表首位 = 最外层」，最内层最先看到工具原始返回、剥离后外层所有中间件（harness PII/媒体、Octop 各中间件）观测面一致。对 `ThreadArtifactsMiddleware._paths_from_content` 的影响已由 F20 + `file://` 守护条件双重兜底。
+**挂载位置**：追加到 `agent_middleware` 列表**末尾（最内层）**，在 `manager.py:3026-3041` 组装。理由：langchain 语义「列表首位 = 最外层」，最内层最先看到工具原始返回、剥离后外层所有中间件（harness PII/媒体、YYC3-Pai 各中间件）观测面一致。对 `ThreadArtifactsMiddleware._paths_from_content` 的影响已由 F20 + `file://` 守护条件双重兜底。
 
 **为什么中间件优于改插件 SDK（`response_format="content_and_artifact"`）**：`_to_structured_tool` 目前不透传 response_format（F12），改 SDK 还需每个插件改返回值；中间件对现有 26 个 octop_ui 插件零改动生效，并自动覆盖未来插件。
 
@@ -113,7 +113,7 @@ F19 已论证：artifact 不进模型请求（F3），fork 只复制 checkpoint 
 ## 5. 风险与发布约束
 
 | 风险 | 评估 | 缓解 |
-|---|---|---|
+| --- | --- | --- |
 | **前后端必须同批发布** | 后端先上、前端未更新 → 剥离后的 envelope 让旧前端渲染空。wheel 内嵌 dashboard 构建产物，天然原子 ✅ | 自托管分离部署场景在 CHANGELOG 标注；第三方 API 消费者迁移指引写进 `docs/api.md` |
 | 新旧消息混存 | 老消息无 `data_ref`/artifact，新消息有 | 前端两条解析路径都要兼容（§4.3.4-4.3.5），测试覆盖 |
 | WS 帧带宽 | artifact 随 `model_dump` 进帧，体积与今天相同（今天全量走 content） | 无回归 |
@@ -127,11 +127,13 @@ F19 已论证：artifact 不进模型请求（F3），fork 只复制 checkpoint 
 ## 6. 测试计划
 
 后端：
+
 - 中间件单元测试（新建 `tests/unit/agents/middleware/test_octop_ui_offload.py`）：剥离 / 小 payload 不动 / 非 JSON 不动 / 无 `octop_ui` 不动 / `data` 为空不动 / 含 `file://` 不动 / 坏 JSON 不动 / Command 结果不动 / 原地修改保留 `id`/`tool_call_id`/`name`/`status` / 异常吞掉并计数；
 - `serialize.py` 含 artifact 的序列化用例；
 - 集成：agent stream 含 octop_ui 大 payload → WS 帧 content 已压缩且 artifact 在场；历史 API 返回 artifact；fork 后新线程首调不爆量。
 
 前端：
+
 - `extractToolResultOutput` / `closeToolCall`：content+artifact 同帧时 artifact 落进 `toolData`；
 - `extractToolData` 历史路径读 artifact；
 - `parseOctopToolOutput`：`data` 优先于 `data_ref`；老格式（内联 data）兼容；

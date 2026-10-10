@@ -7,7 +7,7 @@
 
 ## Context
 
-Octop needs to run a web server, a CLI, per-user Agent runtimes, IM channel connections, and cron schedulers simultaneously. The question was whether to split these into separate services (worker + API server) or keep everything in one process.
+YYC3-Pai needs to run a web server, a CLI, per-user Agent runtimes, IM channel connections, and cron schedulers simultaneously. The question was whether to split these into separate services (worker + API server) or keep everything in one process.
 
 ## Decision
 
@@ -15,7 +15,7 @@ Everything runs in a single Python process served by uvicorn. There is no extern
 
 ## Rationale
 
-- **Self-hosted target:** Operators install with `pip install octop && octop init`. Adding Redis or a process supervisor doubles the ops burden for the primary audience.
+- **Self-hosted target:** Operators install with `pip install yyc3-pai && pai init`. Adding Redis or a process supervisor doubles the ops burden for the primary audience.
 - **Workload profile:** Agent calls are LLM-bound (seconds to minutes of I/O wait). Python's asyncio handles this fan-out efficiently without threads or processes.
 - **SQLite is sufficient:** Concurrent writes are rare (one writer per agent at a time); WAL mode handles the load. Migrating to Postgres requires only a new `SqlitePool` implementation.
 - **Restart semantics are simple:** `OctopServer.start()` rebuilds the entire runtime tree from the SQLite file. No external state to reconcile.

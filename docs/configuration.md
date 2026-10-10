@@ -1,24 +1,24 @@
 # Configuration
 
-Octop stores all of its state under `~/.octop/`. The directory is created
-on first server start (or by `octop init` / `octop run`).
+YYC3-Pai stores all of its state under `~/.yyc3-pai/`. The directory is created
+on first server start (or by `pai init` / `pai run`).
 
 ## Filesystem layout
 
 ```
-~/.octop/
+~/.yyc3-pai/
 ├── config.json              # process-level settings (host, port, CORS, DB, TLS, …)
-├── env                      # optional dotenv (OCTOP_DATABASE_*, API keys, …); loaded at server start
-├── octop.db                 # SQLite — users, agents, providers, sessions, audit
-├── cli_state.json           # CLI token + pinned defaults (`octop user login`)
-├── repl_history             # readline-style history for `octop chats repl`
+├── env                      # optional dotenv (YYC3_DATABASE_*, API keys, …); loaded at server start
+├── yyc3-pai.db              # SQLite — users, agents, providers, sessions, audit
+├── cli_state.json           # CLI token + pinned defaults (`pai user login`)
+├── repl_history             # readline-style history for `pai chats repl`
 ├── secrets/
-│   └── jwt_secret           # 32-byte random; rotate with `octop admin rotate-jwt-secret`
+│   └── jwt_secret           # 32-byte random; rotate with `pai admin rotate-jwt-secret`
 ├── agents/<agent_id>/       # per-agent workspace (LangGraph state, attachments, …)
 ├── plugins/                 # installed third-party plugins
-├── ssl/                     # self-signed certs when `octop run --ssl` is used without --cert/--key
-├── logs/                    # rotating log files (when `octop service start` writes a logfile)
-└── octop.log                # default foreground log path
+├── ssl/                     # self-signed certs when `pai run --ssl` is used without --cert/--key
+├── logs/                    # rotating log files (when `pai service start` writes a logfile)
+└── yyc3-pai.log             # default foreground log path
 ```
 
 `env` is dotenv format, applied before `config.json` is loaded
@@ -32,12 +32,12 @@ file are left alone). Every running agent inherits those keys:
   cannot be overridden from `.env`). New agents store that file at
   `{workspace}/.octop/.env`; existing agents keep `{workspace}/.env` when
   their stored internal system-files prefix uses the legacy layout. Remote
-  object-store workspaces are not read from the host path — Octop/harness
-  also reads `.env` through the agent backend on each execute. Octop also
+  object-store workspaces are not read from the host path — YYC3-Pai/harness
+  also reads `.env` through the agent backend on each execute. YYC3-Pai also
   injects `OCTOP_AGENT_ID`, `OCTOP_AUTH_DIR` (under `{workspace}/.octop/auth`
   for new agents; legacy agents keep `{workspace}/.octop-auth`),
   and `OCTOP_HOME` into shell/sandbox env.
-- **Docker sandbox** — re-reads `~/.octop/env` on execute, plus workspace `.env`
+- **Docker sandbox** — re-reads `~/.yyc3-pai/env` on execute, plus workspace `.env`
   and a minimal `PATH` (not the full host environment). Admin `PATH`/`HOME`
   cannot override the container toolchain; workspace `.env` may set `PATH`.
 - **Web search tools** (Tavily, Brave, …) register at agent start from process
@@ -49,7 +49,8 @@ Per-agent secrets belong in `{workspace}/.env` or, for new agents,
 `{workspace}/.octop/.env` (also writable via the `write_env_file` tool).
 That file is excluded from published-expert snapshots.
 
-The root can be overridden with `OCTOP_HOME` (absolute path). Most
+The root can be overridden with `YYC3_PAI_HOME` (absolute path; legacy
+`OCTOP_HOME` still accepted). Most
 sub-paths are exposed as properties on `PathLayout` in
 `octop.infra.utils.paths`.
 
@@ -74,11 +75,11 @@ on each start. Schema (`OctopConfig` in `octop/config.py`):
   "max_upload_mb": 100,
   "database": {
     "driver": "sqlite",
-    "sqlite_path": "octop.db",
+    "sqlite_path": "yyc3-pai.db",
     "host": "127.0.0.1",
     "port": 5432,
-    "database": "octop",
-    "user": "octop",
+    "database": "yyc3_pai",
+    "user": "yyc3",
     "password": null,
     "url": null
   },
@@ -100,19 +101,20 @@ Notes:
 
 - `default_timezone` is the process default for dashboard timestamps, cron
   scheduling, and harness. Legacy `cron_timezone` in `config.json` and
-  `OCTOP_CRON_TIMEZONE` are still accepted; the new key/env wins when both
+  `OCTOP_CRON_TIMEZONE` are still accepted (as is the new
+  `YYC3_CRON_TIMEZONE`); the new key/env wins when both
   are set.
 - `database.password`: when the wizard configures PostgreSQL via discrete
   fields, this **may** be written into `config.json` (convenient for local
-  first-run). In production, prefer using only `OCTOP_DATABASE_PASSWORD` or
-  a `OCTOP_DATABASE_URL` that includes the password, and restrict
+  first-run). In production, prefer using only `YYC3_DATABASE_PASSWORD` or
+  a `YYC3_DATABASE_URL` that includes the password, and restrict
   `config.json` file permissions. Environment variables always override the
   same-named setting in the file.
 - `enable_api_docs=false` keeps `/api/docs` (Scalar) off in production
   while still serving `/api/openapi.json` to the dashboard.
 - `require_setup_password=true` adds the wizard password gate to the
   first-run setup flow; set `false` for unattended bootstraps via
-  `OCTOP_ADMIN_USERNAME` / `OCTOP_ADMIN_PASSWORD`.
+  `YYC3_ADMIN_USERNAME` / `YYC3_ADMIN_PASSWORD`.
 - `max_upload_mb` is the process-wide ceiling for dashboard chat
   attachments, IM inbound files, and knowledge-base documents (default
   100). Existing `config.json` files that omit the key pick up the
@@ -121,7 +123,7 @@ Notes:
   `client_max_body_size`). Agent workspace file upload, plugin ZIPs,
   and backup archives use separate limits and are not this setting.
 - `plugins.<id>.enabled` is the **global** plugin switch (Dashboard Admin →
-  Plugins). Bundled plugins are copied into `~/.octop/plugins/` on init and
+  Plugins). Bundled plugins are copied into `~/.yyc3-pai/plugins/` on init and
   server start with `enabled: false`. `bundled_plugins_seeded` lists ids
   already offered so uninstall does not come back on the next start.
 
@@ -131,54 +133,54 @@ Each variable, when set, takes precedence over the matching key in
 `config.json`. Unset variables leave the on-disk value untouched.
 
 | Variable | Type | Default | Effect |
-|----------|------|---------|--------|
-| `OCTOP_HOME` | path | `~/.octop` | Install root (DB, secrets, workspaces, plugins) |
-| `OCTOP_BIND_HOST` | string | `127.0.0.1` | Listen address (use `0.0.0.0` for LAN access) |
-| `OCTOP_PORT` | int | `8088` | Listen port (`0`–`65535`; `0` asks the OS for a free port) |
-| `OCTOP_LOG_LEVEL` | string | `info` | One of `debug` `info` `warning` `error` |
-| `OCTOP_LOG_RETENTION_DAYS` | int | `14` | Keep rotated `octop.log.YYYY-MM-DD` files for this many days |
-| `OCTOP_LOG_MAX_BYTES` | int | `104857600` (100 MiB) | Roll the active log when it exceeds this size (in addition to daily rotation) |
-| `OCTOP_LOG_COMPRESS` | bool | `true` | logrotate-style `compress` + `delaycompress`: gzip prior rotated plains on the next cycle (`octop.log.YYYY-MM-DD.gz`); the newest rotated file stays uncompressed until then |
-| `OCTOP_ACCESS_TOKEN_TTL` | int (seconds) | `86400` | JWT access-token lifetime |
-| `OCTOP_LOGIN_MAX_ATTEMPTS` | int | `5` | Failed-login attempts before lockout |
-| `OCTOP_LOGIN_LOCKOUT_SECONDS` | int | `900` | Lockout duration after `OCTOP_LOGIN_MAX_ATTEMPTS` failures |
-| `OCTOP_CAPTCHA_PROVIDER` | slug | `slider` | Login captcha (`slider`, `turnstile`, `hcaptcha`, `recaptcha-v3`, `tencent`, `geetest-v4`; `recaptcha` v2 stays resolvable for existing configs but is unlisted). Boot snapshot; restart after change |
-| `OCTOP_CAPTCHA_SITE_KEY` | string | empty | Public site key (Tencent: CaptchaAppId; required when the env snapshot is a strong provider) |
-| `OCTOP_CAPTCHA_SECRET` | string | empty | Siteverify secret (Tencent: AppSecretKey; never logged; `GET /api/envs` redacts it) |
-| `OCTOP_CAPTCHA_CAM_SECRET_ID` | string | empty | Tencent only: CAM API SecretId signing `DescribeCaptchaResult`; required when the env snapshot is `tencent` |
-| `OCTOP_CAPTCHA_CAM_SECRET_KEY` | string | empty | Tencent only: CAM API SecretKey; never logged; `GET /api/envs` redacts it |
-| `OCTOP_CAPTCHA_V3_MIN_SCORE` | float | `0.5` | Minimum `recaptcha-v3` score; admin UI is read-only |
-| `OCTOP_DEFAULT_TIMEZONE` | IANA tz | `Asia/Shanghai` | Default timezone for display, scheduling, and harness (`cron_timezone` / `OCTOP_CRON_TIMEZONE` still accepted) |
-| `OCTOP_CORS_ORIGINS` | comma-sep list | empty | Permitted CORS origins for the dashboard / external callers |
-| `OCTOP_ENABLE_DASHBOARD` | bool | `true` | Serve the built React SPA at `/` |
-| `OCTOP_ENABLE_API_DOCS` | bool | `false` | Expose Scalar API docs at `/api/docs` |
-| `OCTOP_REQUIRE_SETUP_PASSWORD` | bool | `true` | Require wizard password during initial setup |
-| `OCTOP_MAX_UPLOAD_MB` | int | `100` | Max upload size in MiB for chat attachments, IM inbound, and knowledge documents (1–1024) |
-| `OCTOP_DATABASE_URL` | string | empty | Full DSN — overrides the `OCTOP_DATABASE_*` fields below |
-| `OCTOP_DATABASE_DRIVER` | `sqlite` \| `postgresql` | `sqlite` | Storage backend |
-| `OCTOP_DATABASE_SQLITE_PATH` | path | `octop.db` | SQLite file path (relative to `OCTOP_HOME` unless absolute) |
-| `OCTOP_DATABASE_HOST` | string | `127.0.0.1` | PostgreSQL host (when `driver=postgresql`) |
-| `OCTOP_DATABASE_PORT` | int | `5432` | PostgreSQL port |
-| `OCTOP_DATABASE_NAME` | string | `octop` | PostgreSQL database name |
-| `OCTOP_DATABASE_USER` | string | `octop` | PostgreSQL user |
-| `OCTOP_DATABASE_PASSWORD` | string | empty | PostgreSQL password (overrides file; prefer env in production) |
-| `OCTOP_ADMIN_USERNAME` | string | empty | Pre-fills the first-admin username in `octop init` |
-| `OCTOP_ADMIN_PASSWORD` | string | empty | Pre-fills the first-admin password in `octop init` |
-| `OCTOP_ADMIN_DISPLAY_NAME` | string | empty | Pre-fills the admin display name |
-| `OCTOP_USER` | string | empty | Default `--user` for CLI subcommands |
-| `OCTOP_AGENT` | string | empty | Default `--agent` for CLI subcommands |
-| `OCTOP_SERVICE_MODE` | `systemd` \| `launchd` | auto | Override the service backend (used by `octop service`) |
-| `OCTOP_SERVICE_SCOPE` | `user` \| `system` | auto | systemd `--user` vs system unit (Linux only) |
+| ---------- | ------ | --------- | -------- |
+| `YYC3_PAI_HOME` | path | `~/.yyc3-pai` | Install root (DB, secrets, workspaces, plugins); legacy `OCTOP_HOME` still accepted |
+| `YYC3_BIND_HOST` | string | `127.0.0.1` | Listen address (use `0.0.0.0` for LAN access) |
+| `YYC3_PORT` | int | `8088` | Listen port (`0`–`65535`; `0` asks the OS for a free port) |
+| `YYC3_LOG_LEVEL` | string | `info` | One of `debug` `info` `warning` `error` |
+| `YYC3_LOG_RETENTION_DAYS` | int | `14` | Keep rotated `yyc3-pai.log.YYYY-MM-DD` files for this many days |
+| `YYC3_LOG_MAX_BYTES` | int | `104857600` (100 MiB) | Roll the active log when it exceeds this size (in addition to daily rotation) |
+| `YYC3_LOG_COMPRESS` | bool | `true` | logrotate-style `compress` + `delaycompress`: gzip prior rotated plains on the next cycle (`yyc3-pai.log.YYYY-MM-DD.gz`); the newest rotated file stays uncompressed until then |
+| `YYC3_ACCESS_TOKEN_TTL` | int (seconds) | `86400` | JWT access-token lifetime |
+| `YYC3_LOGIN_MAX_ATTEMPTS` | int | `5` | Failed-login attempts before lockout |
+| `YYC3_LOGIN_LOCKOUT_SECONDS` | int | `900` | Lockout duration after `YYC3_LOGIN_MAX_ATTEMPTS` failures |
+| `YYC3_CAPTCHA_PROVIDER` | slug | `slider` | Login captcha (`slider`, `turnstile`, `hcaptcha`, `recaptcha-v3`, `tencent`, `geetest-v4`; `recaptcha` v2 stays resolvable for existing configs but is unlisted). Boot snapshot; restart after change |
+| `YYC3_CAPTCHA_SITE_KEY` | string | empty | Public site key (Tencent: CaptchaAppId; required when the env snapshot is a strong provider) |
+| `YYC3_CAPTCHA_SECRET` | string | empty | Siteverify secret (Tencent: AppSecretKey; never logged; `GET /api/envs` redacts it) |
+| `YYC3_CAPTCHA_CAM_SECRET_ID` | string | empty | Tencent only: CAM API SecretId signing `DescribeCaptchaResult`; required when the env snapshot is `tencent` |
+| `YYC3_CAPTCHA_CAM_SECRET_KEY` | string | empty | Tencent only: CAM API SecretKey; never logged; `GET /api/envs` redacts it |
+| `YYC3_CAPTCHA_V3_MIN_SCORE` | float | `0.5` | Minimum `recaptcha-v3` score; admin UI is read-only |
+| `YYC3_DEFAULT_TIMEZONE` | IANA tz | `Asia/Shanghai` | Default timezone for display, scheduling, and harness (`cron_timezone` / `OCTOP_CRON_TIMEZONE` still accepted) |
+| `YYC3_CORS_ORIGINS` | comma-sep list | empty | Permitted CORS origins for the dashboard / external callers |
+| `YYC3_ENABLE_DASHBOARD` | bool | `true` | Serve the built React SPA at `/` |
+| `YYC3_ENABLE_API_DOCS` | bool | `false` | Expose Scalar API docs at `/api/docs` |
+| `YYC3_REQUIRE_SETUP_PASSWORD` | bool | `true` | Require wizard password during initial setup |
+| `YYC3_MAX_UPLOAD_MB` | int | `100` | Max upload size in MiB for chat attachments, IM inbound, and knowledge documents (1–1024) |
+| `YYC3_DATABASE_URL` | string | empty | Full DSN — overrides the `YYC3_DATABASE_*` fields below |
+| `YYC3_DATABASE_DRIVER` | `sqlite` \| `postgresql` | `sqlite` | Storage backend |
+| `YYC3_DATABASE_SQLITE_PATH` | path | `yyc3-pai.db` | SQLite file path (relative to `YYC3_PAI_HOME` unless absolute) |
+| `YYC3_DATABASE_HOST` | string | `127.0.0.1` | PostgreSQL host (when `driver=postgresql`) |
+| `YYC3_DATABASE_PORT` | int | `5432` | PostgreSQL port |
+| `YYC3_DATABASE_NAME` | string | `yyc3_pai` | PostgreSQL database name |
+| `YYC3_DATABASE_USER` | string | `yyc3` | PostgreSQL user |
+| `YYC3_DATABASE_PASSWORD` | string | empty | PostgreSQL password (overrides file; prefer env in production) |
+| `YYC3_ADMIN_USERNAME` | string | empty | Pre-fills the first-admin username in `pai init` |
+| `YYC3_ADMIN_PASSWORD` | string | empty | Pre-fills the first-admin password in `pai init` |
+| `YYC3_ADMIN_DISPLAY_NAME` | string | empty | Pre-fills the admin display name |
+| `YYC3_USER` | string | empty | Default `--user` for CLI subcommands |
+| `YYC3_AGENT` | string | empty | Default `--agent` for CLI subcommands |
+| `YYC3_SERVICE_MODE` | `systemd` \| `launchd` | auto | Override the service backend (used by `pai service`) |
+| `YYC3_SERVICE_SCOPE` | `user` \| `system` | auto | systemd `--user` vs system unit (Linux only) |
 
 Invalid integer values are logged and ignored — the on-disk default
 remains in effect. `database_env_configured()` returns `True` when any
-`OCTOP_DATABASE_*` is set, which lets `OctopServer.start()` pick the
+`YYC3_DATABASE_*` (or legacy `OCTOP_DATABASE_*`) is set, which lets `OctopServer.start()` pick the
 configured backend at boot.
 
-**Docker Compose:** put `OCTOP_DATABASE_*` in `docker/.env` *and* ensure
+**Docker Compose:** put `YYC3_DATABASE_*` in `docker/.env` *and* ensure
 they are listed under `environment:` in `docker/docker-compose.yml`
 (Compose uses `.env` for interpolation only; unset keys do not enter the
-container). Writing the same keys to the mounted `~/.octop/env` also works.
+container). Writing the same keys to the mounted `~/.yyc3-pai/env` also works.
 
 ### Agent memory vs control plane
 
@@ -224,18 +226,18 @@ step; password verification works without a pool. The modern flow uses
 plus `database_bound` / `database_driver`. `setup_lockdown` middleware
 blocks non-setup routes until the wizard completes.
 
-For unattended installs, use `octop init --yes` with
-`OCTOP_ADMIN_USERNAME` / `OCTOP_ADMIN_PASSWORD` (and
-`OCTOP_REQUIRE_SETUP_PASSWORD=false` if the env-var path is used). This
+For unattended installs, use `pai init --yes` with
+`YYC3_ADMIN_USERNAME` / `YYC3_ADMIN_PASSWORD` (and
+`YYC3_REQUIRE_SETUP_PASSWORD=false` if the env-var path is used). This
 runs the same migrations + admin creation without the HTTP wizard.
 
 ## Secrets
 
 The JWT secret is generated on first start and stored in
-`~/.octop/secrets/jwt_secret`. Rotate it with:
+`~/.yyc3-pai/secrets/jwt_secret`. Rotate it with:
 
 ```bash
-octop admin rotate-jwt-secret
+pai admin rotate-jwt-secret
 ```
 
 Rotation invalidates every outstanding access token immediately. The
@@ -248,7 +250,7 @@ Per-agent provider credentials (e.g. API keys) live in the SQLite
 ## Optional segmented history archive
 
 `history_v2_enabled` defaults to `false`; enable it with
-`OCTOP_HISTORY_V2_ENABLED=true`.
+`YYC3_HISTORY_V2_ENABLED=true`.
 This switch only affects the write format of the next complete turn —
 once disabled, turns already saved in the new format are still read
 correctly.

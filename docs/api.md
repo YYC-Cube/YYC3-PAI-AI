@@ -5,7 +5,7 @@ endpoints emit `text/event-stream`; chat turns use a WebSocket
 described in [Chat (WebSocket)](#chat-websocket).
 
 > **Interactive docs** (Scalar) live at `/api/docs` when
-> `enable_api_docs=true` (or `OCTOP_ENABLE_API_DOCS=1`). The schema
+> `enable_api_docs=true` (or `YYC3_ENABLE_API_DOCS=1`). The schema
 > is at `/api/openapi.json`.
 
 ## Authentication
@@ -14,10 +14,10 @@ described in [Chat (WebSocket)](#chat-websocket).
 |--------|-------|
 | `Authorization` | `Bearer <access_token>` from `POST /api/auth/login` |
 
-Tokens expire after `OCTOP_ACCESS_TOKEN_TTL` seconds (default 24 h).
-Rotating the JWT secret (`octop admin rotate-jwt-secret`) invalidates
+Tokens expire after `YYC3_ACCESS_TOKEN_TTL` seconds (default 24 h).
+Rotating the JWT secret (`pai admin rotate-jwt-secret`) invalidates
 every outstanding token immediately. Login attempts are rate-limited
-(`OCTOP_LOGIN_MAX_ATTEMPTS` / `OCTOP_LOGIN_LOCKOUT_SECONDS`); the
+(`YYC3_LOGIN_MAX_ATTEMPTS` / `YYC3_LOGIN_LOCKOUT_SECONDS`); the
 admin can clear the lockout with `POST /api/users/{id}/unlock-login`.
 
 ### Auth column legend
@@ -53,89 +53,89 @@ rejected before siteverify.
 
 Offline recovery: delete the `captcha.settings` row via local CLI /
 `settings_repo` if a settings-sourced strong provider is unreachable. If
-the process refused to start because `OCTOP_CAPTCHA_PROVIDER` is strong
-without both keys and no readable settings blob, edit `~/.octop/env` on
+the process refused to start because `YYC3_CAPTCHA_PROVIDER` is strong
+without both keys and no readable settings blob, edit `~/.yyc3-pai/env` on
 disk — the dashboard and `PUT /api/envs` are unreachable until the
-process starts. `GET /api/envs` redacts `OCTOP_CAPTCHA_SECRET` as
+process starts. `GET /api/envs` redacts `YYC3_CAPTCHA_SECRET` as
 `********`; sending that sentinel on PUT keeps the on-disk value.
 
 If you serve the dashboard behind a CSP, allow
 `challenges.cloudflare.com`; `js.hcaptcha.com`, `newassets.hcaptcha.com`,
 `api.hcaptcha.com`; `www.google.com`, `www.gstatic.com`;
-`turing.captcha.qcloud.com`, `captcha.qq.com`, `ssl.captcha.qq.com`. Octop
+`turing.captcha.qcloud.com`, `captcha.qq.com`, `ssl.captcha.qq.com`. YYC3-Pai
 does not set these headers itself.
 
 ## Setup & auth
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/setup/status` | public | `{required, completed, has_admin}` |
-| `GET`    | `/setup/presets` | public | Provider templates for the wizard |
-| `POST`   | `/setup/begin` | public | Begin a wizard session (no password) |
-| `POST`   | `/setup/verify-password` | public | Exchange the wizard password for a session token |
-| `GET`    | `/setup/validate-token` | public | Check a wizard session token |
-| `POST`   | `/setup/initial-admin` | public | body `{username, password, display_name?, email?}` → `201` |
-| `POST`   | `/setup/resume-wizard` | public | Issue a fresh wizard token mid-setup |
-| `POST`   | `/setup/test-provider` | public | Ping a provider draft (kind/base_url/api_key/model) |
-| `POST`   | `/setup/finish` | public | Finalise setup and unlock the rest of the API |
-| `GET`    | `/auth/captcha` | public | `{provider, site_key?}` for the login widget; 503 while setup is required |
-| `POST`   | `/auth/login` | public | body `{username, password, captcha_token?}` (`username` may be email) → `{access_token, role, user, ...}`. When no local password matches, the credentials are retried against the configured LDAP directory; a first directory login provisions an Octop account (unless `auto_provision` is off) and derives the role from `admin_groups` |
-| `GET`    | `/auth/oidc/status` | public | OIDC login availability and provider display name |
-| `POST`   | `/auth/oidc/start` | public | body `{redirect_after?}` → identity-provider authorization URL |
-| `GET`    | `/auth/oidc/callback` | public | Identity-provider callback; redirects to dashboard login completion |
-| `POST`   | `/auth/oidc/exchange` | public | body `{code}` → same JWT response as `/auth/login` |
-| `GET`    | `/auth/oidc/config` | admin | OIDC provider configuration and callback URL; client secret is omitted |
-| `PUT`    | `/auth/oidc/config` | admin | Write OIDC provider configuration; `client_secret` is write-only |
-| `POST`   | `/auth/oidc/config/test` | admin | Verify configured discovery metadata and JWKS endpoint |
-| `GET`    | `/auth/oauth/status` | public | `{providers:[{kind, display_name, enabled}]}` |
-| `POST`   | `/auth/oauth/start` | public | body `{kind, redirect_after?}` → authorization URL |
-| `GET`    | `/auth/oauth/callback` | public | App OAuth callback (`code` or DingTalk `authCode`); same completion page as OIDC |
-| `POST`   | `/auth/oauth/exchange` | public | Same one-time code exchange as `/auth/oidc/exchange` |
-| `POST`   | `/auth/oauth/bind/start` | user | body `{kind, redirect_after?}` → bind the identity to the current user |
-| `POST`   | `/auth/oauth/unbind` | user | Unlink one SSO identity by `kind` (requires a local password when it is the last login method) |
-| `GET`    | `/auth/oauth/providers/{kind}` | admin | Provider config; `kind` is `oidc`, `feishu`, `dingtalk`, or `wecom` |
-| `PUT`    | `/auth/oauth/providers/{kind}` | admin | Upsert provider config; `client_secret` is write-only; WeCom uses `extra.agent_id` |
-| `POST`   | `/auth/oauth/providers/{kind}/test` | admin | Test provider credentials |
-| `GET`    | `/auth/ldap/status` | public | `{enabled, display_name}` for the login page hint |
-| `GET`    | `/auth/ldap/config` | admin | Directory settings; `bind_password` is never returned (`has_bind_password` instead) |
-| `PUT`    | `/auth/ldap/config` | admin | Upsert directory settings; `bind_password` is write-only (omit to keep the stored one) |
-| `POST`   | `/auth/ldap/config/test` | admin | Service bind + probe of `user_base_dn` → `{ok, detail}` |
-| `POST`   | `/auth/logout` | user | `204` |
-| `GET`    | `/auth/me` | user | `{id, username, role, display_name, locale, ...}` |
-| `PATCH`  | `/auth/me` | user | body `{display_name?, locale?, ...}` |
-| `POST`   | `/auth/change-password` | user | body `{old_password, new_password}` → `204`. Accounts without a local password (directory/SSO-provisioned) get `PASSWORD_NOT_SET` |
-| `GET`    | `/health` | public | `{status: "ok", version}` |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/setup/status` | public | `{required, completed, has_admin}` |
+| `GET` | `/setup/presets` | public | Provider templates for the wizard |
+| `POST` | `/setup/begin` | public | Begin a wizard session (no password) |
+| `POST` | `/setup/verify-password` | public | Exchange the wizard password for a session token |
+| `GET` | `/setup/validate-token` | public | Check a wizard session token |
+| `POST` | `/setup/initial-admin` | public | body `{username, password, display_name?, email?}` → `201` |
+| `POST` | `/setup/resume-wizard` | public | Issue a fresh wizard token mid-setup |
+| `POST` | `/setup/test-provider` | public | Ping a provider draft (kind/base_url/api_key/model) |
+| `POST` | `/setup/finish` | public | Finalise setup and unlock the rest of the API |
+| `GET` | `/auth/captcha` | public | `{provider, site_key?}` for the login widget; 503 while setup is required |
+| `POST` | `/auth/login` | public | body `{username, password, captcha_token?}` (`username` may be email) → `{access_token, role, user, ...}`. When no local password matches, the credentials are retried against the configured LDAP directory; a first directory login provisions a YYC3-Pai account (unless `auto_provision` is off) and derives the role from `admin_groups` |
+| `GET` | `/auth/oidc/status` | public | OIDC login availability and provider display name |
+| `POST` | `/auth/oidc/start` | public | body `{redirect_after?}` → identity-provider authorization URL |
+| `GET` | `/auth/oidc/callback` | public | Identity-provider callback; redirects to dashboard login completion |
+| `POST` | `/auth/oidc/exchange` | public | body `{code}` → same JWT response as `/auth/login` |
+| `GET` | `/auth/oidc/config` | admin | OIDC provider configuration and callback URL; client secret is omitted |
+| `PUT` | `/auth/oidc/config` | admin | Write OIDC provider configuration; `client_secret` is write-only |
+| `POST` | `/auth/oidc/config/test` | admin | Verify configured discovery metadata and JWKS endpoint |
+| `GET` | `/auth/oauth/status` | public | `{providers:[{kind, display_name, enabled}]}` |
+| `POST` | `/auth/oauth/start` | public | body `{kind, redirect_after?}` → authorization URL |
+| `GET` | `/auth/oauth/callback` | public | App OAuth callback (`code` or DingTalk `authCode`); same completion page as OIDC |
+| `POST` | `/auth/oauth/exchange` | public | Same one-time code exchange as `/auth/oidc/exchange` |
+| `POST` | `/auth/oauth/bind/start` | user | body `{kind, redirect_after?}` → bind the identity to the current user |
+| `POST` | `/auth/oauth/unbind` | user | Unlink one SSO identity by `kind` (requires a local password when it is the last login method) |
+| `GET` | `/auth/oauth/providers/{kind}` | admin | Provider config; `kind` is `oidc`, `feishu`, `dingtalk`, or `wecom` |
+| `PUT` | `/auth/oauth/providers/{kind}` | admin | Upsert provider config; `client_secret` is write-only; WeCom uses `extra.agent_id` |
+| `POST` | `/auth/oauth/providers/{kind}/test` | admin | Test provider credentials |
+| `GET` | `/auth/ldap/status` | public | `{enabled, display_name}` for the login page hint |
+| `GET` | `/auth/ldap/config` | admin | Directory settings; `bind_password` is never returned (`has_bind_password` instead) |
+| `PUT` | `/auth/ldap/config` | admin | Upsert directory settings; `bind_password` is write-only (omit to keep the stored one) |
+| `POST` | `/auth/ldap/config/test` | admin | Service bind + probe of `user_base_dn` → `{ok, detail}` |
+| `POST` | `/auth/logout` | user | `204` |
+| `GET` | `/auth/me` | user | `{id, username, role, display_name, locale, ...}` |
+| `PATCH` | `/auth/me` | user | body `{display_name?, locale?, ...}` |
+| `POST` | `/auth/change-password` | user | body `{old_password, new_password}` → `204`. Accounts without a local password (directory/SSO-provisioned) get `PASSWORD_NOT_SET` |
+| `GET` | `/health` | public | `{status: "ok", version}` |
 
 ## Users (admin)
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/users` | admin | `[{id, username, role, display_name, email, enabled, ...}]` |
-| `POST`   | `/users` | admin | body `{username, password, role, display_name?, email?, permissions?, workspace_root_dir?, token_quota?}` → `201` |
-| `GET`    | `/users/{id}` | admin | full user row |
-| `PATCH`  | `/users/{id}` | admin | body subset of `{role, display_name, email, enabled, locale}` |
-| `POST`   | `/users/{id}/reset-password` | admin | body `{new_password}` → `204` |
-| `POST`   | `/users/{id}/unlock-login` | admin | `204` (clears the lockout) |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/users` | admin | `[{id, username, role, display_name, email, enabled, ...}]` |
+| `POST` | `/users` | admin | body `{username, password, role, display_name?, email?, permissions?, workspace_root_dir?, token_quota?}` → `201` |
+| `GET` | `/users/{id}` | admin | full user row |
+| `PATCH` | `/users/{id}` | admin | body subset of `{role, display_name, email, enabled, locale}` |
+| `POST` | `/users/{id}/reset-password` | admin | body `{new_password}` → `204` |
+| `POST` | `/users/{id}/unlock-login` | admin | `204` (clears the lockout) |
 | `DELETE` | `/users/{id}` | admin | `204` |
 
 ## Agents
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/agents` | user | `[{id, agent_id, name, persona_mbti, state, unread_count, ...}]` |
-| `POST`   | `/agents` | user | body `{name, persona_mbti?, default_model?, system_prompt?, description?, icon?, template_name?, config?}` → `201` |
-| `GET`    | `/agents/{id}` | owner | full agent row |
-| `PATCH`  | `/agents/{id}` | owner | body subset of create body |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/agents` | user | `[{id, agent_id, name, persona_mbti, state, unread_count, ...}]` |
+| `POST` | `/agents` | user | body `{name, persona_mbti?, default_model?, system_prompt?, description?, icon?, template_name?, config?}` → `201` |
+| `GET` | `/agents/{id}` | owner | full agent row |
+| `PATCH` | `/agents/{id}` | owner | body subset of create body |
 | `DELETE` | `/agents/{id}` | owner | `204` |
-| `POST`   | `/agents/{id}/start` | owner | `204` |
-| `POST`   | `/agents/{id}/stop` | owner | `204` |
-| `POST`   | `/agents/{id}/reload` | owner | `204` (rebuild harness runtime) |
-| `POST`   | `/agents/{id}/read` | owner | `204` (mark unread badge cleared) |
-| `GET`    | `/agents/{id}/status` | owner | `{state, last_error?, memory_maintenance?, ...}` |
-| `POST`   | `/agents/from-expert/{expert_id}` | user | body `{name, ...}` → `201` (creates from bundled expert template) |
-| `GET`    | `/agents/{id}/tool-settings` | owner | built-in + installed plugin tools with enable / disableable / available flags |
-| `PUT`    | `/agents/{id}/tool-settings` | owner | body `{disabled_builtin: string[], plugins?}` — persists denylist + plugin flags (hot-sync, no reload) |
-| `PATCH`  | `/agents/{id}/tool-settings/{tool_name}` | owner | body `{enabled, source, plugin_id?}` — toggle one tool (hot-sync) |
+| `POST` | `/agents/{id}/start` | owner | `204` |
+| `POST` | `/agents/{id}/stop` | owner | `204` |
+| `POST` | `/agents/{id}/reload` | owner | `204` (rebuild harness runtime) |
+| `POST` | `/agents/{id}/read` | owner | `204` (mark unread badge cleared) |
+| `GET` | `/agents/{id}/status` | owner | `{state, last_error?, memory_maintenance?, ...}` |
+| `POST` | `/agents/from-expert/{expert_id}` | user | body `{name, ...}` → `201` (creates from bundled expert template) |
+| `GET` | `/agents/{id}/tool-settings` | owner | built-in + installed plugin tools with enable / disableable / available flags |
+| `PUT` | `/agents/{id}/tool-settings` | owner | body `{disabled_builtin: string[], plugins?}` — persists denylist + plugin flags (hot-sync, no reload) |
+| `PATCH` | `/agents/{id}/tool-settings/{tool_name}` | owner | body `{enabled, source, plugin_id?}` — toggle one tool (hot-sync) |
 
 ## Skills and skill packages
 
@@ -143,7 +143,7 @@ Skill copy operations create snapshots; they do not keep the source and
 destination synchronized after the request completes.
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
+| -------- | ------ | ------ | ------- |
 | `GET` | `/skill-packages?writable_only=true` | user (`skill_packages`) | List only packages the current user may modify; admins may modify all packages |
 | `POST` | `/agents/{id}/skill-packages/{package_id}/copy` | owner (`skill_packages`) | body `{skill_slugs: string[], overwrite?: boolean}`; copy selected package skills into the workspace |
 | `POST` | `/agents/{id}/skills/{slug}/push-to-package` | owner (`skill_packages`) | body `{package_id, overwrite?: boolean}`; copy a workspace skill into a package created by the user (or any package for admins) |
@@ -151,7 +151,7 @@ destination synchronized after the request completes.
 ## Chat (WebSocket)
 
 | Path | Auth | Notes |
-|------|------|-------|
+| ------ | ------ | ------- |
 | `WS /agents/{id}/chat/ws?token=<jwt>` | owner | Primary dashboard turn endpoint. Send `{"type":"user_turn", ...}` frames (optional `hitl_policy` is a thread-scoped tool-approval bypass); server replies with harness stream chunks ending in `{"type":"done"}` or `{"type":"error","message":"..."}`. `{"type":"ping"}` → `{"type":"pong"}`. `{"type":"subscribe","thread_id"}` → `{"type":"turn_status","thread_id","active"}` (attach to an in-flight turn without cancelling on disconnect). `{"type":"cancel","thread_id"}` stops the active turn (explicit stop; disconnect alone does **not** cancel). |
 | `GET /agents/{id}/chat/welcome` | agent access | `{welcome_message, quick_prompts, task_examples}`; `task_examples` is `null` when the workspace field is absent |
 | `POST /agents/{id}/chat/polish` | owner | body `{text, default_model?}` → `{text}` (one-shot prompt refinement) |
@@ -166,12 +166,12 @@ because each request is a one-shot continuation.
 ## Threads & history
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/agents/{id}/chat/sessions` | owner | `[{id, thread_id, title, archived, last_active, unread, ...}]` |
-| `POST`   | `/agents/{id}/chat/sessions` | owner | body `{session_key?}` → `{thread_id, session_key}` |
-| `PATCH`  | `/agents/{id}/chat/sessions/{thread_id}` | owner | body `{title?, pinned?}` → updated row |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/agents/{id}/chat/sessions` | owner | `[{id, thread_id, title, archived, last_active, unread, ...}]` |
+| `POST` | `/agents/{id}/chat/sessions` | owner | body `{session_key?}` → `{thread_id, session_key}` |
+| `PATCH` | `/agents/{id}/chat/sessions/{thread_id}` | owner | body `{title?, pinned?}` → updated row |
 | `DELETE` | `/agents/{id}/chat/sessions/{thread_id}` | owner | `204` (archives the active row) |
-| `GET`    | `/agents/{id}/chat/sessions/{thread_id}/history` | owner | paginated message history; `turn_active` tells a reconnecting client whether to re-`subscribe` over the chat WebSocket |
+| `GET` | `/agents/{id}/chat/sessions/{thread_id}/history` | owner | paginated message history; `turn_active` tells a reconnecting client whether to re-`subscribe` over the chat WebSocket |
 
 **Tool result blocks.** `tool_result` blocks in history (and `tool_result`
 frames on the chat WebSocket) carry the tool's return value in `output`. When a
@@ -185,7 +185,7 @@ plugin returns a large `octop_ui` payload, the backend offloads the envelope's
 ### Trajectory ledger
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
+| -------- | ------ | ------ | ------- |
 | `GET` | `/agents/{id}/threads/{thread_id}/trajectory` | owner | paginated event summaries; use `before_seq` for older rows |
 | `GET` | `/agents/{id}/threads/{thread_id}/trajectory/events/{event_id}` | owner | full event payload |
 | `GET` | `/agents/{id}/threads/{thread_id}/trajectory/metrics` | owner | aggregated turn, timing, and token metrics |
@@ -195,37 +195,37 @@ plugin returns a large `octop_ui` payload, the backend offloads the envelope's
 ## Channels
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/agents/{aid}/channels` | owner | list of channel rows |
-| `POST`   | `/agents/{aid}/channels` | owner | body `{kind, name, config}` → `201` |
-| `GET`    | `/agents/{aid}/channels/{cid}` | owner | channel row |
-| `PATCH`  | `/agents/{aid}/channels/{cid}` | owner | body subset → updated row |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/agents/{aid}/channels` | owner | list of channel rows |
+| `POST` | `/agents/{aid}/channels` | owner | body `{kind, name, config}` → `201` |
+| `GET` | `/agents/{aid}/channels/{cid}` | owner | channel row |
+| `PATCH` | `/agents/{aid}/channels/{cid}` | owner | body subset → updated row |
 | `DELETE` | `/agents/{aid}/channels/{cid}` | owner | `204` |
-| `POST`   | `/agents/{aid}/channels/{cid}/test` | owner | `{ok, error?}` (instantiate → start → stop) |
-| `POST`   | `/agents/{aid}/channels/probe` | owner | `{ok, reason?, detail?}` — preflight a candidate config |
-| `POST`   | `/agents/{aid}/channels/{platform}/qrcode/generate` | owner | platform-specific bot creator (wecom, weixin, feishu, yuanbao) |
-| `POST`   | `/agents/{aid}/channels/{platform}/qrcode/poll` | owner | poll bot creator state |
-| `POST`   | `/agents/{aid}/channels/{platform}/bot-creator/start` | owner | start a bot-creator flow |
-| `POST`   | `/agents/{aid}/channels/{platform}/bot-creator/poll` | owner | poll progress |
-| `POST`   | `/agents/{aid}/channels/{platform}/bot-creator/stop` | owner | stop an in-flight bot creator |
+| `POST` | `/agents/{aid}/channels/{cid}/test` | owner | `{ok, error?}` (instantiate → start → stop) |
+| `POST` | `/agents/{aid}/channels/probe` | owner | `{ok, reason?, detail?}` — preflight a candidate config |
+| `POST` | `/agents/{aid}/channels/{platform}/qrcode/generate` | owner | platform-specific bot creator (wecom, weixin, feishu, yuanbao) |
+| `POST` | `/agents/{aid}/channels/{platform}/qrcode/poll` | owner | poll bot creator state |
+| `POST` | `/agents/{aid}/channels/{platform}/bot-creator/start` | owner | start a bot-creator flow |
+| `POST` | `/agents/{aid}/channels/{platform}/bot-creator/poll` | owner | poll progress |
+| `POST` | `/agents/{aid}/channels/{platform}/bot-creator/stop` | owner | stop an in-flight bot creator |
 
 ## Cron
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/settings/timezone` | user | process-level `{timezone}` from `default_timezone` |
-| `GET`    | `/settings/upload` | user | `{max_upload_mb, max_upload_bytes}` from `max_upload_mb` |
-| `GET`    | `/settings/hitl` | user | `{enabled, tool_guard_require_approval, show_approval_ui}` — `show_approval_ui` is true when tool HITL is on or command guard is `require_approval` |
-| `GET`    | `/settings/captcha` | `captcha` | `{active, available, providers, source, v3_min_score}`; secrets omitted |
-| `PUT`    | `/settings/captcha` | `captcha` | merge `{active?, providers?}`; empty secret keeps ciphertext; `null` removes a pair |
-| `GET`    | `/cron/settings` | user | compat alias of `/settings/timezone` |
-| `GET`    | `/agents/{aid}/cron/examples` | agent access | `{task_examples}` from workspace `.octop/manifest.json` (`{zh,en}` string arrays, display-normalized to 3 or 6); `null` if the field is absent (dashboard keeps default cards). Prefer `GET /agents/{aid}/chat/welcome` which includes the same field. |
-| `GET`    | `/agents/{aid}/cron` | owner only | list cron rows; non-owners (including admin) get `[]` |
-| `POST`   | `/agents/{aid}/cron` | owner only | body `{name?, trigger, prompt, session_key?, fresh_thread?, enabled?, model?, task_type?}` → `201` |
-| `GET`    | `/agents/{aid}/cron/{cid}` | owner only | cron row |
-| `PATCH`  | `/agents/{aid}/cron/{cid}` | owner only | body subset → updated row |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/settings/timezone` | user | process-level `{timezone}` from `default_timezone` |
+| `GET` | `/settings/upload` | user | `{max_upload_mb, max_upload_bytes}` from `max_upload_mb` |
+| `GET` | `/settings/hitl` | user | `{enabled, tool_guard_require_approval, show_approval_ui}` — `show_approval_ui` is true when tool HITL is on or command guard is `require_approval` |
+| `GET` | `/settings/captcha` | `captcha` | `{active, available, providers, source, v3_min_score}`; secrets omitted |
+| `PUT` | `/settings/captcha` | `captcha` | merge `{active?, providers?}`; empty secret keeps ciphertext; `null` removes a pair |
+| `GET` | `/cron/settings` | user | compat alias of `/settings/timezone` |
+| `GET` | `/agents/{aid}/cron/examples` | agent access | `{task_examples}` from workspace `.octop/manifest.json` (`{zh,en}` string arrays, display-normalized to 3 or 6); `null` if the field is absent (dashboard keeps default cards). Prefer `GET /agents/{aid}/chat/welcome` which includes the same field. |
+| `GET` | `/agents/{aid}/cron` | owner only | list cron rows; non-owners (including admin) get `[]` |
+| `POST` | `/agents/{aid}/cron` | owner only | body `{name?, trigger, prompt, session_key?, fresh_thread?, enabled?, model?, task_type?}` → `201` |
+| `GET` | `/agents/{aid}/cron/{cid}` | owner only | cron row |
+| `PATCH` | `/agents/{aid}/cron/{cid}` | owner only | body subset → updated row |
 | `DELETE` | `/agents/{aid}/cron/{cid}` | owner only | `204` |
-| `POST`   | `/agents/{aid}/cron/{cid}/run-now` | owner only | `204` (fire immediately, off-schedule) |
+| `POST` | `/agents/{aid}/cron/{cid}/run-now` | owner only | `204` (fire immediately, off-schedule) |
 
 `task_type` is `"text"` (push prompt directly to the session) or
 `"agent"` (run the prompt through the LLM and push the reply).
@@ -238,20 +238,20 @@ the server derives one from `prompt`.
 ## Providers
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/providers` | user | providers visible to the user (own + shared) |
-| `POST`   | `/providers` | user | body `{name, kind, base_url?, api_key?, model?, ...}` → `201` |
-| `PATCH`  | `/providers/{id}` | owner | body subset → updated row |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/providers` | user | providers visible to the user (own + shared) |
+| `POST` | `/providers` | user | body `{name, kind, base_url?, api_key?, model?, ...}` → `201` |
+| `PATCH` | `/providers/{id}` | owner | body subset → updated row |
 | `DELETE` | `/providers/{id}` | owner | `204` (refuses if any agent references it) |
-| `POST`   | `/providers/{id}/test` | user | `{ok, latency_ms?, error?}` (one-token ping with 10 s timeout) |
-| `POST`   | `/admin/providers` | admin | same body as user POST; row has `user_id = NULL` |
-| `PATCH`  | `/admin/providers/{id}` | admin | as user PATCH but works on shared rows |
+| `POST` | `/providers/{id}/test` | user | `{ok, latency_ms?, error?}` (one-token ping with 10 s timeout) |
+| `POST` | `/admin/providers` | admin | same body as user POST; row has `user_id = NULL` |
+| `PATCH` | `/admin/providers/{id}` | admin | as user PATCH but works on shared rows |
 | `DELETE` | `/admin/providers/{id}` | admin | `204` |
 
 ## Models
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
+| -------- | ------ | ------ | ------- |
 | `GET` | `/models/presets` | user | provider templates from `octop-harness` |
 | `GET` | `/models` | user | resolved models across enabled providers |
 | `GET` | `/models/active` | user | `{provider_name, model}` |
@@ -264,7 +264,7 @@ permission checks). The Ark API key is write-only and encrypted at rest. Saving 
 reloads running agents so the image and video tools receive the new configuration.
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
+| -------- | ------ | ------ | ------- |
 | `GET` | `/admin/media-generation` | providers | Return Volcengine Ark image/video settings; never returns the API key |
 | `PUT` | `/admin/media-generation` | providers | Save enabled tools and Seedream/Seedance model IDs; an included API key is verified before saving |
 | `POST` | `/admin/media-generation/test` | providers | Test credentials or a selected image/video model; model tests submit real, potentially billable requests |
@@ -272,11 +272,11 @@ reloads running agents so the image and video tools receive the new configuratio
 ## Voice
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`  | `/voice/presets` | user | voice provider presets |
-| `GET`  | `/voice/providers` | user | user's voice providers |
-| `GET`  | `/voice/active` | user | active TTS / STT configuration |
-| `PUT`  | `/voice/active` | user | update active voice configuration |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/voice/presets` | user | voice provider presets |
+| `GET` | `/voice/providers` | user | user's voice providers |
+| `GET` | `/voice/active` | user | active TTS / STT configuration |
+| `PUT` | `/voice/active` | user | update active voice configuration |
 | `POST` | `/voice/stt` | user | body `{audio, format?, language?}` → `{text, segments?}` |
 | `POST` | `/voice/tts` | user | body `{text, voice?, format?}` → audio bytes |
 | `GET`/`POST`/`PATCH`/`DELETE` | `/admin/voice/providers` | admin | admin voice provider CRUD |
@@ -284,13 +284,13 @@ reloads running agents so the image and video tools receive the new configuratio
 ## MBTI & personas
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/mbti/codes` | user | `[{code: "INTJ", ...}, ...]` (16 codes + `_default`) |
-| `GET`    | `/mbti/codes/{code}` | user | full profile (dimensions, behaviour, UI metadata) |
-| `GET`    | `/mbti/preview/{code}` | user | rendered persona template (legacy `/api/personas/{code}`) |
-| `PUT`    | `/agents/{aid}/mbti` | owner | body `{code}` → apply persona and reload |
-| `GET`    | `/personas` | user | `[{code}, ...]` (compat shim) |
-| `GET`    | `/personas/{code}` | user | rendered template (compat shim) |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/mbti/codes` | user | `[{code: "INTJ", ...}, ...]` (16 codes + `_default`) |
+| `GET` | `/mbti/codes/{code}` | user | full profile (dimensions, behaviour, UI metadata) |
+| `GET` | `/mbti/preview/{code}` | user | rendered persona template (legacy `/api/personas/{code}`) |
+| `PUT` | `/agents/{aid}/mbti` | owner | body `{code}` → apply persona and reload |
+| `GET` | `/personas` | user | `[{code}, ...]` (compat shim) |
+| `GET` | `/personas/{code}` | user | rendered template (compat shim) |
 
 Persona content lives in `src/octop/infra/agents/persona/mbti_profiles.py` —
 see [Personas](./personas.md).
@@ -310,46 +310,46 @@ Bundled experts live in `src/octop/infra/agents/experts/library/`
 ## Workspace, skills, subagents, memory, files
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/agents/{aid}/workspace/tree` | owner | list dir (default `.`) |
-| `GET`    | `/agents/{aid}/workspace/file` | owner | read a content file |
-| `PUT`    | `/agents/{aid}/workspace/file` | owner | write a content file (via `BackendWorkspace`) |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/agents/{aid}/workspace/tree` | owner | list dir (default `.`) |
+| `GET` | `/agents/{aid}/workspace/file` | owner | read a content file |
+| `PUT` | `/agents/{aid}/workspace/file` | owner | write a content file (via `BackendWorkspace`) |
 | `DELETE` | `/agents/{aid}/workspace/file` | owner | delete a content file |
-| `POST`   | `/agents/{aid}/workspace/rename` | owner | rename / move |
-| `POST`   | `/agents/{aid}/workspace/upload` | owner | multipart upload → backend (not `max_upload_mb`) |
-| `GET`    | `/agents/{aid}/workspace/download` | owner | download a file |
-| `GET`    | `/agents/{aid}/workspace/glob` | owner | glob backend paths |
-| `GET`    | `/agents/{aid}/workspace/grep` | owner | grep backend files |
-| `GET`    | `/agents/{aid}/workspace/...` | owner | see `api/routers/workspace.py` |
-| `GET`    | `/agents/{aid}/skills` | owner | list installed skills |
-| `PUT`    | `/agents/{aid}/skills/{slug}` | owner | enable / disable a skill |
-| `GET`    | `/agents/{aid}/skills/hub/search` | user | Skill Hub search |
-| `GET`    | `/agents/{aid}/skills/hub/rankings` | user | Skill Hub rankings |
-| `POST`   | `/agents/{aid}/skills/hub/install` | owner | body `{slug, version?}` → `201` |
-| `GET`    | `/subagent-catalog/divisions` | user | bundled subagent divisions |
-| `GET`    | `/subagent-catalog` | user | bundled subagent catalog |
-| `GET`    | `/subagent-catalog/{slug}` | user | full subagent definition |
-| `GET`    | `/agents/{aid}/subagents` | owner | installed subagents for an agent |
-| `POST`   | `/agents/{aid}/subagents` | owner | install a bundled subagent |
-| `GET`    | `/agents/{aid}/heartbeat-config` | owner | read heartbeat YAML |
-| `PUT`    | `/agents/{aid}/heartbeat-config` | owner | write heartbeat YAML |
-| `GET`    | `/agents/{aid}/memory/daily` | owner | list daily memory files |
-| `GET`    | `/agents/{aid}/memory/daily/{filename}` | owner | read one daily memory |
+| `POST` | `/agents/{aid}/workspace/rename` | owner | rename / move |
+| `POST` | `/agents/{aid}/workspace/upload` | owner | multipart upload → backend (not `max_upload_mb`) |
+| `GET` | `/agents/{aid}/workspace/download` | owner | download a file |
+| `GET` | `/agents/{aid}/workspace/glob` | owner | glob backend paths |
+| `GET` | `/agents/{aid}/workspace/grep` | owner | grep backend files |
+| `GET` | `/agents/{aid}/workspace/...` | owner | see `api/routers/workspace.py` |
+| `GET` | `/agents/{aid}/skills` | owner | list installed skills |
+| `PUT` | `/agents/{aid}/skills/{slug}` | owner | enable / disable a skill |
+| `GET` | `/agents/{aid}/skills/hub/search` | user | Skill Hub search |
+| `GET` | `/agents/{aid}/skills/hub/rankings` | user | Skill Hub rankings |
+| `POST` | `/agents/{aid}/skills/hub/install` | owner | body `{slug, version?}` → `201` |
+| `GET` | `/subagent-catalog/divisions` | user | bundled subagent divisions |
+| `GET` | `/subagent-catalog` | user | bundled subagent catalog |
+| `GET` | `/subagent-catalog/{slug}` | user | full subagent definition |
+| `GET` | `/agents/{aid}/subagents` | owner | installed subagents for an agent |
+| `POST` | `/agents/{aid}/subagents` | owner | install a bundled subagent |
+| `GET` | `/agents/{aid}/heartbeat-config` | owner | read heartbeat YAML |
+| `PUT` | `/agents/{aid}/heartbeat-config` | owner | write heartbeat YAML |
+| `GET` | `/agents/{aid}/memory/daily` | owner | list daily memory files |
+| `GET` | `/agents/{aid}/memory/daily/{filename}` | owner | read one daily memory |
 | `DELETE` | `/agents/{aid}/memory/daily/{filename}` | owner | delete one daily memory |
 | `GET`/`POST` | `/memory/...` | user | memory API (dashboard memory tab) |
 
 ## ACP (Agent Client Protocol)
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/acp` | user | current user's global runner list |
-| `PUT`    | `/acp` | user | replace global runners |
-| `GET`    | `/acp/{runner_name}` | user | one runner |
-| `PUT`    | `/acp/{runner_name}` | user | upsert one runner |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/acp` | user | current user's global runner list |
+| `PUT` | `/acp` | user | replace global runners |
+| `GET` | `/acp/{runner_name}` | user | one runner |
+| `PUT` | `/acp/{runner_name}` | user | upsert one runner |
 | `DELETE` | `/acp/{runner_name}` | user | delete a custom runner (built-ins are protected) |
-| `GET`    | `/agents/{aid}/acp` | owner | global runners + this agent's `tool_enabled` flag |
-| `PUT`    | `/agents/{aid}/acp` | owner | update `tool_enabled` and optionally the global list |
-| `PUT`    | `/agents/{aid}/acp/tool` | owner | toggle the `acp_runner` tool only |
+| `GET` | `/agents/{aid}/acp` | owner | global runners + this agent's `tool_enabled` flag |
+| `PUT` | `/agents/{aid}/acp` | owner | update `tool_enabled` and optionally the global list |
+| `PUT` | `/agents/{aid}/acp/tool` | owner | toggle the `acp_runner` tool only |
 
 See [ACP integration](./acp.md) for the runner object schema and the
 Zed setup example.
@@ -372,35 +372,35 @@ Listing is single-level and capped; write probe runs only
 for non-`/` paths.
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/filesystem/dirs?path=<abs>` | user | `{path, entries: [{path, name}]}` — one directory level |
-| `POST`   | `/filesystem/probe` | user | body `{path}` → `{ok, path?}` or `{ok: false, code, detail?}` (`not_directory`, `permission_denied`, `write_failed`, `not_allowed`) |
-| `POST`   | `/filesystem/mkdir` | user | body `{path, base_name?}` → `{path, name}` — create child dir (`base_name` defaults to `New Folder`; collisions become `Name (2)`, …) |
-| `POST`   | `/filesystem/rename` | user | body `{path, new_name}` → `{path, name}` — rename basename only |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/filesystem/dirs?path=<abs>` | user | `{path, entries: [{path, name}]}` — one directory level |
+| `POST` | `/filesystem/probe` | user | body `{path}` → `{ok, path?}` or `{ok: false, code, detail?}` (`not_directory`, `permission_denied`, `write_failed`, `not_allowed`) |
+| `POST` | `/filesystem/mkdir` | user | body `{path, base_name?}` → `{path, name}` — create child dir (`base_name` defaults to `New Folder`; collisions become `Name (2)`, …) |
+| `POST` | `/filesystem/rename` | user | body `{path, new_name}` → `{path, name}` — rename basename only |
 
 ## Connectors & OAuth
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/connectors/catalog` | user | connector catalog (Notion, Figma, …) |
-| `GET`    | `/connectors/test-credentials` | user | preflight credentials |
-| `GET`    | `/connector-instances` | user | list instances |
-| `POST`   | `/connector-instances` | user | create instance |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/connectors/catalog` | user | connector catalog (Notion, Figma, …) |
+| `GET` | `/connectors/test-credentials` | user | preflight credentials |
+| `GET` | `/connector-instances` | user | list instances |
+| `POST` | `/connector-instances` | user | create instance |
 | `GET`/`PATCH`/`DELETE` | `/connector-instances/{id}` | user | CRUD on an instance |
-| `POST`   | `/connector-instances/{id}/test` | user | test a configured instance |
-| `POST`   | `/connector-instances/{id}/refresh` | user | refresh OAuth tokens |
-| `GET`    | `/connectors/auth/{kind}/info` | user | auth flow info |
-| `GET`    | `/connectors/auth/{kind}/authorize-url` | user | build the authorize URL |
-| `POST`   | `/connectors/auth/{kind}/exchange-code` | user | exchange auth code |
-| `POST`   | `/connectors/oauth/start` | user | start OAuth (catalog or custom MCP via `target`) |
-| `POST`   | `/connectors/oauth/{kind}/start` | user | legacy catalog OAuth start |
-| `PUT`    | `/connectors/custom-mcp` | user | save custom MCP server map |
-| `PATCH`  | `/connectors/custom-mcp/servers/{name}` | user | patch `enabled` / `default_open` on one server |
-| `POST`   | `/connectors/custom-mcp/test` | user | probe a custom MCP server (inline spec or saved name) |
-| `GET`    | `/connectors/oauth/callback` | public | OAuth redirect target |
-| `GET`    | `/connectors/oauth/pending/{state_id}` | user | poll the OAuth result |
+| `POST` | `/connector-instances/{id}/test` | user | test a configured instance |
+| `POST` | `/connector-instances/{id}/refresh` | user | refresh OAuth tokens |
+| `GET` | `/connectors/auth/{kind}/info` | user | auth flow info |
+| `GET` | `/connectors/auth/{kind}/authorize-url` | user | build the authorize URL |
+| `POST` | `/connectors/auth/{kind}/exchange-code` | user | exchange auth code |
+| `POST` | `/connectors/oauth/start` | user | start OAuth (catalog or custom MCP via `target`) |
+| `POST` | `/connectors/oauth/{kind}/start` | user | legacy catalog OAuth start |
+| `PUT` | `/connectors/custom-mcp` | user | save custom MCP server map |
+| `PATCH` | `/connectors/custom-mcp/servers/{name}` | user | patch `enabled` / `default_open` on one server |
+| `POST` | `/connectors/custom-mcp/test` | user | probe a custom MCP server (inline spec or saved name) |
+| `GET` | `/connectors/oauth/callback` | public | OAuth redirect target |
+| `GET` | `/connectors/oauth/pending/{state_id}` | user | poll the OAuth result |
 
-Custom MCP OAuth (streamable HTTP, public HTTPS URL only): Octop discovers the authorization
+Custom MCP OAuth (streamable HTTP, public HTTPS URL only): YYC3-Pai discovers the authorization
 server from the MCP URL (401 / RFC 9728 protected-resource metadata), requires dynamic client
 registration (DCR), stores encrypted tokens in the custom MCP spec, and injects `Authorization:
 Bearer` when loading tools. Loopback and LAN MCP URLs may use HTTP and do not use remote OAuth
@@ -415,15 +415,15 @@ discovery.
 ## Observability & security
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
+| -------- | ------ | ------ | ------- |
 | `GET`/`PUT` | `/admin/observability` | admin | Langfuse configuration (host, project, env) |
-| `GET`    | `/admin/security` | admin | global security policy |
-| `PUT`    | `/admin/security` | admin | update global policy |
-| `GET`    | `/admin/security/tool-guard/rules` | admin | active command guard rules |
-| `GET`    | `/admin/security/tool-guard/rules/raw` | admin | editable YAML |
-| `PUT`    | `/admin/security/tool-guard/rules/raw` | admin | save YAML |
-| `POST`   | `/admin/security/tool-guard/rules/reset` | admin | reset to shipped defaults |
-| `GET`    | `/admin/security/defaults` | admin | defaults + rule catalogs |
+| `GET` | `/admin/security` | admin | global security policy |
+| `PUT` | `/admin/security` | admin | update global policy |
+| `GET` | `/admin/security/tool-guard/rules` | admin | active command guard rules |
+| `GET` | `/admin/security/tool-guard/rules/raw` | admin | editable YAML |
+| `PUT` | `/admin/security/tool-guard/rules/raw` | admin | save YAML |
+| `POST` | `/admin/security/tool-guard/rules/reset` | admin | reset to shipped defaults |
+| `GET` | `/admin/security/defaults` | admin | defaults + rule catalogs |
 
 ## TLS (Let's Encrypt)
 
@@ -439,19 +439,19 @@ endpoint (public, mounted directly in `api/app.py`).
 ## Browser, terminal, uploads
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
+| -------- | ------ | ------ | ------- |
 | `WS`/`POST`/`GET`/… | `/agents/{aid}/terminal` | owner | AI-assisted remote PTY |
 | `GET` | `/agents/{aid}/terminal/context` | owner | recent terminal context for the AI helper |
 | `WS`/`POST`/`GET`/… | `/browser/...` | user | octop-browser sessions, live stream, record/replay |
-| `POST` | `/browser/shutdown` | user | stop the current user's Octop-managed Chrome |
+| `POST` | `/browser/shutdown` | user | stop the current user's YYC3-Pai-managed Chrome |
 | `POST` | `/agents/{aid}/upload` | user | multipart upload → `{workspace}/inbound/` |
 | `POST` | `/agents/{aid}/files/access-urls` | user | refresh inbound media URLs (signed) |
-| `GET`  | `/agents/{aid}/files/{path}` | owner | read an inbound file |
+| `GET` | `/agents/{aid}/files/{path}` | owner | read an inbound file |
 
 ## Updates, ollama, i18n, plugins, slash, preferences
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
+| -------- | ------ | ------ | ------- |
 | `GET`/`POST` | `/update/status`, `/check`, `/upgrade`, `/progress`, `/restart` | admin | in-place server update flow |
 | `GET`/`POST`/`DELETE` | `/ollama-models/...` | `ollama_models` | Ollama model discovery + downloads |
 | `GET`/`PUT` | `/ollama-models/service` | `ollama_models` | Local daemon toggle; omit `enabled` to set `models_dir` only |
@@ -469,12 +469,12 @@ endpoint (public, mounted directly in `api/app.py`).
 ## Usage & admin
 
 | Method | Path | Auth | Notes |
-|--------|------|------|-------|
-| `GET`    | `/usage/summary` | user | token usage summary for the current user |
-| `GET`    | `/admin/usage` | admin | global token usage summary |
-| `GET`    | `/admin/overview` | admin | `{user_count, agent_count, ...}` |
-| `GET`    | `/admin/audit-log` | admin | recent audit rows |
-| `GET`    | `/admin/metrics` | admin | `{messages_total, stream_errors_total, cron_runs_total, cron_errors_total, agent_active, ...}` |
+| -------- | ------ | ------ | ------- |
+| `GET` | `/usage/summary` | user | token usage summary for the current user |
+| `GET` | `/admin/usage` | admin | global token usage summary |
+| `GET` | `/admin/overview` | admin | `{user_count, agent_count, ...}` |
+| `GET` | `/admin/audit-log` | admin | recent audit rows |
+| `GET` | `/admin/metrics` | admin | `{messages_total, stream_errors_total, cron_runs_total, cron_errors_total, agent_active, ...}` |
 
 ## Envs
 
@@ -498,7 +498,7 @@ dashboard mirrors every code under `apiErrors.*` in
 `dashboard/src/locales/{en,zh}.json`.
 
 | Code | HTTP | Meaning |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `AUTH_FAILED` | 401 | Bad credentials |
 | `TOKEN_EXPIRED` | 401 | JWT past its TTL |
 | `LOGIN_LOCKED` | 423 | Too many failed attempts — wait `login_lockout_seconds` or call `/users/{id}/unlock-login` |

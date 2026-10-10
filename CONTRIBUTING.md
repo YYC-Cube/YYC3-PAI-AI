@@ -1,14 +1,14 @@
-# Contributing to Octop
+# Contributing to YYC3-Pai
 
-Thank you for your interest in contributing! Octop is the control-plane application in the [Octop Harness](https://github.com/TencentCloud) ecosystem.
+Thank you for your interest in contributing! YYC3-Pai (YYC π³) is a hard fork maintained by [YanYuCloudCube](https://github.com/YYC-Cube), built on the YYC³ Harness runtime.
 
 ## Getting started
 
 **Prerequisites:** Python 3.12+, Node.js 18+, [uv](https://docs.astral.sh/uv/)
 
 ```bash
-git clone https://github.com/TencentCloud/Octop.git octop
-cd octop
+git clone https://github.com/YYC-Cube/YYC3-Pai.git
+cd YYC3-Pai
 make install          # backend dev dependencies
 make install-hooks    # once per clone: pre-commit runs make all + dashboard build
 make all              # format-all + backend lint + typecheck + test (ship bar)
@@ -26,7 +26,7 @@ make check-all        # full stack quality gate
 ## Development workflow
 
 | Command | Description |
-|---------|-------------|
+| --------- | ------------- |
 | `make install` | Install Python dev dependencies |
 | `make install-hooks` | Point git at `.githooks` (pre-commit: `make all` + dashboard build) |
 | `make all` | `format-all` + backend lint + typecheck + test |
@@ -37,7 +37,7 @@ make check-all        # full stack quality gate
 ## Branching
 
 | Branch | Role |
-|--------|------|
+| -------- | ------ |
 | `main` | Production source of truth; GitHub default branch; only release / hotfix merges |
 | `develop` | Daily integration; **open feature PRs against `develop`** |
 | `release/x.y.z` | Temporary release snapshot; deleted after the version ships |
@@ -70,7 +70,7 @@ See [AGENTS.md](AGENTS.md) for module boundaries and coding conventions.
 
 1. Cut `release/x.y.z` from latest `develop` (version bump + CHANGELOG on that branch)
 2. Open PR: `release/x.y.z` → `main` and merge when green
-3. Tag `v<version>` on **main tip** and push — GitHub Actions builds, publishes to PyPI, and creates the GitHub Release
+3. Tag `v<version>` on **main tip** and push — GitHub Actions builds the wheel and creates the GitHub Release
 4. Delete `release/x.y.z`; Actions syncs `main` → `develop` (or opens `chore/sync-develop-after-*` if merge conflicts / branch protection)
 
 Agent-assisted publish: `.cursor/skills/publish` (`/publish <version>`).
@@ -83,15 +83,15 @@ Branch from `main` → PR into `main` (tag if shipping a patch) → PR into `dev
 
 # 贡献指南
 
-感谢你对 Octop 的关注！Octop 是 [Octop Harness](https://github.com/TencentCloud) 生态中的可自托管 AI 助手平台，支持多用户与多 Agent。
+感谢你对 YYC3-Pai 的关注！YYC3-Pai（YYC π³）是由 [YanYuCloudCube](https://github.com/YYC-Cube) 维护的硬分叉，基于 YYC³ Harness 运行时，支持多用户与多 Agent。
 
 ## 环境搭建
 
 **前置条件：** Python 3.12+、Node.js 18+、[uv](https://docs.astral.sh/uv/)
 
 ```bash
-git clone https://github.com/TencentCloud/Octop.git octop
-cd octop
+git clone https://github.com/YYC-Cube/YYC3-Pai.git
+cd YYC3-Pai
 make install
 make install-hooks    # 每个 clone 执行一次：提交前跑 make all + 前端 build
 make all              # format-all + 后端 lint / typecheck / test
@@ -107,7 +107,7 @@ make check-all        # 全栈质量门禁
 ## 分支策略
 
 | 分支 | 角色 |
-|------|------|
+| ------ | ------ |
 | `main` | 生产真源；GitHub 默认分支；仅合入 release / hotfix |
 | `develop` | 日常集成；**特性 PR 请打向 `develop`** |
 | `release/x.y.z` | 临时发版分支；发版完成后删除 |
@@ -135,7 +135,7 @@ make check-all        # 全栈质量门禁
 
 1. 从最新 `develop` 切 `release/x.y.z`（在该分支 bump 版本与 CHANGELOG）
 2. PR：`release/x.y.z` → `main`，合并通过后
-3. 在 **main tip** 打并推送 `v<version>`，由 Actions 构建并发布
+3. 在 **main tip** 打并推送 `v<version>`，由 Actions 构建 wheel 并创建 GitHub Release
 4. 删除 `release/x.y.z`；Actions 自动 sync `main` → `develop`（冲突或分支保护时会开 `chore/sync-develop-after-*` PR）
 
 Hotfix：从 `main` 拉分支 → 合入 `main`（需发补丁则打 tag）→ 再合入 `develop`。

@@ -34,14 +34,14 @@ Navigation guide for AI coding agents working in this repository.
 
 ## 2. What this is
 
-**Octop** — self-hosted AI assistant platform (multi-user, multi-agent).
+**YYC3-Pai (YYC π³)** — self-hosted AI assistant platform (multi-user, multi-agent).
 One Python wheel: FastAPI backend + React dashboard + Click CLI.
 No external queue. No required services beyond an LLM provider.
 
 ## 3. Tech stack
 
 | Layer | Technology |
-|-------|-----------|
+| ------- | ----------- |
 | Language | Python 3.12+ |
 | Web framework | FastAPI + uvicorn |
 | Async runtime | asyncio (no threads except `run_in_executor`) |
@@ -57,7 +57,7 @@ No external queue. No required services beyond an LLM provider.
 High-level tree — see [§5 Module boundaries](#5-module-boundaries) for what each folder owns and what it may import.
 
 ```
-Octop (`octop/` workspace directory)     Python package root (`src/octop/`)
+YYC3-Pai (`octop/` workspace directory)   Python package root (`src/octop/`)
   config.py
   launch.py                   composition root: OctopServer + FastAPI + uvicorn
   i18n/                       locale JSON bundles + tr() + domain helpers
@@ -83,10 +83,10 @@ cli/ ──► launch.py ──► api/ + infra/
 ```
 
 | Layer | Role | May import | Must NOT import |
-|-------|------|------------|-----------------|
+| ------- | ------ | ------------ | ----------------- |
 | `octop.config` | Env-based `OctopConfig` | stdlib, pydantic | `infra/`, `api/`, `cli/`, `launch.py` |
 | `octop.i18n` | Locale JSON + `tr()` + per-namespace helpers | `infra/utils/locale`, stdlib | `api/`, `cli/`, `dashboard/` |
-| `octop.launch` | Wire `OctopServer`, `build_app`, uvicorn for `octop run` | `infra/`, `api/` | business logic; must not be imported by `infra/` |
+| `octop.launch` | Wire `OctopServer`, `build_app`, uvicorn for `pai run` | `infra/`, `api/` | business logic; must not be imported by `infra/` |
 | `infra/utils/` | Pure helpers (paths, ulid, env files, Ollama) | stdlib, third-party | any other `infra/*` domain code |
 | `infra/db/repos/` | One repo per table — SQL only | `infra/db/_base`, `infra/utils/` | `agents/`, `gateway/`, `api/`, orchestration |
 | `infra/` (domain) | Business logic & orchestration | `infra/utils/`, `infra/db/`, `octop.config`, peer `infra/*` subpackages, `infra/errors`, `infra/metrics` | `api/`, `cli/`, `launch.py`, `dashboard/` |
@@ -98,7 +98,7 @@ cli/ ──► launch.py ──► api/ + infra/
 
 - `infra/` → `api/`, `cli/`, or `launch.py`.
 - `api/` → `cli/` or `launch.py`.
-- `cli/` → `api/` (use `launch.py` for `octop run` instead).
+- `cli/` → `api/` (use `launch.py` for `pai run` instead).
 - `infra/db/repos/` → any non-DB `infra` package.
 - `infra/utils/` → any non-utils `infra` package.
 - Routers/helpers in `api/routers/` must stay thin: validate HTTP, call `infra/`, map errors — not new domain rules.
@@ -106,7 +106,7 @@ cli/ ──► launch.py ──► api/ + infra/
 ### `infra/` subpackages
 
 | Path | Owns | Typical importers |
-|------|------|-------------------|
+| ------ | ------ | ------------------- |
 | `infra/agents/` | Agent registry (`manager.py`), harness runtime, providers, settings (`settings/`), workspace paths (`workspace/`), threads helpers (`threads/`), security, persona/MBTI, experts, plugins, teams, memory | `server.py`, `gateway/`, `api/routers/agents.py` |
 | `infra/backend/` | Workspace storage adapter, resolver, remote probe (COS/S3/…) | `agents/`, `api/routers/workspace*.py` |
 | `infra/connectors/` | Connector catalog, OAuth, MCP gateway, credential crypto | `api/routers/connectors.py`, `internal_mcp.py`, `agents/manager.py` (MCP assembly) |
@@ -132,7 +132,7 @@ Only `launch.py` may import both `infra/server` and `api/app` in the same module
 ### `api/` layout
 
 | Path | Owns | Must NOT own |
-|------|------|--------------|
+| ------ | ------ | -------------- |
 | `api/app.py` | FastAPI factory, router registration, static dashboard mount | domain rules, SQL |
 | `api/deps.py` | JWT extraction, `current_user`, `get_server` | agent lifecycle, cron logic |
 | `api/middleware/` | JWT gate, setup lockdown | business validation beyond auth/setup |
@@ -144,7 +144,7 @@ Only `launch.py` may import both `infra/server` and `api/app` in the same module
 ### `cli/` layout
 
 | Path | Owns |
-|------|------|
+| ------ | ------ |
 | `cli/main.py` | Click entry, command registration |
 | `cli/*_cmd.py` | User-facing subcommands |
 | `cli/support/db.py` | Offline DB (`open_cli_services`) |
@@ -153,23 +153,23 @@ Only `launch.py` may import both `infra/server` and `api/app` in the same module
 | `cli/support/acting.py` | Resolve `--user` / pinned defaults / agent owner |
 | `cli/support/ctx.py` | Root `--user` / `--agent` / `--json` resolution |
 | `cli/support/state.py` | Pinned `default_user` / `default_agent` in `cli_state.json` |
-| `cli/run_cmd.py` | `octop run` — delegates to `launch.run_foreground_blocking` |
+| `cli/run_cmd.py` | `pai run` — delegates to `launch.run_foreground_blocking` |
 | `cli/init_cmd.py`, `cli/backup_cmd.py` | Local DB bootstrap / backup via `infra/db` |
 
 **CLI transport layers** (pick one per command; domain rules live in `infra/`, not duplicated in `cli/`):
 
 | Layer | When | Examples |
-|-------|------|----------|
-| **Offline** | Read/write local `~/.octop` SQLite only | `user *`, `provider *`, `cron` list/create/delete, `agent list/delete`, `chats` CRUD, `models` presets/list/active, `channel` CRUD, `admin`, `skills` enable/disable |
+| ------- | ------ | ---------- |
+| **Offline** | Read/write local `~/.yyc3-pai` SQLite only | `user *`, `provider *`, `cron` list/create/delete, `agent list/delete`, `chats` CRUD, `models` presets/list/active, `channel` CRUD, `admin`, `skills` enable/disable |
 | **Embedded** | Needs harness/gateway runtime; boots in-process `OctopServer` | `chats send/repl`, `chats get` (history), `cron run-now`, `agent` create/start/stop/reload, `provider test`, `channel test`, `skills list`, `acp` |
-| **External** | Talks to OS/daemon directly, no Octop HTTP | `models ollama-*`, channel QR bind (WeCom/WeChat), Feishu bot-creator subprocess |
+| **External** | Talks to OS/daemon directly, no YYC3-Pai HTTP | `models ollama-*`, channel QR bind (WeCom/WeChat), Feishu bot-creator subprocess |
 
-No `octop user login` — CLI trusts local filesystem access to `~/.octop`. Pin acting user with `octop config set-user` or root `--user`; pin agent with `octop agent use` or root `--agent`. If `octop run` is already running, config CLI writes take effect after server restart (cron, channels loaded at boot).
+No `pai user login` — CLI trusts local filesystem access to `~/.yyc3-pai`. Pin acting user with `pai config set-user` or root `--user`; pin agent with `pai agent use` or root `--agent`. If `pai run` is already running, config CLI writes take effect after server restart (cron, channels loaded at boot).
 
 ### `dashboard/src/` layout
 
 | Path | Owns | Must NOT |
-|------|------|----------|
+| ------ | ------ | ---------- |
 | `api/` | Typed fetch wrappers (`request.ts`, `modules/*`) | UI components, page state |
 | `pages/` | Route-level screens and page-local hooks | generic reusable widgets (move to `components/`) |
 | `components/` | Shared UI building blocks | direct `fetch` (use `api/` modules) |
@@ -179,7 +179,7 @@ No `octop user login` — CLI trusts local filesystem access to `~/.octop`. Pin 
 | `locales/` | i18n strings | — |
 | `utils/` | Frontend pure helpers | API or server knowledge |
 
-Frontend talks to Octop **only** via `/api` HTTP — never import or assume Python module layout.
+Frontend talks to YYC3-Pai **only** via `/api` HTTP — never import or assume Python module layout.
 
 ## 6. Run commands
 
@@ -206,19 +206,19 @@ make build-frontend                     # dashboard/ → src/octop/dashboard/
 
 **Agent scope:** Most agent routes use `/api/agents/{agent_id}/…` in the URL. A few legacy endpoints (e.g. MBTI) still take `X-Octop-Agent-Id`. Always validate ownership: load the agent row → `_assert_agent_owner(row, user)` (or admin bypass).
 
-**Agent workspace I/O:** All reads/writes of agent workspace **content files** go through `HarnessAgent.workspace` (`BackendWorkspace` from `octop-harness`). Do **not** use `agent.backend` directly, `resolve_harness_backend`, or `Path.write_text` / `read_text` on `~/.octop/agents/<id>/` for workspace content. Do **not** branch on backend type or `virtual_mode` in Octop — path rules live in `BackendWorkspace`.
+**Agent workspace I/O:** All reads/writes of agent workspace **content files** go through `HarnessAgent.workspace` (`BackendWorkspace` from `octop-harness`). Do **not** use `agent.backend` directly, `resolve_harness_backend`, or `Path.write_text` / `read_text` on `~/.yyc3-pai/agents/<id>/` for workspace content. Do **not** branch on backend type or `virtual_mode` in YYC3-Pai — path rules live in `BackendWorkspace`.
 
 New agents additionally keep system-scoped files under `{workspace}/.octop/` (e.g. sessions/sqlite, skills/agents system trees, auth tokens under `.octop/auth`). `system_files_path` is internal and not user-configurable; the `.octop` directory is created on first harness workspace init. Legacy agents keep auth at `{workspace}/.octop-auth`.
 
 | Context | Entry |
-|---------|--------|
+| --------- | -------- |
 | HTTP (agent must be running) | `require_running_workspace()` in `api/common/workspace.py` |
 | Gateway / IM / media | `harness_workspace_for_agent()` in `infra/gateway/process/agent_resolve.py` |
 | Agent startup seed (SOUL, expert, plugins) | `agent.workspace` after `_start_agent` |
 
 **Path conventions:** Pass workspace-relative paths to `BackendWorkspace` (`SOUL.md`, `skills/foo/SKILL.md`). Directory listing defaults to `"."` (current workspace directory). `"/"` is a distinct backend-root path inside `BackendWorkspace` — do **not** conflate it with `"."` there. The dashboard may send leading-`/` paths; HTTP adapters normalize those in `workspace_api_path()` before calling `BackendWorkspace`.
 
-**Chat attachments:** Dashboard uploads go to `{workspace}/inbound/` via `api/common/attachments.py` + `api/routers/uploads.py`, not a separate `~/.octop/uploads/` store.
+**Chat attachments:** Dashboard uploads go to `{workspace}/inbound/` via `api/common/attachments.py` + `api/routers/uploads.py`, not a separate `~/.yyc3-pai/uploads/` store.
 
 **Database:** SQLite and PostgreSQL share one schema. Add or change tables via a numbered pair
 `infra/db/migrations/00N_description.sql` **and** `00N_description.pg.sql`, then bump the
@@ -299,7 +299,7 @@ Do **not** use gettext (`.po` files). Do **not** embed user-visible English in `
 User-facing datetime display and cron/scheduling defaults MUST use the server timezone from `config.json` → `default_timezone` (env override `OCTOP_DEFAULT_TIMEZONE`; legacy `cron_timezone` / `OCTOP_CRON_TIMEZONE` still accepted) — not the browser's local timezone.
 
 | Layer | Entry |
-|-------|--------|
+| ------- | -------- |
 | Config | `OctopConfig.default_timezone` in `config.py` |
 | API | `GET /api/settings/timezone` → `{ "timezone": "…" }` (`GET /api/cron/settings` remains a compat alias) |
 | Dashboard | `useServerTimezone()`; format with `formatServerDateTime` / `formatServerIsoDateTime` / `formatMessageTime(..., timeZone)` in `dashboard/src/utils/formatMessageTime.ts` |
@@ -308,7 +308,7 @@ User-facing datetime display and cron/scheduling defaults MUST use the server ti
 
 **Language:** Keep the existing locale resolution (user preference → `Accept-Language` / dashboard i18n → channel hints → `DEFAULT_LOCALE`). Language is **not** a `config.json` key — do not add one unless explicitly requested.
 
-**Workspace storage:** `infra/backend/resolver.py` resolves harness `BackendProtocol` from agent config; remote backends use `probe.py` for fast tree listing. Docker sandbox (`type: "docker"` / storage `kind=docker`) uses `sandbox_scope` + `sandbox_prefix` (Octop default `octop_sandbox`) — see `docs/agent-backend-file-io.md` §13.
+**Workspace storage:** `infra/backend/resolver.py` resolves harness `BackendProtocol` from agent config; remote backends use `probe.py` for fast tree listing. Docker sandbox (`type: "docker"` / storage `kind=docker`) uses `sandbox_scope` + `sandbox_prefix` (YYC3-Pai default `octop_sandbox`) — see `docs/agent-backend-file-io.md` §13.
 
 **Connectors:** `infra/connectors/` — catalog, OAuth registry, MCP gateway; HTTP surface in `api/routers/connectors.py`.
 
@@ -322,14 +322,14 @@ User-facing datetime display and cron/scheduling defaults MUST use the server ti
 - Document non-obvious fields with `Field(..., description="…")`; name models clearly.
 - Spot-check `/api/docs` after API changes — a route that renders as an empty card or untyped blob is unfinished.
 
-**Cross-platform tests:** Octop CI runs on both Linux and Windows, so tests must not assume a single platform:
+**Cross-platform tests:** YYC3-Pai CI runs on both Linux and Windows, so tests must not assume a single platform:
 
 - Guard POSIX-only behavior with the repo convention `@pytest.mark.skipif(os.name != "posix", reason="…")`; prefer a module-level `posix_only = pytest.mark.skipif(os.name != "posix", reason="…")` alias. Use `pytest.mark.skipif(os.name == "nt", reason="…")` when a case is Linux/macOS-only for a different reason (e.g. forbidden path characters).
 - Do not hard-code POSIX paths (`/`, `/proc`, `/etc`, `/root`, `/usr/bin/…`, `~` → HOME) in assertions that run on every platform — they resolve differently on Windows (e.g. `/` → `D:\`). Prefer opaque mock tokens via `tests.support.fakes.fake_bin_path("tool")` (uses `pathlib` / `os.sep`) when stubbing `shutil.which` / `resolve_binary`.
 - Prefer `tmp_path` / `tmp_path_factory` and `pathlib.Path` over OS-specific literals; compare paths with `Path` equality (`tmp_path / "a" / "b"`), not string prefixes with `/`. Use `Path.as_posix()` / `os.sep` only when a serialized path string is part of the contract under test.
 - Do not assert `chmod` mode bits, symlink semantics, or Unix-only subprocess shells unless the test is marked `posix_only` (and production code short-circuits on non-POSIX the same way).
 - When a feature's semantics are inherently POSIX-only (e.g. the host root_dir denied prefixes in `infra/utils/host_dirs.py`), keep the source guards (`os.name != "posix"` short-circuit) and mirror them in the tests.
-- New connector/CLI/gateway tests that materialize files under `OCTOP_HOME` must set `monkeypatch.setenv("OCTOP_HOME", str(tmp_path))` and assert dirs with `Path` joins — never assume `~/.octop/...` string shape.
+- New connector/CLI/gateway tests that materialize files under the data root must set `monkeypatch.setenv("YYC3_PAI_HOME", str(tmp_path))` (legacy `OCTOP_HOME` still works as a fallback) and assert dirs with `Path` joins — never assume `~/.yyc3-pai/...` string shape.
 
 ## 8. Do not
 
@@ -352,12 +352,12 @@ Boundary rules are in [§5](#5-module-boundaries). Additionally:
 ## 9. Where to look
 
 | Question | Location |
-|----------|----------|
+| ---------- | ---------- |
 | How does auth work? | `api/deps.py`, `api/middleware/jwt_auth.py`, `api/routers/auth.py` |
 | LDAP (directory) login | `infra/auth/ldap/`, `api/routers/auth_ldap.py`; config row is `sso_providers.kind='ldap'`; guide: `docs/ldap.md` |
 | Setup wizard (password file, tokens) | `infra/setup/`, `api/routers/setup.py` |
 | TLS / Let's Encrypt | `infra/setup/tls/`, `api/routers/tls.py` |
-| `octop run` boot sequence | `launch.py`, `cli/run_cmd.py` |
+| `pai run` boot sequence | `launch.py`, `cli/run_cmd.py` |
 | How is a message processed? | `infra/gateway/processor.py` → harness agent |
 | How are agents started/stopped? | `infra/agents/manager.py` |
 | How does cron work? | `infra/cron/manager.py`, `infra/cron/job.py` |
@@ -393,7 +393,7 @@ hotfix/* ──PR──► main (+ tag) and ──PR──► develop
 ```
 
 | Branch | Role |
-|--------|------|
+| -------- | ------ |
 | `main` | Production source of truth; **default branch**; only release / hotfix merges; **only `v*` tags on `main` are production** |
 | `develop` | Daily integration; **base for feature PRs** |
 | `release/x.y.z` | Temporary freeze (version bump / CHANGELOG / bugfixes); **delete after ship** |

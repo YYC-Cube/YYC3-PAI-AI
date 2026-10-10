@@ -1,13 +1,13 @@
 # ACP (Agent Client Protocol)
 
-Octop integrates [ACP](https://agentclientprotocol.com/) in two directions:
+YYC3-Pai integrates [ACP](https://agentclientprotocol.com/) in two directions:
 
 | Direction | ACP server | ACP client | Typical use |
 |-----------|------------|------------|-------------|
-| **Inbound** | Octop (`octop acp`) | Zed, OpenCode, … | External IDE drives your Octop agent |
-| **Outbound** | OpenCode, CodeBuddy, … | Octop (`acp_runner` tool) | Octop agent delegates coding tasks |
+| **Inbound** | YYC3-Pai (`pai acp`) | Zed, OpenCode, … | External IDE drives your YYC3-Pai agent |
+| **Outbound** | OpenCode, CodeBuddy, … | YYC3-Pai (`acp_runner` tool) | YYC3-Pai agent delegates coding tasks |
 
-Both use **stdio** JSON-RPC today. Octop does not expose an HTTP ACP endpoint.
+Both use **stdio** JSON-RPC today. YYC3-Pai does not expose an HTTP ACP endpoint.
 
 ---
 
@@ -18,7 +18,7 @@ Open **ACP** in the sidebar (`/acp`).
 ### What is global vs per-agent
 
 | Setting | Scope | Stored in |
-|---------|--------|-----------|
+| --------- | -------- | ----------- |
 | Runner cards (command, args, enabled, …) | **Per user** — shared by all your agents | `settings` table (`acp_runners:user:{id}`) |
 | **Enable acp_runner tool** toggle | **Per agent** | Agent `config_json.acp.tool_enabled` |
 
@@ -27,7 +27,7 @@ Legacy per-agent `config_json.acp.runners` is migrated to the user-global store 
 ### Built-in runners
 
 | ID | Command | Args |
-|----|---------|------|
+| ---- | --------- | ------ |
 | `opencode` | `opencode` | `acp` |
 | `codebuddy` | `codebuddy` | `--acp` |
 | `claude_code` | `npx` | `-y`, `@zed-industries/claude-agent-acp` |
@@ -36,7 +36,7 @@ Legacy per-agent `config_json.acp.runners` is migrated to the user-global store 
 | `cursor_cli` | `agent` | `acp` |
 | `pi` | `npx` | `-y`, `pi-acp` |
 
-Install the CLI on the host where `octop run` executes, ensure it is on `PATH` (or set an absolute `command` in the runner drawer). Built-in runners cannot be deleted; custom runners can be added from **Add runner**.
+Install the CLI on the host where `pai run` executes, ensure it is on `PATH` (or set an absolute `command` in the runner drawer). Built-in runners cannot be deleted; custom runners can be added from **Add runner**.
 
 ### Enable delegation in chat
 
@@ -63,16 +63,16 @@ Use acp_runner: action=start, runner=opencode, message=find the README in the wo
 
 Permission prompts from the external agent appear in chat; pick an option or instruct the agent to call `action=respond` with the option id.
 
-After changing global runners, Octop reloads your agents automatically. Changing only `tool_enabled` reloads that agent.
+After changing global runners, YYC3-Pai reloads your agents automatically. Changing only `tool_enabled` reloads that agent.
 
 ---
 
-## CLI: inbound — expose Octop as an ACP server
+## CLI: inbound — expose YYC3-Pai as an ACP server
 
-Let external clients (e.g. Zed) use an Octop agent as their coding agent:
+Let external clients (e.g. Zed) use a YYC3-Pai agent as their coding agent:
 
 ```bash
-octop acp --agent main
+pai acp --agent main
 ```
 
 | Option | Description |
@@ -80,14 +80,14 @@ octop acp --agent main
 | `--agent ID` | Agent to expose (default: CLI `default_agent` or first agent) |
 | `--debug` | Log to stderr |
 
-This starts a **standalone** `OctopServer` (reads `~/.octop`), boots the agent, and speaks ACP on stdin/stdout. It does **not** require `octop run` to be running; it is a separate process.
+This starts a **standalone** `OctopServer` (reads `~/.yyc3-pai`), boots the agent, and speaks ACP on stdin/stdout. It does **not** require `pai run` to be running; it is a separate process.
 
 Pin the default agent for convenience:
 
 ```bash
-octop user login --username you
-# set default_agent in ~/.octop/cli_state.json, or:
-octop --agent main acp
+pai user login --username you
+# set default_agent in ~/.yyc3-pai/cli_state.json, or:
+pai --agent main acp
 ```
 
 ### Zed example
@@ -97,8 +97,8 @@ octop --agent main acp
 ```json
 {
   "agent_servers": {
-    "Octop": {
-      "command": "octop",
+    "YYC3-Pai": {
+      "command": "pai",
       "args": ["acp", "--agent", "main"],
       "env": {}
     }
@@ -111,16 +111,16 @@ From a dev checkout:
 ```json
 {
   "agent_servers": {
-    "Octop": {
+    "YYC3-Pai": {
       "command": "uv",
-      "args": ["run", "octop", "acp", "--agent", "main"],
+      "args": ["run", "pai", "acp", "--agent", "main"],
       "env": {}
     }
   }
 }
 ```
 
-Create an agent thread in Zed and prompt as usual. Sessions map to `thread_id`; the agent workspace remains under `~/.octop/agents/<agent_id>/`.
+Create an agent thread in Zed and prompt as usual. Sessions map to `thread_id`; the agent workspace remains under `~/.yyc3-pai/agents/<agent_id>/`.
 
 ---
 
@@ -131,7 +131,7 @@ Interactive docs: `/api/docs` (tag **agents**).
 ### Global runners (current user)
 
 | Method | Path | Body |
-|--------|------|------|
+| -------- | ------ | ------ |
 | `GET` | `/api/acp` | — |
 | `PUT` | `/api/acp` | `{ "runners": { "<id>": { … } } }` |
 | `GET` | `/api/acp/{runner_name}` | — |
@@ -141,7 +141,7 @@ Interactive docs: `/api/docs` (tag **agents**).
 ### Per-agent tool toggle
 
 | Method | Path | Body |
-|--------|------|------|
+| -------- | ------ | ------ |
 | `GET` | `/api/agents/{agent_id}/acp` | returns global `runners` + agent `tool_enabled` |
 | `PUT` | `/api/agents/{agent_id}/acp` | `{ "tool_enabled": bool, "runners": …? }` — `runners` optional, updates global |
 | `PUT` | `/api/agents/{agent_id}/acp/tool` | `{ "tool_enabled": bool }` only |
@@ -164,8 +164,8 @@ Runner shape:
 
 ## Prerequisites
 
-- **octop-harness `[acp]` extra** — pulls in `agent-client-protocol` (included in the Octop wheel dependency on octop-harness).
-- **Outbound:** install external CLIs (`opencode`, `codebuddy`, …) on the machine running `octop run`.
+- **octop-harness `[acp]` extra** — pulls in `agent-client-protocol` (included in the YYC3-Pai wheel dependency on octop-harness).
+- **Outbound:** install external CLIs (`opencode`, `codebuddy`, …) on the machine running `pai run`.
 - **Inbound:** agent must start successfully (provider + model configured).
 
 ---
@@ -173,11 +173,11 @@ Runner shape:
 ## Troubleshooting
 
 | Symptom | Likely cause |
-|---------|----------------|
+| --------- | ---------------- |
 | Runner missing on some agents | Upgrade to user-global runners; open `/acp` once or `GET /api/acp` to trigger migration |
-| `acp_runner` lists runner but start fails with “Unknown runner” | Restart `octop run` after adding a custom runner (ACP service cache is process-wide) |
+| `acp_runner` lists runner but start fails with “Unknown runner” | Restart `pai run` after adding a custom runner (ACP service cache is process-wide) |
 | External runner returns no text | Check CLI auth/quota (e.g. `codebuddy auth status`) |
-| `octop acp` fails immediately | Agent not running or invalid `--agent`; create/start agent in dashboard first |
+| `pai acp` fails immediately | Agent not running or invalid `--agent`; create/start agent in dashboard first |
 | Command not found | Use absolute path in runner `command` if `PATH` for the server process differs from your shell |
 | Kimi Code fails to start | Install [kimi-code](https://github.com/MoonshotAI/kimi-code) and run `kimi` login on the host |
 | Cursor CLI fails to start | Install Cursor CLI; run `agent login` or set `CURSOR_API_KEY` |
@@ -188,6 +188,6 @@ Runner shape:
 ## Related
 
 - Dashboard: `/acp`
-- CLI: `octop acp --help`
+- CLI: `pai acp --help`
 - OpenAPI: `/api/docs`
 - Harness implementation: `octop-harness` → `octop_harness.acp` (server + `acp_runner` tool)

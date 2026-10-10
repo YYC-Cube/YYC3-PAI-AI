@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/readme-banner.png" alt="Octop Banner" width="600" />
+  <img src="public/yyc3-family.png" alt="YYC3-Pai Family" />
 </p>
 
 <p align="center">
@@ -7,20 +7,13 @@
 </p>
 
 <p align="center">
-  <a href="https://trendshift.io/repositories/95504?utm_source=repository-badge&utm_medium=badge&utm_campaign=badge-repository-95504" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/repositories/95504" alt="TencentCloud/Octop | Trendshift" width="250" height="55" />
-  </a>
-</p>
-
-<p align="center">
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/codeql.yml/badge.svg" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/releases"><img alt="Release" src="https://img.shields.io/github/v/release/YYC-Cube/YYC3-Pai?include_prereleases&label=release" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green" /></a>
   <a href="https://www.python.org/downloads/"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12%2B-blue?logo=python&logoColor=white" /></a>
-  <a href="https://github.com/TencentCloud/Octop/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green" /></a>
-  <a href="https://github.com/TencentCloud/Octop/releases"><img alt="Version" src="https://img.shields.io/badge/version-1.0.2b6-orange" /></a>
-  <a href="https://pypi.org/project/octop/"><img src="https://img.shields.io/pypi/v/octop" alt="PyPI" /></a>
-  <a href="https://github.com/astral-sh/ruff"><img alt="Code Style: Ruff" src="https://img.shields.io/badge/code%20style-ruff-000000?logo=ruff&logoColor=white" /></a>
-  <a href="https://github.com/TencentCloud/Octop"><img alt="GitHub stars" src="https://img.shields.io/github/stars/TencentCloud/Octop?style=social" /></a>
-  <a href="https://github.com/TencentCloud/Octop/fork"><img alt="GitHub forks" src="https://img.shields.io/github/forks/TencentCloud/Octop?style=social" /></a>
-  <a href="https://discord.gg/QnWdhJxq9h"><img alt="Discord" src="https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white" /></a>
+  <img alt="Docker" src="https://img.shields.io/badge/docker-ghcr.io%2Fyyc--cube%2Fyyc3--pai-2496ED?logo=docker&logoColor=white" />
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/YYC-Cube/YYC3-Pai?style=social" /></a>
 </p>
 
 <p align="center">
@@ -39,39 +32,40 @@
 
 ---
 
-**Octop** is an open-source, self-hosted AI assistant. It's not just a tool — it's a digital life form that can operate in parallel. Through its multi-agent architecture, it builds an intelligent environment that is both independent and collaborative for teams, families, and individuals. Best of all, it runs entirely on your machine — the fully self-hosted design means privacy is never a compromise, while single-process startup makes the powerful web console, CLI, and IM integrations readily accessible.
+**YYC3-Pai (YYC π³)** is an open-source, self-hosted AI assistant maintained by [YanYuCloudCube](https://github.com/YYC-Cube). It's not just a tool — it's a digital assistant that can operate in parallel. Through its multi-agent architecture, it builds an intelligent environment that is both independent and collaborative for teams, families, and individuals. Best of all, it runs entirely on your machine — the fully self-hosted design means privacy is never a compromise, while single-process startup makes the powerful web console, CLI, and IM integrations readily accessible.
 
 Chat through the Web Dashboard, Feishu, DingTalk, QQ, WeChat, Telegram, Discord, WeCom, or programmatic HTTP/SSE/WebSocket. Extend capabilities with the **expert library**, **Connectors** (OAuth + MCP), and **ACP** integration for IDE workflows.
+
+> YYC3-Pai is a hard fork of the upstream [Octop](https://github.com/TencentCloud/Octop) project. See [LICENSE](LICENSE) and the source history for upstream attribution.
 
 ## ✨ Highlights
 
 | | Feature | Description |
-|---|---------|-------------|
+| --- | --------- | ------------- |
 | 👥 | **Multi-user expert team** | One admin, shared household; built-in expert library and expert market — switch specialists per scenario |
 | 🤝 | **Expert sharing** | Publish experts and shared skill/sub-agent pools so teammates reuse proven setups instead of rebuilding them |
 | 🎭 | **MBTI personas** | 16 personality templates plus an interactive quiz — give each agent a distinct character |
 | 🎯 | **AgentTeams** *(Beta)* | A coordinator schedules multiple experts on multi-step work; [details](docs/expert-teams.md) |
 | 🔒 | **Security built-in** | JWT multi-user isolation, tool approval, shell command guardrails, and PII redaction — data stays local |
-| 🔌 | **Connector ecosystem** | Tencent suite (Docs, Meeting, News, …); OAuth and MCP gateway extend resource boundaries |
+| 🔌 | **Connector ecosystem** | Docs, Meeting, News and other connectors; OAuth and MCP gateway extend resource boundaries |
 | 💾 | **Pluggable workspace backends** | Local disk, Docker sandbox, PostgreSQL, or COS/S3 for agent files — separate from the control-plane DB |
 | 🧠 | **Portable memory** | Powered by YYC³ Memory (yyc3-memory); memory migrates with the workspace |
 | 📚 | **Knowledge base** | RAG over your documents; share corpora within a deployment and ground answers in your private data |
-| 🧩 | **Plugins** | Extend Octop with third-party plugins; bundled plugins are seeded and toggled on demand |
-| ↔️ | **ACP bidirectional** | `octop acp` for IDE/terminal AI; delegate to OpenCode / Claude Code with permission gates |
+| 🧩 | **Plugins** | Extend YYC3-Pai with third-party plugins; bundled plugins are seeded and toggled on demand |
+| ↔️ | **ACP bidirectional** | `pai acp` for IDE/terminal AI; delegate to OpenCode / Claude Code with permission gates |
 | 💻 | **Terminal AI+** | Interactive shell in the browser — AI-assisted command execution and troubleshooting |
 | 🌐 | **Browser AI+** | Headless Chromium sessions for web automation, screenshots, and remote browsing |
 | 🖥️ | **Remote desktop** | Live screen and input from the dashboard on Linux, Windows, and macOS — remote office work and GUI apps; one-click isolated desktop on headless Linux |
-| 🪟 | **Desktop client** | Native Windows / macOS / Linux apps (and FnOS packages) alongside the web dashboard |
-| 🏠 | **Self-hosted** | Dashboard, CLI, IM channels, and cron in one `octop run` — all data under `~/.octop/` |
+| 🏠 | **Self-hosted** | Dashboard, CLI, IM channels, and cron in one `pai run` — all data under `~/.yyc3-pai/` |
 
 ## 📌 Overview
 
-Octop is a self-hosted AI assistant platform for households and small teams. It runs a single process that serves a web dashboard, a CLI, IM channels (Feishu, DingTalk, QQ, WeChat, Telegram, Discord, WeCom, and more), and cron automation — all sharing one control-plane database under `~/.octop/` (SQLite by default; PostgreSQL optional).
+YYC3-Pai is a self-hosted AI assistant platform for households and small teams. It runs a single process that serves a web dashboard, a CLI, IM channels (Feishu, DingTalk, QQ, WeChat, Telegram, Discord, WeCom, and more), and cron automation — all sharing one control-plane database under `~/.yyc3-pai/` (SQLite by default, file `yyc3-pai.db`; PostgreSQL optional).
 
-> Octop's design goal: keep every conversation, workspace, and credential on your own machine, while giving each user a personal team of specialized agents they can switch between per task.
+> YYC3-Pai's design goal: keep every conversation, workspace, and credential on your own machine, while giving each user a personal team of specialized agents they can switch between per task.
 
 <details>
-<summary>🐾 What can you do with Octop</summary>
+<summary>What can you do with YYC3-Pai</summary>
 
 - **Personal assistant** — let a dedicated agent write weekly reports, organize notes, and manage your schedule; memory persists with the workspace.
 - **Family sharing** — one admin account, the whole household; assign different agents and experts per member; share experts and knowledge bases when useful.
@@ -85,34 +79,36 @@ Octop is a self-hosted AI assistant platform for households and small teams. It 
 ## 🧠 Core Technology
 
 | Layer | Technology |
-|-------|-----------|
+| ------- | ----------- |
 | **Language** | Python 3.12+ |
 | **Web framework** | FastAPI + uvicorn |
 | **Agent runtime** | YYC³ Harness (yyc3-harness) |
 | **Gateway** | YYC³ Gateway (yyc3-gateway) |
 | **Control plane DB** | SQLite (WAL, default) or PostgreSQL (optional) |
-| **Frontend** | React 18 + TypeScript + Vite + Ant Design |
+| **Frontend** | React 18 + TypeScript + Vite |
 | **Scheduling** | APScheduler |
 | **ACP** | agent-client-protocol |
 | **Build / quality** | hatchling · ruff · mypy · pytest |
 
-Octop is built on the Octop Harness stack — a set of focused runtimes that Octop composes into one process:
+YYC3-Pai is built on the YYC³ Harness stack — a set of focused runtimes it composes into one process:
 
 - **YYC³ Harness (yyc3-harness)** — Agent runtime: model routing, tools, skills, and conversation checkpointing.
 - **YYC³ Gateway (yyc3-gateway)** — multi-platform IM channel bridge that normalizes incoming messages into a single processing pipeline.
 - **YYC³ Memory (yyc3-memory)** — hierarchical recall with full-text search, so an agent's memory travels with its workspace.
 - **YYC³ Browser (yyc3-browser)** — CDP-based browser automation with persistent profiles for web tasks.
 
-Instead of an external queue or message broker, Octop routes every surface — Web UI, IM, and cron — through one in-process `HarnessProcessor`. The result is a single, restart-safe process whose entire state is rebuilt from the control-plane database on boot (local SQLite by default; PostgreSQL optional).
+Instead of an external queue or message broker, YYC3-Pai routes every surface — Web UI, IM, and cron — through one in-process processor. The result is a single, restart-safe process whose entire state is rebuilt from the control-plane database on boot (local SQLite by default; PostgreSQL optional).
 
 ## 🤔 Features
 
 ### Server & auth
+
 - Multi-user JWT authentication with admin role
-- First-run setup wizard (`octop init`)
-- Interactive API docs at `/api/docs` (off by default — set `"enable_api_docs": true` in `config.json` to enable)
+- First-run setup wizard (`pai init`)
+- Interactive API docs at `/api/docs` (Scalar)
 
 ### Experts
+
 - Multiple experts per user; each has its own workspace, providers, channels, and cron
 - 16 MBTI persona templates + custom system prompt
 - Expert library scanned at boot (`infra/agents/experts/library/`); expert market and in-deployment expert sharing
@@ -120,31 +116,34 @@ Instead of an external queue or message broker, Octop routes every surface — W
 - Workspace backends (expert files): local disk, Docker sandbox, PostgreSQL, COS/S3, and other remote stores — distinct from the control-plane database
 
 ### Channels & automation
+
 - IM channels: Feishu, DingTalk, QQ, WeChat, Telegram, Discord, WeCom, and more
 - Proactive cron jobs with natural-language and slash-command triggers
 - Unified message processing across Web UI, IM, and cron surfaces
 
 ### Surfaces
+
 - **Web dashboard** — chat, experts / teams, connectors, channels, cron, knowledge, plugins, settings
-- **Desktop client** — native apps for Windows / macOS / Linux; FnOS packages for NAS
-- **CLI** — `octop run`, `octop chats`, `octop acp`, admin commands
+- **CLI** — `pai run`, `pai chats`, `pai acp`, admin commands
 - **HTTP/SSE/WebSocket API** — full programmatic access
 - **Remote desktop** — dashboard control of the host desktop session
 
 ### Knowledge & plugins
+
 - **Knowledge base** — RAG over your documents; optional sharing within the same deployment
-- **Plugins** — install and manage third-party plugins (`octop plugin`); bundled plugins are seeded and toggled on demand from the dashboard
+- **Plugins** — install and manage third-party plugins (`pai plugin`); bundled plugins are seeded and toggled on demand from the dashboard
 
 ### ACP (Agent Client Protocol)
 
-Octop supports ACP in two directions:
+YYC3-Pai supports ACP in two directions:
 
-1. **Inbound** — external tools use **your** Octop agent
+1. **Inbound** — external tools use **your** YYC3-Pai agent
+
    ```bash
-   octop acp --agent main   # stdio ACP server for Zed, OpenCode, …
+   pai acp --agent main   # stdio ACP server for Zed, OpenCode, …
    ```
 
-2. **Outbound** — Octop delegates to external coding agents
+2. **Outbound** — YYC3-Pai delegates to external coding agents
    - Dashboard → **ACP** (`/acp`): configure runners (global per user)
    - Enable **acp_runner** per agent, then delegate in chat
 
@@ -154,152 +153,97 @@ Full setup: **[docs/acp.md](docs/acp.md)**.
 
 ## 🧭 Roadmap
 
-Here are our mid-to-long term plans:
+Here are mid-to-long term plans:
 
 **Shipped**
+
 - [x] **Shared resource pool** — a central pool of skills and sub-agents that any user can drop into a new expert without rebuilding from scratch.
 - [x] **Expert sharing** — publish your experts to other users in the same deployment, so good configurations are reused instead of recreated.
-- [x] **PC client** — native desktop apps for Windows / macOS / Linux alongside the web dashboard and IM channels.
 
 **In progress**
+
 - [ ] **AgentTeams** *(Beta)* — let one coordinator autonomously schedule and orchestrate multiple experts to tackle multi-step tasks.
-- [ ] **Mobile client** *(closed beta)* — native mobile apps currently in internal testing.
+- [ ] **Self-evolution** — distill conversations into reusable skills, so the assistant grows with you.
 
 **Planned**
-- [ ] **Browser & terminal polishing** — browser skill *recording* (capture a workflow and replay it as a skill) and a more capable terminal AI assistant.
-- [ ] **Self-evolution** — automatically distill everyday conversations into reusable skills, so the assistant grows with you.
-- [ ] **Managed Agents** — platform-hosted agent lifecycle (provision, scale, and operate agents without managing the full self-hosted stack yourself).
-- [ ] **Project** — project-scoped workspaces that group agents, files, and conversations around a shared goal.
-- [ ] **Cloud–edge continuum** — run Octop locally while offloading selected tasks to the cloud, so light work stays on-device and heavier jobs use remote capacity when you need it.
-- [ ] **Plugin marketplace** — a curated market to discover, install, and update third-party plugins without leaving Octop.
-- [ ] **Conversational control plane** — deepen Octop’s own skills so chat can cover the full dashboard surface: create experts, wire channels, manage knowledge bases, and scaffold plugins end-to-end.
 
-This roadmap may shift as the community grows; treat it as indicative only.
+- [ ] **Browser & terminal polishing** — browser workflow *recording* (capture and replay as a skill) and a more capable terminal AI assistant.
+- [ ] **Project** — project-scoped workspaces that group agents, files, and conversations around a shared goal.
+- [ ] **Cloud–edge continuum** — run YYC3-Pai locally while offloading selected tasks to the cloud, so light work stays on-device and heavier jobs use remote capacity when you need it.
+- [ ] **Conversational control plane** — deepen YYC3-Pai's own skills so chat can cover the full dashboard surface: create experts, wire channels, manage knowledge bases, and scaffold plugins end-to-end.
+
+This roadmap may shift as the project grows; treat it as indicative only.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - **macOS / Linux / Windows**
-- No pre-installed Python required — the installer uses [uv](https://docs.astral.sh/uv/) to provision Python 3.12 in an isolated venv under `~/.octop/`
+- [uv](https://docs.astral.sh/uv/) and Python 3.12+
 - A modern multi-core CPU with a few GB of RAM for the process plus model/embedding caches; enough disk for the database, agent workspaces, and document corpora
 
-### 1. Install
-
-**macOS / Linux** — one-line installer (recommended):
+### 1. Install from source
 
 ```bash
-curl -fsSL https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.sh | bash
+git clone https://github.com/YYC-Cube/YYC3-Pai.git
+cd YYC3-Pai
+uv sync                       # provision an isolated venv and install dependencies
 ```
 
-**Windows (PowerShell)**:
-
-```powershell
-irm https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.ps1 | iex
-```
-
-**Windows (cmd)** — download and run, or from a cloned repo:
-
-```bat
-curl -fsSL https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.bat -o install.bat
-install.bat
-```
-
-After installation, open a **new terminal** or reload your shell:
-
-```bash
-source ~/.zshrc   # Zsh
-# or
-source ~/.bashrc  # Bash
-```
-
-The installer places `octop` on your PATH via `~/.octop/bin`. Optional extras:
-
-```bash
-# Download Playwright Chromium for browser automation (skipped if a system Chrome/Chromium is already present)
-curl -fsSL https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.sh | bash -s -- --extras browser
-```
-
-See [scripts/README.md](scripts/README.md) for all install options (`--version`, `--from-source`, `--mirror`, Windows flags).
-
-**Desktop app** (GUI, no terminal) — grab the artifact for your platform from [GitHub Releases](https://github.com/TencentCloud/Octop/releases/latest):
-
-| Platform | Artifact |
-|----------|----------|
-| Windows | `Octop-desktop-windows-amd64-<version>.exe` (64-bit) / `Octop-desktop-windows-arm64-<version>.exe` (ARM64) — NSIS installer |
-| macOS | `Octop-desktop-darwin-arm64-<version>.dmg` (Apple Silicon) / `Octop-desktop-darwin-amd64-<version>.dmg` (Intel) |
-| Linux | `Octop-desktop-linux-amd64-<version>.tar.gz` / `Octop-desktop-linux-arm64-<version>.tar.gz` |
-| FnOS NAS | `Octop-fnos-docker-<version>.fpk` (recommended on ARM; amd64/arm64 image) / `Octop-fnos-native-<version>.fpk` (x86_64, no Docker) / `Octop-fnos-native-arm64-<version>.fpk` (ARM64 fallback if no Docker) — install via App Center |
-
-See [desktop/README.md](desktop/README.md) for the desktop shell and [fnos/README.md](fnos/README.md) for the FnOS packaging guide.
-
-**Alternative — PyPI** (if you already manage Python yourself):
-
-```bash
-pip install octop
-# optional local ONNX embedding model cache (Models → Local): pip install "octop[local-embedding]"
-# Downloads catalog weights under ~/.octop/embedding_models; not chat, not Memory.
-# Browser automation uses the bundled Playwright package; install Chromium via the installer --extras browser,
-# the dashboard, or: python -m playwright install chromium
-```
-
-From a source checkout with uv:
+Optional extras (local ONNX embedding models):
 
 ```bash
 uv sync --extra local-embedding
 ```
 
+For browser automation, install Chromium:
+
+```bash
+uv run playwright install chromium
+```
+
 ### 2. Initialize
 
 ```bash
-octop init
+uv run pai init
 ```
 
-The interactive wizard creates the SQLite database, JWT secret, and first admin account under `~/.octop/`.
+The interactive wizard creates the SQLite database, JWT secret, and first admin account under `~/.yyc3-pai/`.
 
 ### 3. Run
 
 ```bash
 # Foreground (API + Web dashboard)
-octop run
+uv run pai run
 
 # Custom host / port
-octop run --host 0.0.0.0 --port 8088
+uv run pai run --host 0.0.0.0 --port 8088
 
 # Register as a system service (systemd / launchd / Windows service)
-octop service start
+uv run pai service start
 ```
 
-Open **http://127.0.0.1:8088**. With Docker, the first init generates a random admin password (written to `/data/.octop/credential.txt`) unless `OCTOP_DEFAULT_PASSWORD` is set. Interactive `octop init` / the setup wizard asks you to choose a password (≥8 characters, letters and digits).
+Open **<http://127.0.0.1:8088>**. The interactive setup asks you to choose a password (≥8 characters, letters and digits).
 
 ### Docker (recommended for production)
 
 ```bash
 # Build and start
 docker compose -f docker/docker-compose.yml up -d
-
-# Or build manually
-bash docker/docker_build.sh
-docker run -d \
-  -p 8088:8088 \
-  -v octop-data:/data/.octop \
-  -e HOME=/data \
-  -e OCTOP_DEFAULT_PASSWORD="<strong-password-or-omit-for-random>" \
-  octop:latest
 ```
 
-Open `http://localhost:8088`. First boot creates the admin account and writes the credentials to `/data/.octop/credential.txt` in the container. With `OCTOP_DEFAULT_PASSWORD` unset a strong random password is generated; a password you set must be ≥8 characters with letters and digits (weak/common passwords are rejected by the app password policy and fall back to a random one). Override the username via `OCTOP_ADMIN_USERNAME`.
+Open `http://localhost:8088`. First boot creates the admin account and writes the credentials to the container data volume. Set `YYC3_DEFAULT_PASSWORD` to pin the first-run password; unset a strong random password is generated. Override the username via `YYC3_ADMIN_USERNAME`.
 
 > **Password policy:** at least 8 characters with letters and digits.
 
 | Variable | Default | Description |
-|----------|---------|-------------|
-| `OCTOP_PORT` | `8088` | HTTP listen port |
-| `OCTOP_DEFAULT_PASSWORD` | _(unset)_ | First-run admin password (Docker bootstrap). Unset = random password written to `credential.txt` |
-| `OCTOP_ADMIN_USERNAME` | `admin` | First-run admin username |
-| `OCTOP_DATA` | `~/.octop` | Host data directory (compose bind mount) |
+| ---------- | --------- | ------------- |
+| `YYC3_PORT` | `8088` | HTTP listen port |
+| `YYC3_DEFAULT_PASSWORD` | *(unset)* | First-run admin password (Docker bootstrap). Unset = random password written to the data volume |
+| `YYC3_ADMIN_USERNAME` | `admin` | First-run admin username |
+| `YYC3_PAI_HOME` | `~/.yyc3-pai` | Data root (compose bind mount) |
 
-See [`.env.example`](.env.example) for the full list.
+Environment variables use the `YYC3_` prefix; legacy `OCTOP_*` variables remain supported as a fallback. See [`.env.example`](.env.example) for the full list.
 
 ## 📑 Contents
 
@@ -309,127 +253,104 @@ See [`.env.example`](.env.example) for the full list.
 - [Features](#-features)
 - [Roadmap](#-roadmap)
 - [Quick Start](#-quick-start)
-- **Deploy & Use**
-  - [Install options](#-install-options)
+- **Architecture & Dev**
   - [Configuration](#️-configuration)
   - [CLI reference](#-cli-reference)
-  - [Web dashboard](#️-web-dashboard)
   - [Data directory](#-data-directory)
-- **Architecture & Dev**
-  - [Architecture](#️-architecture)
-  - [Project layout](#-project-layout)
-  - [Development](#️-development)
+  - [Architecture](#-architecture)
+  - [Development](#-development)
 - **Project Info**
   - [Security & privacy](#-security--privacy)
   - [Contributing](#-contributing)
   - [Changelog](#-changelog)
   - [Related projects](#-related-projects)
-  - [Community](#-community)
   - [License](#-license)
 
-## 📦 Install options
+### 🗂️ Documentation center
 
-| Method | Platform | Description |
-|--------|----------|-------------|
-| Remote one-liner | macOS / Linux | `curl …/octop/install.sh \| bash` |
-| Remote one-liner | Windows | `irm …/octop/install.ps1 \| iex` or `install.bat` |
-| Local script | macOS / Linux | `bash scripts/install.sh` |
-| Local script | Windows | `scripts\install.bat` or `install.ps1` |
-| PyPI | Any | `pip install octop` (optional extras such as `local-embedding`) |
-| Docker | Any | `docker/docker-compose.yml` |
-
-All install scripts provision an isolated environment at `~/.octop/venv` and a `~/.octop/bin/octop` wrapper — they do not touch system Python.
-
-### Upgrade
-
-`octop update` replaces only the wheel/binary — your `~/.octop/` database, workspaces, secrets, and `config.json` are preserved:
-
-```bash
-octop update          # fetch and install the latest octop, then restart the service if one is registered
-```
-
-The schema migrates automatically on next boot; run `octop init` only if the setup wizard prompts for a migration. Always back up first (`octop backup`) before a cross-version upgrade.
+| | Doc | What's inside |
+| --- | ----- | --------------- |
+| 🏗️ | [Architecture](docs/architecture.md) | Single-process model, module map, boot sequence |
+| ⚙️ | [Configuration](docs/configuration.md) | `config.json`, env vars, database backends, TLS |
+| ⌨️ | [CLI reference](docs/cli.md) | Every `pai` subcommand with examples |
+| 🔌 | [API](docs/api.md) | HTTP / SSE / WebSocket endpoints behind `/api` |
+| 💬 | [User guide](docs/user-guide.md) | Dashboard walkthrough, step by step |
+| 🎭 | [Personas](docs/personas.md) | MBTI templates and expert personas |
+| 🤝 | [Expert teams](docs/expert-teams.md) | AgentTeams coordinator / member design |
+| 🔗 | [ACP](docs/acp.md) | Bidirectional IDE & coding-agent integration |
+| 🌉 | [Bridge](docs/bridge.md) | Link two instances for remote experts |
+| 📡 | [Workspace file I/O](docs/agent-backend-file-io.md) | Storage backends, Docker sandbox, path rules |
+| 🧠 | [Memory slim](docs/memory-slim.md) | Shrink agent memory safely |
+| 🔐 | [LDAP](docs/ldap.md) | Directory login & provisioning |
+| 📻 | [Discord channel](docs/discord-channel.md) | Bot setup & testing |
+| 📚 | [Versioned history](docs/versioned-history.md) | Conversation archive internals |
 
 ## ⚙️ Configuration
 
-All runtime state lives in `~/.octop/`. Manage it via CLI or edit files directly.
+All runtime state lives in `~/.yyc3-pai/`. Manage it via CLI or edit files directly.
 
 ```bash
 # LLM providers and models
-octop models
-octop provider list
+pai models
+pai provider list
 
 # IM channels
-octop channel list
-octop channel install
+pai channel list
 
 # Skills (per agent)
-octop skills list --agent main
+pai skills list --agent main
 
 # Cron jobs
-octop cron list
-octop cron create --help
+pai cron list
+pai cron create --help
 
 # Users (admin)
-octop user list
+pai user list
 ```
 
 ### Supported LLM providers
 
-OpenAI-compatible APIs, DashScope (Qwen), Ollama, and other presets — configure per agent in the dashboard or via `octop provider`.
+OpenAI-compatible APIs, DashScope (Qwen), Ollama, and other presets — configure per agent in the dashboard or via `pai provider`.
 
 ### Supported channels
 
 | Channel | Credentials |
-|---------|-------------|
+| --------- | ------------- |
 | **Feishu** | App ID, App Secret |
 | **DingTalk** | App Key, App Secret |
 | **QQ** | Bot AppID, Token |
 | **WeChat** | QR bind / account credentials; [CLI](docs/cli.md) |
 | **Telegram** | Bot Token |
-| **Discord** | Bot Token; all accessible channels allowed by default, optional channel/DM allowlists; [setup and testing](docs/discord-channel.md) |
+| **Discord** | Bot Token; optional channel/DM allowlists; [setup and testing](docs/discord-channel.md) |
 | **WeCom** | Corp ID, Agent Secret |
 | **Web Dashboard** | Enabled by default |
-
-Other kinds (e.g. Yuanbao, Xiaoyi, MQTT) are available via the gateway — see channel setup in the dashboard or CLI.
 
 ## 📖 CLI reference
 
 | Command | Description |
-|---------|-------------|
-| `octop init` | Bootstrap `~/.octop/` (DB, admin, JWT secret) |
-| `octop run` | Start Octop in the foreground |
-| `octop service start` | Install and start as a system service |
-| `octop service stop` | Stop the system service |
-| `octop agent` | Create, list, start/stop agents |
-| `octop channel` | Install and manage IM channels |
-| `octop chats` | REPL and session management |
-| `octop acp` | Stdio ACP server for IDE integration |
-| `octop cron` | Manage scheduled tasks |
-| `octop models` | Provider presets and model resolution |
-| `octop skills` | Enable/disable per-agent skills |
-| `octop plugin` | Install and manage third-party plugins |
-| `octop backup` | Export / restore backups |
-| `octop clean` | Remove CLI state or wipe `~/.octop/` |
-| `octop memory list` | List running agents eligible for memory maintenance; no database changes. |
-| `octop memory slim [--agent ID]` | Back up and slim SQLite memory through the running host; uses the selected agent or prompts by number. Shows terminal and dashboard progress. [Details](docs/memory-slim.md) |
-| `octop memory slim --all` | Sequentially maintain all eligible running agents, with per-agent progress; stops on the first failure. |
-| `octop update` | Check for and install updates |
-
-In signed-in dashboard or local CLI chat, `/memory slim` explains maintenance for the current agent;
-`/memory slim --all` lists your eligible agents. Add `--confirm` to start after reviewing the impact.
-Use `/memory status` for progress/results. Chat stays available until maintenance is confirmed and begins.
-External IM maintenance requires verified sender permissions and is not enabled yet.
+| --------- | ------------- |
+| `pai init` | Bootstrap `~/.yyc3-pai/` (DB, admin, JWT secret) |
+| `pai run` | Start YYC3-Pai in the foreground |
+| `pai service start` | Install and start as a system service |
+| `pai service stop` | Stop the system service |
+| `pai agent` | Create, list, start/stop agents |
+| `pai channel` | Install and manage IM channels |
+| `pai chats` | REPL and session management |
+| `pai acp` | Stdio ACP server for IDE integration |
+| `pai cron` | Manage scheduled tasks |
+| `pai models` | Provider presets and model resolution |
+| `pai skills` | Enable/disable per-agent skills |
+| `pai plugin` | Install and manage third-party plugins |
+| `pai backup` | Export / restore backups |
+| `pai clean` | Remove CLI state or wipe `~/.yyc3-pai/` |
+| `pai memory slim [--agent ID]` | Back up and slim SQLite memory through the running host. [Details](docs/memory-slim.md) |
+| `pai update` | Check for and install updates |
 
 Full reference: **[docs/cli.md](docs/cli.md)**.
 
 ## 🖥️ Web dashboard
 
-After `octop run`, open **http://127.0.0.1:8088**.
-
-<p align="center">
-  <img src="docs/assets/readme-chat.png" alt="Octop Web Dashboard" width="800" />
-</p>
+After `pai run`, open **<http://127.0.0.1:8088>**.
 
 - **Chat** — real-time conversation with experts and teams
 - **Experts** — create experts, pick templates / MBTI personas, share or publish experts, configure providers
@@ -443,33 +364,31 @@ After `octop run`, open **http://127.0.0.1:8088**.
 - **ACP** — configure outbound coding-agent runners
 - **Settings** — users, security, TLS, system
 
-Interactive API docs: **http://127.0.0.1:8088/api/docs** (disabled by default — enable by setting `"enable_api_docs": true` in `config.json`)
+Interactive API docs: **<http://127.0.0.1:8088/api/docs>** (Scalar).
 
 ## 📁 Data directory
 
 ```
-~/.octop/                          ← install & data root
+~/.yyc3-pai/                       ← data root
 ├── config.json                    # process config (optional database section)
-├── octop.db                       # SQLite — users, agents, channels, cron, …
+├── yyc3-pai.db                    # SQLite — users, agents, channels, cron, …
 ├── secrets/                       # JWT secret, channel tokens
 ├── agents/<agent_id>/             # per-agent workspace (SOUL.md, skills, …)
 ├── security/tool_guard/           # shell command allow/deny rules
 ├── logs/                          # runtime logs
-├── venv/                          # uv-managed Python (installer layout)
-└── bin/octop                      # PATH wrapper → venv/bin/octop
+├── env                            # global environment variables
+└── cli_state.json                 # pinned CLI user / agent
 ```
 
-The control plane can also use PostgreSQL — set `database` in `config.json`, or `OCTOP_DATABASE_*` / the first-run wizard. With PostgreSQL, agent memory reuses the same DSN by default (per-agent schema); to keep file-based memory, set `"memory": { "backend": { "type": "sqlite" } }` in the agent config. See [docs/configuration.md](docs/configuration.md) and [docs/adr/002-database-backends.md](docs/adr/002-database-backends.md).
-
-See [docs/configuration.md](docs/configuration.md) for env vars and `config.json`.
+The control plane can also use PostgreSQL — set `database` in `config.json`, via `YYC3_DATABASE_*`, or the first-run wizard. With PostgreSQL, agent memory reuses the same DSN by default (per-agent schema); to keep file-based memory, set `"memory": { "backend": { "type": "sqlite" } }` in the agent config. See [docs/configuration.md](docs/configuration.md) and [docs/adr/002-database-backends.md](docs/adr/002-database-backends.md).
 
 ## 🏗️ Architecture
 
 ```
 OctopServer
  ├─ DatabasePool            SQLite (WAL) or PostgreSQL
- ├─ SharedServices       DI root — every repo + config
- ├─ ExpertCatalog        scans agents/experts/library/ at boot
+ ├─ SharedServices          DI root — every repo + config
+ ├─ ExpertCatalog           scans agents/experts/library/ at boot
  ├─ UserManager
  │   └─ HarnessAgentManager (per user)
  │       └─ AgentRuntime (per agent)
@@ -480,11 +399,11 @@ OctopServer
  └─ FastAPI app (uvicorn)
 ```
 
-Single process. Restart rebuilds state from the control-plane database (local SQLite by default; PostgreSQL optional).
+Single process. Restart rebuilds state from the control-plane database (local SQLite by default; PostgreSQL optional). Internal class/module names such as `OctopServer` and the `octop` package are kept as implementation identifiers.
 
 See [docs/architecture.md](docs/architecture.md), [docs/adr/001-single-process-model.md](docs/adr/001-single-process-model.md), and [docs/adr/002-database-backends.md](docs/adr/002-database-backends.md).
 
-## 📁 Project layout
+### Project layout
 
 ```
 src/octop/
@@ -496,7 +415,6 @@ src/octop/
   dashboard/   built React SPA (wheel artifact)
 
 dashboard/     frontend source (Vite) — edit here, run make build-frontend
-
 docker/        Docker Compose, entrypoint, build & deploy scripts
 tests/         unit/ + integration/
 ```
@@ -511,7 +429,7 @@ make install          # pip install -e ".[dev]"
 make all              # format-all + lint + typecheck + test (ship bar)
 
 # Frontend (separate terminal)
-make dev-frontend     # Vite dev server on :5173 (override with VITE_DEV_PORT)
+make dev-frontend     # Vite dev server
 make build-frontend   # production build → src/octop/dashboard/
 cd dashboard && npx tsc -b
 ```
@@ -520,10 +438,10 @@ Individual targets: `make test`, `make lint`, `make typecheck`, `make format`.
 
 ## 🔒 Security & privacy
 
-- **Local-first**: Config, chats, workspaces, and credentials live under `~/.octop/` on your machine.
+- **Local-first**: Config, chats, workspaces, and credentials live under `~/.yyc3-pai/` on your machine.
 - **Multi-user isolation**: JWT auth with per-user agents and workspaces.
 - **PII redaction & tool approval**: sensitive data is redacted before it leaves the workspace, and risky tools or shell commands require explicit approval under the guardrail rules.
-- **Tool guardrails**: User-editable shell command rules under `~/.octop/security/tool_guard/`.
+- **Tool guardrails**: User-editable shell command rules under `~/.yyc3-pai/security/tool_guard/`.
 - **No vendor lock-in**: Swap LLM providers, storage backends, and channels without rewriting agents.
 
 ## 🤝 Contributing
@@ -532,12 +450,10 @@ Contributions are welcome:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Run `make all` (backend) or `make check-all` (full stack) before submitting
+3. Run `make all` before submitting
 4. Open a Pull Request
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide. Security issues: [SECURITY.md](SECURITY.md).
-
-Module boundaries and coding conventions: [AGENTS.md](AGENTS.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide. Security issues: [SECURITY.md](SECURITY.md). Module boundaries and coding conventions: [AGENTS.md](AGENTS.md).
 
 ## 📋 Changelog
 
@@ -546,34 +462,12 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 ## 🔗 Related projects
 
 | Project | Description |
-|---------|-------------|
+| --------- | ------------- |
 | YYC³ Harness (yyc3-harness) | Agent runtime — model routing, tools, skills, checkpointing |
 | YYC³ Gateway (yyc3-gateway) | Multi-platform IM channel bridge |
 | YYC³ Memory (yyc3-memory) | Hierarchical recall and FTS search |
 | YYC³ Browser (yyc3-browser) | CDP browser automation with persistent profiles |
 
-## 💬 Community
-
-- **Discord** — join the English-speaking community: [discord.gg/jPas5J8Ua](https://discord.gg/QnWdhJxq9h)
-
-### WeCom Customer Group (CN)
-
-For the customer WeCom support group, scan:
-
-<p align="center">
-  <img src="docs/assets/qrcode.png" alt="WeCom customer group QR code" width="220" />
-</p>
-
-> Please scan the QR code to join the group. For any questions or assistance, please contact the group admin directly.
-
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
-
-## ✨ Contributors
-
-Thanks to all contributors:
-
-<a href="https://github.com/tencentcloud/octop/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=tencentcloud/octop" />
-</a>

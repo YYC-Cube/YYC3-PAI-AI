@@ -1,0 +1,46 @@
+# YYC³ Pre-commit Gates · 提交前三闸
+# 安装 Install:  pip install pre-commit && pre-commit install
+# 手动全跑 Run all:  pre-commit run --all-files
+repos:
+  # ── 基础卫生 Basic hygiene ──────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: detect-private-key
+
+  # ── Gate 1 · 静态检查 Lint (ruff + mypy) ────────────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        files: ^13-.*\.py$
+        additional_dependencies: [pydantic]
+
+  # ── Gate 2 · 密钥扫描 Secret scan (gitleaks) ────────────
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.1
+    hooks:
+      - id: gitleaks
+
+  # ── Gate 3 · Mermaid 代码块保护（文档站点渲染依赖）───────
+  - repo: local
+    hooks:
+      - id: docs-mermaid-check
+        name: verify mermaid fences balanced
+        entry: python scripts/check_mermaid.py
+        language: system
+        pass_filenames: false
+        always_run: true

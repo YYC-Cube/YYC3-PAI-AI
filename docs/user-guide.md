@@ -1,16 +1,16 @@
-# Octop 用户帮助文档
+# YYC3-Pai 用户帮助文档
 
 > 本帮助文档面向最终用户，介绍 **安装 → 设置向导 → 配置模型 → 基本使用** 的完整流程。
-> 所有运行时数据默认存放在 `~/.octop/`（可通过 `OCTOP_HOME` 覆盖）。
+> 所有运行时数据默认存放在 `~/.yyc3-pai/`（可通过 `YYC3_PAI_HOME` 覆盖）。
 
 ---
 
 ## 目录
 
 - [一、简介](#一简介)
-- [二、安装 Octop](#二安装-octop)
+- [二、安装 YYC3-Pai](#二安装-yyc3-pai)
   - [2.1 环境要求](#21-环境要求)
-  - [2.2 一键脚本安装（推荐）](#22-一键脚本安装推荐)
+  - [2.2 源码安装（推荐）](#22-源码安装推荐)
   - [2.3 验证安装](#23-验证安装)
   - [2.4 Docker 安装（生产推荐）](#24-docker-安装生产推荐)
 - [三、首次启动与设置向导](#三首次启动与设置向导)
@@ -43,9 +43,9 @@
 
 ## 一、简介
 
-**Octop** 是一个开源、自托管的 AI 助手平台，支持多用户、多 Agent。它在单进程中同时提供 Web 控制台、CLI、IM 通道（飞书、钉钉、QQ、Discord、企业微信等）和定时任务，所有数据都保存在你自己的机器上。
+**YYC3-Pai** 是一个开源、自托管的 AI 助手平台，支持多用户、多 Agent。它在单进程中同时提供 Web 控制台、CLI、IM 通道（飞书、钉钉、QQ、Discord、企业微信等）和定时任务，所有数据都保存在你自己的机器上。
 
-![图 1.1 — Octop 产品总览](assets/overview.png)
+![图 1.1 — YYC3-Pai 产品总览](assets/overview.png)
 
 核心特性速览：
 
@@ -58,55 +58,37 @@
 
 ---
 
-## 二、安装 Octop
+## 二、安装 YYC3-Pai
 
 ### 2.1 环境要求
 
 - 操作系统：**macOS / Linux / Windows**。
-- **无需** 预先安装 Python —— 安装脚本会通过 [uv](https://docs.astral.sh/uv/) 在 `~/.octop/` 下自动创建隔离的 Python 3.12 虚拟环境。
-- 需要可访问外网，用于下载安装脚本与依赖。
+- 安装 [uv](https://docs.astral.sh/uv/) 后，uv 会在项目目录自动创建隔离的 Python 3.12 虚拟环境，**无需** 预先安装 Python。
+- 需要可访问外网，用于克隆仓库与下载依赖。
 
-### 2.2 一键脚本安装（推荐）
+### 2.2 源码安装（推荐）
 
-**macOS / Linux**
-
-```bash
-curl -fsSL https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.sh | bash
-```
-
-**Windows（PowerShell）**
-
-```powershell
-irm https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.ps1 | iex
-```
-
-**Windows（cmd）** —— 先下载再运行：
-
-```bat
-curl -fsSL https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.bat -o install.bat
-install.bat
-```
-
-安装完成后，**打开一个新终端** 或重新加载 shell 配置，使 PATH 生效：
+**macOS / Linux / Windows（PowerShell），命令相同：**
 
 ```bash
-source ~/.zshrc   # Zsh
-# 或
-source ~/.bashrc  # Bash
+git clone https://github.com/YYC-Cube/YYC3-Pai.git
+cd YYC3-Pai
+uv sync          # 自动创建 .venv 并安装全部依赖
+uv run pai init  # 创建 ~/.yyc3-pai/、数据库迁移、JWT 密钥与首个管理员
 ```
 
-安装脚本会把 `octop` 命令放入 `~/.octop/bin` 并加入 PATH，并在 `~/.octop/venv` 创建隔离环境；**不会改动系统 Python**。
-
-> **可选附加组件**：安装脚本支持通过 `--extras` 追加能力，例如浏览器自动化 `--extras browser`；也可用 `--version` 指定版本、`--mirror <url>` 使用国内 PyPI 镜像。更多选项见 [scripts/README.md](../scripts/README.md)。
+后续命令在项目目录通过 `uv run pai …` 运行；也可激活虚拟环境
+（`.venv/bin/`，Windows 为 `.venv\Scripts\`）后直接使用 `pai`，
+**不会改动系统 Python**。
 
 ### 2.3 验证安装
 
 ```bash
-octop --version
-octop run --help
+uv run pai --version
+uv run pai run --help
 ```
 
-若提示 `command not found: octop`，请确认已重新加载 shell 或检查 `~/.octop/bin` 是否在 PATH 中。
+若提示找不到 `pai` 命令，请在源码目录使用 `uv run pai`，或先激活 `.venv`。
 
 ### 2.4 Docker 安装（生产推荐）
 
@@ -118,21 +100,25 @@ docker compose -f docker/docker-compose.yml up -d
 bash docker/docker_build.sh
 docker run -d \
   -p 8088:8088 \
-  -v octop-data:/data/.octop \
+  -v yyc3-pai-data:/data/.yyc3-pai \
   -e HOME=/data \
-  -e OCTOP_DEFAULT_PASSWORD="<自定义强密码，留空则自动生成随机密码>" \
-  octop:latest
+  -e YYC3_DEFAULT_PASSWORD="<自定义强密码，留空则自动生成随机密码>" \
+  yyc3-pai:latest
 ```
 
 完整环境变量见 [.env.example](../.env.example)：
 
 | 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `OCTOP_PORT` | `8088` | HTTP 监听端口 |
-| `OCTOP_DEFAULT_PASSWORD` | _(空)_ | 首次运行管理员密码（Docker 引导；≥8 位且含字母+数字；留空则自动生成随机密码并写入 credential.txt） |
-| `OCTOP_ADMIN_USERNAME` | `admin` | 首次运行管理员用户名 |
-| `OCTOP_DATA` | `~/.octop` | 宿主机数据目录（compose 挂载） |
+| ------ | -------- | ------ |
+| `YYC3_PORT` | `8088` | HTTP 监听端口 |
+| `YYC3_DEFAULT_PASSWORD` | _(空)_ | 首次运行管理员密码（Docker 引导；≥8 位且含字母+数字；留空则自动生成随机密码并写入 credential.txt） |
+| `YYC3_ADMIN_USERNAME` | `admin` | 首次运行管理员用户名 |
+| `YYC3_DATA` | `~/.yyc3-pai` | 宿主机数据目录（compose 挂载） |
 
+> 注：当前 `docker/` 目录下的脚本仍在完成更名；在此之前，旧变量名
+> `OCTOP_PORT` / `OCTOP_DEFAULT_PASSWORD` / `OCTOP_DATA` 与
+> `/data/.octop` 路径继续可用。
+>
 > 后续计划：Docker 首次启动可改为随机生成管理员密码，并仅写入 `credential.txt`。
 
 ---
@@ -144,16 +130,16 @@ docker run -d \
 安装完成后，直接启动服务即可。首次运行时，控制面数据库、JWT 密钥与首个管理员都会在**设置向导**中创建（绿场默认延后打开数据库，直到向导里确认 SQLite / PostgreSQL）：
 
 ```bash
-octop run       # 前台启动 API + Web 控制台
+pai run       # 前台启动 API + Web 控制台
 ```
 
 若希望服务在后台常驻，可注册为系统服务：
 
 ```bash
-octop service start   # Linux(systemd) / macOS(launchd) / Windows 服务
+pai service start   # Linux(systemd) / macOS(launchd) / Windows 服务
 ```
 
-启动后打开 **http://127.0.0.1:8088**。
+启动后打开 <http://127.0.0.1:8088>。
 
 首次访问会**自动跳转到设置向导页面**（URL 类似 `/setup`）。若启用了启动密码保护，向导会先要求输入一次性「设置密码」。
 
@@ -166,15 +152,15 @@ octop service start   # Linux(systemd) / macOS(launchd) / Windows 服务
 **步骤 1：设置密码（可选）**
 
 - 首次配置需要一个临时「设置密码」作为保护（默认开启）。
-- 密码打印在启动终端，并写入服务器上的引导文件（常见为 `~/octop-login.txt`）。
+- 密码打印在启动终端，并写入服务器上的引导文件（常见为 `~/yyc3-pai-login.txt`）。
 - 此步**不依赖**控制面数据库是否已打开。
 
 **步骤 2：选择控制面数据库**
 
-- 默认使用本地 **SQLite**（路径相对 `~/.octop/`，通常为 `octop.db`），点击「保存并继续」即可。
+- 默认使用本地 **SQLite**（路径相对 `~/.yyc3-pai/`，通常为 `yyc3-pai.db`），点击「保存并继续」即可。
 - 「展开更多」可配置 **PostgreSQL**（内测）：填写主机等并先「测试连接」，再「使用 PostgreSQL 并继续」。
 - 向导会把选择写入 `config.json` 的 `database` 段，并在服务进程内**首次绑定**连接池、跑迁移。
-- 也可事先用环境变量指定（见 [configuration.md](configuration.md) 的 `OCTOP_DATABASE_*`）；已有库文件的升级安装不会延后建连。
+- 也可事先用环境变量指定（见 [configuration.md](configuration.md) 的 `YYC3_DATABASE_*`）；已有库文件的升级安装不会延后建连。
 - 本步只配置**控制面**；若选用 PostgreSQL，Agent 记忆默认复用同一 DSN（可用 `memory.backend.type=sqlite` 强制文件记忆）。详见 [configuration.md](configuration.md)。
 
 **步骤 3：创建管理员账号**
@@ -209,9 +195,9 @@ octop service start   # Linux(systemd) / macOS(launchd) / Windows 服务
 对于自动化部署，可省略向导中的"设置密码"步骤，直接在 Web 控制台通过环境变量预设管理员身份后启动：
 
 ```bash
-export OCTOP_ADMIN_USERNAME=admin
-export OCTOP_ADMIN_PASSWORD="<你的强密码，≥8 位且含字母和数字>"
-octop run
+export YYC3_ADMIN_USERNAME=admin
+export YYC3_ADMIN_PASSWORD="<你的强密码，≥8 位且含字母和数字>"
+pai run
 ```
 
 密码须满足策略（≥8 位，同时包含字母和数字）。之后再在 Web 控制台中完成模型等其余配置即可。
@@ -220,14 +206,14 @@ octop run
 
 ## 四、配置模型（LLM 供应商）
 
-Octop 通过 **供应商（Provider）** 接入大模型。每个 Agent 可使用不同的供应商与模型。支持 OpenAI 兼容 API、Anthropic、AWS Bedrock、DashScope（通义千问）、Ollama 本地模型等。
+YYC3-Pai 通过 **供应商（Provider）** 接入大模型。每个 Agent 可使用不同的供应商与模型。支持 OpenAI 兼容 API、Anthropic、AWS Bedrock、DashScope（通义千问）、Ollama 本地模型等。
 
 ### 4.1 预设供应商
 
 在向导"模型"步骤或控制台"设置 → 模型"中，可一键选择常见预设：
 
 | 预设 | 说明 |
-|------|------|
+| ------ | ------ |
 | OpenAI | 官方 API，需 API Key |
 | Anthropic | Claude 系列，需 API Key |
 | DeepSeek | 需 API Key |
@@ -269,16 +255,16 @@ Octop 通过 **供应商（Provider）** 接入大模型。每个 Agent 可使�
 ### 4.5 通过 CLI 配置供应商
 
 ```bash
-octop models              # 查看供应商预设与模型解析
-octop provider list       # 列出已配置供应商
-octop provider --help     # 供应商增删改查帮助
+pai models              # 查看供应商预设与模型解析
+pai provider list       # 列出已配置供应商
+pai provider --help     # 供应商增删改查帮助
 ```
 
 ### 4.6 本地模型 Ollama
 
 若本机已运行 Ollama，可选择 `ollama` 预设（默认 `base_url` 为本地地址），无需 API Key 即可接入本地模型，适合隐私敏感或离线场景。
 
-如果 Ollama 把模型存在非默认目录（例如从系统盘改到其它磁盘），在供应商设置里填写 **模型下载目录** 后保存。Octop 会按该路径识别已下载模型，并在启动本地 Ollama 服务时设置 `OLLAMA_MODELS`。
+如果 Ollama 把模型存在非默认目录（例如从系统盘改到其它磁盘），在供应商设置里填写 **模型下载目录** 后保存。YYC3-Pai 会按该路径识别已下载模型，并在启动本地 Ollama 服务时设置 `OLLAMA_MODELS`。
 
 ### 4.7 图片与视频生成模型
 
@@ -299,9 +285,9 @@ octop provider --help     # 供应商增删改查帮助
 
 ### 5.1 登录
 
-打开 **http://127.0.0.1:8088**，使用向导创建的账号登录。
+打开 <http://127.0.0.1:8088>，使用向导创建的账号登录。
 
-> ⚠️ **安全提醒**：Docker 首次初始化若未设置 `OCTOP_DEFAULT_PASSWORD`，会自动生成随机管理员密码（写入 `/data/.octop/credential.txt`，可用 `docker exec <容器> cat /data/.octop/credential.txt` 查看）。无论哪种方式，都请尽快在 **个人设置 → 修改密码** 中更换，避免服务暴露到公网时被未授权访问。
+> ⚠️ **安全提醒**：Docker 首次初始化若未设置 `YYC3_DEFAULT_PASSWORD`，会自动生成随机管理员密码（写入 `/data/.yyc3-pai/credential.txt`，可用 `docker exec <容器> cat /data/.yyc3-pai/credential.txt` 查看）。无论哪种方式，都请尽快在 **个人设置 → 修改密码** 中更换，避免服务暴露到公网时被未授权访问。
 
 ![图 5.1 — 登录页面](assets/use-01-login.png)
 
@@ -332,7 +318,7 @@ octop provider --help     # 供应商增删改查帮助
 - 各通道所需凭证见下表：
 
 | 通道 | 所需凭证 |
-|------|----------|
+| ------ | ---------- |
 | 飞书 | App ID、App Secret |
 | 钉钉 | App Key、App Secret |
 | QQ | Bot AppID、Token |
@@ -351,12 +337,12 @@ octop provider --help     # 供应商增删改查帮助
 
 ### 5.7 ACP（与 IDE / 编码 Agent 协作）
 
-Octop 支持两个方向的 ACP 集成：
+YYC3-Pai 支持两个方向的 ACP 集成：
 
-1. **入站** —— 让外部工具（Zed、OpenCode 等）使用你的 Octop Agent：
+1. **入站** —— 让外部工具（Zed、OpenCode 等）使用你的 YYC3-Pai Agent：
 
    ```bash
-   octop acp --agent main
+   pai acp --agent main
    ```
 
 2. **出站** —— 在对话中把编码任务委派给外部 Agent（OpenCode、CodeBuddy、Claude Code、Codex）：
@@ -368,11 +354,11 @@ Octop 支持两个方向的 ACP 集成：
 ### 5.8 设置（用户 / 安全 / TLS / 系统）
 
 - **用户**：管理账号、角色、修改密码。
-- **安全**：工具审批、Shell 命令护栏（`~/.octop/security/tool_guard/`）。
+- **安全**：工具审批、Shell 命令护栏（`~/.yyc3-pai/security/tool_guard/`）。
 - **TLS**：配置 HTTPS（自签或 Let's Encrypt）。
 - **系统**：监听地址 / 端口、日志级别、定时任务时区等。
 
-> 手动编辑配置文件：运行时参数保存在 `~/.octop/config.json`，可用环境变量覆盖（如 `OCTOP_PORT`、`OCTOP_BIND_HOST`）。详见 [docs/configuration.md](configuration.md)。
+> 手动编辑配置文件：运行时参数保存在 `~/.yyc3-pai/config.json`，可用环境变量覆盖（如 `YYC3_PORT`、`YYC3_BIND_HOST`）。详见 [docs/configuration.md](configuration.md)。
 
 ![图 5.6 — 设置页面](assets/use-06-settings.png)
 
@@ -393,22 +379,22 @@ Octop 支持两个方向的 ACP 集成：
 ## 六、常用命令速查
 
 | 命令 | 说明 |
-|------|------|
-| `octop run` | 前台启动 Octop |
-| `octop run --host 0.0.0.0 --port 8088` | 自定义监听地址与端口 |
-| `octop service start` | 安装并启动系统服务 |
-| `octop service stop` | 停止系统服务 |
-| `octop agent` | 创建、列出、启停 Agent |
-| `octop channel` | 安装与管理 IM 通道 |
-| `octop chats` | REPL 与会话管理 |
-| `octop acp` | 为 IDE 提供 stdio ACP 服务 |
-| `octop cron` | 管理定时任务 |
-| `octop models` | 供应商预设与模型解析 |
-| `octop provider list` | 列出已配置供应商 |
-| `octop skills` | 按 Agent 启用 / 禁用 Skill |
-| `octop user list` | 列出用户（管理员） |
-| `octop backup` | 导出 / 恢复备份 |
-| `octop update` | 检查并安装更新 |
+| ------ | ------ |
+| `pai run` | 前台启动 YYC3-Pai |
+| `pai run --host 0.0.0.0 --port 8088` | 自定义监听地址与端口 |
+| `pai service start` | 安装并启动系统服务 |
+| `pai service stop` | 停止系统服务 |
+| `pai agent` | 创建、列出、启停 Agent |
+| `pai channel` | 安装与管理 IM 通道 |
+| `pai chats` | REPL 与会话管理 |
+| `pai acp` | 为 IDE 提供 stdio ACP 服务 |
+| `pai cron` | 管理定时任务 |
+| `pai models` | 供应商预设与模型解析 |
+| `pai provider list` | 列出已配置供应商 |
+| `pai skills` | 按 Agent 启用 / 禁用 Skill |
+| `pai user list` | 列出用户（管理员） |
+| `pai backup` | 导出 / 恢复备份 |
+| `pai update` | 检查并安装更新 |
 
 完整参考见 [docs/cli.md](cli.md)。
 
@@ -416,38 +402,45 @@ Octop 支持两个方向的 ACP 集成：
 
 ## 七、常见问题
 
-**Q：访问 http://127.0.0.1:8088 打不开？**
-- 确认已执行 `octop run` 且终端无报错。
+**Q：访问 <http://127.0.0.1:8088> 打不开？**
+
+- 确认已执行 `pai run` 且终端无报错。
 - 若改过端口，请访问对应地址（如 `http://127.0.0.1:8088` 或自定义端口）。
-- 用 `octop service status`（Linux / macOS）确认服务状态。
+- 用 `pai service status`（Linux / macOS）确认服务状态。
 
 **Q：忘记管理员密码？**
+
 - 可通过 CLI 重置或重新初始化（注意：重置密码请使用用户管理相关命令 / 直接管理数据库）。
 
 **Q：模型测试连接失败？**
+
 - 检查 API Key、Base URL 是否正确，网络是否可访问该服务，账户是否有配额。
 
 **Q：如何修改监听地址让局域网访问？**
-- 启动时：`octop run --host 0.0.0.0 --port 8088`；或设置环境变量 `OCTOP_BIND_HOST=0.0.0.0`、`OCTOP_PORT=8088`。
+
+- 启动时：`pai run --host 0.0.0.0 --port 8088`；或设置环境变量 `YYC3_BIND_HOST=0.0.0.0`、`YYC3_PORT=8088`。
 
 **Q：数据存放在哪里？**
-- 全部在 `~/.octop/`：
+
+- 全部在 `~/.yyc3-pai/`：
 
 ```
-~/.octop/
+~/.yyc3-pai/
 ├── config.json              # 进程级配置（地址、端口、CORS、TLS、database …）
-├── octop.db                 # 默认 SQLite 控制面 — 用户、Agent、通道、定时任务 …
+├── yyc3-pai.db              # 默认 SQLite 控制面 — 用户、Agent、通道、定时任务 …
 ├── secrets/                 # JWT 密钥、通道 Token
 ├── agents/<agent_id>/       # 各 Agent 工作区（SOUL.md、skills …）
 ├── security/tool_guard/     # Shell 命令允许 / 拒绝规则
 ├── logs/                    # 运行日志
-└── bin/octop                # PATH 包装脚本 → venv/bin/octop
+└── bin/pai                  # PATH 包装脚本 → venv/bin/pai
 ```
 
 **Q：如何升级？**
-- `octop update`（若通过一键安装）；或从 PyPI / 源码重新安装后重启服务。
+
+- `pai update`（PyPI 安装）；源码安装可 `git pull` 后重新 `uv sync`；完成后重启服务。
 
 **Q：如何加入客户企业微信服务群？**
+
 - 请扫描下方二维码加入：
 
 ![客户企业微信服务群二维码](assets/qrcode.png)
@@ -461,8 +454,8 @@ Octop 支持两个方向的 ACP 集成：
 文档中的插图汇总如下（已放置在 `docs/assets/` 目录）：
 
 | 编号 | 位置 | 文件名 | 状态 | 内容说明 |
-|------|------|--------|------|----------|
-| 图 1.1 | 一、简介 | `overview.png` | ✅ 已就位 | Octop 品牌 Banner |
+| ------ | ------ | -------- | ------ | ---------- |
+| 图 1.1 | 一、简介 | `overview.png` | ✅ 已就位 | YYC3-Pai 品牌 Banner |
 | 图 3.1 | 3.2 向导步骤 | `setup-01-steps.png` | ✅ 已就位 | 向导步骤条（验证密码页） |
 | 图 3.2 | 3.2 管理员 | `setup-02-admin.png` | ✅ 已就位 | 创建管理员账号表单 |
 | 图 3.3 | 3.2 模型 | `setup-03-model.png` | ✅ 已就位 | 向导内预设供应商选择 |

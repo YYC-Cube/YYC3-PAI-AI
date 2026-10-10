@@ -11,18 +11,18 @@
 
 **Please do not open a public GitHub issue for security vulnerabilities.**
 
-- **GitHub Security Advisory:** [Create advisory](https://github.com/TencentCloud/Octop/security/advisories/new)
-- **Email:** jubaoliang@gmail.com
+- **GitHub Security Advisory:** [Create advisory](https://github.com/YYC-Cube/YYC3-Pai/security/advisories/new)
+- **Email:** <admin@0379.email>
 
 We aim to acknowledge reports within **3 business days** and provide a fix timeline within **7 business days** for confirmed issues.
 
 ## Scope
 
-Octop is a self-hosted control plane. Operators are responsible for:
+YYC3-Pai is a self-hosted control plane. Operators are responsible for:
 
-- Securing the host and network exposure of `octop run`
+- Securing the host and network exposure of `pai run`
 - Rotating JWT secrets and admin credentials
-- Reviewing tool guard rules under `~/.octop/security/tool_guard/`
+- Reviewing tool guard rules under `~/.yyc3-pai/security/tool_guard/`
 - Protecting LLM API keys and IM channel credentials
 
 See [docs/configuration.md](docs/configuration.md) for deployment hardening guidance.

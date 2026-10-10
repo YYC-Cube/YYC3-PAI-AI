@@ -3,11 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Octop：面向团队与家庭轻协作的自托管 AI 助手平台。"
-    />
-    <title>Octop｜自托管 AI 助手平台</title>
+    <meta name="description" content="YYC3-Pai：面向团队与家庭轻协作的自托管 AI 助手平台。" />
+    <title>YYC3-Pai｜自托管 AI 助手平台</title>
     <style>
       :root {
         --ink: #eaf3ff;
@@ -38,8 +35,8 @@
           system-ui,
           -apple-system,
           BlinkMacSystemFont,
-          "PingFang SC",
-          "Microsoft YaHei",
+          'PingFang SC',
+          'Microsoft YaHei',
           sans-serif;
         line-height: 1.6;
       }
@@ -54,27 +51,18 @@
         padding: 24px max(5vw, 24px) 48px;
         position: relative;
         overflow: hidden;
-        background: radial-gradient(
-            circle at 80% 12%,
-            rgba(72, 145, 255, 0.32),
-            transparent 30%
-          ),
-          radial-gradient(
-            circle at 12% 80%,
-            rgba(62, 216, 186, 0.15),
-            transparent 32%
-          ),
+        background:
+          radial-gradient(circle at 80% 12%, rgba(72, 145, 255, 0.32), transparent 30%),
+          radial-gradient(circle at 12% 80%, rgba(62, 216, 186, 0.15), transparent 32%),
           linear-gradient(130deg, #07111f 0%, #0a1930 60%, #07111f 100%);
       }
       .hero::after {
-        content: "";
+        content: '';
         position: absolute;
         inset: 0;
         opacity: 0.3;
-        background-image: linear-gradient(
-            rgba(122, 183, 255, 0.15) 1px,
-            transparent 1px
-          ),
+        background-image:
+          linear-gradient(rgba(122, 183, 255, 0.15) 1px, transparent 1px),
           linear-gradient(90deg, rgba(122, 183, 255, 0.15) 1px, transparent 1px);
         background-size: 54px 54px;
         mask-image: linear-gradient(to bottom, black, transparent 82%);
@@ -168,11 +156,7 @@
         padding: 22px 24px;
         border: 1px solid var(--line);
         border-radius: 18px;
-        background: linear-gradient(
-          100deg,
-          rgba(17, 46, 79, 0.78),
-          rgba(20, 34, 66, 0.6)
-        );
+        background: linear-gradient(100deg, rgba(17, 46, 79, 0.78), rgba(20, 34, 66, 0.6));
       }
       .metrics-panel h3 {
         margin: 0;
@@ -462,37 +446,148 @@
   <body>
     <header class="hero">
       <nav>
-        <a class="brand" href="#top" aria-label="Octop 首页">
+        <a class="brand" href="#top" aria-label="YYC3-Pai 首页">
           <svg viewBox="0 0 1493 440" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <g clip-path="url(#octop-logo-clip)">
-              <rect width="440" height="440" rx="110" fill="url(#octop-logo-paint0)" stroke="url(#octop-logo-paint1)" stroke-width="4.4"/>
-              <rect x="326.938" y="211.621" width="22.2018" height="17.156" rx="8.57798" fill="url(#octop-logo-paint2)"/>
-              <rect x="356.185" y="211.621" width="56.5138" height="17.156" rx="8.57798" fill="url(#octop-logo-paint3)"/>
-              <rect x="347.134" y="243.928" width="33.3028" height="17.156" rx="8.57798" fill="url(#octop-logo-paint4)"/>
-              <rect x="343.105" y="180.334" width="36.3303" height="17.156" rx="8.57798" fill="url(#octop-logo-paint5)"/>
-              <path d="M196.219 106.683C231.985 106.683 263.888 123.222 284.698 149.068H320.855C325.871 149.068 329.938 153.134 329.938 158.15C329.938 163.166 325.871 167.233 320.855 167.233H248.727C241.386 167.233 234.386 164.533 227.917 161.06C218.477 155.991 207.683 153.115 196.218 153.115C159.155 153.115 129.109 183.161 129.109 220.225C129.109 257.289 159.155 287.335 196.218 287.335C205.859 287.335 215.026 285.302 223.312 281.641C228.953 279.149 234.914 277.233 241.081 277.233H294.415L303.7 277.238C308.716 277.238 312.782 281.304 312.782 286.32C312.782 291.336 308.716 295.402 303.7 295.403H281.287C260.486 318.919 230.084 333.747 196.219 333.747C133.517 333.747 82.687 282.917 82.687 220.215C82.6872 157.513 133.517 106.683 196.219 106.683ZM331.956 180.359C336.972 180.359 341.038 184.426 341.039 189.442C341.038 194.458 336.972 198.524 331.956 198.524H294.617C290.715 198.524 287.552 201.687 287.552 205.588C287.552 209.49 290.715 212.653 294.617 212.653H310.115C314.96 212.846 318.829 216.834 318.83 221.727C318.829 226.743 314.763 230.809 309.747 230.809H281.995C277.815 230.809 274.426 234.198 274.426 238.378C274.426 242.558 277.815 245.946 281.995 245.947H328.975C333.969 245.972 338.011 250.028 338.011 255.029C338.011 260.045 333.944 264.111 328.928 264.111H300.953L246.99 264.114C257.17 252.347 263.33 237.005 263.33 220.225C263.33 205.293 258.451 191.5 250.204 180.352H302.553L331.956 180.359Z" fill="white"/>
-              <circle cx="673.866" cy="215.461" r="91.0098" stroke="black" stroke-width="43.5454"/>
-              <path d="M1175.96 181.04H1228.22C1253.49 181.04 1274.38 201.813 1274.38 227.928V254.337C1274.38 280.453 1253.49 301.225 1228.22 301.225H1175.96C1150.69 301.225 1129.81 280.453 1129.81 254.337V227.928C1129.81 201.813 1150.69 181.04 1175.96 181.04Z" stroke="black" stroke-width="43.5454"/>
-              <path d="M929.117 202.857H878.967C859.728 202.857 844.13 218.455 844.13 237.694V244.661C844.13 263.9 859.728 279.498 878.967 279.498H955.337L992.673 323.043H878.967L877.954 323.037C835.132 322.494 800.585 287.612 800.585 244.661V237.694C800.585 194.743 835.132 159.862 877.954 159.319L878.967 159.312H961.184L929.117 202.857Z" fill="black"/>
-              <path d="M1045.28 241.135H1045.28V270.746C1045.28 275.556 1049.18 279.455 1053.99 279.455H1089.07L1122.24 323.001H1053.99L1053.31 322.996C1024.99 322.637 1002.1 299.745 1001.74 271.422L1001.73 270.746V197.59H1045.28V241.135Z" fill="black"/>
-              <circle cx="1023.07" cy="126.629" r="23.95" fill="#FF0004"/>
-              <path d="M1094.97 202.857H970.986L1002.86 159.312H1094.97V202.857Z" fill="black"/>
-              <path d="M1426.81 159.324C1462.97 159.782 1492.14 189.238 1492.14 225.507V259.472C1492.14 295.742 1462.97 325.198 1426.81 325.656L1425.95 325.662H1361L1392.37 282.116H1425.95C1438.46 282.116 1448.6 271.978 1448.6 259.472V225.507C1448.6 213.002 1438.46 202.863 1425.95 202.863H1376.31C1363.81 202.863 1353.67 213.002 1353.67 225.507V282.116H1353.7V325.662H1353.67V381.412C1353.67 392.534 1346.72 402.032 1336.92 405.802L1310.12 385.171V225.507C1310.12 188.952 1339.76 159.318 1376.31 159.318H1425.95L1426.81 159.324Z" fill="black"/>
+              <rect
+                width="440"
+                height="440"
+                rx="110"
+                fill="url(#octop-logo-paint0)"
+                stroke="url(#octop-logo-paint1)"
+                stroke-width="4.4"
+              />
+              <rect
+                x="326.938"
+                y="211.621"
+                width="22.2018"
+                height="17.156"
+                rx="8.57798"
+                fill="url(#octop-logo-paint2)"
+              />
+              <rect
+                x="356.185"
+                y="211.621"
+                width="56.5138"
+                height="17.156"
+                rx="8.57798"
+                fill="url(#octop-logo-paint3)"
+              />
+              <rect
+                x="347.134"
+                y="243.928"
+                width="33.3028"
+                height="17.156"
+                rx="8.57798"
+                fill="url(#octop-logo-paint4)"
+              />
+              <rect
+                x="343.105"
+                y="180.334"
+                width="36.3303"
+                height="17.156"
+                rx="8.57798"
+                fill="url(#octop-logo-paint5)"
+              />
+              <path
+                d="M196.219 106.683C231.985 106.683 263.888 123.222 284.698 149.068H320.855C325.871 149.068 329.938 153.134 329.938 158.15C329.938 163.166 325.871 167.233 320.855 167.233H248.727C241.386 167.233 234.386 164.533 227.917 161.06C218.477 155.991 207.683 153.115 196.218 153.115C159.155 153.115 129.109 183.161 129.109 220.225C129.109 257.289 159.155 287.335 196.218 287.335C205.859 287.335 215.026 285.302 223.312 281.641C228.953 279.149 234.914 277.233 241.081 277.233H294.415L303.7 277.238C308.716 277.238 312.782 281.304 312.782 286.32C312.782 291.336 308.716 295.402 303.7 295.403H281.287C260.486 318.919 230.084 333.747 196.219 333.747C133.517 333.747 82.687 282.917 82.687 220.215C82.6872 157.513 133.517 106.683 196.219 106.683ZM331.956 180.359C336.972 180.359 341.038 184.426 341.039 189.442C341.038 194.458 336.972 198.524 331.956 198.524H294.617C290.715 198.524 287.552 201.687 287.552 205.588C287.552 209.49 290.715 212.653 294.617 212.653H310.115C314.96 212.846 318.829 216.834 318.83 221.727C318.829 226.743 314.763 230.809 309.747 230.809H281.995C277.815 230.809 274.426 234.198 274.426 238.378C274.426 242.558 277.815 245.946 281.995 245.947H328.975C333.969 245.972 338.011 250.028 338.011 255.029C338.011 260.045 333.944 264.111 328.928 264.111H300.953L246.99 264.114C257.17 252.347 263.33 237.005 263.33 220.225C263.33 205.293 258.451 191.5 250.204 180.352H302.553L331.956 180.359Z"
+                fill="white"
+              />
+              <circle cx="673.866" cy="215.461" r="91.0098" stroke="black" stroke-width="43.5454" />
+              <path
+                d="M1175.96 181.04H1228.22C1253.49 181.04 1274.38 201.813 1274.38 227.928V254.337C1274.38 280.453 1253.49 301.225 1228.22 301.225H1175.96C1150.69 301.225 1129.81 280.453 1129.81 254.337V227.928C1129.81 201.813 1150.69 181.04 1175.96 181.04Z"
+                stroke="black"
+                stroke-width="43.5454"
+              />
+              <path
+                d="M929.117 202.857H878.967C859.728 202.857 844.13 218.455 844.13 237.694V244.661C844.13 263.9 859.728 279.498 878.967 279.498H955.337L992.673 323.043H878.967L877.954 323.037C835.132 322.494 800.585 287.612 800.585 244.661V237.694C800.585 194.743 835.132 159.862 877.954 159.319L878.967 159.312H961.184L929.117 202.857Z"
+                fill="black"
+              />
+              <path
+                d="M1045.28 241.135H1045.28V270.746C1045.28 275.556 1049.18 279.455 1053.99 279.455H1089.07L1122.24 323.001H1053.99L1053.31 322.996C1024.99 322.637 1002.1 299.745 1001.74 271.422L1001.73 270.746V197.59H1045.28V241.135Z"
+                fill="black"
+              />
+              <circle cx="1023.07" cy="126.629" r="23.95" fill="#FF0004" />
+              <path d="M1094.97 202.857H970.986L1002.86 159.312H1094.97V202.857Z" fill="black" />
+              <path
+                d="M1426.81 159.324C1462.97 159.782 1492.14 189.238 1492.14 225.507V259.472C1492.14 295.742 1462.97 325.198 1426.81 325.656L1425.95 325.662H1361L1392.37 282.116H1425.95C1438.46 282.116 1448.6 271.978 1448.6 259.472V225.507C1448.6 213.002 1438.46 202.863 1425.95 202.863H1376.31C1363.81 202.863 1353.67 213.002 1353.67 225.507V282.116H1353.7V325.662H1353.67V381.412C1353.67 392.534 1346.72 402.032 1336.92 405.802L1310.12 385.171V225.507C1310.12 188.952 1339.76 159.318 1376.31 159.318H1425.95L1426.81 159.324Z"
+                fill="black"
+              />
             </g>
             <defs>
-              <linearGradient id="octop-logo-paint0" x1="419.375" y1="405.625" x2="20.625" y2="34.375" gradientUnits="userSpaceOnUse"><stop stop-color="#FF0307"/><stop offset="1" stop-color="#FF5E60"/></linearGradient>
-              <linearGradient id="octop-logo-paint1" x1="41.25" y1="20.625" x2="391.875" y2="426.25" gradientUnits="userSpaceOnUse"><stop stop-color="#FFBABA"/><stop offset="0.514423" stop-color="#F44040"/><stop offset="1" stop-color="#FFBABA"/></linearGradient>
-              <linearGradient id="octop-logo-paint2" x1="353.217" y1="220.085" x2="326.938" y2="220.128" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white"/></linearGradient>
-              <linearGradient id="octop-logo-paint3" x1="423.076" y1="220.085" x2="356.186" y2="220.361" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white"/></linearGradient>
-              <linearGradient id="octop-logo-paint4" x1="386.552" y1="252.392" x2="347.134" y2="252.488" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white"/></linearGradient>
-              <linearGradient id="octop-logo-paint5" x1="386.107" y1="188.799" x2="343.105" y2="188.912" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white"/></linearGradient>
-              <clipPath id="octop-logo-clip"><rect width="1492.07" height="440" fill="white"/></clipPath>
+              <linearGradient
+                id="octop-logo-paint0"
+                x1="419.375"
+                y1="405.625"
+                x2="20.625"
+                y2="34.375"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#FF0307" />
+                <stop offset="1" stop-color="#FF5E60" />
+              </linearGradient>
+              <linearGradient
+                id="octop-logo-paint1"
+                x1="41.25"
+                y1="20.625"
+                x2="391.875"
+                y2="426.25"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#FFBABA" />
+                <stop offset="0.514423" stop-color="#F44040" />
+                <stop offset="1" stop-color="#FFBABA" />
+              </linearGradient>
+              <linearGradient
+                id="octop-logo-paint2"
+                x1="353.217"
+                y1="220.085"
+                x2="326.938"
+                y2="220.128"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="white" stop-opacity="0" />
+                <stop offset="1" stop-color="white" />
+              </linearGradient>
+              <linearGradient
+                id="octop-logo-paint3"
+                x1="423.076"
+                y1="220.085"
+                x2="356.186"
+                y2="220.361"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="white" stop-opacity="0" />
+                <stop offset="1" stop-color="white" />
+              </linearGradient>
+              <linearGradient
+                id="octop-logo-paint4"
+                x1="386.552"
+                y1="252.392"
+                x2="347.134"
+                y2="252.488"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="white" stop-opacity="0" />
+                <stop offset="1" stop-color="white" />
+              </linearGradient>
+              <linearGradient
+                id="octop-logo-paint5"
+                x1="386.107"
+                y1="188.799"
+                x2="343.105"
+                y2="188.912"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="white" stop-opacity="0" />
+                <stop offset="1" stop-color="white" />
+              </linearGradient>
+              <clipPath id="octop-logo-clip"><rect width="1492.07" height="440" fill="white" /></clipPath>
             </defs>
           </svg>
         </a>
         <div class="nav-links">
-          <a href="#now">现状</a><a href="#edge">亮点</a
-          ><a href="#compare">对比</a><a href="#roadmap">规划</a>
+          <a href="#now">现状</a><a href="#edge">亮点</a><a href="#compare">对比</a><a href="#roadmap">规划</a>
         </div>
       </nav>
     </header>
@@ -503,8 +598,7 @@
           <div class="eyebrow">01 / 现状</div>
           <h2>懂你、帮你、陪你成长的智能伙伴。</h2>
           <p>
-            Octop 已具备完整的自托管运行形态：Web 控制台、CLI、IM
-            通道与定时任务由单一进程统一承载；每位用户可拥有自己的
+            YYC3-Pai 已具备完整的自托管运行形态：Web 控制台、CLI、IM 通道与定时任务由单一进程统一承载；每位用户可拥有自己的
             Agent、工作区、模型配置、通道与自动化。
           </p>
         </div>
@@ -512,33 +606,24 @@
           <article class="card">
             <div class="icon">◎</div>
             <h3>统一工作入口</h3>
-            <p>
-              Web 控制台、命令行、飞书、钉钉、QQ、Discord、企业微信与 API
-              使用同一 Agent 运行时。
-            </p>
+            <p>Web 控制台、命令行、飞书、钉钉、QQ、Discord、企业微信与 API 使用同一 Agent 运行时。</p>
           </article>
           <article class="card">
             <div class="icon">◫</div>
             <h3>面向轻协作</h3>
-            <p>
-              JWT 用户隔离、管理员角色与“每用户多个
-              Agent”，适配家庭与小团队的共享与分工。
-            </p>
+            <p>JWT 用户隔离、管理员角色与“每用户多个 Agent”，适配家庭与小团队的共享与分工。</p>
           </article>
           <article class="card">
             <div class="icon">↗</div>
             <h3>企业可集成</h3>
             <p>
-              OAuth + MCP Connector、HTTP/WebSocket API，以及可接入 COS/S3
-              等远程工作区后端，降低融入既有环境的成本。
+              OAuth + MCP Connector、HTTP/WebSocket API，以及可接入 COS/S3 等远程工作区后端，降低融入既有环境的成本。
             </p>
           </article>
         </div>
         <div class="metrics-panel">
           <h3>社区与商业化进展 <span class="label">团队披露</span></h3>
-          <p>
-            截至本材料编制时的业务口径；对外发布时请同步更新统计日期与客户授权状态。
-          </p>
+          <p>截至本材料编制时的业务口径；对外发布时请同步更新统计日期与客户授权状态。</p>
           <table class="metrics-table">
             <tbody>
               <tr>
@@ -555,10 +640,7 @@
               </tr>
               <tr>
                 <th>标杆客户</th>
-                <td>
-                  传媒大脑（已从 OpenClaw 迁移至
-                  Octop），深大医院等多家企事业单位。
-                </td>
+                <td>传媒大脑（已从 OpenClaw 迁移至 YYC3-Pai），深大医院等多家企事业单位。</td>
               </tr>
             </tbody>
           </table>
@@ -570,43 +652,30 @@
           <div class="eyebrow">02 / 总体方向</div>
           <h2>更易用、更聪明、更安全、更省 Token。</h2>
           <p>
-            Octop 的产品演进围绕四个明确方向展开：降低 AI
-            助手的使用门槛，提升复杂任务的协作与推理质量，建立可验证的安全边界，并让长程任务以更低
-            Token 成本持续运行。
+            YYC3-Pai 的产品演进围绕四个明确方向展开：降低 AI
+            助手的使用门槛，提升复杂任务的协作与推理质量，建立可验证的安全边界，并让长程任务以更低 Token 成本持续运行。
           </p>
         </div>
         <div class="grid grid-4">
           <article class="card direction-card">
             <div class="icon">↗</div>
             <strong>更易用</strong>
-            <p>
-              降低使用门槛，开箱即用。让用户在熟悉的 Web、CLI 与 IM
-              环境中，快速获得可执行的 AI 助手。
-            </p>
+            <p>降低使用门槛，开箱即用。让用户在熟悉的 Web、CLI 与 IM 环境中，快速获得可执行的 AI 助手。</p>
           </article>
           <article class="card direction-card">
             <div class="icon">✦</div>
             <strong>更聪明</strong>
-            <p>
-              用多专家协作与上下文管理，帮助 Agent
-              理解更长的任务链路，完成更复杂的分工与推理。
-            </p>
+            <p>用多专家协作与上下文管理，帮助 Agent 理解更长的任务链路，完成更复杂的分工与推理。</p>
           </article>
           <article class="card direction-card">
             <div class="icon">◇</div>
             <strong>更安全</strong>
-            <p>
-              通过用户/数据隔离、权限控制和沙箱化演进，让 AI
-              在真实环境中工作时始终处于可控边界。
-            </p>
+            <p>通过用户/数据隔离、权限控制和沙箱化演进，让 AI 在真实环境中工作时始终处于可控边界。</p>
           </article>
           <article class="card direction-card">
             <div class="icon">↓</div>
             <strong>更省 Token</strong>
-            <p>
-              以文件系统
-              offload、分层提示词与分层记忆承载长程上下文，减少无效重复推理与成本。
-            </p>
+            <p>以文件系统 offload、分层提示词与分层记忆承载长程上下文，减少无效重复推理与成本。</p>
           </article>
         </div>
 
@@ -620,16 +689,14 @@
             <strong>多用户 × 多专家架构</strong>
             <p>
               每位用户创建多个独立 Agent，并可从专家库选择角色；MBTI
-              人格与系统提示词使角色长期稳定、分工清晰，为多人轻协作与后续
-              AgentTeams 奠定基础。
+              人格与系统提示词使角色长期稳定、分工清晰，为多人轻协作与后续 AgentTeams 奠定基础。
             </p>
           </article>
           <article class="card feature-card">
             <div class="icon">02</div>
             <strong>存算分离与可插拔后端存储</strong>
             <p>
-              后端存储可落在本地、Docker、COS/S3
-              等后端；计算与存储解耦，便于按企业基础设施部署，记忆也能随工作区迁移。
+              后端存储可落在本地、Docker、COS/S3 等后端；计算与存储解耦，便于按企业基础设施部署，记忆也能随工作区迁移。
             </p>
           </article>
           <article class="card feature-card">
@@ -644,24 +711,20 @@
             <div class="icon">04</div>
             <strong>连接器与真实环境操作</strong>
             <p>
-              Connector（OAuth + MCP）、浏览器自动化、交互式 Shell、远程桌面与
-              ACP，将 AI 接入外部系统、终端、网页与 GUI 工作流。
+              Connector（OAuth + MCP）、浏览器自动化、交互式 Shell、远程桌面与 ACP，将 AI 接入外部系统、终端、网页与 GUI
+              工作流。
             </p>
           </article>
           <article class="card feature-card">
             <div class="icon">05</div>
             <strong>主动服务与AI人格</strong>
-            <p>
-              定时任务可主动推送；MBTI 人格与自定义系统提示词让 Agent
-              从“被动问答”走向具有稳定服务风格的长期伙伴。
-            </p>
+            <p>定时任务可主动推送；MBTI 人格与自定义系统提示词让 Agent 从“被动问答”走向具有稳定服务风格的长期伙伴。</p>
           </article>
           <article class="card feature-card">
             <div class="icon">06</div>
             <strong>安全边界持续加固</strong>
             <p>
-              当前具备 JWT 用户隔离、工具审批、Shell
-              命令防护与敏感信息脱敏；下一步研究 rootfs 数据隔离与 Agent
+              当前具备 JWT 用户隔离、工具审批、Shell 命令防护与敏感信息脱敏；下一步研究 rootfs 数据隔离与 Agent
               完全沙箱化。
             </p>
           </article>
@@ -672,29 +735,14 @@
         <div class="section-head">
           <div class="eyebrow">03 / 公开资料对比</div>
           <h2>关键功能对比</h2>
-          <p>
-            以下内容基于各项目官方仓库或官方站点的公开文档整理，状态截至
-            2026-08-17。
-          </p>
+          <p>以下内容基于各项目官方仓库或官方站点的公开文档整理，状态截至 2026-08-17。</p>
         </div>
         <div class="compare-layout">
           <div class="radar-wrap">
-            <svg
-              viewBox="0 0 520 470"
-              role="img"
-              aria-label="Octop、OpenClaw、Hermes 的公开产品定位雷达图"
-            >
-              <g
-                transform="translate(260 235)"
-                fill="none"
-                stroke="rgba(174,209,255,.20)"
-              >
-                <polygon
-                  points="0,-166 144,-83 144,83 0,166 -144,83 -144,-83"
-                />
-                <polygon
-                  points="0,-133 115,-66 115,66 0,133 -115,66 -115,-66"
-                />
+            <svg viewBox="0 0 520 470" role="img" aria-label="YYC3-Pai、OpenClaw、Hermes 的公开产品定位雷达图">
+              <g transform="translate(260 235)" fill="none" stroke="rgba(174,209,255,.20)">
+                <polygon points="0,-166 144,-83 144,83 0,166 -144,83 -144,-83" />
+                <polygon points="0,-133 115,-66 115,66 0,133 -115,66 -115,-66" />
                 <polygon points="0,-100 87,-50 87,50 0,100 -87,50 -87,-50" />
                 <polygon points="0,-67 58,-34 58,34 0,67 -58,34 -58,-34" />
                 <polygon points="0,-33 29,-17 29,17 0,33 -29,17 -29,-17" />
@@ -723,12 +771,7 @@
                   stroke-width="2.5"
                 />
               </g>
-              <g
-                fill="#c7d6e8"
-                font-size="13"
-                font-weight="600"
-                text-anchor="middle"
-              >
+              <g fill="#c7d6e8" font-size="13" font-weight="600" text-anchor="middle">
                 <text x="260" y="34">团队/多用户治理</text>
                 <text x="451" y="132">生态与通道</text>
                 <text x="447" y="354">自主学习</text>
@@ -738,7 +781,7 @@
               </g>
             </svg>
             <div class="legend">
-              <span><i style="background: #65e6d1"></i>Octop</span
+              <span><i style="background: #65e6d1"></i>YYC3-Pai</span
               ><span><i style="background: #61a7ff"></i>OpenClaw</span
               ><span><i style="background: #a597ff"></i>Hermes</span>
             </div>
@@ -747,19 +790,14 @@
             <p class="notice">
               <b>图表读法：</b>
               <span class="notice-line"
-                >六个轴反映公开定位与官方已文档化的覆盖范围，并非统一基准下的
-                1–5 分能力评分。</span
+                >六个轴反映公开定位与官方已文档化的覆盖范围，并非统一基准下的 1–5 分能力评分。</span
               >
               <span class="notice-line"
-                >Octop 偏向团队治理、可迁移工作区与远程操作；OpenClaw
-                偏向跨平台个人助手与插件生态。</span
+                >YYC3-Pai 偏向团队治理、可迁移工作区与远程操作；OpenClaw 偏向跨平台个人助手与插件生态。</span
               >
+              <span class="notice-line">Hermes 突出自学习闭环、子 Agent 与多种终端后端。</span>
               <span class="notice-line"
-                >Hermes 突出自学习闭环、子 Agent 与多种终端后端。</span
-              >
-              <span class="notice-line"
-                >DeepSeek Harness 仍为 developer
-                preview，未纳入雷达图，而列入下方功能矩阵。</span
+                >DeepSeek Harness 仍为 developer preview，未纳入雷达图，而列入下方功能矩阵。</span
               >
             </p>
             <div class="table-wrap" style="margin-top: 20px">
@@ -767,7 +805,7 @@
                 <thead>
                   <tr>
                     <th>已公开能力</th>
-                    <th>Octop</th>
+                    <th>YYC3-Pai</th>
                     <th>OpenClaw</th>
                     <th>Hermes</th>
                     <th>DeepSeek<br />Harness</th>
@@ -848,9 +886,7 @@
               </table>
             </div>
             <p class="muted" style="font-size: 12px; margin-top: 10px">
-              符号说明：● 官方资料明确描述；△
-              存在相关机制但与本行定义不完全等同；—
-              本次公开资料未确认，不等于“不具备”。
+              符号说明：● 官方资料明确描述；△ 存在相关机制但与本行定义不完全等同；— 本次公开资料未确认，不等于“不具备”。
             </p>
           </div>
         </div>
@@ -860,9 +896,7 @@
         <div class="section-head">
           <div class="eyebrow">04 / 规划</div>
           <h2>Teams / 自进化 / 客户端 / 插件机制</h2>
-          <p>
-            以下为短期与中长期规划。
-          </p>
+          <p>以下为短期与中长期规划。</p>
         </div>
         <div class="roadmap">
           <article class="card phase">
@@ -887,7 +921,7 @@
             <small>扩展 / 产品与平台</small>
             <h3>从验证到规模化赋能</h3>
             <ul>
-              <li>浏览器录制 Octop 验证</li>
+              <li>浏览器录制 YYC3-Pai 验证</li>
               <li>PC 与移动端协同，拓宽使用场景</li>
               <li>成熟能力再反哺 lh 与 clawpro 等上层平台</li>
             </ul>
@@ -901,47 +935,28 @@
       <div class="source-list">
         <span
           >•
-          <a
-            href="https://github.com/TencentCloud/Octop"
-            target="_blank"
-            rel="noreferrer"
-            >Octop 官方仓库与 README</a
-          >：多用户、多
-          Agent、工作区后端、浏览器/终端/远程桌面、Connector、ACP、Cron
-          等。</span
+          <a href="https://github.com/YYC-Cube/YYC3-Pai" target="_blank" rel="noreferrer">YYC3-Pai 官方仓库与 README</a
+          >：多用户、多 Agent、工作区后端、浏览器/终端/远程桌面、Connector、ACP、Cron 等。</span
         >
         <span
           >•
-          <a
-            href="https://github.com/openclaw/openclaw"
-            target="_blank"
-            rel="noreferrer"
-            >OpenClaw 官方仓库</a
+          <a href="https://github.com/openclaw/openclaw" target="_blank" rel="noreferrer">OpenClaw 官方仓库</a
           >：个人助手定位、通道、技能、插件、节点与平台能力。</span
         >
         <span
           >•
-          <a
-            href="https://github.com/NousResearch/hermes-agent"
-            target="_blank"
-            rel="noreferrer"
-            >Hermes 官方仓库</a
+          <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noreferrer">Hermes 官方仓库</a
           >：学习闭环、子 Agent、Cron、浏览器与终端后端、OpenClaw 导入。</span
         >
         <span
           >•
-          <a
-            href="https://github.com/deepseek-ai/deepseek-harness"
-            target="_blank"
-            rel="noreferrer"
+          <a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noreferrer"
             >DeepSeek Harness 官方仓库</a
-          >：开发者 Agent Harness、插件化架构与本地 Web UI；官方标注为 developer
-          preview。</span
+          >：开发者 Agent Harness、插件化架构与本地 Web UI；官方标注为 developer preview。</span
         >
       </div>
       <p style="margin-top: 20px">
-        版本：2026-08-17 ·
-        本页不构成第三方产品验收或安全测评；竞品功能和市场数据应在发布前重新核验。
+        版本：2026-08-17 · 本页不构成第三方产品验收或安全测评；竞品功能和市场数据应在发布前重新核验。
       </p>
     </footer>
   </body>

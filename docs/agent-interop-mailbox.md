@@ -1,6 +1,6 @@
 # Agent Teams：Inbox + Callback 方案
 
-**状态：** 已实现（harness `teams/` + octop `GlobalProcessor` 作为 `TeamProcessor`）
+**状态：** 已实现（harness `teams/` + YYC3-Pai `GlobalProcessor` 作为 `TeamProcessor`）
 **范围：** `octop-harness`（主实现）+ `octop`（宿主适配）
 **关联：** [agent-call-agent.md](./agent-call-agent.md)、[agent-delegation.md](./agent-delegation.md)
 
@@ -151,6 +151,7 @@ class HarnessAgentInboxManager:
 并发：**全局单 worker 串行**消费（不按 target 分队列）。
 
 要点：
+
 - 第二步 `call` 落在 `source_thread_id` 上，langgraph checkpointer 自动把这轮并进父对话，
   天然「结合之前的问题一并处理」。
 - `on_reply` 只负责**投递已生成文本**（不再触发 agent），宿主侧实现极薄。
@@ -171,7 +172,7 @@ HarnessAgentManager(
 
 - `team_processor is None` → 不创建 inbox；`stream`/`call` 直连。
 - `team_processor` 非空 → 创建 `HarnessAgentInboxManager(caller=self, processor=...)`。
-- 属性 `team_enabled: bool`；`set_team_processor(...)` 支持启动后注入（Octop 装配顺序需要）。
+- 属性 `team_enabled: bool`；`set_team_processor(...)` 支持启动后注入（YYC3-Pai 装配顺序需要）。
 
 ### 5.2 `stream` / `call`：回到原始实现
 
@@ -199,7 +200,7 @@ def team_tools(self) -> list[StructuredTool]:
     return build_team_tools(self)        # agent_list + ask_agent
 ```
 
-- 仅当调用方（Octop）显式取用时加入 agent 工具；**不写进 HarnessAgent 默认工具**。
+- 仅当调用方（YYC3-Pai）显式取用时加入 agent 工具；**不写进 HarnessAgent 默认工具**。
 
 ---
 
@@ -218,7 +219,7 @@ def team_tools(self) -> list[StructuredTool]:
 
 ---
 
-## 7. Octop 适配
+## 7. YYC3-Pai 适配
 
 ### 7.1 实现 `TeamProcessor`
 
@@ -251,7 +252,7 @@ harness = HarnessAgentManager(providers=..., team_processor=delegation_processor
 ### 7.3 工具注册
 
 `AgentManager._build_harness_config`：`merged_tools.extend(self._harness_manager.team_tools())`
-（仅 Octop 使用 manager，符合「使用 manager 时才启用」）。
+（仅 YYC3-Pai 使用 manager，符合「使用 manager 时才启用」）。
 
 ### 7.4 入口不变
 
@@ -282,7 +283,7 @@ inbox worker：
 ### octop-harness
 
 | 文件 | 操作 |
-|------|------|
+| ------ | ------ |
 | `mailbox.py` | **删除** |
 | `peer.py` | **拆分** → `teams/util.py`（helpers）+ `teams/inbox.py`（数据/管理器） |
 | `manager.py` | `stream`/`call` 还原直连；新增 `team_processor`、`team_enabled`、`team_tools`、`call_peer`/`submit_peer`；`apply_mentions` 用 `call_peer` |
@@ -294,7 +295,7 @@ inbox worker：
 ### octop
 
 | 文件 | 操作 |
-|------|------|
+| ------ | ------ |
 | `infra/gateway/processor.py` | `GlobalProcessor` 实现 `TeamProcessor`；`on_reply` 投递未读/IM |
 | `infra/agents/manager.py` | 构造 `team_processor=...`；`team_tools()` 注册；`apply_mention_agent_calls` 透传 |
 | `infra/agents/agent_call.py` | 重导出从 `octop_harness.teams.util` |
@@ -309,7 +310,7 @@ inbox worker：
 2. **manager 接线**：`stream`/`call` 还原；`team_processor` 开关；`call_peer`/`submit_peer`/`apply_mentions`/`team_tools`。
 3. **teams/tools.py**：`agent_list` + `ask_agent`（sync 默认，team 时支持 background）。
 4. **harness 测试**：`test_inbox.py`（enqueue→target.call→source.call→on_reply）、`test_team_tools.py`。
-5. **Octop 接线**：`DelegationProcessor`、装配、工具注册、删旧路径；回归 `uv run pytest -m "not live"`。
+5. **YYC3-Pai 接线**：`DelegationProcessor`、装配、工具注册、删旧路径；回归 `uv run pytest -m "not live"`。
 
 ---
 

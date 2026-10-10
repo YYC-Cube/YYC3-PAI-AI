@@ -1,16 +1,16 @@
 ---
 name: publish
 description: >-
-  Publish the Octop Python package: cut a release branch from develop, bump
+  Publish the YYC3-Pai Python package: cut a release branch from develop, bump
   version, update CHANGELOG, open a PR to main; after merge, Actions tag on
-  main (PyPI / Docker Hub + GHCR) and sync main into develop. Use when the user asks
+  main (GitHub Release + GHCR) and sync main into develop. Use when the user asks
   to publish, release, bump version, cut a release, or run /publish.
 disable-model-invocation: true
 ---
 
 # Publish
 
-自动化 Octop Python 包的完整发布流程。
+自动化 YYC3-Pai Python 包的完整发布流程。
 
 **开始时宣告：** "正在使用 publish 技能发布版本 {VERSION}。"
 
@@ -19,7 +19,7 @@ disable-model-invocation: true
 以下配置有默认值，可在项目的 `.cursor/skills/publish/SKILL.md` 中覆盖。
 
 | 配置项 | 默认值 | 说明 |
-|--------|--------|------|
+| -------- | -------- | ------ |
 | `CHANGELOG_FILE` | `CHANGELOG.md` | 相对于仓库根目录的路径，文件不存在则跳过 |
 | `VERSION_FILE` | `pyproject.toml` | 包含版本号的文件 |
 | `VERSION_PATTERN` | `^\s*version\s*=\s*"[^"]+"` | 匹配版本行的正则表达式 |
@@ -41,7 +41,7 @@ disable-model-invocation: true
 
 ## 发布流程
 
-> **顺序硬约束：** 先 PR 合入 `main`，再在 **main tip** 打并推送 `v*` tag。  
+> **顺序硬约束：** 先 PR 合入 `main`，再在 **main tip** 打并推送 `v*` tag。
 > **禁止**在 release 分支未合入 `main` 前推送生产 tag。
 
 ### 步骤 1 — 读取配置并确认版本
@@ -50,18 +50,24 @@ disable-model-invocation: true
 2. 记录当前分支为 `{original_branch}`。
 3. `git fetch {REMOTE} {INTEGRATION_BRANCH} {TARGET_BRANCH}`
 4. 从 `VERSION_FILE` 读取当前版本（在即将基于的 integration tip 上）：
+
    ```bash
    git show {REMOTE}/{INTEGRATION_BRANCH}:pyproject.toml | grep -E '^\s*version\s*=\s*"[^"]+"'
    ```
+
 5. 检查未提交的更改：
+
    ```bash
    git status --short
    ```
+
    若工作树不干净：**中止**并要求用户先提交或 stash。发布不得夹带无关脏文件。
 6. 查找最近的 git tag：
+
    ```bash
    git tag --sort=-creatordate | head -1
    ```
+
    如果没有 tag，视为首次发布（在步骤 3 中使用从仓库初始到 HEAD 的所有提交）。
 7. 展示确认信息：
 
@@ -86,6 +92,7 @@ git checkout -B {RELEASE_BRANCH_PREFIX}{version} {REMOTE}/{INTEGRATION_BRANCH}
 ```
 
 如果本地或远程已存在同名 release 分支，中止：
+
 ```
 ✗ 分支 {RELEASE_BRANCH_PREFIX}{version} 已存在。
 请手动删除后再运行 /publish。
@@ -94,6 +101,7 @@ git checkout -B {RELEASE_BRANCH_PREFIX}{version} {REMOTE}/{INTEGRATION_BRANCH}
 ### 步骤 3 — 分析变更并生成 CHANGELOG 草稿
 
 1. 获取上次 tag 以来的提交（相对当前 release HEAD，即 develop tip）：
+
    ```bash
    git log {last_tag}..HEAD --oneline
    # 首次发布时：
@@ -101,10 +109,12 @@ git checkout -B {RELEASE_BRANCH_PREFIX}{version} {REMOTE}/{INTEGRATION_BRANCH}
    ```
 
 2. 如果没有找到提交：
+
    ```
    ⚠ 自上次发布 tag ({last_tag}) 以来没有新提交。
    是否继续？[y/N]
    ```
+
    用户未确认则中止。
 
 3. 按提交前缀分类，生成 Keep a Changelog 格式的条目。
@@ -123,6 +133,7 @@ git checkout -B {RELEASE_BRANCH_PREFIX}{version} {REMOTE}/{INTEGRATION_BRANCH}
    - 安全修复 → **安全**
 
    输出格式：
+
    ```markdown
    ## [A.B.C] - YYYY-MM-DD
 
@@ -141,9 +152,11 @@ git checkout -B {RELEASE_BRANCH_PREFIX}{version} {REMOTE}/{INTEGRATION_BRANCH}
    ### 安全
    - 中文描述安全修复
    ```
+
    省略空的分类。日期使用 ISO 8601 格式（当天日期）。日期行与第一个分类之间、各分类之间保留空行。
 
 4. 向用户展示草稿并请求确认：
+
    ```
    CHANGELOG 草稿：
 
@@ -151,6 +164,7 @@ git checkout -B {RELEASE_BRANCH_PREFIX}{version} {REMOTE}/{INTEGRATION_BRANCH}
 
    添加到 CHANGELOG.md？[y/N/edit]
    ```
+
    - `y` → 继续
    - `n` → 中止
    - `edit` 或其他反馈 → 询问用户："需要什么修改？" — 等待回复后重新生成，再次展示确认。循环直到 `y` 或 `n`。
@@ -179,12 +193,15 @@ git checkout -B {RELEASE_BRANCH_PREFIX}{version} {REMOTE}/{INTEGRATION_BRANCH}
 
 发布版本号必须保持多文件一致。依次升级以下位置：
 
-1. `VERSION_FILE`（`pyproject.toml`）— wheel / PyPI 的唯一版本源：
+1. `VERSION_FILE`（`pyproject.toml`）— wheel 的唯一版本源：
+
    ```bash
    grep -n '^\s*version\s*=\s*"[^"]+"' pyproject.toml
    # 用 Edit 工具将该行的 "X.Y.Z" 替换为 "A.B.C"
    ```
+
 2. 所有匹配 `README_GLOB` 且含 shields.io 版本徽标的 README（含多语言）：
+
    ```bash
    # 发现需升级的文件（勿只改英文 README.md）
    grep -l 'shields.io/badge/version-' README.md README_*.md 2>/dev/null
@@ -192,19 +209,24 @@ git checkout -B {RELEASE_BRANCH_PREFIX}{version} {REMOTE}/{INTEGRATION_BRANCH}
    grep -n 'shields.io/badge/version-' {file}
    # 用 Edit 工具将 `version-X.Y.Z-orange` 替换为 `version-A.B.C-orange`
    ```
+
    当前仓库至少包括 `README.md` 与 `README_CN.md`；若某语言文件无徽标则跳过该文件。
    全部未命中则提示并继续（不中止）。
 3. `INIT_VERSION_FILE`（`src/octop/__init__.py`）— 运行时常量 `__version__`：
+
    ```bash
    grep -n '__version__' src/octop/__init__.py
    # 用 Edit 工具将 `__version__ = "X.Y.Z"` 替换为 `"A.B.C"`
    ```
+
    文件不存在则跳过并提示（不中止）。
 4. 飞牛 FnOS 两个 manifest 的 `version=` 字段（与 `pyproject.toml` 保持一致；`scripts/build-fpk.sh` 打包时也会再注入一次，但仓库源文件必须先改，避免商店展示/手工校验看到旧号）：
+
    ```bash
    grep -n '^version=' fnos/docker/manifest fnos/native/manifest
    # 用 Edit 工具将两处 `version=X.Y.Z` 替换为 `version=A.B.C`
    ```
+
    两个文件都必须改。缺文件则提示并继续（不中止）。
 
 **4c. 提交：**
@@ -214,13 +236,16 @@ git status --short
 ```
 
 - 如果有更改：暂存并提交：
+
   ```bash
   git add -A
   git commit -m "chore: release {version}"
   ```
+
 - 如果工作树已干净：无需提交，跳过。
 
 **4d. 推送 release 分支：**
+
 ```bash
 git push -u {REMOTE} {RELEASE_BRANCH_PREFIX}{version}
 ```
@@ -256,9 +281,11 @@ EOF
 ### 步骤 6 — 等待合入后，由 Action 在 main tip 打 tag
 
 1. 询问用户 PR 是否已合并，或轮询：
+
    ```bash
    gh pr view {pr_url} --json state,mergedAt
    ```
+
    未合并则等待；无需本地执行打 tag。
 
 2. 合并后：
@@ -273,10 +300,12 @@ EOF
 ### 步骤 7 — 删除 release 分支；develop 由 Action 同步
 
 1. 删除远程与本地 release 分支：
+
    ```bash
    git push {REMOTE} --delete {RELEASE_BRANCH_PREFIX}{version}
    git branch -D {RELEASE_BRANCH_PREFIX}{version}
    ```
+
    删除失败则警告（非致命），提示手动删除。
 
 2. **develop 同步**：GitHub Release 发布成功后，`sync-main-to-develop.yml` 会自动开 `main → develop` PR，并在无冲突时用 **merge commit** 合入。
@@ -295,7 +324,7 @@ git checkout {original_branch}
 ## 错误处理参考
 
 | 场景 | 行为 |
-|------|------|
+| ------ | ------ |
 | `VERSION_FILE` 未找到 | 中止："找不到 VERSION_FILE：{path}" |
 | 文件中未匹配到版本号 | 中止："在 {VERSION_FILE} 中找不到匹配 {VERSION_PATTERN} 的版本行" |
 | 工作树不干净 | 中止：先清理再发布 |
@@ -312,8 +341,9 @@ git checkout {original_branch}
 ## 红线规则
 
 **绝不：**
+
 - 在 release / feature 分支上、于合入 `main` **之前**推送生产 `v*` tag
-- 在推送 tag 前直接上传 PyPI（发布由 GitHub Action 负责）
+- 在推送 tag 前直接发布产物（发布由 GitHub Action 负责）
 - 将 `develop` 直接 push / merge 进 `main`（必须走 PR）
 - 跳过步骤 1 的用户确认
 - 跳过步骤 3 的 CHANGELOG 确认
@@ -322,6 +352,7 @@ git checkout {original_branch}
 - 保留已发完的 `release/*` 作为长期分支
 
 **始终：**
+
 - 从最新 `{REMOTE}/{INTEGRATION_BRANCH}` 切 release
 - 先合入 `{TARGET_BRANCH}`，再由 Action 在 main tip 打 tag
 - 发版后删除 `release/*`；`main → develop` 由 `sync-main-to-develop.yml` 自动同步（失败时再手动补）

@@ -1,19 +1,19 @@
 # Agent 内容文件 Backend 严格化改造方案
 
-> 目标：Octop 服务端对 agent workspace **内容文件**的读写，一律经 `agent.backend`（或 `resolve_harness_backend`），不再用 `Path(...).write_text` / `read_text` 直连磁盘。  
+> 目标：YYC3-Pai 服务端对 agent workspace **内容文件**的读写，一律经 `agent.backend`（或 `resolve_harness_backend`），不再用 `Path(...).write_text` / `read_text` 直连磁盘。
 > 记忆相关路径除外。不新增统一 I/O 抽象层。
 
 ---
 
 ## 1. 背景与问题
 
-当前部分代码在 agent 已配置远程 backend（S3/COS 等）时，仍向本地 `~/.octop/agents/<agent_id>/` 读写内容文件，导致：
+当前部分代码在 agent 已配置远程 backend（S3/COS 等）时，仍向本地 `~/.yyc3-pai/agents/<agent_id>/` 读写内容文件，导致：
 
 - 用户配置了 backend，agent 工具读的是远程存储；
-- Octop 服务端 seed / 写 SOUL / 同步插件 skills 等仍写本地；
+- YYC3-Pai 服务端 seed / 写 SOUL / 同步插件 skills 等仍写本地；
 - Dashboard 部分读路径优先本地，展示与真实存储不一致。
 
-默认未配置 backend 时，harness 使用 `filesystem` + `virtual_mode`，`root_dir` 由 `workspace_dir`（即 `~/.octop/agents/<id>/`）在创建 backend 时挂载。此时直连磁盘与经 backend 写入**同一物理文件**，但远程 backend 场景下必须统一走 backend。
+默认未配置 backend 时，harness 使用 `filesystem` + `virtual_mode`，`root_dir` 由 `workspace_dir`（即 `~/.yyc3-pai/agents/<id>/`）在创建 backend 时挂载。此时直连磁盘与经 backend 写入**同一物理文件**，但远程 backend 场景下必须统一走 backend。
 
 ---
 
@@ -21,7 +21,7 @@
 
 ### 2.1 只换 IO 通道，不换路径
 
-改造前后**操作的是同一个文件**，路径字符串**保持项目既有写法**，Octop 不做路径改写。
+改造前后**操作的是同一个文件**，路径字符串**保持项目既有写法**，YYC3-Pai 不做路径改写。
 
 ```python
 # 以前
@@ -34,7 +34,7 @@ backend = await agent_registry.resolve_harness_backend(agent_id)
 await backend.aupload_files([(soul_path, text.encode("utf-8"))])
 ```
 
-- **禁止**在 Octop 层把 `~/.octop/agents/<id>/SOUL.md`「转换」为 `/SOUL.md`、`SOUL.md` 等另一套命名。
+- **禁止**在 YYC3-Pai 层把 `~/.yyc3-pai/agents/<id>/SOUL.md`「转换」为 `/SOUL.md`、`SOUL.md` 等另一套命名。
 - 专家模板、skills、seed 等：backend 参数中的 path 与原先 `disk_path = workspace_dir / rel` 的字符串形式一致。
 
 ### 2.2 Backend 获取方式
@@ -58,13 +58,13 @@ await backend.aupload_files([(soul_path, text.encode("utf-8"))])
 
 ### 2.4 `workspace_dir` 的保留用途
 
-`~/.octop/agents/<id>/` 仍作为 harness 的 `workspace_dir`，用于：
+`~/.yyc3-pai/agents/<id>/` 仍作为 harness 的 `workspace_dir`，用于：
 
 - 构造 backend 时的 `root_dir` 挂载（默认 filesystem）；
 - checkpoint、sessions JSONL、octop-memory SQLite 等**本地产物**（不由 backend 协议管理）；
 - 终端 PTY 的 cwd（见 §6 例外）。
 
-**内容文件**（md、skills 等）不再由 Octop 对该目录做 `read_text` / `write_text`。
+**内容文件**（md、skills 等）不再由 YYC3-Pai 对该目录做 `read_text` / `write_text`。
 
 ---
 
@@ -73,7 +73,7 @@ await backend.aupload_files([(soul_path, text.encode("utf-8"))])
 ### 3.1 纳入改造（须走 backend）
 
 | 类型 | 典型路径（示例，以实际 `workspace_dir` 拼接为准） |
-|------|--------------------------------------------------|
+| ------ | -------------------------------------------------- |
 | 引导模板 | `{workspace_dir}/AGENTS.md`、`BOOTSTRAP.md`、… |
 | Persona | `{workspace_dir}/SOUL.md` |
 | Skills | `{workspace_dir}/skills/<name>/SKILL.md` |
@@ -87,7 +87,7 @@ await backend.aupload_files([(soul_path, text.encode("utf-8"))])
 ### 3.2 记忆豁免（本期不强制改）
 
 | 类型 | 说明 |
-|------|------|
+| ------ | ------ |
 | `MEMORY.md` | 长期记忆 |
 | `daily/YYYY-MM-DD.md` | 日记忆；读已走 backend，删除暂可保留本地 `unlink` |
 | `sessions/*.jsonl` | 对话历史兜底 |
@@ -96,7 +96,7 @@ await backend.aupload_files([(soul_path, text.encode("utf-8"))])
 ### 3.3 不在范围
 
 - Expert library 内 skill 脚本（agent 运行时经 harness 工具执行）
-- `~/.octop/plugins/` 安装、`~/.octop/security/` tool guard
+- `~/.yyc3-pai/plugins/` 安装、`~/.yyc3-pai/security/` tool guard
 - Expert catalog  bundled 源码读取
 
 ---
@@ -106,7 +106,7 @@ await backend.aupload_files([(soul_path, text.encode("utf-8"))])
 ### 4.1 写路径（优先级最高）
 
 | 位置 | 现状 | 改造 |
-|------|------|------|
+| ------ | ------ | ------ |
 | `infra/agents/manager.py` `_seed_workspace` | `init_workspace(ws_dir)` 写本地 | `init_workspace(tmp_dir)` → 收集文件 → `backend.aupload_files`，path 为 `str(workspace_dir / rel)` |
 | `infra/agents/persona/` (SOUL / persona render) | `Path.write_text` | 改为 async，参数含 `backend`；`aupload_files([(str(workspace_dir / "SOUL.md"), ...)])` |
 | `infra/agents/manager.py` `_start_agent` | 调 `write_soul_md(workspace_dir=...)` | 先 `resolve_harness_backend`，再写 SOUL |
@@ -118,7 +118,7 @@ await backend.aupload_files([(soul_path, text.encode("utf-8"))])
 ### 4.2 读路径
 
 | 位置 | 现状 | 改造 |
-|------|------|------|
+| ------ | ------ | ------ |
 | `infra/agents/context_breakdown.py` | `_read_workspace_text(workspace_dir, name)` | 改为 `backend.aread(str(workspace_dir / name))`；`MEMORY.md` 可保留记忆豁免策略 |
 | `infra/agents/manager.py` `_bootstrap_pending` | 读本地 `BOOTSTRAP.md`、`.bootstrapped` | 改为 async，经 `backend.aread` / `exists` 判断 |
 | `api/routers/agents.py` / `experts.py` | 调 `_bootstrap_pending(workspace)` | 传入 backend |
@@ -127,7 +127,7 @@ await backend.aupload_files([(soul_path, text.encode("utf-8"))])
 ### 4.3 Gateway 与备份
 
 | 位置 | 现状 | 改造 |
-|------|------|------|
+| ------ | ------ | ------ |
 | `infra/gateway/backend_files.py` | 预览失败时 `Path.read_bytes` 兜底 | 去掉对 agent workspace staging 的静默 fallback；host 临时文件仍可先 upload 再读 backend |
 | `infra/backup/system_archive.py` | tar 打包本地 `agent_workspace` | 每 agent 使用 `export_workspace_zip(backend)` |
 | `infra/backup/workspace_archive.py` | replace 模式 `_clear_local_workspace` | 远程 replace 需列 backend 文件后覆盖；或文档警告 + 后续支持 delete |
@@ -156,14 +156,14 @@ create(agent)
 ```
 
 - 全程不对内容文件 `Path.write_text`。
-- `init_workspace=False`：避免 harness 再次写本地造成双轨；seed 由 Octop 经 backend 完成。
+- `init_workspace=False`：避免 harness 再次写本地造成双轨；seed 由 YYC3-Pai 经 backend 完成。
 
 ---
 
 ## 6. 明确例外
 
 | 场景 | 处理 |
-|------|------|
+| ------ | ------ |
 | **终端** `api/routers/terminal.py` | PTY cwd 仍为 `workspace_dir`；远程 backend 时 UI 禁用或提示「仅本地 backend」 |
 | **记忆删除** `agent_files.delete_daily_memory` | 暂保留本地 `unlink`；待 backend 支持 delete 后统一 |
 | **sessions JSONL** | 记忆豁免 |
@@ -190,7 +190,7 @@ create(agent)
 ## 8. PR 拆分
 
 | PR | 内容 | 风险 |
-|----|------|------|
+| ---- | ------ | ------ |
 | **PR-1** | 写路径：seed、soul、plugins、expert template；删本地双写 | 中 |
 | **PR-2** | 读路径：context_breakdown、bootstrap_pending | 低 |
 | **PR-3** | gateway 去 fallback、system backup 走 backend | 中 |
@@ -203,7 +203,7 @@ create(agent)
 ## 9. 测试计划
 
 | 类型 | 内容 |
-|------|------|
+| ------ | ------ |
 | 单元 | `FakeBackend` 记录 `aupload_files` 的 path 与 bytes；创建 agent 后断言 path 为 `workspace_dir` 下的绝对路径形式 |
 | 单元 | `_apply_expert_template` 不再调用 `Path.write_text` |
 | 单元 | `bootstrap_pending` 经 backend 判断 |
@@ -247,11 +247,11 @@ do not collapse host abs before calling BackendWorkspace.
 需要把 agent 的文件系统工具与 `execute` 隔离到 Docker 容器时，配置 harness `type: "docker"`（需 `octop-harness[docker]`，本机 Docker daemon 可用）。
 
 宿主 ``workspace_dir`` 在**创建专家时**写入 ``config_json.workspace_dir``（默认
-``{OCTOP_HOME}/agents/<agent_id>/``；创建时可覆盖）。**所有 backend 类型**共用这
+``{YYC3_PAI_HOME}/agents/<agent_id>/``；创建时可覆盖）。**所有 backend 类型**共用这
 一路径作为 harness ``HarnessAgentConfig.workspace_dir``：
 
 | Backend | 专家可见内容 | 宿主 ``workspace_dir`` |
-|---------|--------------|------------------------|
+| --------- | -------------- | ------------------------ |
 | ``local_shell`` / ``filesystem`` | 通常对齐该目录（或 ``root_dir``） | sessions / memory / checkpoints |
 | ``docker`` | 容器内**同名绝对路径**（不 bind-mount） | 同上 |
 | 对象存储等 | 远端对象；本地物化/缓存按 backend | 同上 |
@@ -259,7 +259,7 @@ do not collapse host abs before calling BackendWorkspace.
 自动压缩与 `/compact` 把被挤出的原文写到
 ``{artifacts_root}/conversation_history/{session_id}.md``。本地
 ``local_shell`` / ``filesystem`` 经 harness ``MountedCompositeBackend`` 把
-``artifacts_root`` 收到工作区（Octop：``.octop/conversation_history/``）。
+``artifacts_root`` 收到工作区（YYC3-Pai：``.octop/conversation_history/``）。
 ``docker`` / ``opensandbox`` / COS 等**没有**这层 wrap：offload 可能落到
 容器内 ``/conversation_history/``。自动压缩在写失败时仍继续摘要
 （``file_path=None``）；``/compact`` 写失败则整次失败，不改对话状态。
@@ -284,11 +284,11 @@ Harness 侧只认调用方传入的 ``workspace_dir``；Docker 默认把它镜�
 字段：
 
 | 字段 | 说明 |
-|------|------|
+| ------ | ------ |
 | `sandbox_scope` | `agent`（默认）/ `user` / `fixed` |
-| `sandbox_prefix` | 容器名前缀；Octop 默认注入 `octop_sandbox`；库默认 `sandbox` |
+| `sandbox_prefix` | 容器名前缀；YYC3-Pai 默认注入 `octop_sandbox`；库默认 `sandbox` |
 | `sandbox_id` | `fixed` 必填 |
-| `username` | `user` 用；缺省时 Octop 注入专家所有者用户名 |
+| `username` | `user` 用；缺省时 YYC3-Pai 注入专家所有者用户名 |
 | `previewable` | 仅影响 Admin「我的存储」浏览按钮；默认仅 `fixed` 为 true。专家工作区始终可预览 |
 | `volumes` | 用户自行配置的挂载，原样透传；**不**自动 named volume |
 
@@ -313,7 +313,7 @@ Harness 侧只认调用方传入的 ``workspace_dir``；Docker 默认把它镜�
 行为要点：
 
 - **同名路径、两处落盘（不自动挂载）**：
-  - 专家 ``workspace_dir``（创建时写入配置/库；Octop 默认 ``{OCTOP_HOME}/agents/<id>/``）：宿主上放 sessions / memory / checkpoints
+  - 专家 ``workspace_dir``（创建时写入配置/库；YYC3-Pai 默认 ``{YYC3_PAI_HOME}/agents/<id>/``）：宿主上放 sessions / memory / checkpoints
   - 容器内同一绝对路径：专家可见工作区（由传入的 ``workspace_dir`` 决定；可用 ``workspace_path`` 覆盖；皆无时回退 ``/workspace``）
 - **沙箱 FS**：`ls` / `read` / `write` / `execute` 都在容器内，经 Docker Python SDK 完成
 - **专家工作区**（专家页文件树 / SOUL.md 等）始终可预览；走 agent backend API（Docker 时即该专家对应容器内同名路径）
@@ -323,4 +323,3 @@ Harness 侧只认调用方传入的 ``workspace_dir``；Docker 默认把它镜�
 - Admin 启用 Docker 存储后端或点「测试可用性」时会自动拉取镜像
 - storage backend 浏览 API 支持 docker kind（`previewable` 时）；探测走 test id 沙箱
 - Admin「支持类型」页的 Docker 卡片可配置沙箱镜像；打开配置抽屉后可探测本机 Docker，并提供一键安装 / 复制脚本 / 安装提示词
-

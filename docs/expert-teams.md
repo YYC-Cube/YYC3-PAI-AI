@@ -7,7 +7,7 @@
 ### 身份与编制
 
 | # | 决策 |
-|---|------|
+| --- | ------ |
 | 1 | 成员仍是独立专家，可同时加入多个团队 |
 | 2 | 创建团队至少 2 个成员（不含主持人） |
 | 3 | 成员只能是普通专家，不能套团队 |
@@ -19,7 +19,7 @@
 ### 说话与调度
 
 | # | 决策 |
-|---|------|
+| --- | ------ |
 | 8 | 真群聊：成员气泡直接上时间线 |
 | 9 | 主持人只调度：寒暄/说明派工可短答；专业工作一律异步派给成员 |
 | 10 | `@` 只提示优先，不强制只派给被点名的人 |
@@ -33,7 +33,7 @@
 ### 会话、存储、通道、UI
 
 | # | 决策 |
-|---|------|
+| --- | ------ |
 | 17 | 房间 ID = 主持人 `thread_id`；成员 checkpoint = `主thread~成员id`；网关转播 + `speaker_agent_id` |
 | 18 | 各写各的工作区；团队准则/团体记忆只在主持人侧，派工时写进任务消息 |
 | 19 | 通道只绑主持人 |
@@ -47,7 +47,7 @@
 团队不是平行实体，而是 `agents.kind = team` 的特殊专家：
 
 | | 专家 (`kind=expert`) | 团队主持人 (`kind=team`) |
-|--|--|--|
+| -- | -- | -- |
 | 工作区 / checkpoint / 记忆 | 有 | 有（团队记忆根） |
 | 系统提示 | 专家模板 | 隐藏调度模板 + 运行时「先消化再改写」约束（用户不可见专家库） |
 | 工具 | 干活用的全套 | 轻量 + `agent_list` + 异步 `ask_agent` |
@@ -87,7 +87,7 @@ octop-harness 增加 `peer_invoke_mode: "sync" | "async" | "both"`（默认 `bot
 - `async`：只注入异步派工（发完即返回）
 - `both`：一个工具两个 mode
 
-Octop 普通专家设 `peer_invoke_mode=sync`（单聊：结果回工具）；团队主持人设 `async` 且 `team_peers` = 成员 id（群聊：上墙）。主持人自己的对话请求也会带上 `peer_invoke_mode=async`。在仍默认 `ask_agent mode=sync` 的运行时上，Octop 会把主持人对成员的 `call_peer` 改写成 inbox `submit_peer`，保证发完即返回。异步管道按 inbox / 房间走群聊双写，不按 `kind=team` 决定要不要上墙。
+YYC3-Pai 普通专家设 `peer_invoke_mode=sync`（单聊：结果回工具）；团队主持人设 `async` 且 `team_peers` = 成员 id（群聊：上墙）。主持人自己的对话请求也会带上 `peer_invoke_mode=async`。在仍默认 `ask_agent mode=sync` 的运行时上，YYC3-Pai 会把主持人对成员的 `call_peer` 改写成 inbox `submit_peer`，保证发完即返回。异步管道按 inbox / 房间走群聊双写，不按 `kind=team` 决定要不要上墙。
 
 inbox 按 callee 并发：同一成员串行，不同成员并行；主持人回叫按源 `thread_id` 串行。
 
@@ -95,7 +95,7 @@ inbox 按 callee 并发：同一成员串行，不同成员并行；主持人回
 
 成员被团队派工时，请求级覆盖 `peer_invoke_mode=sync` 且 `team_peers` 收窄为同事，禁止再异步往群里拉人。成员收到的 Human 是主持人改写后的任务说明书，不是用户原话；群聊记录（用户 / 主持人 / 已上墙成员）只作为 System 背景。成员 checkpoint 仍是 `主thread~成员id`。主持人系统提示会要求先消化再改写，禁止原样转发。
 
-### Octop 主持人装配
+### YYC3-Pai 主持人装配
 
 `_build_harness_config` 在 `kind=team` 时：
 
@@ -128,7 +128,7 @@ conversation_id = 主持人 thread_id
 ## HTTP
 
 | 方法 | 路径 | 说明 |
-|------|------|------|
+| ------ | ------ | ------ |
 | GET | `/api/teams` | 当前用户的团队（含成员摘要） |
 | POST | `/api/teams` | 创建主持人 + 至少 2 名成员 |
 | GET | `/api/teams/{team_id}` | 详情 |

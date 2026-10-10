@@ -1,16 +1,16 @@
-# Bridge（Octop ↔ Octop 实例桥）
+# Bridge（YYC3-Pai ↔ YYC3-Pai 实例桥）
 
-> 状态：实现中（Phase 0–3 骨架已落地）。命名与范围以本文为准；实现落在 `infra/bridge/`。  
+> 状态：实现中（Phase 0–3 骨架已落地）。命名与范围以本文为准；实现落在 `infra/bridge/`。
 > 与同机 Agent 互调无关：见 [agent-call-agent.md](./agent-call-agent.md)（`ask_agent` 不参与跨实例）。
 
-用户级连接另一台 Octop（云端或另一台本地），在本机 Dashboard 查看对端专家列表、按需拉取对话记录，并像选择本地专家一样与对端专家对话（对称：对端也可经同一桥访问本机）。对话只在**专家所在实例**执行；发起侧不落库完整历史。
+用户级连接另一台 YYC3-Pai（云端或另一台本地），在本机 Dashboard 查看对端专家列表、按需拉取对话记录，并像选择本地专家一样与对端专家对话（对称：对端也可经同一桥访问本机）。对话只在**专家所在实例**执行；发起侧不落库完整历史。
 
 ## 1. 需求结论
 
 | 项 | 结论 |
-|----|------|
+| ---- | ------ |
 | 连接粒度 | 用户级：地址 + 用户名 + 密码；密码加密存储便于自动重连 |
-| 多节点 | 同一用户可同时连接多个远程 Octop |
+| 多节点 | 同一用户可同时连接多个远程 YYC3-Pai |
 | 拓扑 | 两边均可主动建连；同一逻辑连接共用一个 `connection_id` |
 | 专家 | 在线拉取列表；影子入口；不复制 workspace；不安装为本地 runnable agent |
 | 可见范围 | 与该账号在对端本机可见范围一致（无额外「联邦可见」勾选） |
@@ -27,7 +27,7 @@
 
 ```
 ┌─────────────────────┐         Bridge WS（双向可发起）        ┌─────────────────────┐
-│ 本机 Octop          │◄─────────────────────────────────────►│ 对端 Octop          │
+│ 本机 YYC3-Pai       │◄─────────────────────────────────────►│ 对端 YYC3-Pai       │
 │                     │   HTTP 隧道 + turn 流式多路复用         │                     │
 │ Dashboard ──HTTP──► │                                       │ ◄──HTTP── Dashboard │
 │   localhost API     │                                       │   peer API          │
@@ -40,8 +40,8 @@
 └─────────────────────┘                                       └─────────────────────┘
 ```
 
-![图 2-1 总体架构：两台 Octop 经 Bridge WebSocket 互联](./assets/bridge-architecture.png)
-<!-- 生图建议：扁平化技术架构示意图，16:9。左侧一台服务器图标标「本机 Octop」，右侧标「对端 Octop」，中间一条加粗双向箭头标「Bridge WebSocket（双向可发起）」，细注「HTTP 隧道 + turn 流式多路复用」。两侧各自画出：Dashboard（浏览器仅连本机）、localhost/peer API、infra/bridge 模块、本地/对端 agent+harness。强调机机总线是独立 Bridge WS，不复用浏览器 Hub。现代 SaaS 蓝灰配色、等宽无衬线、留白充足。（注意：含精确文字的架构图建议用 Mermaid/Excalidraw 生成；AI 生图只作概念示意图，文字以图注补充） -->
+![图 2-1 总体架构：两台 YYC3-Pai 经 Bridge WebSocket 互联](./assets/bridge-architecture.png)
+<!-- 生图建议：扁平化技术架构示意图，16:9。左侧一台服务器图标标「本机 YYC3-Pai」，右侧标「对端 YYC3-Pai」，中间一条加粗双向箭头标「Bridge WebSocket（双向可发起）」，细注「HTTP 隧道 + turn 流式多路复用」。两侧各自画出：Dashboard（浏览器仅连本机）、localhost/peer API、infra/bridge 模块、本地/对端 agent+harness。强调机机总线是独立 Bridge WS，不复用浏览器 Hub。现代 SaaS 蓝灰配色、等宽无衬线、留白充足。（注意：含精确文字的架构图建议用 Mermaid/Excalidraw 生成；AI 生图只作概念示意图，文字以图注补充） -->
 
 - **Harness / GlobalProcessor** 保持单机语义；桥只负责把请求送到对端执行并把响应送回。
 - Dashboard 的 `WebSocketHub` 仅服务浏览器↔本机；**机机总线是独立的 Bridge WS**，不要复用 Hub。
@@ -50,7 +50,7 @@
 ## 3. 模块边界
 
 | 路径 | 职责 |
-|------|------|
+| ------ | ------ |
 | `infra/bridge/connections.py` | 连接 CRUD、加密凭证、`connection_id`、多节点 |
 | `infra/bridge/transport.py` | 出站 WS 客户端 + 入站 WS 端点；重连；同 `connection_id` 去重合并 |
 | `infra/bridge/http_tunnel.py` | 通用 `method/path/query/headers/body` ↔ 响应；分片、超时、取消 |
@@ -64,8 +64,7 @@
 
 「保存并连接」仅在登录 + Bridge WS `hello_ack` 成功后落库；失败回滚。管理 API 按连接所有者鉴权（登录用户即可管理自己的桥）。入站隧道允许 **agent 范围内** 的读写（聊天、工作区、定时任务、状态，以及个性化里标记为 limited 的工具 / 插件 / 渠道，含 `PATCH …/tool-settings` 与 `POST …/reload`），外加只读 composer：`GET /api/providers/resolved`、`GET /api/providers/active-model`、`GET /api/knowledge-bases`、`GET /api/knowledge-bases/capability`，以及 Chat dock 浏览器 viewer：`GET /api/browser/env-status`、`GET /api/browser/harness-sessions`、`POST /api/browser/sessions/{id}/handoff`。技能包、全局 ACP、连接器管理、知识库管理在 Dashboard 标为 peer-only，应在对端操作。管理 / 认证 / Bridge 控制面不入隧道。`history-migration` 仅本机处理。入站 hello 不得抢占他人 `connection_id`。旧入口 `/admin/advanced?tab=bridge` 会重定向到 `/bridge`。
 
-
-依赖：`api` → `infra/bridge` → 现有 `infra`（对端登录、对端执行 agents/history/upload）。  
+依赖：`api` → `infra/bridge` → 现有 `infra`（对端登录、对端执行 agents/history/upload）。
 禁止：`bridge` → `api/` / `cli/` / `launch.py`（peer turn / browser runner 由 `build_app` 注入）；禁止用 Dashboard Hub 做机机通道。
 
 ## 4. 连接与身份
@@ -86,7 +85,7 @@
 表名建议：`bridge_connections`。
 
 | 列 | 说明 |
-|----|------|
+| ---- | ------ |
 | `connection_id` | 双方一致的逻辑连接 id |
 | `owner_user_id` | 本机用户 |
 | `peer_base_url` | 对端地址 |
@@ -179,7 +178,7 @@
 ## 7. 与现有组件关系
 
 | 现有 | Bridge 中的角色 |
-|------|-----------------|
+| ------ | ----------------- |
 | Dashboard chat WS / `WebSocketHub` | 仅浏览器↔本机 |
 | `GlobalProcessor` / harness | 只在专家所在侧跑 |
 | `ask_agent` / Team | 不参与跨实例 |
@@ -190,7 +189,7 @@
 ## 8. 分期
 
 | 阶段 | 内容 |
-|------|------|
+| ------ | ------ |
 | Phase 0 | 连接 CRUD、密码加密、登录换 token、双边 WS、`connection_id` 握手与去重、隧道 ping/health |
 | Phase 1 | 远程分组列表、`bridge:*` 映射、经隧道拉 agents / history；Dashboard 远程入口 |
 | Phase 2 | 本机 chat WS ↔ 对端 turn 中继；临时会话；取消/断线 |
@@ -203,12 +202,12 @@
 2. **隧道面过大**：协议通用后需身份隔离 + 可选 path 策略 + 审计，避免误暴露危险管理 API。
 3. **双连接竞态**：两边同时 dial 同一 `connection_id` 必须合并。
 4. **流式对话**：不要把 turn 硬塞进模拟 HTTP SSE；HTTP 隧道与 turn 流分帧、同连接多路复用。
-5. **版本 skew**：握手带 octop / bridge protocol version；不兼容则拒绝并提示升级。
+5. **版本 skew**：握手带 yyc3-pai / bridge protocol version；不兼容则拒绝并提示升级。
 
 ## 10. 命名一览
 
 | 用途 | 命名 |
-|------|------|
+| ------ | ------ |
 | 包 | `octop.infra.bridge` |
 | HTTP 管理 API | `/api/bridge/...` |
 | 远程 agent id | `bridge:{connection_id}:{remote_agent_id}` |
