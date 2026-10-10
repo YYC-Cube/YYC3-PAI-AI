@@ -1,9 +1,0 @@
-packages:
-  - "."
-allowBuilds:
-  '@tailwindcss/oxide': false
-  esbuild: false
-  onnxruntime-node: false
-  protobufjs: false
-  puppeteer: false
-  sharp: false

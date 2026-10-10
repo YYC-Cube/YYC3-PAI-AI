@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  release-build:
+    name: "📦 Release Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt -r requirements-dev.txt build
+      - name: Final gates
+        run: |
+          ruff check .
+          pytest --cov-fail-under=80 -q
+      - name: Build artifacts
+        run: python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-dist
+          path: dist/
+
+  release-publish:
+    name: "🚀 GitHub Release + GHCR"
+    runs-on: ubuntu-latest
+    needs: release-build
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dist
+          path: dist/
+
+      - name: Generate changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.changelog.outputs.changelog }}
+          files: dist/*
+          generate_release_notes: true
+
+      - name: Push image to GHCR
+        uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+            ghcr.io/${{ github.repository }}:latest
+
+  release-notify:
+    name: "📣 Notify"
+    runs-on: ubuntu-latest
+    needs: release-publish
+    if: always()
+    steps:
+      - name: On failure → admin@
+        if: failure()
+        run: echo "Release FAILED for ${{ github.ref_name }} — notify admin@yanyucloud.com"
+      - name: On success → broadcast
+        if: success()
+        run: echo "Release ${{ github.ref_name }} published ✅ — announce via dev@yanyucloud.com"

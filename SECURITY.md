@@ -1,194 +1,28 @@
-# 安全政策
+# Security Policy
 
-## 🔒 安全承诺
+## Supported versions
 
-YYC³ AI-PAI 团队将用户安全和数据隐私视为最高优先级。我们致力于提供一个安全、可靠的AI编程助手环境。
+| Version | Supported |
+|---------|-----------|
+| latest release on `main` | ✅ |
+| older releases | best effort |
 
-## 📢 报告安全漏洞
+## Reporting a vulnerability
 
-我们发现安全问题时，请**不要**在公开的GitHub Issue中报告。请通过以下方式私密报告：
+**Please do not open a public GitHub issue for security vulnerabilities.**
 
-### 联系方式
+- **GitHub Security Advisory:** [Create advisory](https://github.com/YYC-Cube/YYC3-Pai/security/advisories/new)
+- **Email:** <admin@0379.email>
 
-- 📧 **Email**: security@0379.email
-- 🔑 **PGP Key**: [0xYYYYYYYY](./docs/security-pgp-key.asc) （可选）
-- ⏰ **响应时间**: 48小时内确认收到
+We aim to acknowledge reports within **3 business days** and provide a fix timeline within **7 business days** for confirmed issues.
 
-### 报告内容
+## Scope
 
-请在报告中包含：
+YYC3-Pai is a self-hosted control plane. Operators are responsible for:
 
-1. **漏洞类型** - 例如XSS、CSRF、SQL注入、信息泄露等
-2. **影响范围** - 受影响的版本和功能模块
-3. **复现步骤** - 详细的重现步骤（尽可能简化）
-4. **潜在危害** - 攻击者可能利用该漏洞造成的损害
-5. **修复建议** - 如果您有修复建议，请一并提供
+- Securing the host and network exposure of `pai run`
+- Rotating JWT secrets and admin credentials
+- Reviewing tool guard rules under `~/.yyc3-pai/security/tool_guard/`
+- Protecting LLM API keys and IM channel credentials
 
-### 响应流程
-
-```
-收到报告 → 确认(48h) → 初步评估(7天) → 修复开发(14天) → 安全审核(7天) → 发布补丁
-```
-
-| 阶段 | 时间框架 | 说明 |
-|------|---------|------|
-| 确认收到 | ≤ 48小时 | 确认收到并开始评估 |
-| 初步评估 | ≤ 7天 | 确定严重程度和范围 |
-| 修复开发 | ≤ 14天 | 开发和测试修复方案 |
-| 安全审核 | ≤ 7天 | 内部安全团队审核 |
-| 补丁发布 | 尽快 | 协调披露时间 |
-
-## 🎖️ 致谢计划
-
-我们认可并感谢帮助我们提高安全性的研究人员：
-
-### 致谢等级
-
-| 等级 | 描述 | 奖励 |
-|------|------|------|
-| 🔴 **Critical** | 远程代码执行、数据泄露 | $500 + Hall of Fame + 安全顾问认证 |
-| 🟠 **High** | 权限提升、身份绕过 | $200 + Hall of Fame |
-| 🟡 **Medium** | XSS、CSRF、信息泄露 | $100 + 公开致谢 |
-| 🟢 **Low** | 小问题、建议改进 | 公开致谢 + 贴纸 |
-
-### Hall of Fame
-
-<!-- 安全研究者将在此列出 -->
-*等待第一位安全研究者的贡献...*
-
-## 🔐 已知安全问题
-
-### 已修复问题
-
-| CVE编号 | 严重程度 | 发现日期 | 修复日期 | 描述 |
-|---------|---------|---------|---------|------|
-| N/A | - | - | - | 暂无已报告的安全问题 |
-
-### 当前监控
-
-我们持续监控以下安全领域：
-
-- [x] **依赖项漏洞** - 自动化Dependabot扫描
-- [x] **API密钥泄露** - GitLeaks预提交检查
-- [x] **XSS防护** - React内置转义 + CSP策略
-- [x] **CSRF保护** - Token验证机制
-- [ ] **WebAssembly安全** - WebGPU沙箱隔离（开发中）
-- [ ] **侧信道攻击** - 加密实现审计（规划中）
-
-## 🛡️ 安全架构
-
-### 数据加密
-
-```typescript
-// AES-256-GCM 端到端加密
-const encryption = {
-  algorithm: 'AES-256-GCM',
-  keyLength: 256,
-  ivLength: 12,
-  tagLength: 128,
-  keyDerivation: 'PBKDF2',
-  iterations: 600000, // OWASP推荐值
-}
-```
-
-### 本地优先架构
-
-```
-┌─────────────────────────────────────┐
-│           用户设备                   │
-│  ┌─────────┐  ┌──────────────────┐  │
-│  │ UI层     │  │  IndexedDB       │  │
-│  │ (React)  │→ │  (Dexie.js)      │  │
-│  └─────────┘  └──────────────────┘  │
-│         ↓ 加密                        │
-│  ┌────────────────────────────────┐  │
-│  │  Tauri Backend                 │  │
-│  │  (Rust Native)                 │  │
-│  └────────────────────────────────┘  │
-└─────────────────────────────────────┘
-          ↕ 仅同步元数据
-┌─────────────────────────────────────┐
-│        云端服务（可选）               │
-│  - CRDT协作服务器                    │
-│  - 备份存储                          │
-│  - 不接触明文数据                    │
-└─────────────────────────────────────┘
-```
-
-### 安全最佳实践
-
-#### 1. API密钥管理
-- ✅ 使用Tauri安全存储 (`@tauri/plugin-store`)
-- ✅ 运行时解密，内存中不留存
-- ✅ 支持自定义端点（自托管）
-- ❌ 从不在前端硬编码密钥
-
-#### 2. 数据持久化
-- ✅ 所有本地数据AES-256-GCM加密
-- ✅ 用户密码PBKDF2哈希（600,000次迭代）
-- ✅ 敏感操作需要二次确认
-- ✅ 会话超时自动锁定
-
-#### 3. 网络通信
-- ✅ 强制HTTPS/TLS 1.3
-- ✅ API请求签名验证
-- ✅ CORS严格白名单
-- ✅ Rate limiting限流
-
-#### 4. AI模型集成
-- ✅ API调用日志脱敏处理
-- ✅ 不发送完整源代码到云端
-- ✅ 用户可控的数据共享选项
-- ✅ 本地模型支持（Ollama/WebGPU）
-
-## 📋 安全 Checklist
-
-### 发布前检查
-
-- [ ] 所有依赖项已更新至最新安全版本
-- [ ] `npm audit` 无高危漏洞
-- [ ] 生产构建已启用Content Security Policy
-- [ ] 错误消息不含敏感信息
-- [ ] 日志中无API密钥或token泄露
-- [ ] 第三方库来源可信且已锁定版本
-- [ ] WebAssembly模块经过安全审核
-
-### 定期维护
-
-- [ ] 每周自动依赖更新检查
-- [ ] 每月安全扫描（SAST/DAST）
-- [ ] 每季度渗透测试
-- [ ] 年度安全架构评审
-
-## 🌍 合规性声明
-
-### GDPR合规（欧盟）
-- ✅ 用户数据完全本地存储
-- ✅ 数据可导出/删除功能
-- ✅ 最小化数据收集原则
-- ✅ 明确的隐私政策
-
-### CCPA合规（加州）
-- ✅ 知情权 - 用户知道收集了什么
-- ✅ 删除权 - 可清除所有数据
-- ✅ 选择退出权 - 可禁用遥测
-- ✅ 非歧视性服务
-
-### 中国网络安全法
-- ✅ 数据本地化存储
-- ✅ 重要数据分类分级
-- ✅ 安全事件应急响应机制
-- ✅ 用户实名制（可选）
-
-## 📚 相关资源
-
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [CWE弱点列表](https://cwe.mitre.org/)
-- [NVD国家漏洞数据库](https://nvd.nist.gov/)
-- [安全编码规范](https://wiki.sei.cmu.edu/confluence/display/seccode)
-
----
-
-**最后更新**: 2026-04-09  
-**下次审查**: 2026-07-09  
-**负责人**: YYC³ Security Team  
+See [docs/configuration.md](docs/configuration.md) for deployment hardening guidance.

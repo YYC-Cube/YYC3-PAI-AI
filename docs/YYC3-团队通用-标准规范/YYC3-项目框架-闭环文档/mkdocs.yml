@@ -1,0 +1,78 @@
+site_name: YYC³ · Generative AI Prompt Engineering
+site_description: "YANYUCLOUDCUBE 生成式人工智能提示词工程体系 — 00至13 全系列 465+ 文档 · Five Dimensions · Five-High/Five-Standard/Five-Transformation"
+site_author: "Yanyu Intelligent Technology Co., Ltd."
+site_url: "https://yanyucloudcube.github.io/YYC3-Prompt-Engineering"
+repo_url: "https://github.com/YanYuCloudCube/YYC3-Prompt-Engineering"
+repo_name: "YYC3-Prompt-Engineering"
+copyright: "© 2025-2026 言语（河南）智能科技有限公司 · ® YANYUCLOUDCUBE"
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: 切换深色 Switch to dark
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: 切换浅色 Switch to light
+  icon:
+    logo: material/lan
+  font:
+    text: Noto Sans SC
+    code: JetBrains Mono
+
+nav:
+  - 首页 Home: index.md
+  - 架构 Architecture: ARCHITECTURE.md
+  - CI/CD: CICD.md
+  - 标签规范 Labels: LABELS.md
+  - 发布流程 Release: RELEASE.md
+  - 风格指南 Style Guide: STYLE-GUIDE.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        # !!python/name tag 为 mkdocs 运行时解析，IDE 静态告警可忽略
+        # the !!python/name tag is resolved by mkdocs at runtime; IDE warning is a false positive
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: material/email
+      link: mailto:dev@yanyucloud.com
+      name: dev@yanyucloud.com
+  generator: false
+
+strict: true

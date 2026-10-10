@@ -1,0 +1,51 @@
+name: Security Scan
+
+# 依赖漏洞定期扫描：Python（pip-audit，读 uv.lock 导出）+ 前端（npm audit，生产依赖）。
+# 只在每周定时 + 手动触发，不在 PR 上跑 —— 代码级安全由 CodeQL 覆盖；
+# 传递依赖的历史漏洞不应阻塞功能 PR，本工作流红即告警，由维护者评估升级。
+on:
+  schedule:
+    # 每周一 04:00 北京时间（周日 20:00 UTC）
+    - cron: "0 20 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: pip-audit (Python deps)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Export locked dependencies
+        run: uv export --format requirements-txt --no-dev --no-emit-project --output-file requirements-audit.txt
+
+      - name: pip-audit
+        run: uvx pip-audit -r requirements-audit.txt
+
+  frontend:
+    name: npm audit (dashboard deps)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: npm audit (production deps, high+)
+        run: npm audit --omit=dev --audit-level=high

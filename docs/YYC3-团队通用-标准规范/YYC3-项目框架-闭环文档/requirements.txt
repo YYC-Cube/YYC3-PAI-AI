@@ -1,0 +1,12 @@
+# YYC³ · Runtime dependencies (dir 13 code examples)
+# 生成式人工智能提示词工程 · 代码示例运行依赖
+pydantic>=2.7,<3
+fastapi>=0.111,<1
+uvicorn[standard]>=0.30,<1
+httpx>=0.27,<1
+opentelemetry-sdk>=1.25,<2
+opentelemetry-exporter-otlp>=1.25,<2
+prometheus-client>=0.20,<1
+python-json-logger>=2.0,<4
+pyyaml>=6.0,<7
+tenacity>=8.3,<9

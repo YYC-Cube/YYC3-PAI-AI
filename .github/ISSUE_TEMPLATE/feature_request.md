@@ -1,55 +1,18 @@
 ---
-name: Feature Request
-about: 建议新功能或改进
-title: '[Feature]: '
-labels: ['enhancement', 'needs-discussion']
-assignees: []
+name: Feature request
+about: Propose an enhancement to YYC3-Pai
+title: "[feature] "
+labels: enhancement
 ---
 
-## ✨ 功能描述
+## Problem
 
-清晰简洁地描述你希望实现的功能。
+<!-- What user need or pain point are you addressing? -->
 
-## 🎯 使用场景
+## Proposed solution
 
-描述这个功能将解决什么问题，或在什么场景下会用到。
+<!-- How would the new behavior look? -->
 
-### 当前解决方案
+## Alternatives considered
 
-目前你是如何解决这个问题的？（如果有）
-
-## 📝 建议方案
-
-如果你有具体的实现想法，请详细描述：
-
-- **UI交互**: 功能在界面中如何呈现？
-- **用户流程**: 用户如何使用这个功能？
-- **技术考虑**: 是否有特殊的技术要求？
-
-## 🎨 设计参考
-
-如果有设计草图、参考应用或其他视觉参考，请附上：
-
-- [参考链接](URL)
-- ![设计草图](图片链接)
-
-## 🔄 替代方案
-
-你考虑过的其他替代方案或功能：
-
-## 📊 优先级评估
-
-请选择你认为的优先级：
-
-- [ ] 🔴 **P0 - 关键功能** - 阻碍核心使用场景
-- [ ] 🟠 **P1 - 重要功能** - 显著提升用户体验
-- [ ] 🟡 **P2 - 锦上添花** - 有则更好，无也不影响
-- [ ] 🟢 **P3 - 未来规划** - 长期愿景中的功能
-
-## 💡 附加信息
-
-关于此功能请求的其他补充说明：
-
-- [ ] 我愿意为实现此功能贡献代码
-- [ ] 我已阅读[贡献指南](../CONTRIBUTING.md)
-- [ ] 此功能符合项目的[路线图](./docs/P6-MVP功能拓展/)
+## Additional context

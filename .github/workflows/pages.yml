@@ -1,0 +1,40 @@
+name: Deploy Pages
+
+# Publishes the static site root (public/ → pai.yyc3.vip): brand landing
+# page, CNAME, and the family banner. Repo-side prerequisite: Settings →
+# Pages → Source = "GitHub Actions" (already configured).
+#
+# Triggers:
+#   - push to main touching public/**
+#   - manual workflow_dispatch
+
+on:
+  push:
+    branches: [main]
+    paths: ["public/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

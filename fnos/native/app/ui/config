@@ -1,0 +1,16 @@
+{
+    ".url": {
+        "octop-native.Application": {
+            "title": "YYC3-Pai",
+            "icon": "images/icon_{0}.png",
+            "type": "iframe",
+            "protocol": "http",
+            "port": "8089",
+            "url": "/",
+            "allUsers": true,
+            "control": {
+                "accessPerm": "readonly"
+            }
+        }
+    }
+}

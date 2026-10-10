@@ -1,0 +1,15 @@
+{
+  "fixed": {
+    "file_version": "0.9.26"
+  },
+  "info": {
+    "0000": {
+      "ProductVersion": "0.9.26",
+      "CompanyName": "YYC3-Pai",
+      "FileDescription": "YYC3-Pai desktop",
+      "LegalCopyright": "Copyright © 2026 YanYuCloudCube",
+      "ProductName": "YYC3-Pai",
+      "Comments": "YYC3-Pai desktop shell"
+    }
+  }
+}

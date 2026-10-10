@@ -1,526 +1,473 @@
-<!-- ==========================================================================
-     YYC³ AI-PAI
-     © 2026 YanYuCloudCube™. All rights reserved.
-     Intellectual Property & Trademark: YanYuCloudCube™
-     ========================================================================== -->
-
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./public/Family-001.png">
-    <img src="./public/Family-001.png" width="100%" alt="YYC³ AI-PAI — Words Initiate Quadrants, Language Serves as Core for Future" style="max-width: 896px;">
-  </picture>
+  <img src="public/yyc3-family.png" alt="YYC3-Pai Family" />
 </p>
 
-<div align="center">
+<p align="center">
+  <strong>A smarter, self-hosted AI assistant — multi-user, multi-agent.</strong>
+</p>
 
-# YYC³ AI-PAI · π
+<p align="center">
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/codeql.yml/badge.svg" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/releases"><img alt="Release" src="https://img.shields.io/github/v/release/YYC-Cube/YYC3-Pai?include_prereleases&label=release" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green" /></a>
+  <a href="https://www.python.org/downloads/"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12%2B-blue?logo=python&logoColor=white" /></a>
+  <img alt="Docker" src="https://img.shields.io/badge/docker-ghcr.io%2Fyyc--cube%2Fyyc3--pai-2496ED?logo=docker&logoColor=white" />
+  <a href="https://github.com/YYC-Cube/YYC3-Pai/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/YYC-Cube/YYC3-Pai?style=social" /></a>
+</p>
 
-> ***YanYuCloudCube™***
->
-> *言启象限 · 语枢未来*
->
-> **Words Initiate Quadrants, Language Serves as Core for Future**
->
-> *万象归元于云枢 · 深栈智启新纪元*
->
-> **All things converge in cloud pivot; Deep stacks ignite a new era of intelligence**
+<p align="center">
+  <a href="#-highlights">Highlights</a> ·
+  <a href="#-overview">Overview</a> ·
+  <a href="#-core-technology">Core Technology</a> ·
+  <a href="#-features">Features</a> ·
+  <a href="#-roadmap">Roadmap</a> ·
+  <a href="#-quick-start">Quick Start</a> ·
+  <a href="#-contents">Contents</a>
+</p>
 
-[![Release](https://img.shields.io/github/v/release/YYC-Cube/YYC3-PAI?style=flat-square&logo=github&color=blue)](https://github.com/YYC-Cube/YYC3-PAI/releases)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/YYC-Cube/YYC3-PAI/ci.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/YYC-Cube/YYC3-PAI/actions)
-[![License](https://img.shields.io/badge/license-MIT-yellow.svg?style=flat-square&logo=open-source-initiative&logoColor=white)](./LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6%2B-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.3%2B-61dafb?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-6.3%2B-646cff?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0%2B-06b6d4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square&logo=git&logoColor=white)](./CONTRIBUTING.md)
-
-[![Test Coverage](https://img.shields.io/badge/coverage-85%25-success?style=flat-square&logo=vitest&logoColor=white)](https://github.com/YYC-Cube/YYC3-PAI/actions)
-[![Node](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-9%2B-f69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
-[![Radix UI](https://img.shields.io/badge/Radix_UI-latest-9cf?style=flat-square&logo=radixui&logoColor=white)](https://www.radix-ui.com/)
-[![Code Size](https://img.shields.io/github/languages/code-size/YYC-Cube/YYC3-PAI?style=flat-square&color=purple)](https://github.com/YYC-Cube/YYC3-PAI)
-[![Last Commit](https://img.shields.io/github/last-commit/YYC-Cube/YYC3-PAI?style=flat-square&color=orange)](https://github.com/YYC-Cube/YYC3-PAI/commits/main)
-
-**🌐 [pai.yyc3.vip](https://pai.yyc3.vip)** · 📖 [文档](./docs) · 🚀 [快速开始](#-quick-start-快速开始) · 🤝 [贡献指南](./CONTRIBUTING.md) · 💬 [Discussions](https://github.com/YYC-Cube/YYC3-PAI/discussions)
-
-</div>
+<p align="center">
+  <b>English</b> · <a href="README_CN.md">中文</a>
+</p>
 
 ---
 
-## 📋 Table of Contents · 目录
+**YYC3-Pai (YYC π³)** is an open-source, self-hosted AI assistant maintained by [YanYuCloudCube](https://github.com/YYC-Cube). It's not just a tool — it's a digital assistant that can operate in parallel. Through its multi-agent architecture, it builds an intelligent environment that is both independent and collaborative for teams, families, and individuals. Best of all, it runs entirely on your machine — the fully self-hosted design means privacy is never a compromise, while single-process startup makes the powerful web console, CLI, and IM integrations readily accessible.
 
-| English | 中文 |
-|---------|------|
-| [✨ Features](#-features-核心特性) | [核心特性](#-features-核心特性) |
-| [🏗️ Architecture](#️-architecture-架构) | [架构](#️-architecture-架构) |
-| [🚀 Quick Start](#-quick-start-快速开始) | [快速开始](#-quick-start-快速开始) |
-| [📦 Tech Stack](#-tech-stack-技术栈) | [技术栈](#-tech-stack-技术栈) |
-| [📁 Project Structure](#-project-structure-项目结构) | [项目结构](#-project-structure-项目结构) |
-| [🧪 Testing](#-testing-测试) | [测试](#-testing-测试) |
-| [🔌 API](#-api-api文档) | [API文档](#-api-api文档) |
-| [📊 Performance](#-performance-性能指标) | [性能指标](#-performance-性能指标) |
-| [📚 Documentation](#-documentation-文档体系) | [文档体系](#-documentation-文档体系) |
-| [🤝 Contributing](#-contributing-贡献) | [贡献](#-contributing-贡献) |
-| [📄 License](#-license-许可证) | [许可证](#-license-许可证) |
+Chat through the Web Dashboard, Feishu, DingTalk, QQ, WeChat, Telegram, Discord, WeCom, or programmatic HTTP/SSE/WebSocket. Extend capabilities with the **expert library**, **Connectors** (OAuth + MCP), and **ACP** integration for IDE workflows.
 
----
+> YYC3-Pai is a hard fork of the upstream [Octop](https://github.com/TencentCloud/Octop) project. See [LICENSE](LICENSE) and the source history for upstream attribution.
 
-## ✨ Features · 核心特性
+## ✨ Highlights
 
-### 🤖 AI-Driven Development · AI驱动开发
+| | Feature | Description |
+| --- | --------- | ------------- |
+| 👥 | **Multi-user expert team** | One admin, shared household; built-in expert library and expert market — switch specialists per scenario |
+| 🤝 | **Expert sharing** | Publish experts and shared skill/sub-agent pools so teammates reuse proven setups instead of rebuilding them |
+| 🎭 | **MBTI personas** | 16 personality templates plus an interactive quiz — give each agent a distinct character |
+| 🎯 | **AgentTeams** *(Beta)* | A coordinator schedules multiple experts on multi-step work; [details](docs/expert-teams.md) |
+| 🔒 | **Security built-in** | JWT multi-user isolation, tool approval, shell command guardrails, and PII redaction — data stays local |
+| 🔌 | **Connector ecosystem** | Docs, Meeting, News and other connectors; OAuth and MCP gateway extend resource boundaries |
+| 💾 | **Pluggable workspace backends** | Local disk, Docker sandbox, PostgreSQL, or COS/S3 for agent files — separate from the control-plane DB |
+| 🧠 | **Portable memory** | Powered by YYC³ Memory (yyc3-memory); memory migrates with the workspace |
+| 📚 | **Knowledge base** | RAG over your documents; share corpora within a deployment and ground answers in your private data |
+| 🧩 | **Plugins** | Extend YYC3-Pai with third-party plugins; bundled plugins are seeded and toggled on demand |
+| ↔️ | **ACP bidirectional** | `pai acp` for IDE/terminal AI; delegate to OpenCode / Claude Code with permission gates |
+| 💻 | **Terminal AI+** | Interactive shell in the browser — AI-assisted command execution and troubleshooting |
+| 🌐 | **Browser AI+** | Headless Chromium sessions for web automation, screenshots, and remote browsing |
+| 🖥️ | **Remote desktop** | Live screen and input from the dashboard on Linux, Windows, and macOS — remote office work and GUI apps; one-click isolated desktop on headless Linux |
+| 🏠 | **Self-hosted** | Dashboard, CLI, IM channels, and cron in one `pai run` — all data under `~/.yyc3-pai/` |
 
-| English | 中文 |
-|---------|------|
-| Multi-model support — OpenAI, Claude, Zhipu, Qwen, DeepSeek, Ollama | 多模型支持 — 主流AI模型无缝集成 |
-| Context-aware code generation & completion | 基于上下文的智能代码补全与生成 |
-| Real-time code diagnostics & optimization suggestions | 实时代码质量检测与优化建议 |
-| Natural language to code | 自然语言编程 — 话说即代码 |
+## 📌 Overview
 
-### 🔐 Data Sovereignty · 数据主权
+YYC3-Pai is a self-hosted AI assistant platform for households and small teams. It runs a single process that serves a web dashboard, a CLI, IM channels (Feishu, DingTalk, QQ, WeChat, Telegram, Discord, WeCom, and more), and cron automation — all sharing one control-plane database under `~/.yyc3-pai/` (SQLite by default, file `yyc3-pai.db`; PostgreSQL optional).
 
-| English | 中文 |
-|---------|------|
-| **Local-first** — all data stored locally, full control | **本地优先** — 所有数据本地存储，完全掌控 |
-| **End-to-end encryption** — AES-256-GCM | **端到端加密** — AES-256-GCM 加密保护 |
-| **Zero-knowledge architecture** — server has no data access | **零知识架构** — 服务器无法访问用户数据 |
-| **Data portability** — import/export, zero lock-in | **数据可移植** — 支持导入导出，无锁定风险 |
-
-### 🚀 High Performance · 高性能
-
-- **Lightweight** — built with Vite + Tree-shaking, fast HMR
-- **Virtual scrolling** — smooth rendering for large datasets
-- **Incremental sync** — intelligent file sync, delta-only transfer
-- **LRU caching** — millisecond-level response
-
-### 🎨 Modern UI · 现代化界面
-
-- **Cyberpunk aesthetic** — unique visual design language
-- **Multi-theme** — built-in themes + full customization
-- **Responsive panels** — drag, split, merge, resize
-- **Keyboard-first** — complete shortcut support
-
-### 🔌 Extensible Ecosystem · 扩展生态
-
-- **Plugin system** — flexible plugin architecture
-- **MCP protocol** — Model Context Protocol support
-- **Open API** — complete API surface
-- **Webhook** — event-driven integration
-
----
-
-## 🏗️ Architecture · 架构
-
-### System Architecture · 系统架构
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           YYC³ AI-PAI · π                               │
-├─────────────────────────────────────────────────────────────────────────┤
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐         │
-│  │   UI Layer      │  │  State Layer    │  │  Service Layer  │         │
-│  │  React + Radix  │◄┤  Zustand + Immer │◄┤  AI · File · DB │         │
-│  │  Tailwind 4     │  │  Context        │  │  Sync · Crypto  │         │
-│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘         │
-│           │                    │                    │                   │
-│           ▼                    ▼                    ▼                   │
-│  ┌─────────────────────────────────────────────────────────────┐       │
-│  │                    Storage Layer                             │       │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐   │       │
-│  │  │  IndexedDB   │  │ localStorage │  │  File System     │   │       │
-│  │  │  (Dexie.js)  │  │  (Config)    │  │  (Tauri / Web)   │   │       │
-│  │  └──────────────┘  └──────────────┘  └──────────────────┘   │       │
-│  └─────────────────────────────────────────────────────────────┘       │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### AI Gateway Architecture · AI 网关架构
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         AI Model Gateway                                │
-├─────────────────────────────────────────────────────────────────────────┤
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐     │
-│  │ OpenAI   │ │ Claude   │ │ Zhipu    │ │ Qwen     │ │ Ollama   │     │
-│  │ GPT-4o   │ │ Claude 4 │ │ GLM-5    │ │ Qwen3-Max│ │ Local    │     │
-│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘     │
-│       │            │            │            │            │           │
-│       └────────────┴────────────┴─────┬──────┴────────────┘           │
-│                                       ▼                                │
-│                          ┌────────────────────┐                        │
-│                          │  Unified Adapter    │                        │
-│                          │  (统一适配层)        │                        │
-│                          └────────────────────┘                        │
-│                                       │                                │
-│                    ┌──────────────────┼──────────────────┐             │
-│                    ▼                  ▼                  ▼             │
-│           ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│           │  Cache Layer │  │ Rate Limiter │  │   Fallback   │         │
-│           └──────────────┘  └──────────────┘  └──────────────┘         │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🚀 Quick Start · 快速开始
-
-### Prerequisites · 环境要求
-
-| Dependency · 依赖 | Version · 版本 | Check · 验证 |
-|-------------------|---------------|--------------|
-| Node.js | >= 18.0.0 | `node -v` |
-| pnpm | >= 9.0.0 | `pnpm -v` |
-| Git | >= 2.30.0 | `git --version` |
-
-### Installation · 安装
-
-```bash
-# 1. Clone · 克隆仓库
-git clone https://github.com/YYC-Cube/YYC3-PAI.git
-cd YYC3-PAI
-
-# 2. Install dependencies · 安装依赖
-pnpm install
-
-# 3. Start dev server · 启动开发服务器
-pnpm dev
-# → http://localhost:3200
-
-# 4. Build for production · 构建生产版本
-pnpm build
-# → dist/
-```
-
-### Commands · 命令参考
-
-```bash
-# Development · 开发
-pnpm dev              # Start Vite dev server on :3200
-pnpm type-check       # TypeScript type checking
-
-# Build · 构建
-pnpm build            # Build production bundle + music manifest
-
-# Test · 测试
-pnpm test             # Run all tests
-pnpm test:coverage    # Run tests with coverage report
-
-# Code quality · 代码质量
-pnpm lint             # ESLint check
-pnpm lint:fix         # Auto-fix ESLint issues
-pnpm format           # Prettier formatting
-
-# Music manifest · 音乐库
-pnpm gen-music-manifest  # Regenerate music manifest
-```
-
----
-
-## 📦 Tech Stack · 技术栈
-
-| Category · 类别 | Technology · 技术 | Version · 版本 | Purpose · 用途 |
-|----------------|-------------------|---------------|----------------|
-| **Frontend** | React | 18.3+ | UI framework |
-| | TypeScript | 5.6+ | Type safety |
-| | Vite | 6.3+ | Build tool |
-| **State** | Zustand | 5.0+ | State management |
-| | Immer | 10.0+ | Immutable data |
-| **UI** | Radix UI | latest | Accessible components |
-| | Tailwind CSS | 4.0+ | Styling system |
-| | shadcn/ui | latest | Component library |
-| **Editor** | Monaco Editor | 0.55+ | Code editor |
-| | @tiptap | 3.24+ | Rich text editor |
-| **Storage** | IndexedDB (Dexie) | 4.0+ | Local database |
-| | localStorage | — | Config storage |
-| **AI** | OpenAI SDK | — | GPT-4o integration |
-| | Zhipu SDK | — | GLM-5 integration |
-| | Ollama | — | Local models |
-| **Audio** | Howler.js | 2.2+ | Audio engine |
-| | Web Audio API | — | Audio visualization |
-| **Testing** | Vitest | 4.x | Unit testing |
-| | Playwright | 1.58+ | E2E testing |
-| **Deploy** | GitHub Pages | — | Hosting |
-| | GitHub Actions | — | CI/CD |
-
----
-
-## 📁 Project Structure · 项目结构
-
-```
-YYC3-PAI/
-├── public/                         # Static assets · 静态资源
-│   ├── music/                      # Music library · 音乐库
-│   │   ├── My-music-A/            # 沫言 (10 tracks)
-│   │   ├── My-music-B/            # 沫语 (10 tracks)
-│   │   └── My-music-AB/           # 合唱 (5 tracks)
-│   ├── music-manifest.json         # Auto-generated manifest · 自动生成清单
-│   ├── Family-001.png              # Project hero image · 项目封面
-│   ├── yyc3-icons/                 # Multi-platform icons · 多平台图标
-│   └── icon.svg                    # Favicon
-├── scripts/
-│   └── generate-music-manifest.cjs # Music scanner · 音乐扫描脚本
-├── src/
-│   ├── app/
-│   │   ├── components/             # Page components · 页面组件
-│   │   │   ├── audio/             # Audio player components
-│   │   │   ├── ide/               # IDE components
-│   │   │   └── settings/          # Settings components
-│   │   ├── store/                  # State stores · 状态管理
-│   │   ├── services/              # Business services · 业务服务
-│   │   ├── hooks/                 # Custom hooks · 自定义 Hooks
-│   │   ├── utils/                 # Utilities · 工具函数
-│   │   │   ├── audio-engine.ts    # Audio engine · 音频引擎
-│   │   │   ├── model-router.ts    # AI model router · 模型路由
-│   │   │   └── storage-cleaner.ts # Storage manager · 存储管理
-│   │   ├── i18n/                  # Internationalization · 国际化
-│   │   └── types/                 # Type definitions · 类型定义
-│   ├── components/                 # Shared components · 共享组件
-│   │   └── ui/                    # Base UI components
-│   ├── styles/                     # Global styles · 全局样式
-│   ├── types/                      # Global types · 全局类型
-│   └── workers/                    # Web Workers
-├── docs/                           # Documentation · 文档
-│   └── [project documentation]
-├── e2e/                            # E2E tests · 端到端测试
-├── .github/
-│   └── workflows/
-│       └── ci.yml                 # CI/CD pipeline
-├── CNAME                           # Custom domain · 自定义域名
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── README.md
-```
-
----
-
-## 🧪 Testing · 测试
-
-### Coverage · 覆盖率
-
-| Type · 类型 | Current · 当前 | Target · 目标 |
-|-------------|---------------|--------------|
-| Statements · 语句 | 85%+ | 80% |
-| Branches · 分支 | 75%+ | 70% |
-| Functions · 函数 | 90%+ | 85% |
-| Lines · 行 | 85%+ | 80% |
-
-### Run Tests · 运行测试
-
-```bash
-# All tests · 全部测试
-pnpm test
-
-# Unit tests · 单元测试
-pnpm vitest run
-
-# With coverage · 带覆盖率
-pnpm test:coverage
-
-# E2E tests · 端到端测试
-pnpm test:e2e
-```
-
----
-
-## 🔌 API · API文档
+> YYC3-Pai's design goal: keep every conversation, workspace, and credential on your own machine, while giving each user a personal team of specialized agents they can switch between per task.
 
 <details>
-<summary><b>📁 File System · 文件系统</b></summary>
+<summary>What can you do with YYC3-Pai</summary>
 
-```typescript
-// Read file · 读取文件
-const content = await fileSystem.readFile('/path/to/file.ts')
-
-// Write file · 写入文件
-await fileSystem.writeFile('/path/to/file.ts', content)
-
-// Watch file changes · 监听文件变化
-fileSystem.watch('/path/to/dir', (event, path) => {
-  console.log(`${event}: ${path}`)
-})
-```
+- **Personal assistant** — let a dedicated agent write weekly reports, organize notes, and manage your schedule; memory persists with the workspace.
+- **Family sharing** — one admin account, the whole household; assign different agents and experts per member; share experts and knowledge bases when useful.
+- **Team helper** — AgentTeams or parallel agents, bridging Feishu / DingTalk / WeCom / WeChat to route tasks into group chats.
+- **Developer boost** — delegate coding tasks to OpenCode / Claude Code via ACP, or troubleshoot from the terminal with AI assistance.
+- **Web automation** — use Browser AI+ and remote desktop for forms, screenshots, and GUI apps.
+- **Scheduled tasks** — configure cron in natural language so the agent pushes or runs jobs on time every day.
 
 </details>
 
-<details>
-<summary><b>🤖 AI Services · AI服务</b></summary>
+## 🧠 Core Technology
 
-```typescript
-// Code generation · 代码生成
-const result = await aiService.generateCode({
-  prompt: 'Create a React component',
-  language: 'typescript',
-  context: currentFile
-})
+| Layer | Technology |
+| ------- | ----------- |
+| **Language** | Python 3.12+ |
+| **Web framework** | FastAPI + uvicorn |
+| **Agent runtime** | YYC³ Harness (yyc3-harness) |
+| **Gateway** | YYC³ Gateway (yyc3-gateway) |
+| **Control plane DB** | SQLite (WAL, default) or PostgreSQL (optional) |
+| **Frontend** | React 18 + TypeScript + Vite |
+| **Scheduling** | APScheduler |
+| **ACP** | agent-client-protocol |
+| **Build / quality** | hatchling · ruff · mypy · pytest |
 
-// Code analysis · 代码分析
-const analysis = await aiService.analyzeCode({
-  code: sourceCode,
-  language: 'typescript'
-})
+YYC3-Pai is built on the YYC³ Harness stack — a set of focused runtimes it composes into one process:
 
-// Chat completion · 对话补全
-const response = await aiService.chat({
-  messages: [{ role: 'user', content: 'Optimize this code' }],
-  model: 'gpt-4o'
-})
-```
+- **YYC³ Harness (yyc3-harness)** — Agent runtime: model routing, tools, skills, and conversation checkpointing.
+- **YYC³ Gateway (yyc3-gateway)** — multi-platform IM channel bridge that normalizes incoming messages into a single processing pipeline.
+- **YYC³ Memory (yyc3-memory)** — hierarchical recall with full-text search, so an agent's memory travels with its workspace.
+- **YYC³ Browser (yyc3-browser)** — CDP-based browser automation with persistent profiles for web tasks.
 
-</details>
+Instead of an external queue or message broker, YYC3-Pai routes every surface — Web UI, IM, and cron — through one in-process processor. The result is a single, restart-safe process whose entire state is rebuilt from the control-plane database on boot (local SQLite by default; PostgreSQL optional).
 
-<details>
-<summary><b>💾 Data Storage · 数据存储</b></summary>
+## 🤔 Features
 
-```typescript
-// IndexedDB operations · IndexedDB 操作
-const db = new Dexie('YYC3Database')
-await db.entries.add({
-  id: 'entry-1',
-  path: '/path/to/file',
-  content: '...',
-  metadata: { ... }
-})
+### Server & auth
 
-// Data export · 数据导出
-const blob = await portabilityManager.exportData({
-  format: 'json',
-  includeEncrypted: true,
-  compress: true
-})
+- Multi-user JWT authentication with admin role
+- First-run setup wizard (`pai init`)
+- Interactive API docs at `/api/docs` (Scalar)
 
-// Data import · 数据导入
-await portabilityManager.importData(file, passphrase)
-```
+### Experts
 
-</details>
+- Multiple experts per user; each has its own workspace, providers, channels, and cron
+- 16 MBTI persona templates + custom system prompt
+- Expert library scanned at boot (`infra/agents/experts/library/`); expert market and in-deployment expert sharing
+- **AgentTeams** *(Beta)* — coordinator + member experts for multi-step tasks ([docs/expert-teams.md](docs/expert-teams.md))
+- Workspace backends (expert files): local disk, Docker sandbox, PostgreSQL, COS/S3, and other remote stores — distinct from the control-plane database
 
-<details>
-<summary><b>🎵 Audio Engine · 音频引擎</b></summary>
+### Channels & automation
 
-```typescript
-// Initialize music library · 初始化音乐库
-const engine = getAudioEngine()
-await engine.initializeMusicLibrary()
+- IM channels: Feishu, DingTalk, QQ, WeChat, Telegram, Discord, WeCom, and more
+- Proactive cron jobs with natural-language and slash-command triggers
+- Unified message processing across Web UI, IM, and cron surfaces
 
-// Play · 播放
-engine.play('track-id')
+### Surfaces
 
-// Seek · 跳转
-engine.seek(30) // seconds
+- **Web dashboard** — chat, experts / teams, connectors, channels, cron, knowledge, plugins, settings
+- **CLI** — `pai run`, `pai chats`, `pai acp`, admin commands
+- **HTTP/SSE/WebSocket API** — full programmatic access
+- **Remote desktop** — dashboard control of the host desktop session
 
-// Volume · 音量
-engine.setMusicVolume(70)  // 0-100
+### Knowledge & plugins
 
-// Subscribe to state · 订阅状态
-engine.subscribe((state) => {
-  console.log(state.currentTime, state.isPlaying)
-})
-```
+- **Knowledge base** — RAG over your documents; optional sharing within the same deployment
+- **Plugins** — install and manage third-party plugins (`pai plugin`); bundled plugins are seeded and toggled on demand from the dashboard
 
-</details>
+### ACP (Agent Client Protocol)
 
----
+YYC3-Pai supports ACP in two directions:
 
-## 📊 Performance · 性能指标
+1. **Inbound** — external tools use **your** YYC3-Pai agent
 
-| Metric · 指标 | Target · 目标 | Current · 当前 |
-|--------------|--------------|---------------|
-| First Paint · 首屏加载 | < 2s | ~1.5s |
-| Page Switch · 页面切换 | < 100ms | ~80ms |
-| Data Load · 数据加载 | < 500ms | ~350ms |
-| Memory · 内存占用 | < 500MB | ~380MB |
-| CPU Usage · CPU使用率 | < 30% | ~22% |
-| Bundle Size · 包体积 | < 5MB | ~3.5MB (gzip) |
+   ```bash
+   pai acp --agent main   # stdio ACP server for Zed, OpenCode, …
+   ```
 
----
+2. **Outbound** — YYC3-Pai delegates to external coding agents
+   - Dashboard → **ACP** (`/acp`): configure runners (global per user)
+   - Enable **acp_runner** per agent, then delegate in chat
 
-## 📚 Documentation · 文档体系
+Built-in outbound runners include OpenCode, CodeBuddy, Claude Code, and Codex.
 
-### Open-Source Standards · 开源标准文件
+Full setup: **[docs/acp.md](docs/acp.md)**.
 
-| File · 文件 | Status · 状态 | Description · 说明 |
-|------------|-------------|------------------|
-| ✅ [LICENSE](./LICENSE) | MIT v1.0 | Open-source license · 开源许可证 |
-| ✅ [CONTRIBUTING.md](./CONTRIBUTING.md) | v1.0 | Contribution guide · 贡献指南 |
-| ✅ [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) | v1.0 | Code of conduct · 行为准则 |
-| ✅ [SECURITY.md](./SECURITY.md) | v1.0 | Security policy · 安全政策 |
-| ✅ [SUPPORT.md](./SUPPORT.md) | v1.0 | Support channels · 支持渠道 |
-| ✅ [CHANGELOG.md](./CHANGELOG.md) | v1.0.0 | Version changelog · 更新日志 |
-| ✅ [.github/ISSUE_TEMPLATE](./.github/ISSUE_TEMPLATE/) | 2 templates | Bug report & Feature request |
-| ✅ [.github/PULL_REQUEST_TEMPLATE.md](./.github/PULL_REQUEST_TEMPLATE.md) | v1.0 | PR template |
-| ✅ [.github/workflows/ci.yml](./.github/workflows/ci.yml) | v1.0 | CI/CD pipeline |
+## 🧭 Roadmap
 
-### Full Documentation Index · 完整文档索引
+Here are mid-to-long term plans:
 
-| Document · 文档 | Description · 说明 | Link · 链接 |
-|----------------|-------------------|------------|
-| 📘 项目总览 · Overview | Architecture, features, quick start | [README](./README.md) |
-| 📗 核心架构 · Core Arch | Technical design, storage, building | [P0-核心架构](./docs/P0-核心架构/) |
-| 📙 功能说明 · Features | AI, editor, state management | [P1-核心功能](./docs/P1-核心功能/) |
-| 📒 高级特性 · Advanced | Collaboration, plugins, database | [P2-高级功能](./docs/P2-高级功能/) |
-| 🎵 音乐库 · Music Lib | 25 original tracks | [MUSIC-LIBRARY-INDEX.md](./public/MUSIC-LIBRARY-INDEX.md) |
+**Shipped**
 
----
+- [x] **Shared resource pool** — a central pool of skills and sub-agents that any user can drop into a new expert without rebuilding from scratch.
+- [x] **Expert sharing** — publish your experts to other users in the same deployment, so good configurations are reused instead of recreated.
 
-## 🤝 Contributing · 贡献
+**In progress**
 
-We welcome all forms of contribution! See [CONTRIBUTING.md](./CONTRIBUTING.md) for full details.
+- [ ] **AgentTeams** *(Beta)* — let one coordinator autonomously schedule and orchestrate multiple experts to tackle multi-step tasks.
+- [ ] **Self-evolution** — distill conversations into reusable skills, so the assistant grows with you.
 
-我们欢迎所有形式的贡献！详见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+**Planned**
 
-### Quick Guide · 快速指南
+- [ ] **Browser & terminal polishing** — browser workflow *recording* (capture and replay as a skill) and a more capable terminal AI assistant.
+- [ ] **Project** — project-scoped workspaces that group agents, files, and conversations around a shared goal.
+- [ ] **Cloud–edge continuum** — run YYC3-Pai locally while offloading selected tasks to the cloud, so light work stays on-device and heavier jobs use remote capacity when you need it.
+- [ ] **Conversational control plane** — deepen YYC3-Pai's own skills so chat can cover the full dashboard surface: create experts, wire channels, manage knowledge bases, and scaffold plugins end-to-end.
+
+This roadmap may shift as the project grows; treat it as indicative only.
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **macOS / Linux / Windows**
+- [uv](https://docs.astral.sh/uv/) and Python 3.12+
+- A modern multi-core CPU with a few GB of RAM for the process plus model/embedding caches; enough disk for the database, agent workspaces, and document corpora
+
+### 1. Install from source
 
 ```bash
-# 1. Fork the repo · Fork 仓库
-# 2. Create branch · 创建分支
-git checkout -b feature/amazing-feature
-
-# 3. Make changes · 修改代码
-pnpm dev
-
-# 4. Run tests · 运行测试
-pnpm test && pnpm lint && pnpm type-check
-
-# 5. Commit · 提交 (遵循 Conventional Commits)
-git commit -m 'feat: add amazing feature'
-
-# 6. Push & PR
-git push origin feature/amazing-feature
+git clone https://github.com/YYC-Cube/YYC3-Pai.git
+cd YYC3-Pai
+uv sync                       # provision an isolated venv and install dependencies
 ```
 
----
+Optional extras (local ONNX embedding models):
 
-## 📄 License · 许可证
-
-<div align="center">
-
-```
-MIT License
-
-Copyright (c) 2026 YanYuCloudCube™
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+```bash
+uv sync --extra local-embedding
 ```
 
----
+For browser automation, install Chromium:
 
-**YYC³ AI-PAI** © 2026 **YanYuCloudCube™**
+```bash
+uv run playwright install chromium
+```
 
-**All rights reserved. · 版权所有**
+### 2. Initialize
 
-**Trademark Notice:** *YanYuCloudCube™* and the YYC³ logo are trademarks of YanYuCloudCube Team.
+```bash
+uv run pai init
+```
 
-*言启象限 · 语枢未来*
-*Words Initiate Quadrants, Language Serves as Core for Future*
+The interactive wizard creates the SQLite database, JWT secret, and first admin account under `~/.yyc3-pai/`.
 
-**🌐 [pai.yyc3.vip](https://pai.yyc3.vip)** · 📧 [admin@0379.email](mailto:admin@0379.email) · 🐛 [Issues](https://github.com/YYC-Cube/YYC3-PAI/issues)
+### 3. Run
 
-</div>
+```bash
+# Foreground (API + Web dashboard)
+uv run pai run
+
+# Custom host / port
+uv run pai run --host 0.0.0.0 --port 8088
+
+# Register as a system service (systemd / launchd / Windows service)
+uv run pai service start
+```
+
+Open **<http://127.0.0.1:8088>**. The interactive setup asks you to choose a password (≥8 characters, letters and digits).
+
+### Docker (recommended for production)
+
+```bash
+# Build and start
+docker compose -f docker/docker-compose.yml up -d
+```
+
+Open `http://localhost:8088`. First boot creates the admin account and writes the credentials to the container data volume. Set `YYC3_DEFAULT_PASSWORD` to pin the first-run password; unset a strong random password is generated. Override the username via `YYC3_ADMIN_USERNAME`.
+
+> **Password policy:** at least 8 characters with letters and digits.
+
+| Variable | Default | Description |
+| ---------- | --------- | ------------- |
+| `YYC3_PORT` | `8088` | HTTP listen port |
+| `YYC3_DEFAULT_PASSWORD` | *(unset)* | First-run admin password (Docker bootstrap). Unset = random password written to the data volume |
+| `YYC3_ADMIN_USERNAME` | `admin` | First-run admin username |
+| `YYC3_PAI_HOME` | `~/.yyc3-pai` | Data root (compose bind mount) |
+
+Environment variables use the `YYC3_` prefix; legacy `OCTOP_*` variables remain supported as a fallback. See [`.env.example`](.env.example) for the full list.
+
+## 📑 Contents
+
+- [Highlights](#-highlights)
+- [Overview](#-overview)
+- [Core Technology](#-core-technology)
+- [Features](#-features)
+- [Roadmap](#-roadmap)
+- [Quick Start](#-quick-start)
+- **Architecture & Dev**
+  - [Configuration](#️-configuration)
+  - [CLI reference](#-cli-reference)
+  - [Data directory](#-data-directory)
+  - [Architecture](#-architecture)
+  - [Development](#-development)
+- **Project Info**
+  - [Security & privacy](#-security--privacy)
+  - [Contributing](#-contributing)
+  - [Changelog](#-changelog)
+  - [Related projects](#-related-projects)
+  - [License](#-license)
+
+### 🗂️ Documentation center
+
+| | Doc | What's inside |
+| --- | ----- | --------------- |
+| 🏗️ | [Architecture](docs/architecture.md) | Single-process model, module map, boot sequence |
+| ⚙️ | [Configuration](docs/configuration.md) | `config.json`, env vars, database backends, TLS |
+| ⌨️ | [CLI reference](docs/cli.md) | Every `pai` subcommand with examples |
+| 🔌 | [API](docs/api.md) | HTTP / SSE / WebSocket endpoints behind `/api` |
+| 💬 | [User guide](docs/user-guide.md) | Dashboard walkthrough, step by step |
+| 🎭 | [Personas](docs/personas.md) | MBTI templates and expert personas |
+| 🤝 | [Expert teams](docs/expert-teams.md) | AgentTeams coordinator / member design |
+| 🔗 | [ACP](docs/acp.md) | Bidirectional IDE & coding-agent integration |
+| 🌉 | [Bridge](docs/bridge.md) | Link two instances for remote experts |
+| 📡 | [Workspace file I/O](docs/agent-backend-file-io.md) | Storage backends, Docker sandbox, path rules |
+| 🧠 | [Memory slim](docs/memory-slim.md) | Shrink agent memory safely |
+| 🔐 | [LDAP](docs/ldap.md) | Directory login & provisioning |
+| 📻 | [Discord channel](docs/discord-channel.md) | Bot setup & testing |
+| 📚 | [Versioned history](docs/versioned-history.md) | Conversation archive internals |
+
+## ⚙️ Configuration
+
+All runtime state lives in `~/.yyc3-pai/`. Manage it via CLI or edit files directly.
+
+```bash
+# LLM providers and models
+pai models
+pai provider list
+
+# IM channels
+pai channel list
+
+# Skills (per agent)
+pai skills list --agent main
+
+# Cron jobs
+pai cron list
+pai cron create --help
+
+# Users (admin)
+pai user list
+```
+
+### Supported LLM providers
+
+OpenAI-compatible APIs, DashScope (Qwen), Ollama, and other presets — configure per agent in the dashboard or via `pai provider`.
+
+### Supported channels
+
+| Channel | Credentials |
+| --------- | ------------- |
+| **Feishu** | App ID, App Secret |
+| **DingTalk** | App Key, App Secret |
+| **QQ** | Bot AppID, Token |
+| **WeChat** | QR bind / account credentials; [CLI](docs/cli.md) |
+| **Telegram** | Bot Token |
+| **Discord** | Bot Token; optional channel/DM allowlists; [setup and testing](docs/discord-channel.md) |
+| **WeCom** | Corp ID, Agent Secret |
+| **Web Dashboard** | Enabled by default |
+
+## 📖 CLI reference
+
+| Command | Description |
+| --------- | ------------- |
+| `pai init` | Bootstrap `~/.yyc3-pai/` (DB, admin, JWT secret) |
+| `pai run` | Start YYC3-Pai in the foreground |
+| `pai service start` | Install and start as a system service |
+| `pai service stop` | Stop the system service |
+| `pai agent` | Create, list, start/stop agents |
+| `pai channel` | Install and manage IM channels |
+| `pai chats` | REPL and session management |
+| `pai acp` | Stdio ACP server for IDE integration |
+| `pai cron` | Manage scheduled tasks |
+| `pai models` | Provider presets and model resolution |
+| `pai skills` | Enable/disable per-agent skills |
+| `pai plugin` | Install and manage third-party plugins |
+| `pai backup` | Export / restore backups |
+| `pai clean` | Remove CLI state or wipe `~/.yyc3-pai/` |
+| `pai memory slim [--agent ID]` | Back up and slim SQLite memory through the running host. [Details](docs/memory-slim.md) |
+| `pai update` | Check for and install updates |
+
+Full reference: **[docs/cli.md](docs/cli.md)**.
+
+## 🖥️ Web dashboard
+
+After `pai run`, open **<http://127.0.0.1:8088>**.
+
+- **Chat** — real-time conversation with experts and teams
+- **Experts** — create experts, pick templates / MBTI personas, share or publish experts, configure providers
+- **AgentTeams** *(Beta)* — coordinator + member experts for multi-step work
+- **Connectors** — OAuth apps and MCP gateways
+- **Channels** — IM platform setup
+- **Cron** — visual cron job management
+- **Knowledge base** — manage document corpora, semantic retrieval, and in-deployment sharing
+- **Plugins** — install, enable, and configure plugins
+- **Remote desktop** — live screen and input from the dashboard
+- **ACP** — configure outbound coding-agent runners
+- **Settings** — users, security, TLS, system
+
+Interactive API docs: **<http://127.0.0.1:8088/api/docs>** (Scalar).
+
+## 📁 Data directory
+
+```
+~/.yyc3-pai/                       ← data root
+├── config.json                    # process config (optional database section)
+├── yyc3-pai.db                    # SQLite — users, agents, channels, cron, …
+├── secrets/                       # JWT secret, channel tokens
+├── agents/<agent_id>/             # per-agent workspace (SOUL.md, skills, …)
+├── security/tool_guard/           # shell command allow/deny rules
+├── logs/                          # runtime logs
+├── env                            # global environment variables
+└── cli_state.json                 # pinned CLI user / agent
+```
+
+The control plane can also use PostgreSQL — set `database` in `config.json`, via `YYC3_DATABASE_*`, or the first-run wizard. With PostgreSQL, agent memory reuses the same DSN by default (per-agent schema); to keep file-based memory, set `"memory": { "backend": { "type": "sqlite" } }` in the agent config. See [docs/configuration.md](docs/configuration.md) and [docs/adr/002-database-backends.md](docs/adr/002-database-backends.md).
+
+## 🏗️ Architecture
+
+```
+OctopServer
+ ├─ DatabasePool            SQLite (WAL) or PostgreSQL
+ ├─ SharedServices          DI root — every repo + config
+ ├─ ExpertCatalog           scans agents/experts/library/ at boot
+ ├─ UserManager
+ │   └─ HarnessAgentManager (per user)
+ │       └─ AgentRuntime (per agent)
+ │           ├─ HarnessAgent      Agent runtime (yyc3-harness)
+ │           ├─ HarnessProcessor  IM / UI / cron entry point
+ │           ├─ ChannelManager    IM connections (yyc3-gateway)
+ │           └─ CronManager       APScheduler
+ └─ FastAPI app (uvicorn)
+```
+
+Single process. Restart rebuilds state from the control-plane database (local SQLite by default; PostgreSQL optional). Internal class/module names such as `OctopServer` and the `octop` package are kept as implementation identifiers.
+
+See [docs/architecture.md](docs/architecture.md), [docs/adr/001-single-process-model.md](docs/adr/001-single-process-model.md), and [docs/adr/002-database-backends.md](docs/adr/002-database-backends.md).
+
+### Project layout
+
+```
+src/octop/
+  config.py    env-var config
+  launch.py    OctopServer boot + uvicorn
+  infra/       business core (agents, gateway, cron, db, users, …)
+  api/         HTTP layer — FastAPI app, routers, JWT, SSE
+  cli/         CLI layer — Click commands
+  dashboard/   built React SPA (wheel artifact)
+
+dashboard/     frontend source (Vite) — edit here, run make build-frontend
+docker/        Docker Compose, entrypoint, build & deploy scripts
+tests/         unit/ + integration/
+```
+
+## 🛠️ Development
+
+**Prerequisites:** Python 3.12+, Node 18+, [uv](https://docs.astral.sh/uv/)
+
+```bash
+# Backend
+make install          # pip install -e ".[dev]"
+make all              # format-all + lint + typecheck + test (ship bar)
+
+# Frontend (separate terminal)
+make dev-frontend     # Vite dev server
+make build-frontend   # production build → src/octop/dashboard/
+cd dashboard && npx tsc -b
+```
+
+Individual targets: `make test`, `make lint`, `make typecheck`, `make format`.
+
+## 🔒 Security & privacy
+
+- **Local-first**: Config, chats, workspaces, and credentials live under `~/.yyc3-pai/` on your machine.
+- **Multi-user isolation**: JWT auth with per-user agents and workspaces.
+- **PII redaction & tool approval**: sensitive data is redacted before it leaves the workspace, and risky tools or shell commands require explicit approval under the guardrail rules.
+- **Tool guardrails**: User-editable shell command rules under `~/.yyc3-pai/security/tool_guard/`.
+- **No vendor lock-in**: Swap LLM providers, storage backends, and channels without rewriting agents.
+
+## 🤝 Contributing
+
+Contributions are welcome:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Run `make all` before submitting
+4. Open a Pull Request
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide. Security issues: [SECURITY.md](SECURITY.md). Module boundaries and coding conventions: [AGENTS.md](AGENTS.md).
+
+## 📋 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
+## 🔗 Related projects
+
+| Project | Description |
+| --------- | ------------- |
+| YYC³ Harness (yyc3-harness) | Agent runtime — model routing, tools, skills, checkpointing |
+| YYC³ Gateway (yyc3-gateway) | Multi-platform IM channel bridge |
+| YYC³ Memory (yyc3-memory) | Hierarchical recall and FTS search |
+| YYC³ Browser (yyc3-browser) | CDP browser automation with persistent profiles |
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

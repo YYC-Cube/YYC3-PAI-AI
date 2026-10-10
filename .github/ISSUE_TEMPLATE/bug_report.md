@@ -1,60 +1,34 @@
 ---
-name: Bug Report
-about: 报告一个软件缺陷
-title: '[Bug]: '
-labels: ['bug', 'needs-triage']
-assignees: []
+name: Bug report
+about: Report a defect or unexpected behavior in YYC3-Pai
+title: "[bug] "
+labels: bug
 ---
 
-## 🐛 Bug 描述
+## What happened
 
-清晰简洁地描述这个bug是什么。
+<!-- A clear description of the bug. -->
 
-## 📋 复现步骤
+## Expected behavior
 
-描述触发此bug的步骤：
+<!-- What you thought should happen. -->
 
-1. 进入 '...'
-2. 点击 '....'
-3. 滚动到 '....'
-4. 看到错误
+## Steps to reproduce
 
-## 🎯 期望行为
+1.
+2.
+3.
 
-清晰简洁地描述你期望发生什么。
+## Environment
 
-## 📸 截图
+- `pai` version:
+- Python version:
+- OS:
+- Install method: pip / Docker / source
+- LLM provider (if relevant):
 
-如果适用，请添加截图以帮助解释你的问题。
-
-## 💻 环境
-
-请完成以下信息：
-
-| 项目 | 详情 |
-|------|------|
-| **操作系统** | Windows / macOS / Linux (版本号) |
-| **YYC³版本** | v1.0.0 或 Git commit hash |
-| **Node.js版本** | 运行 `node --version` |
-| **浏览器** | Chrome / Edge / Firefox / Safari (版本号) |
-| **Tauri版本** | 如使用桌面版 |
-
-## 🔍 控制台日志
-
-如有错误信息，请粘贴控制台输出：
+## Logs / screenshots
 
 ```
-在此处粘贴错误日志...
+Paste relevant logs or attach screenshots.
 ```
-
-## 📦 附加信息
-
-关于此问题的其他补充说明：
-
-- [ ] 我已搜索现有的Issues，确认此问题未被报告过
-- [ ] 我已尝试在最新开发分支(main)上复现此问题
-- [ ] 问题可稳定复现（非偶发）
-
-## 🔗 相关问题
-
-- #issue_number（如果有相关的Issue或PR）
