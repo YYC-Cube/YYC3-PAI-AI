@@ -1,6 +1,6 @@
 name: Deploy Pages
 
-# Publishes the static site root (public/ → pai.yyc3.top): brand landing
+# Publishes the static site root (public/ → pai.yyc3.vip): brand landing
 # page, CNAME, and the family banner. Repo-side prerequisite: Settings →
 # Pages → Source = "GitHub Actions" (already configured).
 #

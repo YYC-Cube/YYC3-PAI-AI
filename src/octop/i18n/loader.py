@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from functools import lru_cache
 from importlib import resources
-from typing import Any
+from typing import Any, cast
 
 from octop.infra.utils.locale import Locale, normalize_locale
 
@@ -35,7 +35,8 @@ def _available_locales() -> tuple[str, ...]:
 @lru_cache(maxsize=1)
 def _load_all() -> dict[Locale, dict[str, Any]]:
     out: dict[Locale, dict[str, Any]] = {}
-    for loc in _available_locales():
+    for name in _available_locales():
+        loc = cast(Locale, name)
         raw = resources.files("octop.i18n").joinpath(f"{loc}.json").read_text(encoding="utf-8")
         out[loc] = json.loads(raw)
     return out
