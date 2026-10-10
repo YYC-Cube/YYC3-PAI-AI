@@ -7,7 +7,8 @@
  *
  * Source resolution order:
  *   1. $YYC3_I18N_CORE (path to the YYC3-i18n-Core checkout)
- *   2. ../../YanYuCloudCube/YYC3-i18n-Core (sibling checkout)
+ *   2. ~/YYC-Cube/YYC3-i18n-Core (authoritative publish source)
+ *   3. ../../YanYuCloudCube/YYC3-i18n-Core (archived mirror, fallback)
  *
  * Generated files land in dashboard/src/locales/yyc3/<locale>.json and are
  * committed so the app builds without the sibling repo present.
@@ -19,7 +20,10 @@ import { pathToFileURL } from "node:url";
 
 const candidates = [
   process.env.YYC3_I18N_CORE,
-  // scripts -> dashboard -> YYC3-Pai -> YYC-Cube -> YYC3-GitHub
+  // Authoritative publish source (github: YYC-Cube/YYC3-i18n-Core)
+  path.resolve(process.env.HOME ?? "/Users/yanyu", "YYC-Cube/YYC3-i18n-Core"),
+  // Archived mirror fallback: scripts -> dashboard -> YYC3-Pai -> YYC-Cube
+  // -> YYC3-GitHub -> YanYuCloudCube
   path.resolve(import.meta.dirname, "../../../../YanYuCloudCube/YYC3-i18n-Core"),
 ].filter(Boolean);
 
