@@ -28,6 +28,7 @@ license-upstream: MIT
 | Anthropic 技能剥离 | ✅ 已执行 | 提交 `718b114b`，基线 `d88a6bc1`，tag `v0.1.0-yyc3` |
 | 品牌改造（pyproject/CLI/镜像） | ✅ 已执行 | pyproject→`yyc3-pai` v0.1.0、CLI→`pai`、显示串品牌化，uv lock 已同步 |
 | 四包 Fork-and-Own | ✅ 基线建成 | `yyc3-agent-core` monorepo（发行名 yyc3-*、uv sources 接线闭环、LICENSE/NOTICE 合规），基线提交 `98b9802` |
+| Phase 2 依赖换指向 | ✅ 已执行 | 主仓依赖→`yyc3-*` 本地 editable；`self_update._PACKAGE_NAME`→`yyc3-pai`；uv sync 后五包 import + `pai --help` 验证通过 |
 
 ## 章节索引
 

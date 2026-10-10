@@ -21,10 +21,10 @@ dependencies = [
     "apscheduler>=3.10,<4",
     "argon2-cffi>=23.1",
     "pyjwt>=2.8",
-    "octop-harness[all]>=1.0.1",
-    "octop-memory>=1.0.0",
+    "yyc3-harness[all]>=1.0.2",
+    "yyc3-memory>=1.0.1",
     "lark-oapi>=1.7.3",
-    "octop-gateway>=1.0.0",
+    "yyc3-gateway>=1.0.1",
     "cryptography>=41",
     "scalar-fastapi>=1.0",
     "edge-tts>=6.1",
@@ -33,7 +33,7 @@ dependencies = [
     "acme>=5.6.0",
     "josepy>=2.2.0",
     "boto3>=1.40.61",
-    "octop-browser>=1.0.0",
+    "yyc3-browser>=1.0.0",
     "playwright>=1.40",
     "psycopg[binary]>=3.2",
     "langgraph-checkpoint-postgres>=2.0",
@@ -95,6 +95,14 @@ dev = [
 
 [project.scripts]
 pai = "octop.cli.main:cli"
+
+# Fork-and-Own: resolve the four core packages from the local monorepo
+# (../yyc3-agent-core) instead of the upstream PyPI octop-* distributions.
+[tool.uv.sources]
+yyc3-harness = { path = "../yyc3-agent-core/packages/harness", editable = true }
+yyc3-memory = { path = "../yyc3-agent-core/packages/memory", editable = true }
+yyc3-gateway = { path = "../yyc3-agent-core/packages/gateway", editable = true }
+yyc3-browser = { path = "../yyc3-agent-core/packages/browser", editable = true }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/octop"]

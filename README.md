@@ -54,7 +54,7 @@ Chat through the Web Dashboard, Feishu, DingTalk, QQ, WeChat, Telegram, Discord,
 | 🔒 | **Security built-in** | JWT multi-user isolation, tool approval, shell command guardrails, and PII redaction — data stays local |
 | 🔌 | **Connector ecosystem** | Tencent suite (Docs, Meeting, News, …); OAuth and MCP gateway extend resource boundaries |
 | 💾 | **Pluggable workspace backends** | Local disk, Docker sandbox, PostgreSQL, or COS/S3 for agent files — separate from the control-plane DB |
-| 🧠 | **Portable memory** | Powered by [Octop Memory](https://github.com/TencentCloud/octop-memory); memory migrates with the workspace |
+| 🧠 | **Portable memory** | Powered by YYC³ Memory (yyc3-memory); memory migrates with the workspace |
 | 📚 | **Knowledge base** | RAG over your documents; share corpora within a deployment and ground answers in your private data |
 | 🧩 | **Plugins** | Extend Octop with third-party plugins; bundled plugins are seeded and toggled on demand |
 | ↔️ | **ACP bidirectional** | `octop acp` for IDE/terminal AI; delegate to OpenCode / Claude Code with permission gates |
@@ -88,8 +88,8 @@ Octop is a self-hosted AI assistant platform for households and small teams. It 
 |-------|-----------|
 | **Language** | Python 3.12+ |
 | **Web framework** | FastAPI + uvicorn |
-| **Agent runtime** | [Octop Harness](https://github.com/TencentCloud/octop-harness) |
-| **Gateway** | [Octop Gateway](https://github.com/TencentCloud/octop-gateway) |
+| **Agent runtime** | YYC³ Harness (yyc3-harness) |
+| **Gateway** | YYC³ Gateway (yyc3-gateway) |
 | **Control plane DB** | SQLite (WAL, default) or PostgreSQL (optional) |
 | **Frontend** | React 18 + TypeScript + Vite + Ant Design |
 | **Scheduling** | APScheduler |
@@ -98,10 +98,10 @@ Octop is a self-hosted AI assistant platform for households and small teams. It 
 
 Octop is built on the Octop Harness stack — a set of focused runtimes that Octop composes into one process:
 
-- **[Octop Harness](https://github.com/TencentCloud/octop-harness)** — Agent runtime: model routing, tools, skills, and conversation checkpointing.
-- **[Octop Gateway](https://github.com/TencentCloud/octop-gateway)** — multi-platform IM channel bridge that normalizes incoming messages into a single processing pipeline.
-- **[Octop Memory](https://github.com/TencentCloud/octop-memory)** — hierarchical recall with full-text search, so an agent's memory travels with its workspace.
-- **[Octop Browser](https://github.com/TencentCloud/octop-browser)** — CDP-based browser automation with persistent profiles for web tasks.
+- **YYC³ Harness (yyc3-harness)** — Agent runtime: model routing, tools, skills, and conversation checkpointing.
+- **YYC³ Gateway (yyc3-gateway)** — multi-platform IM channel bridge that normalizes incoming messages into a single processing pipeline.
+- **YYC³ Memory (yyc3-memory)** — hierarchical recall with full-text search, so an agent's memory travels with its workspace.
+- **YYC³ Browser (yyc3-browser)** — CDP-based browser automation with persistent profiles for web tasks.
 
 Instead of an external queue or message broker, Octop routes every surface — Web UI, IM, and cron — through one in-process `HarnessProcessor`. The result is a single, restart-safe process whose entire state is rebuilt from the control-plane database on boot (local SQLite by default; PostgreSQL optional).
 
@@ -473,9 +473,9 @@ OctopServer
  ├─ UserManager
  │   └─ HarnessAgentManager (per user)
  │       └─ AgentRuntime (per agent)
- │           ├─ HarnessAgent      Agent runtime (octop-harness)
+ │           ├─ HarnessAgent      Agent runtime (yyc3-harness)
  │           ├─ HarnessProcessor  IM / UI / cron entry point
- │           ├─ ChannelManager    IM connections (octop-gateway)
+ │           ├─ ChannelManager    IM connections (yyc3-gateway)
  │           └─ CronManager       APScheduler
  └─ FastAPI app (uvicorn)
 ```
@@ -547,10 +547,10 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 | Project | Description |
 |---------|-------------|
-| [Octop Harness](https://github.com/TencentCloud/octop-harness) | Agent runtime — model routing, tools, skills, checkpointing |
-| [Octop Gateway](https://github.com/TencentCloud/octop-gateway) | Multi-platform IM channel bridge |
-| [Octop Memory](https://github.com/TencentCloud/octop-memory) | Hierarchical recall and FTS search |
-| [Octop Browser](https://github.com/TencentCloud/octop-browser) | CDP browser automation with persistent profiles |
+| YYC³ Harness (yyc3-harness) | Agent runtime — model routing, tools, skills, checkpointing |
+| YYC³ Gateway (yyc3-gateway) | Multi-platform IM channel bridge |
+| YYC³ Memory (yyc3-memory) | Hierarchical recall and FTS search |
+| YYC³ Browser (yyc3-browser) | CDP browser automation with persistent profiles |
 
 ## 💬 Community
 

@@ -22,7 +22,7 @@ from octop.infra.utils.paths import PathLayout
 
 logger = logging.getLogger(__name__)
 
-_PACKAGE_NAME = "octop"
+_PACKAGE_NAME = "yyc3-pai"
 _PYPI_URL = f"https://pypi.org/pypi/{_PACKAGE_NAME}/json"
 _PYPI_SIMPLE = "https://pypi.org/simple"
 _PYPI_UA = {"User-Agent": f"{_PACKAGE_NAME}-updater/1.0"}

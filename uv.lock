@@ -856,7 +856,7 @@ wheels = [
 
 [[package]]
 name = "deepagents"
-version = "0.7.9"
+version = "0.7.23"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain" },
@@ -867,9 +867,9 @@ dependencies = [
     { name = "packaging" },
     { name = "wcmatch" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/4b/359aa09b9fb378b9cd10b69cb7bdd75847da03c110939ad01f1db715d0e4/deepagents-0.7.9.tar.gz", hash = "sha256:e62311fe73a752d36b830b2f48352aa63afbd56f47176d924065230d983b248e", size = 287549, upload-time = "2026-08-25T21:02:41.431Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3d/80/3f1e3f28e277d2583ae25b49d6c3eb1a494c176191c02d68275bff9b21b7/deepagents-0.7.23.tar.gz", hash = "sha256:03fbffec1691f72e412eb9251516a799ac3f5d3851defb4a98a49fece5675c10", size = 324077, upload-time = "2026-10-07T16:46:01.2Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/56/5d/6333620e6c9f519f23d85201d9e0ad346be7134fb0039555fabb3ce38e67/deepagents-0.7.9-py3-none-any.whl", hash = "sha256:fb5b382cc98ec132a6e30e5be2cacc60888231e358368aadc12f88efdec5d847", size = 314350, upload-time = "2026-08-25T21:02:39.789Z" },
+    { url = "https://files.pythonhosted.org/packages/38/4a/9ffaf3045014ac8733c121e2b9d7e15e652f29ac42c179871960f7537e93/deepagents-0.7.23-py3-none-any.whl", hash = "sha256:ccba4ca32e82f422e08c04b2321d135f1be321fc44ae5891b9b37a7c8bde5ca7", size = 353394, upload-time = "2026-10-07T16:45:59.917Z" },
 ]
 
 [[package]]
@@ -1190,15 +1190,15 @@ wheels = [
 
 [[package]]
 name = "google-auth"
-version = "2.55.1"
+version = "2.61.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cryptography" },
     { name = "pyasn1-modules" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a3/6f/f3f4ac177c67bbee8fe8e88f2ab4f36af88c44a096e165c5217accf6e5d3/google_auth-2.55.1.tar.gz", hash = "sha256:fb2d9b730f2c9b8d326ec8d7222f21aef2ead15bf0513793d6442485d87af0a1", size = 349527, upload-time = "2026-06-25T23:39:27.182Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/0b/9788e913f2202da49068c27ce821eebcf96319240a89d7bb11f206d6471f/google_auth-2.61.0.tar.gz", hash = "sha256:37f0815967322e8c32b12bf422531e8b637cafdaae0acbb9141117cfe6a96f23", size = 398379, upload-time = "2026-10-07T20:13:14.827Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/1d/f6d3ca1ad0725f2e08a1c6915640748a52de2e66596160a4d53b010cccf0/google_auth-2.55.1-py3-none-any.whl", hash = "sha256:eada68dfd52b3b81191827601e2a0c3fa12540c818534b630ddc5355769c3995", size = 252349, upload-time = "2026-06-25T23:38:52.946Z" },
+    { url = "https://files.pythonhosted.org/packages/1e/68/c2ff6043d93fda69e5c12a834d0be3b3fa6c762e89732160532566be621b/google_auth-2.61.0-py3-none-any.whl", hash = "sha256:ca60266a37475ae68b63bac007272f46094b3d571abe92aded329b6cfb568025", size = 268021, upload-time = "2026-10-07T20:13:13.2Z" },
 ]
 
 [package.optional-dependencies]
@@ -1221,7 +1221,7 @@ wheels = [
 
 [[package]]
 name = "google-genai"
-version = "2.10.0"
+version = "2.29.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -1235,9 +1235,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cd/fe/b796087493c3c55371aa58b9f264841ace5bfdf8c668cafa7afa33c44bec/google_genai-2.10.0.tar.gz", hash = "sha256:77912cd558cd7dfd5b75c25fd1c609e78d7954dde583331104022a46ea90f9ee", size = 600039, upload-time = "2026-06-24T01:33:18.157Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/21/2b/977616ef350e51d3d263eb43be23a91be793544cd937b51c0fac313be233/google_genai-2.29.0.tar.gz", hash = "sha256:124d3eef9ff6b9e4ea548f95ff5b7721683e7990c0a936b006d9e2ab61ea897d", size = 706902, upload-time = "2026-10-07T22:22:57.153Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/39/00bcfd94de255d24249401efff4f48d77bf6066b46447e519fa193c0c299/google_genai-2.10.0-py3-none-any.whl", hash = "sha256:d5350311567ae660c24cbc1752aee4b3d660f89c0106d2dcd2a69978c35afe1e", size = 957974, upload-time = "2026-06-24T01:33:16.296Z" },
+    { url = "https://files.pythonhosted.org/packages/b8/27/a3dede4a1deb21f7fde6a171daa039bf0ea149a5e7826a785e8f109a6e13/google_genai-2.29.0-py3-none-any.whl", hash = "sha256:7adda55cb6746fb46d38ad3202c3372840b96eede964b5fb3df1469cd4998570", size = 1167603, upload-time = "2026-10-07T22:22:55.215Z" },
 ]
 
 [[package]]
@@ -1366,6 +1366,19 @@ wheels = [
 ]
 
 [[package]]
+name = "httpcore2"
+version = "2.13.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "h11" },
+    { name = "truststore" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/cb/f3/1db7aa2bc2524062192bb0e0323969492d1883152a232fe36eea65f4e35c/httpcore2-2.13.1.tar.gz", hash = "sha256:e0aa977abe17e69a3b820a24542a6fa88702676d83880b8d194dcd18408e5103", size = 68071, upload-time = "2026-09-23T07:47:22.372Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/09/ba/a4568248771ce81957bfb7cc600264a40fbcda092391ee1c415c50be4bea/httpcore2-2.13.1-py3-none-any.whl", hash = "sha256:e1e05d4f25f7d7d496bfb96748f6f4b67657b03da069b3a68c36069f3db73d0a", size = 83423, upload-time = "2026-09-23T07:47:19.365Z" },
+]
+
+[[package]]
 name = "httplib2"
 version = "0.32.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1435,6 +1448,32 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/0f/4c/751061ffa58615a32c31b2d82e8482be8dd4a89154f003147acee90f2be9/httpx_sse-0.4.3.tar.gz", hash = "sha256:9b1ed0127459a66014aec3c56bebd93da3c1bc8bb6618c8082039a44889a755d", size = 15943, upload-time = "2025-10-10T21:48:22.271Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d2/fd/6668e5aec43ab844de6fc74927e155a3b37bf40d7c3790e49fc0406b6578/httpx_sse-0.4.3-py3-none-any.whl", hash = "sha256:0ac1c9fe3c0afad2e0ebb25a934a59f4c7823b60792691f779fad2c5568830fc", size = 8960, upload-time = "2025-10-10T21:48:21.158Z" },
+]
+
+[[package]]
+name = "httpx2"
+version = "2.13.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio", marker = "sys_platform != 'emscripten'" },
+    { name = "httpcore2", marker = "sys_platform != 'emscripten'" },
+    { name = "httpx2-jsfetch", marker = "sys_platform == 'emscripten'" },
+    { name = "idna" },
+    { name = "truststore", marker = "sys_platform != 'emscripten'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d5/44/474bef2a0e9d90f1715d32cb98b0738695ca17ba324095fb2497ed7fbd59/httpx2-2.13.1.tar.gz", hash = "sha256:e48744a19e3af5ee48313d0ce5fe941d5422fae5705ea922a4aabf94d7800dfa", size = 100405, upload-time = "2026-09-23T07:47:23.052Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d8/9c/6fe8931fd9f381042a9e4c7d5a7b4cbf7016b252bec0c99a49fce42c3326/httpx2-2.13.1-py3-none-any.whl", hash = "sha256:6dff50fabc270ee5fd25d845d0b078ed20564579744d6d962850975996d2f9a4", size = 95597, upload-time = "2026-09-23T07:47:20.995Z" },
+]
+
+[[package]]
+name = "httpx2-jsfetch"
+version = "1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/cd/c4/0e5636363151a2a1795e0a77617168b9ca438e1748ec05fc9b5687f93d64/httpx2_jsfetch-1.0.tar.gz", hash = "sha256:70a0e3eabfef7cce5ad9c629f7d01ca05e418f586646f4ddf14782e4c1454c60", size = 6872, upload-time = "2026-08-07T00:13:07.492Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9b/43/832f631d32e4f1211caa2ba368317739fe71f0b8530e4c9d15dc454bac2a/httpx2_jsfetch-1.0-py3-none-any.whl", hash = "sha256:cb916b707601e69a07721aabc8f3f6659be3a6893bc1ff5c6f9e02241df2da32", size = 6382, upload-time = "2026-08-07T00:13:06.567Z" },
 ]
 
 [[package]]
@@ -1614,30 +1653,30 @@ wheels = [
 
 [[package]]
 name = "langchain"
-version = "1.3.18"
+version = "1.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langgraph" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/31/e9/0e5425e522b624d7c5c0911957b467b82890b36b0099bf727951f2ee3059/langchain-1.3.18.tar.gz", hash = "sha256:74ce99294f6f2c82ee64c3df39daa6a22085ee1449a718065b3604a88d78bf4d", size = 637052, upload-time = "2026-08-27T17:33:12.702Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6a/a4/a3ceefc3ec734912ca3a21dd79a5e4a98af73015a87e64d284a92cd5572c/langchain-1.4.4.tar.gz", hash = "sha256:baac6e13c08460e1decd0e60061b9a87c07135f1c977424040b0b57ff7bc7887", size = 742902, upload-time = "2026-10-08T22:14:10.86Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f7/04/374f6014ed6959dbdab92962c2b09e4d0223ed6a82f65694870b46d2c13f/langchain-1.3.18-py3-none-any.whl", hash = "sha256:f29cbef985848e5cfff5398f3c8c1568994a3a6f2a8f4fa720df30b6e0668b9c", size = 148007, upload-time = "2026-08-27T17:33:11.23Z" },
+    { url = "https://files.pythonhosted.org/packages/02/36/c348f812eb37a137de2c80140ed1324ab11b75fa5a845e3f1035bacaac4a/langchain-1.4.4-py3-none-any.whl", hash = "sha256:2fd27e9a2d54ebcd915ac5ea51d79c772e020567ef6c6a76678182055489b804", size = 165363, upload-time = "2026-10-08T22:14:09.321Z" },
 ]
 
 [[package]]
 name = "langchain-anthropic"
-version = "1.7.0"
+version = "1.7.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anthropic" },
     { name = "langchain-core" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/56/fc/52f6d1d6069bafb08626e204c89c49c8dd4a536eedbb94f0b7e78668594d/langchain_anthropic-1.7.0.tar.gz", hash = "sha256:d48e3c118ff8d3eea83f17b50234a2d2ff491a2375d565f212eb990e7e3856cb", size = 750068, upload-time = "2026-08-27T15:23:59.261Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/91/e6/45ead93ef6d9f244b502a6a32bf9a185b3da1cc7fa8003896a102dadac09/langchain_anthropic-1.7.5.tar.gz", hash = "sha256:6016f38e5c4bf12c16ecfa76abf133a978f459f4d2887b8e28435ae1ff00beb3", size = 764625, upload-time = "2026-09-29T15:22:07.106Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8e/ce/e4367713080bc750e1dba845409c058f196543d1a0dc99683e2ef062f581/langchain_anthropic-1.7.0-py3-none-any.whl", hash = "sha256:68b34369aa01dad0c67bc690b8c47e09d06bd30fb28f320ad19ddc71c4445dc0", size = 60475, upload-time = "2026-08-27T15:23:57.989Z" },
+    { url = "https://files.pythonhosted.org/packages/eb/a8/c507f2c1859b584843983e98bc71e0066c16a77e6c181921c928e0fdbcf7/langchain_anthropic-1.7.5-py3-none-any.whl", hash = "sha256:b21ef0e0c2d6175235a5b7eef4f5f89057df92d42dbfab66920a05605ef7173a", size = 65239, upload-time = "2026-09-29T15:22:05.832Z" },
 ]
 
 [[package]]
@@ -1697,7 +1736,7 @@ wheels = [
 
 [[package]]
 name = "langchain-core"
-version = "1.6.0"
+version = "1.6.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -1711,14 +1750,14 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uuid-utils" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/97/88/ebc98df187c525d729725ab39759337c56d5d2803423632376aa35bde899/langchain_core-1.6.0.tar.gz", hash = "sha256:dc72e36678ed26683ec0ad8829b44011fba461d10f9b31dbd9110215e5ec2333", size = 992493, upload-time = "2026-08-19T15:55:40.642Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a7/d3/e9611e44e62ab8175127e137587c62dc2ed00e2615aebd89dfdb77f5fba0/langchain_core-1.6.9.tar.gz", hash = "sha256:34394228603e6f0bd24ce4e773b58b7d160e1b8cf489ecb350cf41f5366f5e92", size = 1010051, upload-time = "2026-10-08T20:11:19.881Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/84/4c/508a90b9d2e3bd7738fd93cb2ac2178ce734662c75e69b3b81c445f1b360/langchain_core-1.6.0-py3-none-any.whl", hash = "sha256:d8bb924cd413955d9d3192ccced140407427c3ff51e50ffb941222648da92cb2", size = 570006, upload-time = "2026-08-19T15:55:38.935Z" },
+    { url = "https://files.pythonhosted.org/packages/49/41/fdcdd869c052874b17e2325c986cf8c2fc6bbefa3b9d5404dd64dfffb12a/langchain_core-1.6.9-py3-none-any.whl", hash = "sha256:2bacea12270fd4cfdeeefdc5977e7e8b3c30814c509534d1ef43f4e5b7d3f657", size = 572951, upload-time = "2026-10-08T20:11:18.189Z" },
 ]
 
 [[package]]
 name = "langchain-google-genai"
-version = "4.3.6"
+version = "4.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filetype" },
@@ -1726,9 +1765,9 @@ dependencies = [
     { name = "langchain-core" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/14/2e/7410d35d5a073a8a5d4942d49dfc386e79e11c09c66f02429ffcaeb57a5c/langchain_google_genai-4.3.6.tar.gz", hash = "sha256:d123cd8007ae63fc989bd869ef3853312b912007e63c2815b9aa2f089cfa6a05", size = 301130, upload-time = "2026-08-26T23:53:56.92Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cf/4e/41798c80b574d958d189e049f13d64eb9246a66623465290f2cbfd641759/langchain_google_genai-4.4.0.tar.gz", hash = "sha256:7871beec56ac07b719f77c46997845db6ff2267b817bffb0f97877053b0895d7", size = 378415, upload-time = "2026-09-01T20:15:45.816Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d3/d5/dd74fb715bea978e14c8ba706e228a3637951477525b182553a37a138b1a/langchain_google_genai-4.3.6-py3-none-any.whl", hash = "sha256:00b75df114a519e434b304daabcd98ea885af87a78a4b059b3063490f65feb44", size = 78524, upload-time = "2026-08-26T23:53:55.893Z" },
+    { url = "https://files.pythonhosted.org/packages/2c/10/83bb535e78c2cf767a6193c2f3b00b2894c1581a36ef85911ebaa3b9a891/langchain_google_genai-4.4.0-py3-none-any.whl", hash = "sha256:8e23a1307bd2158590bbf9d99f1d658fc84a9d9ddb77fb1b372f8875a2bafbbf", size = 81617, upload-time = "2026-09-01T20:15:44.533Z" },
 ]
 
 [[package]]
@@ -1907,12 +1946,12 @@ wheels = [
 
 [[package]]
 name = "langsmith"
-version = "0.11.2"
+version = "0.14.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "distro" },
-    { name = "httpx" },
+    { name = "httpx2" },
     { name = "orjson", marker = "platform_python_implementation != 'PyPy'" },
     { name = "packaging" },
     { name = "pydantic" },
@@ -1925,9 +1964,9 @@ dependencies = [
     { name = "xxhash" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c9/0a/1acb2a3ffbccbe8f8dc358778967c9d2979e8a59b67ceba6eb54474324ab/langsmith-0.11.2.tar.gz", hash = "sha256:927694c939c9fb44187e0126cf718413c45ffce2324d480438e70eb0526e1380", size = 4841592, upload-time = "2026-08-27T22:31:34.004Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/49/bf/a82bc6549ca7f45902995605466c607bdcf57deacbaab87f502c9d143653/langsmith-0.14.7.tar.gz", hash = "sha256:10ead0e0134ae2ee49371091e9d996e7f32a6103bc35860d55c26ee42d975bee", size = 5001042, upload-time = "2026-10-09T16:32:09.943Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/00/d9/cec0c1d24dda8c67a23ad204d0167e50aee202460e9388488661d94513f5/langsmith-0.11.2-py3-none-any.whl", hash = "sha256:75258142d27dffcc5df331479704b23fc3fd812cfca0469119bb9055a842882f", size = 753928, upload-time = "2026-08-27T22:31:31.644Z" },
+    { url = "https://files.pythonhosted.org/packages/14/cc/85910477cdf1cadd0ae7f9fe4e81fff793f0423d70c6a82e7b4a88874f8f/langsmith-0.14.7-py3-none-any.whl", hash = "sha256:748538d163cd073879106837d7f0892f34849655ba43cbb5aa5e21509e24423d", size = 861973, upload-time = "2026-10-09T16:32:07.815Z" },
 ]
 
 [[package]]
@@ -2462,100 +2501,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/94/a8/f98e50356cf167df656c526c2dfeec2d7dde182f2a3da4b458a5938e2776/numpy-2.5.1-cp314-cp314t-win32.whl", hash = "sha256:6eab239876581b2b3c5a242281b6007bbdbcd1c7085d7709bb57c5929b11e6bf", size = 6263298, upload-time = "2026-07-04T17:07:53.445Z" },
     { url = "https://files.pythonhosted.org/packages/72/ac/96ae880cdecad0b3275d9359fcec72667b49a4863c9f12942e43679dda02/numpy-2.5.1-cp314-cp314t-win_amd64.whl", hash = "sha256:83ce9c80d5b521b0d77ddcbe5447c218d247929b6cc056ca5351342accfff0af", size = 12748623, upload-time = "2026-07-04T17:07:55.384Z" },
     { url = "https://files.pythonhosted.org/packages/a1/5a/4d2b1601df3602dba7a14f3348ba9bfe94a18adb428e693df6154c293831/numpy-2.5.1-cp314-cp314t-win_arm64.whl", hash = "sha256:5a6db61f9aaa57e369905c67d852045d3c4f7126405b29d09b19dec118e9c9cb", size = 10697674, upload-time = "2026-07-04T17:07:58.506Z" },
-]
-
-[[package]]
-name = "octop-browser"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "mcp" },
-    { name = "pydantic" },
-    { name = "websockets" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/9c/a6/a89e5d3c6b27bb5dc310290f52fb85a3d1f59279b7854ebd5c9973855651/octop_browser-1.0.0.tar.gz", hash = "sha256:a7e12bcf7ca1541d6c81e05d88ecb6a3aaf988ee648fe05922d06f94de18210c", size = 455743, upload-time = "2026-09-24T10:14:17.347Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b0/2a/16ab16287ea1e3f2357c12ccfe1c90dd0ec7af70d71605c54933c5e7db86/octop_browser-1.0.0-py3-none-any.whl", hash = "sha256:9856d0a3449ff8fb63dc86acb6cf51e492e3d70d77f7f9a35c1802c99566a174", size = 108073, upload-time = "2026-09-24T10:14:15.855Z" },
-]
-
-[[package]]
-name = "octop-gateway"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "cryptography" },
-    { name = "dingtalk-stream" },
-    { name = "discord-py" },
-    { name = "httpx" },
-    { name = "lark-oapi" },
-    { name = "paho-mqtt" },
-    { name = "pydantic" },
-    { name = "python-dotenv" },
-    { name = "python-socketio", extra = ["asyncio-client"] },
-    { name = "python-telegram-bot" },
-    { name = "websocket-client" },
-    { name = "websockets" },
-    { name = "wecom-aibot-sdk" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/94/6c/b24f7d8d9f975a7dbe47bcd616429d5a0d75153b2dc0866d6136e653b2db/octop_gateway-1.0.0.tar.gz", hash = "sha256:3630e9f9d40014d961bf8839c19759a676da6e311057df064885fc69cdd789fa", size = 608199, upload-time = "2026-09-24T09:52:46.666Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/20/77/c6d42986b1140c148da0f4777bbff31d189179f2bc69ac276392a73f8589/octop_gateway-1.0.0-py3-none-any.whl", hash = "sha256:bb4aeee8b8bbf683f15d29f8adcff9f5c4963544276c56dca858b01eed78ecaa", size = 160304, upload-time = "2026-09-24T09:52:45.299Z" },
-]
-
-[[package]]
-name = "octop-harness"
-version = "1.0.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "deepagents" },
-    { name = "httpx" },
-    { name = "langchain" },
-    { name = "langchain-anthropic" },
-    { name = "langchain-core" },
-    { name = "langchain-mcp-adapters" },
-    { name = "langchain-openai" },
-    { name = "langgraph" },
-    { name = "langgraph-checkpoint-sqlite" },
-    { name = "markdownify" },
-    { name = "mcp" },
-    { name = "octop-browser" },
-    { name = "octop-memory" },
-    { name = "pyyaml" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/69/11/42b756fae8e1a340109dec6219caf0de48cc510914cf9e574bf64bbe8a33/octop_harness-1.0.1.tar.gz", hash = "sha256:37d641fff84f219a93b211203f838f5059c30b79c3c1be37051c4180ac1e301f", size = 945740, upload-time = "2026-10-03T14:00:52.581Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/b6/45dd42e5278234812a3eb38b205aa5282cafbdcb53fa29d2eb66266112c7/octop_harness-1.0.1-py3-none-any.whl", hash = "sha256:167700a86309ca4a73c414e6b8a94b4d8aa2c3a05cdb15738652af525ec72864", size = 1150981, upload-time = "2026-10-03T14:00:51.103Z" },
-]
-
-[package.optional-dependencies]
-all = [
-    { name = "agent-client-protocol" },
-    { name = "cos-python-sdk-v5" },
-    { name = "deepagents-backends" },
-    { name = "docker" },
-    { name = "esdk-obs-python" },
-    { name = "google-api-python-client" },
-    { name = "langchain-aws" },
-    { name = "langchain-community" },
-    { name = "langchain-tavily" },
-    { name = "langfuse" },
-    { name = "mss" },
-    { name = "oss2" },
-    { name = "pillow" },
-    { name = "psutil" },
-    { name = "psycopg", extra = ["binary"] },
-    { name = "pynput" },
-]
-
-[[package]]
-name = "octop-memory"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/98/58/cf0333efbdd36808c3b6448f7be846cc4a7b32bb21b0e6f2d4408662aab1/octop_memory-1.0.0.tar.gz", hash = "sha256:1df8fa2deb4d37b20f1d00de6a12c8493dcbdaf01745c8313231395442f79556", size = 577027, upload-time = "2026-09-24T09:53:32.674Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/1e/30/17736beb07fc5ce734d2568a316f6f159740022c75cd014f63c33014df9d/octop_memory-1.0.0-py3-none-any.whl", hash = "sha256:518d1033d679be00e32d91ad80cf2378a6b7086824fa23927577d316b27e72ce", size = 372264, upload-time = "2026-09-24T09:53:31.44Z" },
 ]
 
 [[package]]
@@ -4499,6 +4444,15 @@ wheels = [
 ]
 
 [[package]]
+name = "truststore"
+version = "0.10.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/a3/1585216310e344e8102c22482f6060c7a6ea0322b63e026372e6dcefcfd6/truststore-0.10.4.tar.gz", hash = "sha256:9d91bd436463ad5e4ee4aba766628dd6cd7010cf3e2461756b3303710eebc301", size = 26169, upload-time = "2025-08-12T18:49:02.73Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/19/97/56608b2249fe206a67cd573bc93cd9896e1efb9e98bce9c163bcdc704b88/truststore-0.10.4-py3-none-any.whl", hash = "sha256:adaeaecf1cbb5f4de3b1959b42d41f6fab57b2b1666adb59e89cb0b53361d981", size = 18660, upload-time = "2025-08-12T18:49:01.46Z" },
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.15.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5142,6 +5096,244 @@ wheels = [
 ]
 
 [[package]]
+name = "yyc3-browser"
+version = "1.0.0"
+source = { editable = "../yyc3-agent-core/packages/browser" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "mcp" },
+    { name = "pydantic" },
+    { name = "websockets" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.9" },
+    { name = "coverage", extras = ["toml"], marker = "extra == 'dev'", specifier = ">=7.5" },
+    { name = "mcp", specifier = ">=1.9,<3" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.9" },
+    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.7" },
+    { name = "pydantic", specifier = ">=2.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4" },
+    { name = "websockets", specifier = ">=12.0" },
+]
+provides-extras = ["dev"]
+
+[[package]]
+name = "yyc3-gateway"
+version = "1.0.1"
+source = { editable = "../yyc3-agent-core/packages/gateway" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "cryptography" },
+    { name = "dingtalk-stream" },
+    { name = "discord-py" },
+    { name = "httpx" },
+    { name = "lark-oapi" },
+    { name = "paho-mqtt" },
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+    { name = "python-socketio", extra = ["asyncio-client"] },
+    { name = "python-telegram-bot" },
+    { name = "websocket-client" },
+    { name = "websockets" },
+    { name = "wecom-aibot-sdk" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.9" },
+    { name = "cryptography", specifier = ">=42.0" },
+    { name = "dingtalk-stream", specifier = ">=0.24.3" },
+    { name = "discord-py", specifier = ">=2.3" },
+    { name = "httpx", specifier = ">=0.27.0" },
+    { name = "langchain-core", marker = "extra == 'dev'", specifier = ">=1.4.0" },
+    { name = "langchain-core", marker = "extra == 'examples'", specifier = ">=1.4.0" },
+    { name = "langchain-openai", marker = "extra == 'dev'", specifier = ">=1.2.2" },
+    { name = "langchain-openai", marker = "extra == 'examples'", specifier = ">=1.2.2" },
+    { name = "langgraph", marker = "extra == 'dev'", specifier = ">=1.2.1" },
+    { name = "langgraph", marker = "extra == 'examples'", specifier = ">=1.2.1" },
+    { name = "lark-oapi", specifier = ">=1.5.3" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.9" },
+    { name = "openai", marker = "extra == 'dev'", specifier = ">=2.38.0" },
+    { name = "openai", marker = "extra == 'examples'", specifier = ">=2.38.0" },
+    { name = "paho-mqtt", specifier = ">=2.0.0" },
+    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.7" },
+    { name = "pydantic", specifier = ">=2.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0" },
+    { name = "python-dotenv", specifier = ">=1.0" },
+    { name = "python-socketio", extras = ["asyncio-client"], specifier = ">=5.0" },
+    { name = "python-telegram-bot", specifier = ">=21.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
+    { name = "websocket-client", specifier = ">=1.6.0" },
+    { name = "websockets", specifier = ">=12.0" },
+    { name = "wecom-aibot-sdk", specifier = ">=1.0.7" },
+    { name = "yyc3-harness", marker = "extra == 'dev'", editable = "../yyc3-agent-core/packages/harness" },
+    { name = "yyc3-harness", marker = "extra == 'examples'", editable = "../yyc3-agent-core/packages/harness" },
+]
+provides-extras = ["examples", "dev"]
+
+[[package]]
+name = "yyc3-harness"
+version = "1.0.2"
+source = { editable = "../yyc3-agent-core/packages/harness" }
+dependencies = [
+    { name = "deepagents" },
+    { name = "httpx" },
+    { name = "langchain" },
+    { name = "langchain-anthropic" },
+    { name = "langchain-core" },
+    { name = "langchain-mcp-adapters" },
+    { name = "langchain-openai" },
+    { name = "langgraph" },
+    { name = "langgraph-checkpoint-sqlite" },
+    { name = "markdownify" },
+    { name = "mcp" },
+    { name = "pyyaml" },
+    { name = "yyc3-browser" },
+    { name = "yyc3-memory" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "agent-client-protocol" },
+    { name = "cos-python-sdk-v5" },
+    { name = "deepagents-backends" },
+    { name = "docker" },
+    { name = "esdk-obs-python" },
+    { name = "google-api-python-client" },
+    { name = "langchain-aws" },
+    { name = "langchain-community" },
+    { name = "langchain-tavily" },
+    { name = "langfuse" },
+    { name = "mss" },
+    { name = "oss2" },
+    { name = "pillow" },
+    { name = "psutil" },
+    { name = "psycopg", extra = ["binary"] },
+    { name = "pynput" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "agent-client-protocol", marker = "extra == 'acp'", specifier = ">=0.9.0" },
+    { name = "agent-client-protocol", marker = "extra == 'all'", specifier = ">=0.9.0" },
+    { name = "click", marker = "extra == 'cli'", specifier = ">=8.1" },
+    { name = "cos-python-sdk-v5", marker = "extra == 'all'", specifier = ">=1.9" },
+    { name = "cos-python-sdk-v5", marker = "extra == 'object-storage'", specifier = ">=1.9" },
+    { name = "deepagents", specifier = ">=0.7.16,<0.8" },
+    { name = "deepagents-backends", marker = "python_full_version >= '3.12' and extra == 'all'", specifier = ">=0.2" },
+    { name = "deepagents-backends", marker = "python_full_version >= '3.12' and extra == 'remote-backends'", specifier = ">=0.2" },
+    { name = "docker", marker = "extra == 'all'", specifier = ">=7.0" },
+    { name = "docker", marker = "extra == 'docker'", specifier = ">=7.0" },
+    { name = "esdk-obs-python", marker = "extra == 'all'", specifier = ">=3.24" },
+    { name = "esdk-obs-python", marker = "extra == 'object-storage'", specifier = ">=3.24" },
+    { name = "google-api-python-client", marker = "extra == 'all'", specifier = ">=2.0" },
+    { name = "google-api-python-client", marker = "extra == 'web-search-all'", specifier = ">=2.0" },
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "langchain", specifier = ">=1.4.2,<2.0" },
+    { name = "langchain-anthropic", specifier = ">=1.7.2,<2.0" },
+    { name = "langchain-aws", marker = "extra == 'all'", specifier = ">=0.2" },
+    { name = "langchain-aws", marker = "extra == 'bedrock'", specifier = ">=0.2" },
+    { name = "langchain-community", marker = "extra == 'all'", specifier = ">=0.3" },
+    { name = "langchain-community", marker = "extra == 'web-search-all'", specifier = ">=0.3" },
+    { name = "langchain-core", specifier = ">=1.6.3,<2.0" },
+    { name = "langchain-mcp-adapters", specifier = ">=0.3.0" },
+    { name = "langchain-openai", specifier = ">=1.2.2,<2.0" },
+    { name = "langchain-tavily", marker = "extra == 'all'", specifier = ">=0.1" },
+    { name = "langchain-tavily", marker = "extra == 'web-search-all'", specifier = ">=0.1" },
+    { name = "langfuse", marker = "extra == 'all'", specifier = ">=4.9.0" },
+    { name = "langfuse", marker = "extra == 'observability'", specifier = ">=4.9.0" },
+    { name = "langgraph", specifier = ">=1.0,<2.0" },
+    { name = "langgraph-checkpoint-sqlite", specifier = ">=2.0" },
+    { name = "markdownify", specifier = ">=0.13" },
+    { name = "mcp", specifier = ">=1.27.1,<3" },
+    { name = "mss", marker = "extra == 'all'", specifier = ">=9.0" },
+    { name = "mss", marker = "extra == 'desktop'", specifier = ">=9.0" },
+    { name = "opensandbox", marker = "extra == 'opensandbox'", specifier = ">=0.1.16,<1.2" },
+    { name = "oss2", marker = "extra == 'all'", specifier = ">=2.18" },
+    { name = "oss2", marker = "extra == 'object-storage'", specifier = ">=2.18" },
+    { name = "pillow", marker = "extra == 'all'", specifier = ">=10.0" },
+    { name = "pillow", marker = "extra == 'desktop'", specifier = ">=10.0" },
+    { name = "prompt-toolkit", marker = "extra == 'cli'", specifier = ">=3.0" },
+    { name = "psutil", marker = "extra == 'acp'", specifier = ">=5.9" },
+    { name = "psutil", marker = "extra == 'all'", specifier = ">=5.9" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'all'", specifier = ">=3.2" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'remote-backends'", specifier = ">=3.2" },
+    { name = "pynput", marker = "extra == 'all'", specifier = ">=1.7" },
+    { name = "pynput", marker = "extra == 'desktop'", specifier = ">=1.7" },
+    { name = "python-dotenv", marker = "extra == 'cli'", specifier = ">=1.0" },
+    { name = "pyyaml", specifier = ">=6.0" },
+    { name = "rich", marker = "extra == 'cli'", specifier = ">=13.0" },
+    { name = "yyc3-browser", editable = "../yyc3-agent-core/packages/browser" },
+    { name = "yyc3-memory", editable = "../yyc3-agent-core/packages/memory" },
+]
+provides-extras = ["cli", "bedrock", "remote-backends", "docker", "opensandbox", "observability", "acp", "desktop", "web-search-all", "object-storage", "all"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "agent-client-protocol", specifier = ">=0.9.0" },
+    { name = "click", specifier = ">=8.1" },
+    { name = "langfuse", specifier = ">=4.9.0" },
+    { name = "mss", specifier = ">=9.0" },
+    { name = "mypy", specifier = ">=1.11" },
+    { name = "pre-commit", specifier = ">=3.8" },
+    { name = "prompt-toolkit", specifier = ">=3.0" },
+    { name = "psutil", specifier = ">=5.9" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-asyncio", specifier = ">=0.24" },
+    { name = "pytest-cov", specifier = ">=5.0" },
+    { name = "python-dotenv", specifier = ">=1.0" },
+    { name = "rich", specifier = ">=13.0" },
+    { name = "ruff", specifier = ">=0.6" },
+    { name = "types-requests" },
+    { name = "yyc3-browser", editable = "../yyc3-agent-core/packages/browser" },
+]
+
+[[package]]
+name = "yyc3-memory"
+version = "1.0.1"
+source = { editable = "../yyc3-agent-core/packages/memory" }
+
+[package.metadata]
+requires-dist = [
+    { name = "chromadb", marker = "extra == 'chroma'", specifier = ">=0.4" },
+    { name = "click", marker = "extra == 'cli'", specifier = ">=8.0" },
+    { name = "click", marker = "extra == 'dashboard'", specifier = ">=8.0" },
+    { name = "fastapi", marker = "extra == 'dashboard'", specifier = ">=0.110" },
+    { name = "langgraph-checkpoint", marker = "extra == 'langgraph'", specifier = ">=2.0" },
+    { name = "langgraph-checkpoint", marker = "extra == 'langgraph-postgres'", specifier = ">=2.0" },
+    { name = "langgraph-checkpoint-postgres", marker = "extra == 'langgraph-postgres'", specifier = ">=2.0" },
+    { name = "langgraph-checkpoint-sqlite", marker = "extra == 'langgraph'", specifier = ">=2.0" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'langgraph-postgres'", specifier = ">=3.1" },
+    { name = "psycopg", extras = ["binary"], marker = "extra == 'postgres'", specifier = ">=3.1" },
+    { name = "qdrant-client", marker = "extra == 'qdrant'", specifier = ">=1.7" },
+    { name = "sentence-transformers", marker = "extra == 'embeddings'", specifier = ">=2.2" },
+    { name = "uvicorn", extras = ["standard"], marker = "extra == 'dashboard'", specifier = ">=0.29" },
+]
+provides-extras = ["postgres", "chroma", "qdrant", "embeddings", "langgraph", "langgraph-postgres", "cli", "dashboard"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "click", specifier = ">=8.0" },
+    { name = "langgraph", specifier = ">=0.2" },
+    { name = "langgraph-checkpoint", specifier = ">=2.0" },
+    { name = "langgraph-checkpoint-postgres", specifier = ">=2.0" },
+    { name = "langgraph-checkpoint-sqlite", specifier = ">=2.0" },
+    { name = "mypy", specifier = ">=1.13" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.1" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-asyncio", specifier = ">=0.23" },
+    { name = "pytest-cov", specifier = ">=5.0" },
+    { name = "ruff", specifier = ">=0.8" },
+]
+
+[[package]]
 name = "yyc3-pai"
 version = "0.1.0"
 source = { editable = "." }
@@ -5160,10 +5352,6 @@ dependencies = [
     { name = "lark-oapi" },
     { name = "ldap3" },
     { name = "mcp" },
-    { name = "octop-browser" },
-    { name = "octop-gateway" },
-    { name = "octop-harness", extra = ["all"] },
-    { name = "octop-memory" },
     { name = "openpyxl" },
     { name = "pillow" },
     { name = "playwright" },
@@ -5181,6 +5369,10 @@ dependencies = [
     { name = "uvicorn", extra = ["standard"] },
     { name = "websockets" },
     { name = "xlrd" },
+    { name = "yyc3-browser" },
+    { name = "yyc3-gateway" },
+    { name = "yyc3-harness", extra = ["all"] },
+    { name = "yyc3-memory" },
 ]
 
 [package.optional-dependencies]
@@ -5249,10 +5441,6 @@ requires-dist = [
     { name = "mcp", specifier = ">=1.9,<2" },
     { name = "mss", marker = "extra == 'desktop'", specifier = ">=9.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10" },
-    { name = "octop-browser", specifier = ">=1.0.0" },
-    { name = "octop-gateway", specifier = ">=1.0.0" },
-    { name = "octop-harness", extras = ["all"], specifier = ">=1.0.1" },
-    { name = "octop-memory", specifier = ">=1.0.0" },
     { name = "onnxruntime", marker = "extra == 'knowledge-ocr'", specifier = ">=1.17" },
     { name = "openpyxl", specifier = ">=3.1" },
     { name = "pillow", specifier = ">=10.0" },
@@ -5282,6 +5470,10 @@ requires-dist = [
     { name = "websockets", specifier = ">=13.0" },
     { name = "xlrd", specifier = ">=2.0.1" },
     { name = "xlwt", marker = "extra == 'dev'", specifier = ">=1.3" },
+    { name = "yyc3-browser", editable = "../yyc3-agent-core/packages/browser" },
+    { name = "yyc3-gateway", editable = "../yyc3-agent-core/packages/gateway" },
+    { name = "yyc3-harness", extras = ["all"], editable = "../yyc3-agent-core/packages/harness" },
+    { name = "yyc3-memory", editable = "../yyc3-agent-core/packages/memory" },
 ]
 provides-extras = ["dev", "browser", "desktop", "local-embedding", "knowledge-ocr"]
 
