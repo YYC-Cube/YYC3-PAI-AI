@@ -59,9 +59,7 @@ def _legacy_adapter(model_id: str, *, base_url: str | None) -> str:
         return "thinking_nested_effort"
     if _host_matches(host, "deepseek.com", "bigmodel.cn", "z.ai", "moonshot.cn", "moonshot.ai"):
         return "thinking"
-    if _host_matches(
-        host, "openai.com", "generativelanguage.googleapis.com", "groq.com"
-    ):
+    if _host_matches(host, "openai.com", "generativelanguage.googleapis.com", "groq.com"):
         return "openai_reasoning_effort"
     # Existing Octop metadata historically meant an OpenAI-compatible model
     # with a ``thinking`` object. Keep that behaviour for unknown gateways.
