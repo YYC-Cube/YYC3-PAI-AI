@@ -20,7 +20,7 @@ def test_defaults_when_missing(tmp_path: Path):
     assert cfg.enable_api_docs is False
     assert cfg.require_setup_password is True
     assert cfg.database.driver == "sqlite"
-    assert cfg.database.sqlite_path == "octop.db"
+    assert cfg.database.sqlite_path == "yyc3-pai.db"
     assert cfg.database.is_sqlite
     assert cfg.database_in_file is False
     assert cfg.backup.auto_enabled is False

@@ -1,7 +1,7 @@
 """Verify attachment workspace-path behaviour for LLM filesystem tools.
 
 Documents the gap between inbound attachment storage (BackendWorkspace) and
-deepagents filesystem tools under Octop's default backend (root_dir='/').
+deepagents filesystem tools under YYC3-Pai's default backend (root_dir='/').
 """
 
 from __future__ import annotations
@@ -127,7 +127,7 @@ async def test_octop_default_backend_tool_path_misses_uploaded_file() -> None:
         read_result = backend.read(tool_path, offset=0, limit=100)
         assert read_result.error is not None or read_result.file_data is None
 
-        # Octop ingress layer can still read the same attachment
+        # YYC3-Pai ingress layer can still read the same attachment
         data = await workspace.adownload_bytes(stored.path)
         assert data == b"%PDF-1.4"
 

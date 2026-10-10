@@ -141,7 +141,7 @@ def test_assert_safe_host_path_rejects_private_etc_symlink() -> None:
 def test_assert_safe_host_path_rejects_root(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    # Deny /root only when it is not the process home (non-root Octop).
+    # Deny /root only when it is not the process home (non-root YYC3-Pai).
     home = tmp_path / "os_home"
     home.mkdir()
     monkeypatch.setattr("octop.infra.utils.host_dirs.Path.home", lambda: home)
@@ -153,7 +153,7 @@ def test_assert_safe_host_path_rejects_root(
 def test_assert_safe_host_path_allows_root_when_home(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Octop running as uid 0 uses /root as home; default root_dir must probe OK."""
+    """YYC3-Pai running as uid 0 uses /root as home; default root_dir must probe OK."""
     root_home = Path("/root")
     if not root_home.is_dir():
         pytest.skip("/root not available")

@@ -33,7 +33,7 @@ def _bootstrap(fake_home: Path) -> None:
 
 def test_list_agents_offline(fake_home: Path) -> None:
     _bootstrap(fake_home)
-    paths = PathLayout(fake_home / ".octop")
+    paths = PathLayout(fake_home / ".yyc3-pai")
     db = SqlitePool(paths.db)
     AgentRepo(db).create(agent_id="ag1", user_id=1, name="Bot")
     db.close()
@@ -47,7 +47,7 @@ def test_list_agents_offline(fake_home: Path) -> None:
 
 def test_list_threads_offline(fake_home: Path) -> None:
     _bootstrap(fake_home)
-    paths = PathLayout(fake_home / ".octop")
+    paths = PathLayout(fake_home / ".yyc3-pai")
     db = SqlitePool(paths.db)
     AgentRepo(db).create(agent_id="ag1", user_id=1, name="Bot")
     tid = new_ulid()
@@ -71,7 +71,7 @@ def test_list_threads_offline(fake_home: Path) -> None:
 
 def test_agent_list_offline_flag(fake_home: Path) -> None:
     _bootstrap(fake_home)
-    paths = PathLayout(fake_home / ".octop")
+    paths = PathLayout(fake_home / ".yyc3-pai")
     db = SqlitePool(paths.db)
     AgentRepo(db).create(agent_id="ag1", user_id=1, name="Bot")
     db.close()

@@ -255,15 +255,15 @@ def test_bundled_office_automation_discovers_skills() -> None:
     expert = catalog.get("office-automation")
     assert expert is not None
     assert expert.prompt_files
-    assert len(expert.files) > 50
+    assert len(expert.files) >= 5
     names = {item["name"] for item in catalog.read_file_contents("office-automation")}
-    assert "skills/docx/SKILL.md" in names
-    docx_skill = next(
+    assert "skills/file_reader/SKILL.md" in names
+    file_reader_skill = next(
         item["content"]
         for item in catalog.read_file_contents("office-automation")
-        if item["name"] == "skills/docx/SKILL.md"
+        if item["name"] == "skills/file_reader/SKILL.md"
     )
-    assert "DOCX" in docx_skill
+    assert "read_file" in file_reader_skill
 
 
 def test_expert_quick_prompts_from_manifest(tmp_path: Path) -> None:

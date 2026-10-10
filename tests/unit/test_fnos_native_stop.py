@@ -13,6 +13,10 @@ from pathlib import Path
 import pytest
 
 posix_only = pytest.mark.skipif(os.name != "posix", reason="bash helpers")
+requires_proc_fs = pytest.mark.skipif(
+    not Path("/proc/self/environ").exists(),
+    reason="octop_fpk_native_run_pids reads /proc/<pid>/environ (Linux only)",
+)
 
 REPO = Path(__file__).resolve().parents[2]
 COMMON_SH = REPO / "scripts" / "fnos" / "common.sh"
@@ -45,7 +49,7 @@ def _listen_script(port: int) -> str:
         "import signal,socket,time;"
         "signal.signal(signal.SIGHUP,signal.SIG_IGN);"
         "s=socket.socket();s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1);"
-        f"s.bind(('127.0.0.1',{port}));s.listen(1);time.sleep(120)"
+        f"s.bind(('127.0.0.1',{port}));s.listen(64);time.sleep(120)"
     )
 
 
@@ -175,7 +179,7 @@ def test_native_main_stop_frees_port_after_wrapper_start(tmp_path: Path) -> None
     shutil.copy(FNOS_NATIVE / "cmd" / "main", cmd / "main")
     shutil.copy(COMMON_SH, cmd / "common.sh")
     (cmd / "main").chmod(0o755)
-    launcher = bindir / "octop"
+    launcher = bindir / "pai"
     launcher.write_text(
         "#!/bin/bash\n"
         'if [ "${1:-}" = "--prepare" ]; then exit 0; fi\n'
@@ -185,7 +189,7 @@ def test_native_main_stop_frees_port_after_wrapper_start(tmp_path: Path) -> None
         "done\n"
         'python3 -c "import signal,socket,time;signal.signal(signal.SIGHUP,signal.SIG_IGN);'
         "s=socket.socket();s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1);"
-        "s.bind(('127.0.0.1',int('$port')));s.listen(1);time.sleep(120)\" &\n"
+        "s.bind(('127.0.0.1',int('$port')));s.listen(64);time.sleep(120)\" &\n"
         "wait\n",
         encoding="utf-8",
     )
@@ -270,7 +274,7 @@ def test_native_main_start_term_cleans_unready_child(tmp_path: Path) -> None:
     (data / ".octop" / "octop.db").write_text("", encoding="utf-8")
     cmd = tmp_path / "cmd"
     _copy_ctl(cmd)
-    launcher = appdest / "bin" / "octop"
+    launcher = appdest / "bin" / "pai"
     launcher.write_text(
         "#!/bin/bash\n"
         'if [ "${1:-}" = "--prepare" ]; then exit 0; fi\n'
@@ -329,6 +333,7 @@ def _pid_file_alive(path: Path) -> bool:
 
 
 @posix_only
+@requires_proc_fs
 def test_octop_fpk_native_run_pids_and_sweep(tmp_path: Path) -> None:
     env = {**os.environ, "OCTOP_INSTALL_MODE": "fpk-native"}
     proc = subprocess.Popen(

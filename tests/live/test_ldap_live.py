@@ -3,7 +3,7 @@
 Drives the production HTTP surface (``POST /api/auth/login`` plus the admin
 ``/api/auth/ldap/config`` routes) against a real LDAP server, so a green run
 proves the configured directory credentials actually reach the directory and
-that group-derived roles are mapped onto an Octop account.
+that group-derived roles are mapped onto a YYC3-Pai account.
 
 Point it at any directory — a local :program:`glauth` instance is the reference
 setup (see ``docs/ldap.md`` §3.1)::
@@ -96,7 +96,7 @@ async def test_live_directory_login_and_role_mapping(client) -> None:
     assert body["user"]["username"] == username
     assert body["user"]["role"] == optional_env("OCTOP_LDAP_TEST_EXPECTED_ROLE", "admin")
 
-    # The JWT issued from a directory login is a normal Octop token.
+    # The JWT issued from a directory login is a normal YYC3-Pai token.
     me = await http.get("/api/auth/me", headers={"Authorization": f"Bearer {body['access_token']}"})
     assert me.status_code == 200
     assert me.json()["username"] == username

@@ -140,7 +140,7 @@ def test_qq_qrcode_poll_returns_credentials(mock_server_and_user):
 
 
 def test_dingtalk_qrcode_generate_keeps_device_code_server_side(mock_server_and_user):
-    """Only an opaque Octop registration ID and public QR metadata reach the browser."""
+    """Only an opaque YYC3-Pai registration ID and public QR metadata reach the browser."""
     server, user = mock_server_and_user
     from octop.api.routers import channels as ch_module
 

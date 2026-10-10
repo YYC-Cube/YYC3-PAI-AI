@@ -284,7 +284,7 @@ def test_has_kind_detects_system_events(tmp_path: Path) -> None:
     service.observe_chunk(
         "A1",
         "T1",
-        {"type": "system", "label": "Initial System Prompt", "content": "You are Octop."},
+        {"type": "system", "label": "Initial System Prompt", "content": "You are YYC3-Pai."},
     )
     assert service.has_kind("T1", "system") is True
     assert service.has_kind("T1", "context") is False

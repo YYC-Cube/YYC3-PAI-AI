@@ -25,22 +25,22 @@ def test_split_tag_accepts_with_or_without_v() -> None:
 def test_render_download_section_matches_github_asset_names() -> None:
     mod = _load()
     body = mod.render_download_section("0.9.31")
-    base = "https://github.com/TencentCloud/Octop/releases/download/v0.9.31"
-    assert f"{base}/Octop-desktop-windows-amd64-0.9.31.exe" in body
-    assert f"{base}/Octop-desktop-windows-arm64-0.9.31.exe" in body
-    assert f"{base}/Octop-portable-windows-amd64-0.9.31.zip" in body
-    assert f"{base}/Octop-portable-windows-arm64-0.9.31.zip" in body
-    assert f"{base}/Octop-desktop-darwin-arm64-0.9.31.dmg" in body
-    assert f"{base}/Octop-desktop-darwin-amd64-0.9.31.dmg" in body
-    assert f"{base}/Octop-portable-darwin-arm64-0.9.31.zip" in body
-    assert f"{base}/Octop-portable-darwin-amd64-0.9.31.zip" in body
-    assert f"{base}/Octop-desktop-linux-amd64-0.9.31.tar.gz" in body
-    assert f"{base}/Octop-desktop-linux-arm64-0.9.31.tar.gz" in body
-    assert f"{base}/Octop-portable-linux-amd64-0.9.31.zip" in body
-    assert f"{base}/Octop-portable-linux-arm64-0.9.31.zip" in body
-    assert f"{base}/Octop-fnos-docker-0.9.31.fpk" in body
-    assert f"{base}/Octop-fnos-native-0.9.31.fpk" in body
-    assert f"{base}/Octop-fnos-native-arm64-0.9.31.fpk" in body
+    base = "https://github.com/YYC-Cube/YYC3-Pai/releases/download/v0.9.31"
+    assert f"{base}/YYC3-Pai-desktop-windows-amd64-0.9.31.exe" in body
+    assert f"{base}/YYC3-Pai-desktop-windows-arm64-0.9.31.exe" in body
+    assert f"{base}/YYC3-Pai-portable-windows-amd64-0.9.31.zip" in body
+    assert f"{base}/YYC3-Pai-portable-windows-arm64-0.9.31.zip" in body
+    assert f"{base}/YYC3-Pai-desktop-darwin-arm64-0.9.31.dmg" in body
+    assert f"{base}/YYC3-Pai-desktop-darwin-amd64-0.9.31.dmg" in body
+    assert f"{base}/YYC3-Pai-portable-darwin-arm64-0.9.31.zip" in body
+    assert f"{base}/YYC3-Pai-portable-darwin-amd64-0.9.31.zip" in body
+    assert f"{base}/YYC3-Pai-desktop-linux-amd64-0.9.31.tar.gz" in body
+    assert f"{base}/YYC3-Pai-desktop-linux-arm64-0.9.31.tar.gz" in body
+    assert f"{base}/YYC3-Pai-portable-linux-amd64-0.9.31.zip" in body
+    assert f"{base}/YYC3-Pai-portable-linux-arm64-0.9.31.zip" in body
+    assert f"{base}/YYC3-Pai-fnos-docker-0.9.31.fpk" in body
+    assert f"{base}/YYC3-Pai-fnos-native-0.9.31.fpk" in body
+    assert f"{base}/YYC3-Pai-fnos-native-arm64-0.9.31.fpk" in body
     assert "Docker (recommended; x86 and ARM)" in body
     assert "Native x86_64" in body
     assert "Native ARM64 (no Docker)" in body

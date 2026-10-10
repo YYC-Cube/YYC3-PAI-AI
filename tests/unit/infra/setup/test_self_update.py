@@ -116,9 +116,9 @@ def test_fetch_pypi_info_loads_prerelease_description(
     def fake_urlopen(req: object, timeout: int = 10) -> _JsonResp:
         url = getattr(req, "full_url", "")
         urls.append(url)
-        if url.endswith("/octop/json"):
+        if url.endswith("/yyc3-pai/json"):
             return _JsonResp(catalog)
-        if url.endswith("/octop/1.0.2b5/json"):
+        if url.endswith("/yyc3-pai/1.0.2b5/json"):
             return _JsonResp(beta)
         raise AssertionError(url)
 
@@ -129,7 +129,7 @@ def test_fetch_pypi_info_loads_prerelease_description(
     assert info.latest_stable == "1.0.1"
     assert info.description is not None
     assert "remote bridge" in info.description
-    assert any(url.endswith("/octop/1.0.2b5/json") for url in urls)
+    assert any(url.endswith("/yyc3-pai/1.0.2b5/json") for url in urls)
 
 
 def test_fetch_pypi_info_skips_versioned_fetch_when_stable_is_latest(
@@ -144,7 +144,7 @@ def test_fetch_pypi_info_skips_versioned_fetch_when_stable_is_latest(
     def fake_urlopen(req: object, timeout: int = 10) -> _JsonResp:
         url = getattr(req, "full_url", "")
         urls.append(url)
-        if url.endswith("/octop/json"):
+        if url.endswith("/yyc3-pai/json"):
             return _JsonResp(catalog)
         raise AssertionError(url)
 
@@ -154,7 +154,7 @@ def test_fetch_pypi_info_skips_versioned_fetch_when_stable_is_latest(
     assert info.version == "1.0.1"
     assert info.description is not None
     assert "stable" in info.description
-    assert urls == ["https://pypi.org/pypi/octop/json"]
+    assert urls == ["https://pypi.org/pypi/yyc3-pai/json"]
 
 
 def test_build_upgrade_command_prerelease_flags(
@@ -164,12 +164,12 @@ def test_build_upgrade_command_prerelease_flags(
     uv_cmd = build_upgrade_command("uv", python, allow_prerelease=True, version="0.9.34b1")
     assert uv_cmd is not None
     assert uv_cmd[uv_cmd.index("--prerelease") + 1] == "allow"
-    assert "octop==0.9.34b1" in uv_cmd
+    assert "yyc3-pai==0.9.34b1" in uv_cmd
     monkeypatch.setattr("octop.infra.setup.self_update.has_pip", lambda _: True)
     pip_cmd = build_upgrade_command("pip", python, allow_prerelease=True, version="0.9.34b1")
     assert pip_cmd is not None
     assert "--pre" in pip_cmd
-    assert "octop==0.9.34b1" in pip_cmd
+    assert "yyc3-pai==0.9.34b1" in pip_cmd
 
 
 def test_build_upgrade_command_pins_stable_without_pre(
@@ -178,12 +178,12 @@ def test_build_upgrade_command_pins_stable_without_pre(
     python = "/home/user/.octop/venv/bin/python"
     uv_cmd = build_upgrade_command("uv", python, version="0.9.33")
     assert uv_cmd is not None
-    assert "octop==0.9.33" in uv_cmd
+    assert "yyc3-pai==0.9.33" in uv_cmd
     assert "--prerelease" not in uv_cmd
     monkeypatch.setattr("octop.infra.setup.self_update.has_pip", lambda _: True)
     pip_cmd = build_upgrade_command("pip", python, version="0.9.33")
     assert pip_cmd is not None
-    assert "octop==0.9.33" in pip_cmd
+    assert "yyc3-pai==0.9.33" in pip_cmd
     assert "--pre" not in pip_cmd
 
 
@@ -191,8 +191,9 @@ def _fake_windows_scripts(tmp_path: Path) -> Path:
     script_dir = tmp_path / "Scripts"
     script_dir.mkdir()
     (script_dir / "python.exe").write_text("python")
-    (script_dir / "octop.exe").write_text("launcher")
-    (script_dir / "octop.exe.octop-old").write_text("leftover")
+    (script_dir / "pai.exe").write_text("launcher")
+    (script_dir / "yyc3-pai.exe").write_text("launcher")
+    (script_dir / "yyc3-pai.exe.octop-old").write_text("leftover")
     (script_dir / "pip.exe").write_text("pip")
     return script_dir
 
@@ -204,7 +205,7 @@ def test_stash_console_scripts_is_noop_off_windows(
     monkeypatch.setattr("octop.infra.setup.self_update._is_windows", lambda: False)
     script_dir = _fake_windows_scripts(tmp_path)
     assert stash_console_scripts(str(script_dir / "python.exe")) == []
-    assert (script_dir / "octop.exe").exists()
+    assert (script_dir / "yyc3-pai.exe").exists()
 
 
 def test_stash_console_scripts_moves_launcher_and_purges_leftovers(
@@ -216,10 +217,14 @@ def test_stash_console_scripts_moves_launcher_and_purges_leftovers(
 
     moved = stash_console_scripts(str(script_dir / "python.exe"))
 
-    assert moved == [(script_dir / "octop.exe", script_dir / "octop.exe.octop-old")]
-    assert not (script_dir / "octop.exe").exists()
+    assert moved == [
+        (script_dir / "pai.exe", script_dir / "pai.exe.octop-old"),
+        (script_dir / "yyc3-pai.exe", script_dir / "yyc3-pai.exe.octop-old"),
+    ]
+    assert not (script_dir / "pai.exe").exists()
+    assert not (script_dir / "yyc3-pai.exe").exists()
     # The leftover from an earlier upgrade is gone, replaced by the new stash.
-    assert (script_dir / "octop.exe.octop-old").read_text() == "launcher"
+    assert (script_dir / "yyc3-pai.exe.octop-old").read_text() == "launcher"
     assert (script_dir / "pip.exe").exists()
 
 
@@ -233,8 +238,8 @@ def test_restore_console_scripts_puts_launcher_back(
 
     restore_console_scripts(moved)
 
-    assert (script_dir / "octop.exe").read_text() == "launcher"
-    assert not (script_dir / "octop.exe.octop-old").exists()
+    assert (script_dir / "yyc3-pai.exe").read_text() == "launcher"
+    assert not (script_dir / "yyc3-pai.exe.octop-old").exists()
 
 
 @pytest.mark.parametrize("success", [True, False])
@@ -253,9 +258,9 @@ def test_run_upgrade_restores_launcher_only_on_failure(
 
     def fake_upgrade(**_kwargs: object) -> UpgradeResult:
         # The installer only succeeds because the locked launcher moved aside.
-        assert not (script_dir / "octop.exe").exists()
+        assert not (script_dir / "yyc3-pai.exe").exists()
         if success:
-            (script_dir / "octop.exe").write_text("new launcher")
+            (script_dir / "yyc3-pai.exe").write_text("new launcher")
             return UpgradeResult(success=True, installed_version="1.0.1")
         return UpgradeResult(success=False, error="upgrade failed on all mirrors")
 
@@ -265,16 +270,16 @@ def test_run_upgrade_restores_launcher_only_on_failure(
 
     assert result.success is success
     expected = "new launcher" if success else "launcher"
-    assert (script_dir / "octop.exe").read_text() == expected
-    assert not (script_dir / "octop.exe.octop-old").exists()
+    assert (script_dir / "yyc3-pai.exe").read_text() == expected
+    assert not (script_dir / "yyc3-pai.exe.octop-old").exists()
 
 
 def test_page_has_package_version_matches_wheel_and_sdist() -> None:
-    body = '<a href="octop-1.0.1-py3-none-any.whl">octop-1.0.1-py3-none-any.whl</a>'
+    body = '<a href="yyc3-pai-1.0.1-py3-none-any.whl">yyc3-pai-1.0.1-py3-none-any.whl</a>'
     assert page_has_package_version(body, "1.0.1")
     assert not page_has_package_version(body, "1.0.10")
     assert page_has_package_version(
-        '<a href="octop-1.0.2.tar.gz">octop-1.0.2.tar.gz</a>',
+        '<a href="yyc3-pai-1.0.2.tar.gz">yyc3-pai-1.0.2.tar.gz</a>',
         "1.0.2",
     )
     assert page_has_package_version("any non-empty body", None)
@@ -304,7 +309,7 @@ def test_probe_index_classifies_missing_and_unreachable(
             return None
 
         def read(self) -> bytes:
-            return b'<a href="octop-0.9.0-py3-none-any.whl">x</a>'
+            return b'<a href="yyc3-pai-0.9.0-py3-none-any.whl">x</a>'
 
     monkeypatch.setattr(
         "octop.infra.setup.self_update.urllib.request.urlopen",

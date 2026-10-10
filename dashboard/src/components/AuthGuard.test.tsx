@@ -1,9 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { configure, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import AuthGuard from "./AuthGuard";
+
+// The shell-mount test only fails under full-suite load: the default 1s
+// async-util timeout can elapse before the mocked boot chain resolves when
+// sibling files compete for the worker. Give this file a bounded 5s budget.
+configure({ asyncUtilTimeout: 5000 });
 
 vi.mock("../api/modules/auth", () => ({
   authApi: {

@@ -2,13 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   applyQqChannelSaveConfig,
-  DEFAULT_CHANNEL_DISPLAY_CONFIG,
+  CHANNEL_FIELDS,
+  CHANNEL_KEYS,
   DEFAULT_QQ_GROUP_CONTEXT_CONFIG,
+  normalizeChannelFieldValue,
   normalizeQqGroupContextConfig,
   partitionChannelKeys,
-  CHANNEL_KEYS,
-  CHANNEL_FIELDS,
-  normalizeChannelFieldValue,
 } from "./constants";
 
 describe("Discord configuration", () => {

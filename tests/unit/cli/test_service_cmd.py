@@ -143,7 +143,7 @@ def test_service_start_emits_diagnostic_hint_when_health_unreachable(
     # `start` is warn-only, so exit code stays 0 but the hint must appear.
     assert result.exit_code == 0, result.output
     assert "connection refused" in result.output
-    assert "journalctl -u octop" in result.output
+    assert "journalctl -u yyc3-pai" in result.output
 
 
 def test_service_status_exits_when_health_unreachable(

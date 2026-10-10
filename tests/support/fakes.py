@@ -354,7 +354,7 @@ class _FakeHarnessGraph:
 
 
 class _FakeBackend:
-    """In-memory backend supporting the harness BackendProtocol surface used by Octop routers."""
+    """In-memory backend supporting the harness BackendProtocol surface used by YYC3-Pai routers."""
 
     def __init__(self) -> None:
         self._files: dict[str, bytes] = {}

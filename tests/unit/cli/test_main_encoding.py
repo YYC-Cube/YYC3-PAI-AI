@@ -24,7 +24,7 @@ def test_ensure_utf8_stdio_reconfigures_gbk_streams() -> None:
     assert out.encoding.lower() == "utf-8"
     assert err.encoding.lower() == "utf-8"
     # U+2705 (✅) is not representable in GBK; must encode without raising.
-    out.write("\u2705 Octop bootstrapped")
+    out.write("\u2705 YYC3-Pai bootstrapped")
     out.flush()
 
 
@@ -35,7 +35,7 @@ def test_ensure_utf8_stdio_leaves_utf8_streams_alone() -> None:
 
 
 def test_init_completes_with_gbk_stdout(tmp_path: Path) -> None:
-    """``octop init`` still bootstraps when stdout is forced to GBK. The crash
+    """``pai init`` still bootstraps when stdout is forced to GBK. The crash
     previously happened at the final success message, after the DB and admin
     user were already created."""
     home = tmp_path / "octop-home"
@@ -63,4 +63,4 @@ def test_init_completes_with_gbk_stdout(tmp_path: Path) -> None:
     assert proc.returncode == 0, proc.stdout.decode("utf-8", "replace") + proc.stderr.decode(
         "utf-8", "replace"
     )
-    assert (home / "octop.db").is_file()
+    assert (home / "yyc3-pai.db").is_file()

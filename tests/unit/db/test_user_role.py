@@ -88,7 +88,7 @@ def test_cli_and_seed_follow_preset_user_role(tmp_path: Path) -> None:
         home=home,
     )
     assert created["role"] == "user"
-    db = SqlitePool(home / "octop.db")
+    db = SqlitePool(home / "yyc3-pai.db")
     row = UserRepo(db).get_by_username("cliuser")
     assert row is not None
     assert row.role == "user"

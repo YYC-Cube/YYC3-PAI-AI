@@ -349,7 +349,7 @@ async def test_refresh_agents_for_package_hot_syncs_only_mounted_agents(
 async def test_list_skill_summaries_relabels_mounted_package_skills(
     manager: AgentManager,
 ) -> None:
-    """Harness lists package dirs as workspace; Octop marks mounted package slugs."""
+    """Harness lists package dirs as workspace; YYC3-Pai marks mounted package slugs."""
     from unittest.mock import AsyncMock, MagicMock
 
     from octop.infra.skills.skill_package_store import SkillPackageStore

@@ -1,4 +1,4 @@
-"""Compose must forward OCTOP_DATABASE_* into the container (issue #152)."""
+"""Compose must forward YYC3_DATABASE_* (OCTOP_DATABASE_* fallback) into the container."""
 
 from __future__ import annotations
 
@@ -25,5 +25,11 @@ def test_docker_compose_forwards_database_env_keys() -> None:
     repo = Path(__file__).resolve().parents[2]
     text = (repo / "docker" / "docker-compose.yml").read_text(encoding="utf-8")
     env_text = _compose_environment_entries(text)
-    missing = [k for k in _DATABASE_ENV_KEYS if f"{k}=" not in env_text]
+    missing = []
+    for k in _DATABASE_ENV_KEYS:
+        # Primary YYC3_* keys must be literal list entries ("- KEY=...");
+        # legacy OCTOP_* keys only appear as compose-level fallbacks.
+        forwarded = f"{k}=" in env_text if k.startswith("YYC3_") else f"${{{k}:-" in env_text
+        if not forwarded:
+            missing.append(k)
     assert not missing, f"docker-compose.yml environment missing: {missing}"

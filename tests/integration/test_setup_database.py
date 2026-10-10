@@ -70,7 +70,7 @@ async def test_deferred_verify_password_then_bind(tmp_octop_home: Path) -> None:
     """Greenfield: password works with no pool; /setup/database binds once."""
     async with octop_client(tmp_octop_home, bind_database=False) as (client, srv):
         assert srv.database_bound is False
-        assert not (tmp_octop_home / "octop.db").exists()
+        assert not (tmp_octop_home / "yyc3-pai.db").exists()
 
         status = await client.get("/api/setup/status")
         assert status.status_code == 200

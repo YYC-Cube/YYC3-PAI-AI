@@ -32,7 +32,7 @@ def _workspace(root: str, *, virtual_mode: bool = False) -> BackendWorkspace:
 
 
 def _default_virtual_workspace(root: str) -> BackendWorkspace:
-    """BackendWorkspace matching Octop's platform default agent backend.
+    """BackendWorkspace matching YYC3-Pai's platform default agent backend.
 
     POSIX keeps host-rooted shell access; harness scopes deepagents artifacts
     to the agent workspace. Windows scopes the local-shell root to the

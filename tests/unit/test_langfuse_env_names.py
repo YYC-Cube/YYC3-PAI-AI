@@ -1,7 +1,7 @@
 """Every Langfuse variable shipped to the container must have a reader.
 
 `.env.example` and `docker/docker-compose.yml` advertise the observability
-knobs to self-hosters. Octop itself keeps the enable switch in the settings
+knobs to self-hosters. YYC3-Pai itself keeps the enable switch in the settings
 table (`observability_langfuse_enabled`), while the credentials fall back to
 the Langfuse SDK's own environment variables — so a name neither side reads
 is a knob that silently does nothing.
@@ -48,7 +48,7 @@ def _sdk_env_names() -> set[str]:
 
 
 def test_octop_reads_no_langfuse_env_var() -> None:
-    """Guard the premise: Octop's switch lives in the settings table, not env."""
+    """Guard the premise: YYC3-Pai's switch lives in the settings table, not env."""
     source = (REPO_ROOT / "src/octop/infra/agents/settings/langfuse.py").read_text(encoding="utf-8")
     assert '"observability_langfuse_enabled"' in source
     assert not re.search(r"(?:getenv|environ(?:\.get)?)\(\s*[\"']OCTOP_LANGFUSE", source)

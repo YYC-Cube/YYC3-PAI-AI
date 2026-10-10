@@ -39,7 +39,7 @@ def test_init_non_interactive_creates_admin(fake_home: Path) -> None:
     )
     assert result.exit_code == 0, result.output
     assert (fake_home / ".octop").is_dir()
-    assert (fake_home / ".octop" / "octop.db").is_file()
+    assert (fake_home / ".octop" / "yyc3-pai.db").is_file()
     # New catalog plugins are installed via the marketplace, not auto-seeded.
     weather = fake_home / ".octop" / "plugins" / "weather" / "plugin.yaml"
     assert not weather.is_file()
@@ -58,10 +58,10 @@ def test_init_non_interactive_creates_admin(fake_home: Path) -> None:
 
 
 def test_init_allows_sidecar_files_without_database(fake_home: Path) -> None:
-    """NAS / Docker shares often have login.txt before the first octop.db exists."""
+    """NAS / Docker shares often have login.txt before the first yyc3-pai.db exists."""
     home = fake_home / ".octop"
     home.mkdir()
-    (home / "octop-login.txt").write_text("placeholder\n", encoding="utf-8")
+    (home / "yyc3-pai-login.txt").write_text("placeholder\n", encoding="utf-8")
     runner = CliRunner()
     result = runner.invoke(
         cli,
@@ -75,8 +75,8 @@ def test_init_allows_sidecar_files_without_database(fake_home: Path) -> None:
         ],
     )
     assert result.exit_code == 0, result.output
-    assert (home / "octop.db").is_file()
-    assert (home / "octop-login.txt").read_text(encoding="utf-8") == "placeholder\n"
+    assert (home / "yyc3-pai.db").is_file()
+    assert (home / "yyc3-pai-login.txt").read_text(encoding="utf-8") == "placeholder\n"
 
 
 def test_init_refuses_to_overwrite_without_force(fake_home: Path) -> None:

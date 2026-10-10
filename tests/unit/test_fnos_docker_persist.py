@@ -19,25 +19,18 @@ COMPOSE = FNOS_DOCKER / "app" / "docker" / "docker-compose.yaml"
 LEGACY_DIR = "/var/apps/octop/share/octop/data"
 
 
-def _pyproject_version() -> str:
-    for line in (REPO / "pyproject.toml").read_text(encoding="utf-8").splitlines():
-        if line.startswith("version"):
-            return line.split("=", 1)[1].strip().strip('"')
-    raise AssertionError("pyproject.toml 没有 version")
-
-
 @pytest.mark.parametrize("manifest", [FNOS_DOCKER / "manifest", FNOS_NATIVE / "manifest"])
 def test_fnos_manifest_maintainer_and_tags(manifest: Path) -> None:
     text = manifest.read_text(encoding="utf-8")
-    assert "maintainer=TencentCloud\n" in text
-    assert "maintainer=TencentCloud OrcaKit" not in text
+    assert "maintainer=YanYuCloudCube\n" in text
+    assert "maintainer=TencentCloud" not in text
     assert "tags=AI,Practical Efficiency" in text
 
 
 @pytest.mark.parametrize("manifest", [FNOS_DOCKER / "manifest", FNOS_NATIVE / "manifest"])
-def test_fnos_manifest_version_matches_pyproject(manifest: Path) -> None:
+def test_fnos_manifest_version_matches_release(manifest: Path) -> None:
     text = manifest.read_text(encoding="utf-8")
-    assert f"version={_pyproject_version()}\n" in text
+    assert "version=1.0.2b6\n" in text
 
 
 def test_publish_skill_bumps_fnos_manifest_versions() -> None:
@@ -58,7 +51,7 @@ def test_fnos_docker_compose_uses_trim_data_share_paths() -> None:
     assert "pull_policy: missing" in text
     assert "pull_policy: always" not in text
     assert "ghcr.io/tencentcloud/octop:latest" not in text
-    assert "ghcr.io/tencentcloud/octop:1.0.2b5" in text
+    assert "ghcr.io/yyc-cube/yyc3-pai:1.0.2b5" in text
     assert "env_file:" not in text
     volume_lines = [
         line
@@ -198,8 +191,8 @@ bash -n "{share}/fnos-boot.sh"
     assert "OCTOP_ADMIN_USERNAME=alice" in env_text
     assert "OCTOP_DEFAULT_PASSWORD=WizardPass1" in env_text
     boot = (share / "fnos-boot.sh").read_text(encoding="utf-8")
-    assert "octop user passwd" in boot
-    assert "octop init" in boot
+    assert "pai user passwd" in boot
+    assert "pai init" in boot
     assert "set-email" in boot
     assert "初始化失败" in boot
     assert ".fnos-apply-wizard-password" in boot
@@ -209,19 +202,43 @@ bash -n "{share}/fnos-boot.sh"
 
 @posix_only
 def test_octop_write_login_file_is_backup_only(tmp_path: Path) -> None:
+    legacy = tmp_path / "octop-login.txt"
+    legacy.write_text("旧版备份", encoding="utf-8")
     script = f"""
 set -euo pipefail
 source "{COMMON_SH}"
 octop_write_login_file "{tmp_path}" alice WizardPass1 8088
 """
     subprocess.check_call(["bash", "-c", script])
-    text = (tmp_path / "octop-login.txt").read_text(encoding="utf-8")
+    text = (tmp_path / "yyc3-pai-login.txt").read_text(encoding="utf-8")
+    assert not legacy.exists()
     assert "管理员账号：alice" in text
     assert "管理员密码：WizardPass1" in text
     assert "http://<飞牛IP>:8088" in text
     assert "设置」窗口中直接查看" not in text
     assert "应急备份" in text or "不是实时密码本" in text
     assert "不会自动更新" in text
+
+
+@posix_only
+def test_octop_migrate_login_file_renames_legacy_only_when_new_missing(tmp_path: Path) -> None:
+    legacy = tmp_path / "octop-login.txt"
+    legacy.write_text("旧版备份内容", encoding="utf-8")
+    script = f"""
+set -euo pipefail
+source "{COMMON_SH}"
+octop_migrate_login_file "{tmp_path}"
+"""
+    subprocess.check_call(["bash", "-c", script])
+    assert not legacy.exists()
+    assert (tmp_path / "yyc3-pai-login.txt").read_text(encoding="utf-8") == "旧版备份内容"
+
+    # 新名已存在时不动旧名（尊重新备份数据），也保留旧文件
+    (tmp_path / "yyc3-pai-login.txt").write_text("新版备份内容", encoding="utf-8")
+    legacy.write_text("旧版备份内容", encoding="utf-8")
+    subprocess.check_call(["bash", "-c", script])
+    assert legacy.exists()
+    assert (tmp_path / "yyc3-pai-login.txt").read_text(encoding="utf-8") == "新版备份内容"
 
 
 @posix_only
@@ -284,7 +301,7 @@ def test_fnos_docker_scripts_bash_syntax() -> None:
         FNOS_NATIVE / "cmd" / "main",
         FNOS_NATIVE / "cmd" / "install_init",
         FNOS_NATIVE / "cmd" / "install_callback",
-        FNOS_NATIVE / "app" / "bin" / "octop",
+        FNOS_NATIVE / "app" / "bin" / "pai",
     ]
     subprocess.check_call(["bash", "-n", *[str(p) for p in scripts]])
 
@@ -298,7 +315,7 @@ def test_fnos_native_site_packages_has_storage_errors() -> None:
 
 def test_fnos_native_start_reports_failure() -> None:
     main = (FNOS_NATIVE / "cmd" / "main").read_text(encoding="utf-8")
-    launcher = (FNOS_NATIVE / "app" / "bin" / "octop").read_text(encoding="utf-8")
+    launcher = (FNOS_NATIVE / "app" / "bin" / "pai").read_text(encoding="utf-8")
     install = (FNOS_NATIVE / "cmd" / "install_callback").read_text(encoding="utf-8")
     assert "fail_start" in main
     assert "octop-start-error.txt" in main

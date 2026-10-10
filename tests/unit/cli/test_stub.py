@@ -9,11 +9,11 @@ from octop.cli.support.stub import EXIT_NOT_APPLICABLE, not_applicable
 
 def test_not_applicable_exits_with_code_2(capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc:
-        not_applicable("Octop has no embedding subsystem")
+        not_applicable("YYC3-Pai has no embedding subsystem")
     assert exc.value.code == EXIT_NOT_APPLICABLE
     err = capsys.readouterr().err
-    assert "Not applicable for Octop" in err
-    assert "Octop has no embedding subsystem" in err
+    assert "Not applicable for YYC3-Pai" in err
+    assert "YYC3-Pai has no embedding subsystem" in err
 
 
 def test_not_applicable_includes_suggestion(capsys: pytest.CaptureFixture[str]) -> None:

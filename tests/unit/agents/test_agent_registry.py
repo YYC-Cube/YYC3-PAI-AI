@@ -635,7 +635,7 @@ async def test_list_subagent_summaries_delegates_to_harness(tmp_path: Path) -> N
 
 @pytest.mark.asyncio
 async def test_list_subagent_summaries_fills_color_from_frontmatter(tmp_path: Path) -> None:
-    """When harness omits color, Octop copies it from workspace frontmatter."""
+    """When harness omits color, YYC3-Pai copies it from workspace frontmatter."""
     services = _make_services(tmp_path)
     fake_agent = MagicMock(name="HarnessAgent")
     fake_agent.list_subagent_summaries = AsyncMock(

@@ -1,11 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { request, requestUpload } = vi.hoisted(() => ({
-  request: vi.fn(),
-  requestUpload: vi.fn(),
-}));
+const { bridgeAgentHeaders, request, requestBlob, requestUpload } = vi.hoisted(
+  () => ({
+    bridgeAgentHeaders: vi.fn(() => undefined),
+    request: vi.fn(),
+    requestBlob: vi.fn(),
+    requestUpload: vi.fn(),
+  }),
+);
 
-vi.mock("../request", () => ({ request, requestUpload }));
+vi.mock("../request", () => ({
+  bridgeAgentHeaders,
+  request,
+  requestBlob,
+  requestUpload,
+}));
 
 import { knowledgeBasesApi } from "./knowledgeBases";
 
@@ -22,7 +31,9 @@ describe("knowledgeBasesApi", () => {
     knowledgeBasesApi.getOnnxDownloadStatus();
     knowledgeBasesApi.activateOnnx("BAAI/bge-small-zh-v1.5");
 
-    expect(request).toHaveBeenNthCalledWith(1, "/knowledge-bases/capability");
+    expect(request).toHaveBeenNthCalledWith(1, "/knowledge-bases/capability", {
+      headers: undefined,
+    });
     expect(request).toHaveBeenNthCalledWith(2, "/knowledge-bases/feature", {
       method: "PUT",
       body: JSON.stringify({ enabled: true, model: "BAAI/bge-small" }),

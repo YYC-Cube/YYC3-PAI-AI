@@ -12,8 +12,8 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import { afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
 
 // Auto-mock react-i18next so components' ``t(key, fallback)`` calls
 // resolve synchronously to ``fallback`` without needing the real
@@ -33,23 +33,32 @@ vi.mock("react-i18next", async (importOriginal) => {
     );
   };
 
+  // ``t`` must keep a STABLE identity across renders: components that list
+  // ``t`` in effect deps (e.g. MBTISelector) would otherwise re-run their
+  // effects on every render — an infinite fetch loop that pins the worker
+  // CPU and starves sibling test files under parallel execution. Real
+  // i18next also returns a stable ``t``.
+  const translate = (
+    key: string,
+    fallback?: string | TOptions,
+    options?: TOptions,
+  ): string => {
+    if (typeof fallback === "string") return interpolate(fallback, options);
+    if (fallback && typeof fallback === "object") {
+      const template = fallback.defaultValue ?? key;
+      return interpolate(template, fallback);
+    }
+    return key;
+  };
+
+  const i18nStub = {
+    language: "zh",
+    changeLanguage: () => Promise.resolve(),
+  };
+
   return {
     ...actual,
-    useTranslation: () => ({
-      t: (
-        key: string,
-        fallback?: string | TOptions,
-        options?: TOptions,
-      ): string => {
-        if (typeof fallback === "string") return interpolate(fallback, options);
-        if (fallback && typeof fallback === "object") {
-          const template = fallback.defaultValue ?? key;
-          return interpolate(template, fallback);
-        }
-        return key;
-      },
-      i18n: { language: "zh", changeLanguage: () => Promise.resolve() },
-    }),
+    useTranslation: () => ({ t: translate, i18n: i18nStub }),
     Trans: ({ children }: { children?: React.ReactNode }) => children,
   };
 });
@@ -106,6 +115,64 @@ if (typeof window !== "undefined") {
         IntersectionObserver: typeof _IntersectionObserver;
       }
     ).IntersectionObserver = _IntersectionObserver;
+  }
+
+  // pdf.js (pulled in via react-pdf) evaluates ``new DOMMatrix()`` at module
+  // scope, but jsdom doesn't implement DOMMatrix. Stub the spec surface the
+  // bundle touches — tests import the module chain but never render a real
+  // PDF canvas.
+  if (typeof globalThis.DOMMatrix === "undefined") {
+    class DOMMatrixStub {
+      a = 1;
+      b = 0;
+      c = 0;
+      d = 1;
+      e = 0;
+      f = 0;
+      static fromMatrix(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      static fromFloat32Array(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      static fromFloat64Array(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      multiply(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      inverse(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      translate(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      scale(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      rotate(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      rotateAxisAngle(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      skewX(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      skewY(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      flipX(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      flipY(): DOMMatrixStub {
+        return new DOMMatrixStub();
+      }
+      transformPoint(): { x: number; y: number; z: number; w: number } {
+        return { x: 0, y: 0, z: 0, w: 1 };
+      }
+    }
+    (globalThis as { DOMMatrix?: unknown }).DOMMatrix = DOMMatrixStub;
   }
 
   // jsdom doesn't implement ``getComputedStyle().transition`` properly,

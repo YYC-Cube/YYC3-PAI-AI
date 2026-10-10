@@ -131,7 +131,7 @@ def test_project_system_chunk_emits_system_event() -> None:
         {
             "type": "system",
             "label": "Initial System Prompt",
-            "content": "You are Octop.\nBe helpful.",
+            "content": "You are YYC3-Pai.\nBe helpful.",
         },
         agent_id="A1",
         thread_id="T1",
@@ -142,8 +142,8 @@ def test_project_system_chunk_emits_system_event() -> None:
     assert ev.kind == "system"
     assert ev.event_id == "T1:1:system"
     assert ev.payload["label"] == "Initial System Prompt"
-    assert "You are Octop" in ev.payload["content"]
-    assert "Initial System Prompt" in ev.summary or "You are Octop" in ev.summary
+    assert "You are YYC3-Pai" in ev.payload["content"]
+    assert "Initial System Prompt" in ev.summary or "You are YYC3-Pai" in ev.summary
 
 
 def test_project_system_chunk_keeps_content_reference_without_body() -> None:

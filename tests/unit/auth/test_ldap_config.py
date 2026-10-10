@@ -124,7 +124,7 @@ def test_defaults_and_round_trip_through_extra():
     assert config.allowed_groups == ()
     assert config.group_search is False
     # Provisioning is opt-in: a directory account should not silently gain an
-    # Octop account just because it matches the filter.
+    # YYC3-Pai account just because it matches the filter.
     assert config.auto_provision is False
 
     restored = config_from_row(_row(**config.to_extra()))

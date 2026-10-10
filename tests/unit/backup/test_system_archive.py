@@ -951,7 +951,7 @@ def test_migration_restore_preserves_current_users_and_imported_agents(
     src_pool = _make_migration_backup(src_layout, migration_archive, username="lc_user")
     src_pool.close()
 
-    # --- target: a fresh Octop instance with its own admin user + JWT ---
+    # --- target: a fresh YYC3-Pai instance with its own admin user + JWT ---
     tgt_layout = PathLayout(tmp_path / "tgt")
     tgt_layout.root.mkdir()
     tgt_pool = SqlitePool(tgt_layout.db)

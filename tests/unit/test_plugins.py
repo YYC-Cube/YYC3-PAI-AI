@@ -51,7 +51,7 @@ def test_build_plugin_tools_respects_enabled_flag() -> None:
 
 
 def test_expand_plugin_tools_default_on_without_agent_config() -> None:
-    """Octop default-on expansion makes tools bind without an agent opt-in."""
+    """YYC3-Pai default-on expansion makes tools bind without an agent opt-in."""
     from octop.infra.agents.plugins.plugin_tool_defaults import expand_plugin_tools_default_on
 
     load_plugin_dir(_FIXTURE, install_deps=False)

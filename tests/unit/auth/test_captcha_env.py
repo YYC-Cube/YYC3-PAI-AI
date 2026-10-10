@@ -31,7 +31,7 @@ def test_slider_env_is_complete() -> None:
 
 def test_strong_env_without_keys_refuses_boot_when_no_blob() -> None:
     env = snapshot_env({"OCTOP_CAPTCHA_PROVIDER": "turnstile"})
-    with pytest.raises(ValueError, match="OCTOP_CAPTCHA_SITE_KEY"):
+    with pytest.raises(ValueError, match="CAPTCHA_SITE_KEY"):
         validate_boot(env, has_readable_blob=False)
 
 
@@ -43,7 +43,7 @@ def test_tencent_env_without_cam_keys_refuses_boot_when_no_blob() -> None:
             "OCTOP_CAPTCHA_SECRET": "app-secret",
         }
     )
-    with pytest.raises(ValueError, match="OCTOP_CAPTCHA_CAM_SECRET_ID"):
+    with pytest.raises(ValueError, match="CAPTCHA_CAM_SECRET_ID"):
         validate_boot(env, has_readable_blob=False)
 
 
