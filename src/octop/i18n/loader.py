@@ -21,10 +21,21 @@ def _resolve_node(table: dict[str, Any], key: str) -> str | None:
     return node if isinstance(node, str) else None
 
 
+def _available_locales() -> tuple[str, ...]:
+    """Discover bundled locale tables (en.json, zh.json, plus future packs)."""
+    root = resources.files("octop.i18n")
+    found = sorted(
+        entry.name[: -len(".json")]
+        for entry in root.iterdir()
+        if entry.name.endswith(".json") and entry.is_file()
+    )
+    return tuple(found) if "en" in found else ("en",)
+
+
 @lru_cache(maxsize=1)
 def _load_all() -> dict[Locale, dict[str, Any]]:
     out: dict[Locale, dict[str, Any]] = {}
-    for loc in ("en", "zh"):
+    for loc in _available_locales():
         raw = resources.files("octop.i18n").joinpath(f"{loc}.json").read_text(encoding="utf-8")
         out[loc] = json.loads(raw)
     return out

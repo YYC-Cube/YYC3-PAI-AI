@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
+    "sync:yyc3-locales": "node --experimental-strip-types scripts/sync-yyc3-locales.mjs",
     "build": "tsc -b && vite build",
     "build:docker": "vite build",
     "build:prod": "tsc -b && vite build --mode production",
@@ -22,6 +23,7 @@
   "dependencies": {
     "@aiden0z/pptx-renderer": "^1.2.4",
     "@mermaid-js/parser": "^1.1.0",
+    "@yyc3/i18n-core": "^3.0.2",
     "@monaco-editor/react": "^4.7.0",
     "@xterm/addon-fit": "0.10.0",
     "@xterm/addon-web-links": "0.11.0",

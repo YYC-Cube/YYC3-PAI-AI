@@ -49,4 +49,22 @@ describe("localePrefs", () => {
     expect(speechLocaleFromUi("en-US")).toBe("en-US");
     expect(speechLocaleFromUi(null)).toBe("zh-CN");
   });
+
+  it("detectBrowserLocale maps YYC³ pack locales", () => {
+    vi.stubGlobal("navigator", { language: "ja-JP", languages: ["ja-JP"] });
+    expect(detectBrowserLocale()).toBe("ja");
+    vi.stubGlobal("navigator", { language: "pt", languages: ["pt"] });
+    expect(detectBrowserLocale()).toBe("pt-BR");
+    vi.stubGlobal("navigator", { language: "zh-TW", languages: ["zh-TW"] });
+    expect(detectBrowserLocale()).toBe("zh-TW");
+    vi.stubGlobal("navigator", { language: "ar", languages: ["ar-EG"] });
+    expect(detectBrowserLocale()).toBe("ar");
+  });
+
+  it("speechLocaleFromUi maps YYC³ pack locales to BCP-47", () => {
+    expect(speechLocaleFromUi("ja")).toBe("ja-JP");
+    expect(speechLocaleFromUi("pt-BR")).toBe("pt-BR");
+    expect(speechLocaleFromUi("zh-TW")).toBe("zh-TW");
+    expect(speechLocaleFromUi("ar")).toBe("ar");
+  });
 });

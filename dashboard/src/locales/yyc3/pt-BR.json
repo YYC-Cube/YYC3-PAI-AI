@@ -1,0 +1,28 @@
+{
+  "common": {
+    "health": "Saúde",
+    "online": "Online",
+    "offline": "Offline",
+    "welcome": "Bem-vindo",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "version": "v2.0.0"
+  },
+  "nav": {
+    "home": "Início",
+    "about": "Sobre",
+    "contact": "Contato"
+  },
+  "overview": {
+    "stats": {
+      "cronNext": "Próxima ativação {time}"
+    }
+  },
+  "welcome": {
+    "message": "Olá {name}",
+    "title": "Bem-vindo ao YYC³ i18n Core"
+  }
+}
