@@ -118,13 +118,15 @@ dev = [
 [project.scripts]
 pai = "octop.cli.main:cli"
 
-# Fork-and-Own: resolve the four core packages from the local monorepo
-# (../yyc3-agent-core) instead of the upstream PyPI octop-* distributions.
+# Fork-and-Own: resolve the four core packages from the YYC3-Agent-Core
+# monorepo (github.com/YYC-Cube/YYC3-Agent-Core) instead of the upstream
+# PyPI octop-* distributions. uv.lock pins the resolved commit; bump via
+# `uv lock --upgrade-package yyc3-harness` (etc.) after pushing core changes.
 [tool.uv.sources]
-yyc3-harness = { path = "../yyc3-agent-core/packages/harness", editable = true }
-yyc3-memory = { path = "../yyc3-agent-core/packages/memory", editable = true }
-yyc3-gateway = { path = "../yyc3-agent-core/packages/gateway", editable = true }
-yyc3-browser = { path = "../yyc3-agent-core/packages/browser", editable = true }
+yyc3-harness = { git = "https://github.com/YYC-Cube/YYC3-Agent-Core", subdirectory = "packages/harness" }
+yyc3-memory = { git = "https://github.com/YYC-Cube/YYC3-Agent-Core", subdirectory = "packages/memory" }
+yyc3-gateway = { git = "https://github.com/YYC-Cube/YYC3-Agent-Core", subdirectory = "packages/gateway" }
+yyc3-browser = { git = "https://github.com/YYC-Cube/YYC3-Agent-Core", subdirectory = "packages/browser" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/octop"]
