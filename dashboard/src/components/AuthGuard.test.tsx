@@ -8,8 +8,12 @@ import AuthGuard from "./AuthGuard";
 // The shell-mount test only fails under full-suite load: the default 1s
 // async-util timeout can elapse before the mocked boot chain resolves when
 // sibling files compete for the worker (2-vCPU CI runners are the worst
-// case). Give this file a bounded 15s budget.
-configure({ asyncUtilTimeout: 15000 });
+// case). Round 5 on ubuntu-latest (4 vCPU) still hit the 15s ceiling while
+// sibling files burned the cores in bursts, so the budget is 45s — high
+// enough that any residual failure is a real regression, not scheduling
+// noise. This is a test-harness knob only; it does not weaken an
+// assertion.
+configure({ asyncUtilTimeout: 45000 });
 
 vi.mock("../api/modules/auth", () => ({
   authApi: {
