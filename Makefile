@@ -1,4 +1,4 @@
-# Makefile for Octop
+# Makefile for YYC3-Pai
 # Usage:
 #   make              - Show this help
 #   make all          - format (BE+FE) + backend lint + typecheck + test (ship bar)
@@ -35,7 +35,7 @@ PYTEST_JOBS ?= auto
 
 .PHONY: help
 help:
-	@echo "Octop Build System"
+	@echo "YYC3-Pai Build System"
 	@echo ""
 	@echo "Usage: make <target>"
 	@echo ""
@@ -51,12 +51,12 @@ help:
 	@echo "Development targets:"
 	@echo "  dev              Start frontend + backend dev servers"
 	@echo "  dev-frontend     Start Vite dev server only"
-	@echo "  dev-backend      Start octop run only"
+	@echo "  dev-backend      Start pai run only"
 	@echo ""
-	@echo "Online-deps targets (local Octop source + PyPI harness components):"
-	@echo "  install-online   Create .venv-online: Octop editable + harness-* from PyPI"
+	@echo "Online-deps targets (local YYC3-Pai source + PyPI harness components):"
+	@echo "  install-online   Create .venv-online: YYC3-Pai editable + harness-* from PyPI"
 	@echo "  test-online      pytest against .venv-online (not live)"
-	@echo "  run-online       Start octop run from .venv-online"
+	@echo "  run-online       Start pai run from .venv-online"
 	@echo ""
 	@echo "Quality targets (ship bar):"
 	@echo "  all              format-all + lint + typecheck + test (backend lint/typecheck/test)"
@@ -160,7 +160,7 @@ dev:
 	@echo "[dev] Starting frontend and backend dev servers (Ctrl-C to stop both)..."
 	@trap 'kill 0' SIGINT; \
 	(cd $(DASHBOARD_DIR) && npm run dev) & \
-	($(RUN) octop run) & \
+	($(RUN) pai run) & \
 	wait
 
 .PHONY: dev-frontend
@@ -169,10 +169,10 @@ dev-frontend:
 
 .PHONY: dev-backend
 dev-backend:
-	$(RUN) octop run
+	$(RUN) pai run
 
-# ─── Online-deps dev (local Octop source + PyPI harness components) ───────────
-# Keeps a dedicated .venv-online alongside .venv. Octop itself is installed
+# ─── Online-deps dev (local YYC3-Pai source + PyPI harness components) ───────────
+# Keeps a dedicated .venv-online alongside .venv. YYC3-Pai itself is installed
 # editable (-e) so source edits are live; the harness-* siblings are pulled
 # from PyPI (--no-sources ignores the editable local paths in uv.lock).
 # Re-run install-online only when a dependency version changes.
@@ -181,10 +181,10 @@ PY_ONLINE   := $(VENV_ONLINE)/bin
 
 .PHONY: install-online
 install-online:
-	@echo "[install-online] Creating $(VENV_ONLINE) (local Octop + PyPI harness deps)..."
+	@echo "[install-online] Creating $(VENV_ONLINE) (local YYC3-Pai + PyPI harness deps)..."
 	uv venv $(VENV_ONLINE) --python 3.12
 	uv pip install --no-sources --python $(PY_ONLINE)/python -e ".[dev]"
-	@echo "[install-online] Done. Octop=editable(local), harness-*=PyPI."
+	@echo "[install-online] Done. yyc3-pai=editable(local), harness-*=PyPI."
 
 .PHONY: test-online
 test-online:
@@ -193,7 +193,7 @@ test-online:
 
 .PHONY: run-online
 run-online:
-	$(PY_ONLINE)/octop run
+	$(PY_ONLINE)/pai run
 
 # ─── Quality (backend) ───────────────────────────────────────────────────────
 

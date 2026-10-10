@@ -1,0 +1,23 @@
+{
+  // Pyright / IDE (Pylance) workspace config: point the resolver at the uv
+  // virtualenv so first-party deps (octop-harness, octop-gateway, deepagents,
+  // langchain, ...) resolve for IntelliSense instead of showing "cannot
+  // resolve import" noise. `extraPaths` makes the editable-installed `octop`
+  // package resolvable from the in-repo source tree.
+  // Type checking stays owned by the CI gate (`make typecheck` = mypy
+  // --strict src/octop), so typeCheckingMode is off to avoid divergent
+  // duplicate diagnostics in the editor; unresolved imports are still
+  // reported. `ignore` mirrors the mypy `exclude` vendored trees.
+  "include": ["src"],
+  "ignore": [
+    "src/octop/dashboard",
+    "src/octop/infra/agents/experts/library",
+    "src/octop/infra/agents/plugins/bundled",
+    "src/octop/infra/agents/subagents/library"
+  ],
+  "venvPath": ".",
+  "venv": ".venv",
+  "extraPaths": ["src"],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "off"
+}

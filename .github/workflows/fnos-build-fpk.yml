@@ -1,4 +1,4 @@
-name: Build Octop FPK
+name: Build YYC3-Pai FPK
 
 # FnOS (飞牛 NAS) 安装包流水线。
 #
@@ -8,7 +8,7 @@ name: Build Octop FPK
 #
 # 制品复用：
 #   - Docker 镜像：不再重建，等待 docker-publish 推送的
-#     ghcr.io/tencentcloud/octop:{version|latest}
+#     ghcr.io/yyc-cube/yyc3-pai:{version|latest}
 #   - Native wheel：优先从同版本 GitHub Release（v*）下载；
 #     缺失时再回退到本仓源码构建
 #   - fnpack：fpk / native 用 Actions cache 复用 .verify/fnpack（key 含 FNPACK_VERSION）
@@ -18,7 +18,7 @@ name: Build Octop FPK
 #   version → ensure-image → fpk（Docker 版 .fpk，仅打包 compose；镜像已是 amd64+arm64）
 #           ↘ native（x86_64 本地版 .fpk）
 #           ↘ native-arm64（ubuntu-24.04-arm 装 aarch64 site-packages）
-#             → native-arm64-pack（amd64 上用 fnpack 打 Octop-fnos-native-arm64-*.fpk）
+#             → native-arm64-pack（amd64 上用 fnpack 打 YYC3-Pai-fnos-native-arm64-*.fpk）
 #           → release（把 .fpk 挂到已有的 v* GitHub Release）
 
 on:
@@ -125,14 +125,14 @@ jobs:
 
       - name: Build Docker FPK
         env:
-          FPK_NAME_PREFIX: Octop-fnos
+          FPK_NAME_PREFIX: YYC3-Pai-fnos
         run: bash scripts/build-fpk.sh docker
 
       - name: Upload docker fpk artifact
         uses: actions/upload-artifact@v4
         with:
           name: docker-fpk
-          path: dist/Octop-fnos-docker-*.fpk
+          path: dist/YYC3-Pai-fnos-docker-*.fpk
           if-no-files-found: error
 
   native:
@@ -163,8 +163,8 @@ jobs:
           set -euo pipefail
           mkdir -p dist
           REL_TAG="v${VER}"
-          if gh release download "$REL_TAG" --repo "${{ github.repository }}" -p 'octop-*.whl' -D dist 2>/tmp/wheel-dl.err; then
-            ls -lh dist/octop-*.whl
+          if gh release download "$REL_TAG" --repo "${{ github.repository }}" -p 'yyc3_pai-*.whl' -D dist 2>/tmp/wheel-dl.err; then
+            ls -lh dist/yyc3_pai-*.whl
             echo "source=release" >> "$GITHUB_OUTPUT"
             echo "Reusing wheel from GitHub Release ${REL_TAG}"
           else
@@ -186,7 +186,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: dashboard/package-lock.json
 
-      - name: Build Octop wheel from current source
+      - name: Build YYC3-Pai wheel from current source
         if: steps.wheel.outputs.source == 'build'
         run: |
           set -e
@@ -201,9 +201,9 @@ jobs:
           python3 -m pip install --quiet build
           python3 -m build --wheel
           echo "=== built wheel ==="
-          ls -lh dist/octop-*.whl
+          ls -lh dist/yyc3_pai-*.whl
 
-      - name: Install Octop core into app/site-packages (no Chromium, no preinstalled skills)
+      - name: Install YYC3-Pai core into app/site-packages (no Chromium, no preinstalled skills)
         id: install_core
         timeout-minutes: 15
         env:
@@ -217,7 +217,7 @@ jobs:
           {
             python3 -m pip install --quiet uv
             python3 -m uv pip install --python python3.12 \
-              --target "$SP" --no-cache "$(ls dist/octop-*.whl | head -1)"
+              --target "$SP" --no-cache "$(ls dist/yyc3_pai-*.whl | head -1)"
             rm -rf "$SP/mcp" "$SP"/mcp-*.dist-info \
                    "$SP/langchain_mcp_adapters" "$SP"/langchain_mcp_adapters-*.dist-info
             mkdir -p /tmp/octop-pinned
@@ -227,7 +227,7 @@ jobs:
               echo "Extracting pinned wheel: $whl"
               python3.12 -m zipfile -e "$whl" "$SP"
             done
-            cp dist/octop-*.whl "$SP/octop.whl"
+            cp dist/yyc3_pai-*.whl "$SP/yyc3-pai.whl"
             mkdir -p "$SP/octop_harness/backends"
             cp "${{ github.workspace }}/scripts/fnos/vendor/storage_errors.py" \
               "$SP/octop_harness/backends/storage_errors.py"
@@ -239,18 +239,18 @@ jobs:
       - name: Build native FPK
         id: build_native
         env:
-          FPK_NAME_PREFIX: Octop-fnos
+          FPK_NAME_PREFIX: YYC3-Pai-fnos
         run: bash scripts/build-fpk.sh native
 
       - name: Show native fpk size
-        run: ls -lh dist/Octop-fnos-native-[0-9]*.fpk
+        run: ls -lh dist/YYC3-Pai-fnos-native-[0-9]*.fpk
 
       - name: Upload native fpk artifact
         id: upload_native
         uses: actions/upload-artifact@v4
         with:
           name: native-fpk
-          path: dist/Octop-fnos-native-[0-9]*.fpk
+          path: dist/YYC3-Pai-fnos-native-[0-9]*.fpk
           if-no-files-found: error
 
       - name: Upload native install log (for debugging)
@@ -283,8 +283,8 @@ jobs:
           set -euo pipefail
           mkdir -p dist
           REL_TAG="v${VER}"
-          if gh release download "$REL_TAG" --repo "${{ github.repository }}" -p 'octop-*.whl' -D dist 2>/tmp/wheel-dl.err; then
-            ls -lh dist/octop-*.whl
+          if gh release download "$REL_TAG" --repo "${{ github.repository }}" -p 'yyc3_pai-*.whl' -D dist 2>/tmp/wheel-dl.err; then
+            ls -lh dist/yyc3_pai-*.whl
             echo "source=release" >> "$GITHUB_OUTPUT"
             echo "Reusing wheel from GitHub Release ${REL_TAG}"
           else
@@ -306,7 +306,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: dashboard/package-lock.json
 
-      - name: Build Octop wheel from current source
+      - name: Build YYC3-Pai wheel from current source
         if: steps.wheel.outputs.source == 'build'
         run: |
           set -e
@@ -321,9 +321,9 @@ jobs:
           python3 -m pip install --quiet build
           python3 -m build --wheel
           echo "=== built wheel ==="
-          ls -lh dist/octop-*.whl
+          ls -lh dist/yyc3_pai-*.whl
 
-      - name: Install Octop core into app/site-packages (aarch64)
+      - name: Install YYC3-Pai core into app/site-packages (aarch64)
         id: install_core
         timeout-minutes: 15
         env:
@@ -340,7 +340,7 @@ jobs:
             python3 -m pip install --quiet uv
             python3 -m uv pip install --python python3.12 \
               --target "$SP" --no-cache --only-binary :all: \
-              "$(ls dist/octop-*.whl | head -1)"
+              "$(ls dist/yyc3_pai-*.whl | head -1)"
             rm -rf "$SP/mcp" "$SP"/mcp-*.dist-info \
                    "$SP/langchain_mcp_adapters" "$SP"/langchain_mcp_adapters-*.dist-info
             mkdir -p /tmp/octop-pinned
@@ -351,7 +351,7 @@ jobs:
               echo "Extracting pinned wheel: $whl"
               python3.12 -m zipfile -e "$whl" "$SP"
             done
-            cp dist/octop-*.whl "$SP/octop.whl"
+            cp dist/yyc3_pai-*.whl "$SP/yyc3-pai.whl"
             mkdir -p "$SP/octop_harness/backends"
             cp "${{ github.workspace }}/scripts/fnos/vendor/storage_errors.py" \
               "$SP/octop_harness/backends/storage_errors.py"
@@ -401,7 +401,7 @@ jobs:
 
       - name: Build native ARM64 FPK
         env:
-          FPK_NAME_PREFIX: Octop-fnos
+          FPK_NAME_PREFIX: YYC3-Pai-fnos
           FPK_ARCH: arm64
         run: |
           set -euo pipefail
@@ -409,13 +409,13 @@ jobs:
           bash scripts/build-fpk.sh native
 
       - name: Show native arm64 fpk size
-        run: ls -lh dist/Octop-fnos-native-arm64-*.fpk
+        run: ls -lh dist/YYC3-Pai-fnos-native-arm64-*.fpk
 
       - name: Upload native arm64 fpk artifact
         uses: actions/upload-artifact@v4
         with:
           name: native-arm64-fpk
-          path: dist/Octop-fnos-native-arm64-*.fpk
+          path: dist/YYC3-Pai-fnos-native-arm64-*.fpk
           if-no-files-found: error
 
   release:
@@ -434,7 +434,6 @@ jobs:
         with:
           name: docker-fpk
           path: artifacts/docker-fpk
-          if-no-files-found: error
 
       - name: Download native fpk artifact (best-effort)
         continue-on-error: true
@@ -442,7 +441,6 @@ jobs:
         with:
           name: native-fpk
           path: artifacts/native-fpk
-          if-no-files-found: ignore
 
       - name: Download native arm64 fpk artifact (best-effort)
         continue-on-error: true
@@ -450,7 +448,6 @@ jobs:
         with:
           name: native-arm64-fpk
           path: artifacts/native-arm64-fpk
-          if-no-files-found: ignore
 
       - name: Stage dist
         run: |

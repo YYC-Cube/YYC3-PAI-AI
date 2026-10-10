@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a defect or unexpected behavior in Octop
+about: Report a defect or unexpected behavior in YYC3-Pai
 title: "[bug] "
 labels: bug
 ---
@@ -21,7 +21,7 @@ labels: bug
 
 ## Environment
 
-- `octop` version:
+- `pai` version:
 - Python version:
 - OS:
 - Install method: pip / Docker / source

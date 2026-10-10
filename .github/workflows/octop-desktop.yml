@@ -1,4 +1,4 @@
-name: Octop Desktop Package
+name: YYC3-Pai Desktop Package
 
 # 正式发版：Auto Tag 在打 v* 后与 Release / Docker Publish 一并 dispatch。
 # 产物 upsert 到同一 GitHub Release。手工补包：workflow_dispatch + release_tag
@@ -30,7 +30,7 @@ on:
         default: ""
         type: string
       attach_from_run:
-        description: "Existing workflow run ID — attach its Octop-* artifacts and skip the 6-platform rebuild"
+        description: "Existing workflow run ID — attach its YYC3-Pai-* artifacts and skip the 6-platform rebuild"
         required: false
         default: ""
         type: string
@@ -184,7 +184,7 @@ jobs:
       - name: Smoke import (native host only)
         run: |
           set -euo pipefail
-          staging="desktop/portable/release/Octop-${{ matrix.plat }}"
+          staging="desktop/portable/release/YYC3-Pai-${{ matrix.plat }}"
           if [[ -x "${staging}/runtime/bin/python3" ]]; then
             py="${staging}/runtime/bin/python3"
           elif [[ -f "${staging}/runtime/python.exe" ]]; then
@@ -288,14 +288,14 @@ jobs:
           wails3 task package
           ARCH=${{ matrix.arch }}
           VERSION=${{ env.OCTOP_VERSION }}
-          PORTABLE_ZIP=../portable/release/Octop-portable-${{ matrix.plat }}-${{ env.OCTOP_VERSION }}.zip
+          PORTABLE_ZIP=../portable/release/YYC3-Pai-portable-${{ matrix.plat }}-${{ env.OCTOP_VERSION }}.zip
 
       # archive: false — upload the prebuilt zip as-is. Default archive=true would
       # wrap it again, so Actions UI / "Download artifact" becomes zip-in-zip.
       # With archive:false, artifact name is the filename (name: is ignored).
       - uses: actions/upload-artifact@v7
         with:
-          path: desktop/portable/release/Octop-portable-${{ matrix.plat }}-${{ env.OCTOP_VERSION }}.zip
+          path: desktop/portable/release/YYC3-Pai-portable-${{ matrix.plat }}-${{ env.OCTOP_VERSION }}.zip
           archive: false
           if-no-files-found: error
           retention-days: 14
@@ -303,7 +303,7 @@ jobs:
       - name: Upload bundled desktop package
         uses: actions/upload-artifact@v7
         with:
-          path: desktop/src/bin/Octop-desktop-${{ matrix.plat }}-${{ env.OCTOP_VERSION }}.*
+          path: desktop/src/bin/YYC3-Pai-desktop-${{ matrix.plat }}-${{ env.OCTOP_VERSION }}.*
           archive: false
           if-no-files-found: error
           retention-days: 14
@@ -351,7 +351,7 @@ jobs:
       # zips into directories, so files: release-assets/* would skip them.
       - uses: actions/download-artifact@v8
         with:
-          pattern: Octop-*
+          pattern: YYC3-Pai-*
           path: release-assets
           merge-multiple: true
           skip-decompress: true
