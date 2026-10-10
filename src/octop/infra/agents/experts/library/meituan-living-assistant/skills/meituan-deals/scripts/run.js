@@ -36,10 +36,10 @@ const SCRIPTS_DIR = __dirname;
 const SKILL_DIR = path.dirname(SCRIPTS_DIR);
 const CLIENT_ID = 'c6f50b5a1e2f4e2bb00a3e2f58df3ced';
 const PT_PASSPORT_BIN = path.join(SCRIPTS_DIR, 'node_modules', '.bin', 'pt-passport');
-// 认证目录：Octop 多用户/多 Agent 隔离时通过 OCTOP_AUTH_DIR 环境变量注入
-// （如 ~/.octop/agents/<id>/credentials/meituan/）；未注入时回退到本机默认目录。
+// 认证目录：YYC3-Pai 多用户/多 Agent 隔离时通过 OCTOP_AUTH_DIR 环境变量注入
+// （如 ~/.yyc3-pai/agents/<id>/credentials/meituan/）；未注入时回退到本机默认目录。
 const AUTH_DIR = process.env.OCTOP_AUTH_DIR
-    || path.join(require('os').homedir(), '.workbuddy', 'credentials', 'meituan-living-deals-assistant');
+  || path.join(require('os').homedir(), '.workbuddy', 'credentials', 'meituan-living-deals-assistant');
 
 // 自愈：专家模板经字节流拷贝播种到 Agent 工作区后，npm bin 的执行位会丢失。
 // 这里在常量初始化阶段尽力恢复（含内层 cliguard），失败不阻塞启动。
@@ -75,20 +75,25 @@ function isPython3(pythonPath) {
 /**
  * Python 解释器解析优先级：
  * 1. OCTOP_PYTHON 环境变量（显式指定）
- * 2. Octop 自托管 venv（裸机安装：$OCTOP_HOME/venv/bin/python，默认 ~/.octop/venv）
- * 3. Octop Docker 镜像 venv（/app/.venv/bin/python）
- * 4. 回退：PATH 上的 python3 / python（非 Octop 宿主环境的兼容路径）
+ * 2. YYC3-Pai 自托管 venv（$YYC3_PAI_HOME，默认 ~/.yyc3-pai；兼容旧 $OCTOP_HOME=~/.octop）
+ * 3. YYC3-Pai Docker 镜像 venv（/app/.venv/bin/python）
+ * 4. 回退：PATH 上的 python3 / python（非宿主环境的兼容路径）
  */
 function findPython() {
   if (process.env.OCTOP_PYTHON && isPython3(process.env.OCTOP_PYTHON)) {
     return process.env.OCTOP_PYTHON;
   }
-  const octopHome = process.env.OCTOP_HOME || path.join(require('os').homedir(), '.octop');
-  const venvCandidates = [
-    path.join(octopHome, 'venv', 'bin', 'python'),            // macOS / Linux
-    path.join(octopHome, 'venv', 'Scripts', 'python.exe'),    // Windows
-    '/app/.venv/bin/python',                                   // Octop Docker 镜像
-  ];
+  const homeDir = require('os').homedir();
+  const homes = [process.env.YYC3_PAI_HOME, path.join(homeDir, '.yyc3-pai'),
+  process.env.OCTOP_HOME, path.join(homeDir, '.octop')].filter(Boolean);
+  const venvCandidates = [];
+  for (const home of homes) {
+    for (const venv of ['.venv', 'venv']) {
+      venvCandidates.push(path.join(home, venv, 'bin', 'python'));        // macOS / Linux
+      venvCandidates.push(path.join(home, venv, 'Scripts', 'python.exe')); // Windows
+    }
+  }
+  venvCandidates.push('/app/.venv/bin/python');                          // YYC3-Pai Docker 镜像
   for (const p of venvCandidates) {
     try {
       if (fs.existsSync(p) && isPython3(p)) return p;
@@ -117,10 +122,10 @@ function runPython(scriptName, args) {
   const scriptPath = path.join(SCRIPTS_DIR, scriptName);
   const cmdArgs = [scriptPath, ...args];
   try {
-    try { fs.mkdirSync(AUTH_DIR, { recursive: true }); } catch (_) {}
+    try { fs.mkdirSync(AUTH_DIR, { recursive: true }); } catch (_) { }
     const sslEnv = CERT_FILE
-        ? { SSL_CERT_FILE: CERT_FILE, REQUESTS_CA_BUNDLE: CERT_FILE }
-        : {};
+      ? { SSL_CERT_FILE: CERT_FILE, REQUESTS_CA_BUNDLE: CERT_FILE }
+      : {};
     const result = spawnSync(PYTHON, cmdArgs, {
       encoding: 'utf-8',
       timeout: 30000,
@@ -133,7 +138,7 @@ function runPython(scriptName, args) {
     });
     const stdout = (result.stdout || '').trim();
     if (result.status !== 0) {
-      try { return JSON.parse(stdout); } catch (_) {}
+      try { return JSON.parse(stdout); } catch (_) { }
       return { ok: false, error: 'SCRIPT_ERROR', message: (result.stderr || stdout || 'Unknown error').trim() };
     }
     try { return JSON.parse(stdout); } catch (_) {
@@ -214,7 +219,7 @@ commands.init = function () {
     fail('PATH_NOT_FOUND');
   }
 
-  // 2. Python 检查（优先使用 Octop 自托管 venv，见 findPython 解析顺序）
+  // 2. Python 检查（优先使用 YYC3-Pai 自托管 venv，见 findPython 解析顺序）
   let pyVer = '';
   try {
     pyVer = execSync(`"${PYTHON}" --version`, { encoding: 'utf-8', timeout: 10000, stdio: 'pipe' }).trim();
@@ -238,9 +243,9 @@ commands.init = function () {
 
   // 5. pt-passport CLI 本地安装/更新
   const tgzFiles = fs.readdirSync(SCRIPTS_DIR)
-      .filter(f => f.startsWith('mtuser-pt-passport-') && f.endsWith('.tgz'))
-      .sort()
-      .map(f => path.join(SCRIPTS_DIR, f));
+    .filter(f => f.startsWith('mtuser-pt-passport-') && f.endsWith('.tgz'))
+    .sort()
+    .map(f => path.join(SCRIPTS_DIR, f));
 
   if (tgzFiles.length === 0) fail('TGZ_NOT_FOUND');
 
@@ -262,7 +267,7 @@ commands.init = function () {
   }
 
   // 6. 确保 .auth 目录存在
-  try { fs.mkdirSync(AUTH_DIR, { recursive: true }); } catch (_) {}
+  try { fs.mkdirSync(AUTH_DIR, { recursive: true }); } catch (_) { }
 
   // 7. 检测客户端类型
   var clientType = (function () {
@@ -409,7 +414,7 @@ commands['auth-poll-token'] = function () {
 function loadCliguard() {
   const vendorPath = path.join(SCRIPTS_DIR, 'vendor', 'cliguard', 'js', 'cliguard.js');
   const updatePath = path.join(
-      require('os').homedir(), '.cliguard', 'cliguard-updates', 'core', 'cliguard.js'
+    require('os').homedir(), '.cliguard', 'cliguard-updates', 'core', 'cliguard.js'
   );
   if (fs.existsSync(vendorPath)) return require(vendorPath);
   if (fs.existsSync(updatePath)) return require(updatePath);
@@ -547,29 +552,29 @@ commands.qrcode = function (argv) {
   const body = { originalUrl: url, clientSource: 'coupon-fusion-workbuddy' };
 
   httpsPost(apiUrl, body)
-      .then(function (resp) {
-        const data = resp.data;
-        if (data && data.data) {
-          out({ ok: true, type: 'image', imageUrl: data.data });
-        } else {
-          // 服务端未返回图片 → 本地兜底
-          const local = qrcodeLocalFallback(url);
-          if (local.ok) {
-            out(Object.assign({ source: 'local' }, local));
-          } else {
-            out({ ok: false, type: 'skip', message: 'No image returned', raw: data });
-          }
-        }
-      })
-      .catch(function (e) {
-        // 服务端请求失败（网络/超时）→ 本地兜底
+    .then(function (resp) {
+      const data = resp.data;
+      if (data && data.data) {
+        out({ ok: true, type: 'image', imageUrl: data.data });
+      } else {
+        // 服务端未返回图片 → 本地兜底
         const local = qrcodeLocalFallback(url);
         if (local.ok) {
           out(Object.assign({ source: 'local' }, local));
         } else {
-          out({ ok: false, type: 'skip', message: e.message });
+          out({ ok: false, type: 'skip', message: 'No image returned', raw: data });
         }
-      });
+      }
+    })
+    .catch(function (e) {
+      // 服务端请求失败（网络/超时）→ 本地兜底
+      const local = qrcodeLocalFallback(url);
+      if (local.ok) {
+        out(Object.assign({ source: 'local' }, local));
+      } else {
+        out({ ok: false, type: 'skip', message: e.message });
+      }
+    });
 };
 
 /**
@@ -640,11 +645,11 @@ commands.issue = function (argv) {
   function saveTodayCouponCache(data) {
     try {
       const cacheFile = path.join(AUTH_DIR, 'today_coupons_cache.json');
-      try { fs.mkdirSync(AUTH_DIR, { recursive: true }); } catch (_) {}
+      try { fs.mkdirSync(AUTH_DIR, { recursive: true }); } catch (_) { }
       const today = getLocalDateStr();
       const cache = { date: today, data: data };
       fs.writeFileSync(cacheFile, JSON.stringify(cache), 'utf-8');
-    } catch (_) {}
+    } catch (_) { }
   }
 
   function getDeviceToken() {
@@ -670,11 +675,11 @@ commands.issue = function (argv) {
 
   function writeLog(entry, aiScene) {
     try {
-      try { fs.mkdirSync(LOG_DIR, { recursive: true }); } catch (_) {}
+      try { fs.mkdirSync(LOG_DIR, { recursive: true }); } catch (_) { }
       var raw = JSON.stringify(entry);
       var line = aiScene ? xorEncrypt(raw, aiScene) : raw;
       fs.appendFileSync(LOG_FILE, line + '\n', 'utf-8');
-    } catch (_) {}
+    } catch (_) { }
   }
 
   function fenToYuan(fen) {
@@ -721,7 +726,7 @@ commands.issue = function (argv) {
   var _TAB_ORDER = ['外卖', '美食团购', '美团闪购', '休闲娱乐', '生活服务', '丽人医疗', '更多福利'];
   var _TAB_DISPLAY = { '更多福利': '其他' };
   var _SLOT_PLAN_BASE = [['外卖', 2], ['美食团购', 1], ['美团闪购', 1],
-                         ['休闲娱乐', 1], ['生活服务', 1], ['丽人医疗', 1]];
+  ['休闲娱乐', 1], ['生活服务', 1], ['丽人医疗', 1]];
 
   function buildCountStr(coupons) {
     var tabCount = {};
@@ -779,7 +784,7 @@ commands.issue = function (argv) {
     }
 
     var fallbackOrder = ['外卖', '美食团购', '美团闪购', '休闲娱乐', '生活服务', '丽人医疗']
-        .concat(unknownTabs, ['更多福利']);
+      .concat(unknownTabs, ['更多福利']);
     while (slots.length < 8) {
       var filled = false;
       for (var f = 0; f < fallbackOrder.length; f++) {
@@ -864,7 +869,7 @@ commands.issue = function (argv) {
         });
       } else if (code === 401) {
         // 主动清除 pt-passport 本地缓存，防止 auth-get-code 命中旧 token 导致死循环
-        try { runPassport(['logout', '--client_id', CLIENT_ID]); } catch (_) {}
+        try { runPassport(['logout', '--client_id', CLIENT_ID]); } catch (_) { }
 
         logEntry.result = { success: false, code: 401, error: 'RE_LOGIN' };
         writeLog(logEntry, aiScene);
@@ -1217,14 +1222,14 @@ commands['check-login'] = function () {
 * 直接通过 runPassport 清除 pt-passport CLI 缓存（避免 Python 找不到 pt-passport 的 PATH 问题）
 */
 commands.logout = function () {
-var cli_cleared = false;
-try {
-  var res = runPassport(['logout', '--client_id', CLIENT_ID]);
-  cli_cleared = true;
-} catch (e) {
-  cli_cleared = false;
-}
-out({ ok: true, success: true, message: '已退出登录，下次需重新授权', device_token_preserved: true, cli_cache_cleared: cli_cleared });
+  var cli_cleared = false;
+  try {
+    var res = runPassport(['logout', '--client_id', CLIENT_ID]);
+    cli_cleared = true;
+  } catch (e) {
+    cli_cleared = false;
+  }
+  out({ ok: true, success: true, message: '已退出登录，下次需重新授权', device_token_preserved: true, cli_cache_cleared: cli_cleared });
 };
 
 /**
@@ -1232,11 +1237,11 @@ out({ ok: true, success: true, message: '已退出登录，下次需重新授权
 * 清除 device_token 并清除 pt-passport CLI 缓存
 */
 commands['clear-device-token'] = function () {
-// 先清除 pt-passport CLI 缓存
-try { runPassport(['logout', '--client_id', CLIENT_ID]); } catch (e) {}
-// 再清除本地 device_token（通过 auth.py）
-var result = runPython('auth.py', ['clear-device-token']);
-out(Object.assign({ ok: !!result.success }, result));
+  // 先清除 pt-passport CLI 缓存
+  try { runPassport(['logout', '--client_id', CLIENT_ID]); } catch (e) { }
+  // 再清除本地 device_token（通过 auth.py）
+  var result = runPython('auth.py', ['clear-device-token']);
+  out(Object.assign({ ok: !!result.success }, result));
 };
 
 // ── 入口 ─────────────────────────────────────────────────────

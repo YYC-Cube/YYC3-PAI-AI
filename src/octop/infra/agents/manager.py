@@ -2650,13 +2650,13 @@ class AgentManager:
 
                 synced_skills = await sync_octop_builtin_skills(ws)
                 logger.info(
-                    "Agent %s: synced Octop built-in skills=%s",
+                    "Agent %s: synced YYC3-Pai built-in skills=%s",
                     row.agent_id,
                     synced_skills,
                 )
             except Exception:
                 logger.warning(
-                    "Agent %s: failed to sync Octop built-in skills",
+                    "Agent %s: failed to sync YYC3-Pai built-in skills",
                     row.agent_id,
                     exc_info=True,
                 )
@@ -2737,7 +2737,7 @@ class AgentManager:
         return windows_neutralize_host_root(resolved, workspace_dir=workspace_dir)
 
     def resolved_backend_spec(self, agent_id: str) -> Any:
-        """Backend spec for *agent_id* with Octop docker enrichments applied."""
+        """Backend spec for *agent_id* with YYC3-Pai docker enrichments applied."""
         row = self._repos.agent_repo.get(agent_id)
         if row is None:
             return None
@@ -2756,7 +2756,7 @@ class AgentManager:
         return isinstance(spec, dict) and str(spec.get("type") or "").lower() == "opensandbox"
 
     def _prepare_docker_backend(self, backend: Any, row: AgentRow) -> Any:
-        """Inject Octop docker defaults (prefix / agent_id / username) without overwrite."""
+        """Inject YYC3-Pai docker defaults (prefix / agent_id / username) without overwrite."""
         if not isinstance(backend, dict) or backend.get("type") != "docker":
             return backend
         from octop.infra.utils.env_file import env_file_path  # noqa: PLC0415

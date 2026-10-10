@@ -1,5 +1,9 @@
 """Optional OCR backends for knowledge-base images and scanned PDFs."""
 
+# pymupdf / rapidocr are optional extras, imported lazily with a graceful
+# fallback (mirrors mypy ignore_missing_imports in pyproject.toml).
+# pyright: reportMissingImports=false
+
 from __future__ import annotations
 
 import asyncio

@@ -158,7 +158,7 @@ export const CHANNEL_URLS: Partial<Record<ChannelKey, string>> = {
   yuanbao: "https://yuanbao.tencent.com/bot",
   wecom: "https://work.weixin.qq.com/wework_admin/frame#/aiHelper/create",
   telegram: "https://t.me/BotFather",
-  octopbot: "https://octop.cloud.tencent.com",
+  octopbot: "https://pai.yyc3.top",
 };
 
 /** A single field of a channel's config form. */

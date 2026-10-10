@@ -4,8 +4,8 @@
  * Single-column dossier with real stats from statsCounts, grouped profile
  * sections, optional review action, and no fabricated backend-unsupported data.
  */
-import { useCallback, useEffect, useState } from "react";
 import { Button, Skeleton, Space, Tag, Tooltip } from "antd";
+import type { TFunction } from "i18next";
 import {
   ChevronRight,
   Crosshair,
@@ -15,13 +15,13 @@ import {
   Tags,
   User,
 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useServerTimezone } from "../../../hooks/useServerTimezone";
 import {
   calendarDaysAgo,
   formatServerYmd,
 } from "../../../utils/formatMessageTime";
-import type { TFunction } from "i18next";
 
 import {
   memoryDashboardApi,
@@ -197,7 +197,7 @@ export default function ProfileOverview({
           items={state.aboutMe.map((a) => atomToConceptItem(a, t, timeZone))}
           emptyHint={t(
             "memory.terminal.emptyAboutMe",
-            "Octop 还在了解你，多聊几次就会补上",
+            "YYC3-Pai 还在了解你，多聊几次就会补上",
           )}
           onViewAll={onViewAll}
         />
@@ -218,7 +218,7 @@ export default function ProfileOverview({
           title={t("memory.terminal.toldMe", "你提到的事实")}
           subtitle={t(
             "memory.terminal.toldMeDesc",
-            "最近被 Octop 记下的关键内容",
+            "最近被 YYC3-Pai 记下的关键内容",
           )}
           loading={firstLoading}
           items={state.toldMe.map((a) => atomToConceptItem(a, t, timeZone))}

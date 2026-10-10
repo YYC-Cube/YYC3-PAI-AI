@@ -12,6 +12,17 @@ from urllib.parse import quote_plus, urlparse
 
 logger = logging.getLogger(__name__)
 
+
+def env_override(suffix: str) -> str | None:
+    """Resolve a settings env var.
+
+    ``YYC3_<suffix>`` is preferred; the legacy ``OCTOP_<suffix>`` is used as a
+    fallback when the preferred variable is unset.
+    """
+    val = os.environ.get(f"YYC3_{suffix}")
+    return val if val is not None else os.environ.get(f"OCTOP_{suffix}")
+
+
 DEFAULT_MAX_UPLOAD_MB = 100
 MIN_MAX_UPLOAD_MB = 1
 MAX_MAX_UPLOAD_MB = 1024
@@ -19,20 +30,24 @@ DEFAULT_BROWSER_IDLE_TIMEOUT_MINUTES = 30
 
 _VALID_DRIVERS = frozenset({"sqlite", "postgresql"})
 
-_DATABASE_ENV_KEYS = (
-    "OCTOP_DATABASE_URL",
-    "OCTOP_DATABASE_DRIVER",
-    "OCTOP_DATABASE_SQLITE_PATH",
-    "OCTOP_DATABASE_HOST",
-    "OCTOP_DATABASE_PORT",
-    "OCTOP_DATABASE_NAME",
-    "OCTOP_DATABASE_USER",
-    "OCTOP_DATABASE_PASSWORD",
+_DATABASE_ENV_KEYS = tuple(
+    f"{prefix}_DATABASE_{name}"
+    for prefix in ("YYC3", "OCTOP")
+    for name in (
+        "URL",
+        "DRIVER",
+        "SQLITE_PATH",
+        "HOST",
+        "PORT",
+        "NAME",
+        "USER",
+        "PASSWORD",
+    )
 )
 
 
 def database_env_configured() -> bool:
-    """True when any ``OCTOP_DATABASE_*`` env var is set."""
+    """True when any ``DATABASE_*`` config env var is set."""
     return any(os.environ.get(k) for k in _DATABASE_ENV_KEYS)
 
 
@@ -41,13 +56,13 @@ class DatabaseConfig:
     """Database connection settings (SQLite or PostgreSQL)."""
 
     driver: str = "sqlite"
-    sqlite_path: str = "octop.db"
+    sqlite_path: str = "yyc3-pai.db"
     host: str = "127.0.0.1"
     port: int = 5432
-    database: str = "octop"
-    user: str = "octop"
+    database: str = "yyc3_pai"
+    user: str = "yyc3"
     password: str | None = None
-    url: str | None = None  # verbatim OCTOP_DATABASE_URL when set
+    url: str | None = None  # verbatim DATABASE_URL when set
 
     @property
     def is_sqlite(self) -> bool:
@@ -275,7 +290,7 @@ def _coerce_int(name: str, value: str, default: int) -> int:
     try:
         return int(value)
     except ValueError:
-        # Do not log the raw env value — names like OCTOP_*_PASSWORD can flow here.
+        # Do not log the raw env value — names like *_PASSWORD can flow here.
         logger.warning("env %s is not int; using %s", name, default)
         return default
 
@@ -286,7 +301,7 @@ def _coerce_bool(name: str, value: str, default: bool) -> bool:
         return True
     if normalized in {"0", "false", "no", "off"}:
         return False
-    # Do not log the raw env value — OCTOP_REQUIRE_SETUP_PASSWORD is classified as
+    # Do not log the raw env value — REQUIRE_SETUP_PASSWORD is classified as
     # sensitive by CodeQL (py/clear-text-logging-sensitive-data).
     logger.warning("env %s is not bool; using %s", name, default)
     return default
@@ -295,12 +310,12 @@ def _coerce_bool(name: str, value: str, default: bool) -> bool:
 def _parse_database_url(url: str) -> dict[str, Any]:
     parsed = urlparse(url)
     if parsed.scheme not in ("postgresql", "postgres"):
-        msg = f"OCTOP_DATABASE_URL scheme must be postgresql, got {parsed.scheme!r}"
+        msg = f"DATABASE_URL scheme must be postgresql, got {parsed.scheme!r}"
         raise ValueError(msg)
     if not parsed.hostname:
-        raise ValueError("OCTOP_DATABASE_URL missing host")
+        raise ValueError("DATABASE_URL missing host")
     if not parsed.path or parsed.path == "/":
-        raise ValueError("OCTOP_DATABASE_URL missing database name in path")
+        raise ValueError("DATABASE_URL missing database name in path")
     out: dict[str, Any] = {
         "driver": "postgresql",
         "host": parsed.hostname,
@@ -333,7 +348,7 @@ def parse_database_config(merged: dict[str, Any]) -> DatabaseConfig:
         raise ValueError(msg)
 
     if driver == "sqlite":
-        sqlite_path = str(merged.get("sqlite_path", "octop.db")).strip()
+        sqlite_path = str(merged.get("sqlite_path", "yyc3-pai.db")).strip()
         if not sqlite_path:
             raise ValueError("database.sqlite_path must not be empty")
         return DatabaseConfig(driver=driver, sqlite_path=sqlite_path)
@@ -373,45 +388,46 @@ def parse_database_config(merged: dict[str, Any]) -> DatabaseConfig:
 
 def _apply_database_env(merged_db: dict[str, Any]) -> dict[str, Any]:
     out = dict(merged_db)
-    if v := os.environ.get("OCTOP_DATABASE_URL"):
+    if v := env_override("DATABASE_URL"):
         out.update(_parse_database_url(v))
-    if v := os.environ.get("OCTOP_DATABASE_DRIVER"):
+    if v := env_override("DATABASE_DRIVER"):
         out["driver"] = v.strip().lower()
-    if v := os.environ.get("OCTOP_DATABASE_SQLITE_PATH"):
+    if v := env_override("DATABASE_SQLITE_PATH"):
         out["sqlite_path"] = v
-    if v := os.environ.get("OCTOP_DATABASE_HOST"):
+    if v := env_override("DATABASE_HOST"):
         out["host"] = v
-    if v := os.environ.get("OCTOP_DATABASE_PORT"):
-        out["port"] = _coerce_int("OCTOP_DATABASE_PORT", v, int(out.get("port", 5432)))
-    if v := os.environ.get("OCTOP_DATABASE_NAME"):
+    if v := env_override("DATABASE_PORT"):
+        out["port"] = _coerce_int("DATABASE_PORT", v, int(out.get("port", 5432)))
+    if v := env_override("DATABASE_NAME"):
         out["database"] = v
-    if v := os.environ.get("OCTOP_DATABASE_USER"):
+    if v := env_override("DATABASE_USER"):
         out["user"] = v
-    if v := os.environ.get("OCTOP_DATABASE_PASSWORD"):
+    if v := env_override("DATABASE_PASSWORD"):
         out["password"] = v
     return out
 
 
 def env_bind_overrides() -> tuple[str | None, int | None]:
-    """``OCTOP_BIND_HOST`` / ``OCTOP_PORT`` overrides shared by config and CLI.
+    """``BIND_HOST`` / ``PORT`` env overrides shared by config and CLI.
 
-    An invalid ``OCTOP_PORT`` logs a warning and yields no override, so the
-    file/default value wins — same fallback semantics as ``load_config``.
+    ``YYC3_*`` takes precedence over the legacy ``OCTOP_*`` variables. An
+    invalid port logs a warning and yields no override, so the file/default
+    value wins — same fallback semantics as ``load_config``.
     """
-    host = os.environ.get("OCTOP_BIND_HOST") or None
+    host = env_override("BIND_HOST") or None
     port: int | None = None
-    if v := os.environ.get("OCTOP_PORT"):
+    if v := env_override("PORT"):
         try:
             port = int(v)
         except ValueError:
             # Do not log the raw env value.
-            logger.warning("env %s is not int; ignoring override", "OCTOP_PORT")
+            logger.warning("env %s is not int; ignoring override", "PORT")
         # ``resolve_bind`` reads port 0 as "let the OS pick a free port", so the
         # bindable range here is 0-65535. Anything outside it outranks a valid
         # config.json port and kills startup inside ``socket.bind`` with a bare
         # ``OverflowError``, which names neither the key nor the value.
         if port is not None and not 0 <= port <= 65535:
-            logger.warning("env %s is out of range; ignoring override", "OCTOP_PORT")
+            logger.warning("env %s is out of range; ignoring override", "PORT")
             port = None
     return host, port
 
@@ -463,39 +479,37 @@ def load_config(path: Path) -> OctopConfig:
         merged["bind_host"] = env_host
     if env_port is not None:
         merged["port"] = env_port
-    if v := os.environ.get("OCTOP_LOG_LEVEL"):
+    if v := env_override("LOG_LEVEL"):
         merged["log_level"] = v
-    if v := os.environ.get("OCTOP_ACCESS_TOKEN_TTL"):
+    if v := env_override("ACCESS_TOKEN_TTL"):
         merged["access_token_ttl_seconds"] = _coerce_int(
-            "OCTOP_ACCESS_TOKEN_TTL", v, merged["access_token_ttl_seconds"]
+            "ACCESS_TOKEN_TTL", v, merged["access_token_ttl_seconds"]
         )
-    if v := os.environ.get("OCTOP_LOGIN_MAX_ATTEMPTS"):
+    if v := env_override("LOGIN_MAX_ATTEMPTS"):
         merged["login_max_attempts"] = _coerce_int(
-            "OCTOP_LOGIN_MAX_ATTEMPTS", v, merged.get("login_max_attempts", 5)
+            "LOGIN_MAX_ATTEMPTS", v, merged.get("login_max_attempts", 5)
         )
-    if v := os.environ.get("OCTOP_LOGIN_LOCKOUT_SECONDS"):
+    if v := env_override("LOGIN_LOCKOUT_SECONDS"):
         merged["login_lockout_seconds"] = _coerce_int(
-            "OCTOP_LOGIN_LOCKOUT_SECONDS", v, merged.get("login_lockout_seconds", 900)
+            "LOGIN_LOCKOUT_SECONDS", v, merged.get("login_lockout_seconds", 900)
         )
-    if (v := os.environ.get("OCTOP_DEFAULT_TIMEZONE")) or (
-        v := os.environ.get("OCTOP_CRON_TIMEZONE")
-    ):
+    if (v := env_override("DEFAULT_TIMEZONE")) or (v := env_override("CRON_TIMEZONE")):
         merged["default_timezone"] = v
-    if v := os.environ.get("OCTOP_CORS_ORIGINS"):
+    if v := env_override("CORS_ORIGINS"):
         merged["cors_origins"] = [s.strip() for s in v.split(",") if s.strip()]
-    if v := os.environ.get("OCTOP_ENABLE_DASHBOARD"):
+    if v := env_override("ENABLE_DASHBOARD"):
         merged["enable_dashboard"] = _coerce_bool(
-            "OCTOP_ENABLE_DASHBOARD", v, bool(merged["enable_dashboard"])
+            "ENABLE_DASHBOARD", v, bool(merged["enable_dashboard"])
         )
-    if v := os.environ.get("OCTOP_ENABLE_API_DOCS"):
+    if v := env_override("ENABLE_API_DOCS"):
         merged["enable_api_docs"] = _coerce_bool(
-            "OCTOP_ENABLE_API_DOCS", v, bool(merged["enable_api_docs"])
+            "ENABLE_API_DOCS", v, bool(merged["enable_api_docs"])
         )
-    if v := os.environ.get("OCTOP_REQUIRE_SETUP_PASSWORD"):
+    if v := env_override("REQUIRE_SETUP_PASSWORD"):
         merged["require_setup_password"] = _coerce_bool(
-            "OCTOP_REQUIRE_SETUP_PASSWORD", v, bool(merged["require_setup_password"])
+            "REQUIRE_SETUP_PASSWORD", v, bool(merged["require_setup_password"])
         )
-    if v := os.environ.get("OCTOP_MAX_UPLOAD_MB"):
+    if v := env_override("MAX_UPLOAD_MB"):
         merged["max_upload_mb"] = parse_max_upload_mb(
             v, default=int(merged.get("max_upload_mb", DEFAULT_MAX_UPLOAD_MB))
         )
@@ -503,9 +517,9 @@ def load_config(path: Path) -> OctopConfig:
         merged["max_upload_mb"] = parse_max_upload_mb(
             merged.get("max_upload_mb", DEFAULT_MAX_UPLOAD_MB)
         )
-    if v := os.environ.get("OCTOP_BROWSER_IDLE_TIMEOUT_MINUTES"):
+    if v := env_override("BROWSER_IDLE_TIMEOUT_MINUTES"):
         merged["browser_idle_timeout_minutes"] = _coerce_int(
-            "OCTOP_BROWSER_IDLE_TIMEOUT_MINUTES",
+            "BROWSER_IDLE_TIMEOUT_MINUTES",
             v,
             int(
                 merged.get(
@@ -516,8 +530,8 @@ def load_config(path: Path) -> OctopConfig:
         )
 
     capabilities = _parse_capabilities_section(raw.get("capabilities"))
-    if v := os.environ.get("OCTOP_ENABLE_MOBILE"):
-        forced = _coerce_bool("OCTOP_ENABLE_MOBILE", v, capabilities.mobile.enabled)
+    if v := env_override("ENABLE_MOBILE"):
+        forced = _coerce_bool("ENABLE_MOBILE", v, capabilities.mobile.enabled)
         capabilities = CapabilitiesConfig(
             mobile=MobileCapabilities(
                 enabled=forced,
@@ -528,8 +542,8 @@ def load_config(path: Path) -> OctopConfig:
         )
 
     capabilities = _parse_capabilities_section(raw.get("capabilities"))
-    if v := os.environ.get("OCTOP_ENABLE_MOBILE"):
-        forced = _coerce_bool("OCTOP_ENABLE_MOBILE", v, capabilities.mobile.enabled)
+    if v := env_override("ENABLE_MOBILE"):
+        forced = _coerce_bool("ENABLE_MOBILE", v, capabilities.mobile.enabled)
         capabilities = CapabilitiesConfig(
             mobile=MobileCapabilities(
                 enabled=forced,
@@ -540,61 +554,66 @@ def load_config(path: Path) -> OctopConfig:
         )
 
     backup = _parse_backup_section(raw.get("backup"))
-    if v := os.environ.get("OCTOP_BACKUP_AUTO_ENABLED"):
+    if v := env_override("BACKUP_AUTO_ENABLED"):
         backup = replace(
             backup,
-            auto_enabled=_coerce_bool("OCTOP_BACKUP_AUTO_ENABLED", v, backup.auto_enabled),
+            auto_enabled=_coerce_bool("BACKUP_AUTO_ENABLED", v, backup.auto_enabled),
         )
-    if v := os.environ.get("OCTOP_BACKUP_SCHEDULE"):
+    if v := env_override("BACKUP_SCHEDULE"):
         schedule = v.strip() or backup.schedule
         backup = replace(backup, schedule=schedule)
-    if v := os.environ.get("OCTOP_BACKUP_RETENTION_COUNT"):
-        retention = _coerce_int("OCTOP_BACKUP_RETENTION_COUNT", v, backup.retention_count)
+    if v := env_override("BACKUP_RETENTION_COUNT"):
+        retention = _coerce_int("BACKUP_RETENTION_COUNT", v, backup.retention_count)
         if retention < 1:
             logger.warning(
-                "env OCTOP_BACKUP_RETENTION_COUNT is < 1; using %s",
+                "env BACKUP_RETENTION_COUNT is < 1; using %s",
                 backup.retention_count,
             )
             retention = backup.retention_count
         backup = replace(backup, retention_count=retention)
-    if v := os.environ.get("OCTOP_BACKUP_INCLUDE_CONFIG"):
+    if v := env_override("BACKUP_INCLUDE_CONFIG"):
         backup = replace(
             backup,
-            include_config=_coerce_bool("OCTOP_BACKUP_INCLUDE_CONFIG", v, backup.include_config),
+            include_config=_coerce_bool("BACKUP_INCLUDE_CONFIG", v, backup.include_config),
         )
-    if v := os.environ.get("OCTOP_BACKUP_INCLUDE_WORKSPACES"):
+    if v := env_override("BACKUP_INCLUDE_WORKSPACES"):
         backup = replace(
             backup,
             include_workspaces=_coerce_bool(
-                "OCTOP_BACKUP_INCLUDE_WORKSPACES", v, backup.include_workspaces
+                "BACKUP_INCLUDE_WORKSPACES", v, backup.include_workspaces
             ),
         )
-    if v := os.environ.get("OCTOP_BACKUP_INCLUDE_SKILL_PACKAGES"):
+    if v := env_override("BACKUP_INCLUDE_SKILL_PACKAGES"):
         backup = replace(
             backup,
             include_skill_packages=_coerce_bool(
-                "OCTOP_BACKUP_INCLUDE_SKILL_PACKAGES",
+                "BACKUP_INCLUDE_SKILL_PACKAGES",
                 v,
                 backup.include_skill_packages,
             ),
         )
-    if v := os.environ.get("OCTOP_BACKUP_INCLUDE_PLUGINS"):
+    if v := env_override("BACKUP_INCLUDE_PLUGINS"):
         backup = replace(
             backup,
-            include_plugins=_coerce_bool("OCTOP_BACKUP_INCLUDE_PLUGINS", v, backup.include_plugins),
+            include_plugins=_coerce_bool("BACKUP_INCLUDE_PLUGINS", v, backup.include_plugins),
         )
-    if v := os.environ.get("OCTOP_BACKUP_INCLUDE_KNOWLEDGE"):
+    if v := env_override("BACKUP_INCLUDE_KNOWLEDGE"):
         backup = replace(
             backup,
-            include_knowledge=_coerce_bool(
-                "OCTOP_BACKUP_INCLUDE_KNOWLEDGE", v, backup.include_knowledge
-            ),
+            include_knowledge=_coerce_bool("BACKUP_INCLUDE_KNOWLEDGE", v, backup.include_knowledge),
         )
-    if v := os.environ.get("OCTOP_BACKUP_INCLUDE_CHATS"):
+    if v := env_override("BACKUP_INCLUDE_CHATS"):
         backup = replace(
             backup,
-            include_chats=_coerce_bool("OCTOP_BACKUP_INCLUDE_CHATS", v, backup.include_chats),
+            include_chats=_coerce_bool("BACKUP_INCLUDE_CHATS", v, backup.include_chats),
         )
+
+    history_env = env_override("HISTORY_V2_ENABLED")
+    history_v2_enabled = _coerce_bool(
+        "HISTORY_V2_ENABLED",
+        history_env if history_env is not None else str(merged.get("history_v2_enabled", False)),
+        False,
+    )
 
     return OctopConfig(
         bind_host=merged["bind_host"],
@@ -607,13 +626,7 @@ def load_config(path: Path) -> OctopConfig:
         default_timezone=str(merged.get("default_timezone") or "Asia/Shanghai"),
         enable_dashboard=bool(merged["enable_dashboard"]),
         enable_api_docs=bool(merged["enable_api_docs"]),
-        history_v2_enabled=_coerce_bool(
-            "OCTOP_HISTORY_V2_ENABLED",
-            os.environ.get(
-                "OCTOP_HISTORY_V2_ENABLED", str(merged.get("history_v2_enabled", False))
-            ),
-            False,
-        ),
+        history_v2_enabled=history_v2_enabled,
         require_setup_password=bool(merged["require_setup_password"]),
         database=parse_database_config(merged_db),
         database_in_file=database_in_file,

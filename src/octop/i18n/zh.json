@@ -447,7 +447,7 @@
     "SKILL_PACKAGE_NOT_FOUND": "未找到技能包。",
     "SKILL_PACKAGE_NAME_TAKEN": "技能包 {name} 已存在。",
     "SKILL_PACKAGE_BACKEND_UNSUPPORTED": "技能包目前仅支持「本地完整环境（文件系统+指令执行）」或「本地文件系统（不能执行指令）」，且存储根目录须为 /（POSIX）或专家的工作区根目录（Windows 默认）。",
-    "ACP_BACKEND_UNSUPPORTED": "当前专家已启用沙箱环境，不可启用或编辑外部 Runner。启用向外委托（acp_runner）不受影响；通过 IDE / octop acp 接入也不受影响。",
+    "ACP_BACKEND_UNSUPPORTED": "当前专家已启用沙箱环境，不可启用或编辑外部 Runner。启用向外委托（acp_runner）不受影响；通过 IDE / pai acp 接入也不受影响。",
     "PUBLISHED_EXPERT_SLUG_TAKEN": "已存在发布专家 slug：{slug}。",
     "PUBLISHED_EXPERT_ALREADY_EXISTS": "该专家已发布为「{name}」，请改为刷新已发布模板。",
     "OIDC_BAD_REQUEST": "OIDC 请求无效：{detail}",
@@ -702,7 +702,7 @@
     "model_call_failed": "模型调用多次重试后仍失败。请稍后重试；若持续失败，请检查模型配置或更换模型。",
     "model_call_failed_detail": "模型调用失败：{detail}",
     "model_retry_prompt": "模型接口调用失败，不要假装任务已经完成。\n\n原因：{guidance}\n\n请用用户的语言说明情况并给出下一步建议。不要用同样的请求再试一次。\n\n技术细节：{detail}",
-    "path_outside_root": "文件路径超出当前专家的存储根目录，无法读写。请改用存储根目录内的路径，或在专家设置中扩大存储根目录（Windows 上请显式指定盘符路径，例如 D:/octop-data）。"
+    "path_outside_root": "文件路径超出当前专家的存储根目录，无法读写。请改用存储根目录内的路径，或在专家设置中扩大存储根目录（Windows 上请显式指定盘符路径，例如 D:/pai-data）。"
   },
   "attachment": {
     "header": "[附件] {filename}",
@@ -839,7 +839,7 @@
     "target": "本次整理智能体：{agent_id}",
     "elapsed": "已用时 {seconds} 秒",
     "scanned": "已扫描 {scanned}/{total} 条",
-    "all_conflict": "--all 不能与 --agent 或 OCTOP_AGENT 同时使用。",
+    "all_conflict": "--all 不能与 --agent 或 YYC3_AGENT 同时使用（兼容旧 OCTOP_AGENT）。",
     "batch_target": "[{index}/{total}] 正在整理：{name} [{agent_id}]",
     "batch_stopped": "批量整理已停止：{agent_id} 未确认完成；已完成 {completed} 个，另有 {remaining} 个未执行。原因：{detail}",
     "batch_done": "批量整理完成，共完成 {total} 个智能体。",

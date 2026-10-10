@@ -2,22 +2,22 @@
 
 在**仓库根目录**运行以下命令。
 
-## 安装 Octop（终端用户）
+## 安装 YYC3-Pai（终端用户）
 
-将 Octop 安装到隔离虚拟环境 `~/.octop/venv`，并创建 `~/.octop/bin/octop` 包装脚本加入 PATH。
+将 YYC3-Pai 安装到隔离虚拟环境 `~/.yyc3-pai/venv`（旧 `~/.octop` 安装自动沿用），并创建 `pai` 包装脚本加入 PATH。
 
 ### 远程一键安装（推荐）
 
 | 平台 | 命令 |
-|------|------|
-| macOS / Linux | `curl -fsSL https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.sh \| bash` |
-| Windows (PowerShell) | `irm https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.ps1 \| iex` |
-| Windows (cmd) | 下载 `…/octop/install.bat` 后运行，或使用下方本地脚本 |
+| ------ | ------ |
+| macOS / Linux | `curl -fsSL <url>/install.sh \| bash` |
+| Windows (PowerShell) | `irm <url>/install.ps1 \| iex` |
+| Windows (cmd) | 下载 `<url>/install.bat` 后运行，或使用下方本地脚本 |
 
 ### 本地脚本（仓库内）
 
 | 平台 | 命令 |
-|------|------|
+| ------ | ------ |
 | macOS / Linux | `bash scripts/install.sh` |
 | Windows (PowerShell) | `powershell -ExecutionPolicy Bypass -File scripts/install.ps1` |
 | Windows (cmd) | `scripts\install.bat` |
@@ -36,7 +36,7 @@ bash scripts/install.sh --extras browser
 
 # 从本地源码安装（开发/离线）
 bash scripts/install.sh --from-source
-bash scripts/install.sh --from-source /path/to/orca
+bash scripts/install.sh --from-source /path/to/YYC3-Pai
 
 # 使用国内 PyPI 镜像加速依赖
 bash scripts/install.sh --mirror https://mirrors.cloud.tencent.com/pypi/simple
@@ -47,9 +47,11 @@ Windows PowerShell 等价参数：`-Version`、`-FromSource`、`-SourceDir`、`-
 ### 环境变量
 
 | 变量 | 说明 |
-|------|------|
-| `OCTOP_HOME` | 安装根目录，默认 `~/.octop` |
-| `OCTOP_REPO` | `--from-source` 无本地目录时的 git 克隆地址 |
+| ------ | ------ |
+| `YYC3_PAI_HOME` | 安装根目录，默认 `~/.yyc3-pai`（旧 `~/.octop` 自动沿用） |
+| `OCTOP_HOME` | 已废弃，`YYC3_PAI_HOME` 的兜底兼容 |
+| `YYC3_PAI_REPO` | `--from-source` 无本地目录时的 git 克隆地址 |
+| `OCTOP_REPO` | 已废弃，`YYC3_PAI_REPO` 的兜底兼容 |
 | `OCTOP_PYPI_MIRROR` | PyPI 镜像（与 `--mirror` 等效） |
 | `PLAYWRIGHT_DOWNLOAD_HOST` | Playwright 浏览器下载镜像（仅 `--extras browser`） |
 
@@ -58,8 +60,8 @@ Windows PowerShell 等价参数：`-Version`、`-FromSource`、`-SourceDir`、`-
 安装完成后：
 
 ```bash
-octop init    # 初始化数据库与管理员
-octop run     # 启动服务 → http://127.0.0.1:8088
+pai init    # 初始化数据库与管理员
+pai run     # 启动服务 → http://127.0.0.1:8088
 ```
 
 ---

@@ -1,1 +1,1 @@
-"""octop CLI package."""
+"""YYC3-Pai CLI package."""

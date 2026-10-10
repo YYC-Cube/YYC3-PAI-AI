@@ -1,4 +1,4 @@
-"""Internal HTTP MCP endpoints for Octop-hosted connector gateways."""
+"""Internal HTTP MCP endpoints for YYC3-Pai-hosted connector gateways."""
 
 from __future__ import annotations
 

@@ -1,20 +1,20 @@
-# Octop Plugin Demos
+# YYC3-Pai Plugin Demos
 
 [中文版](./README_CN.md)
 
-Sample plugins for Octop / octop-harness `kind` values, plus a **dual
+Sample plugins for YYC3-Pai / octop-harness `kind` values, plus a **dual
 frontend + backend** demo that renders tool results in chat.
 Layout inspired by [octop-toolkit](https://github.com/veenyi/octop-plugins/tree/main/octop-toolkit).
 
 Product plugins shipped with the wheel live in
-`src/octop/infra/agents/plugins/bundled/`. `octop init` and `octop run`
-copy missing ones into `~/.octop/plugins/` and set them **globally off**
+`src/octop/infra/agents/plugins/bundled/`. `pai init` and `pai run`
+copy missing ones into `~/.yyc3-pai/plugins/` and set them **globally off**
 in `config.json`. Uninstalled ids are not re-copied.
 
 ## Demos
 
 | Directory | `kind` | What it shows |
-|-----------|--------|----------------|
+| ----------- | -------- | ---------------- |
 | [`demo-toolkit`](./demo-toolkit/) | `tool` | Register callable tools (time, text stats, configurable echo) |
 | [`demo-greeting-skill`](./demo-greeting-skill/) | `skill` | Sync a sample Skill into the agent workspace |
 | [`demo-turn-logger`](./demo-turn-logger/) | `hook` | Register `AgentMiddleware` that logs before/after model calls |
@@ -77,11 +77,11 @@ Ship a self-contained ESM; React is provided as `window.__OCTOP_REACT__` /
 ## Install locally
 
 ```bash
-octop plugin install ./plugins/demo-toolkit --force
-octop plugin install ./plugins/demo-greeting-skill --force
-octop plugin install ./plugins/demo-turn-logger --force
-octop plugin install ./plugins/demo-ui-card --force
-octop plugin list
+pai plugin install ./plugins/demo-toolkit --force
+pai plugin install ./plugins/demo-greeting-skill --force
+pai plugin install ./plugins/demo-turn-logger --force
+pai plugin install ./plugins/demo-ui-card --force
+pai plugin list
 ```
 
 Or pack a ZIP first (include prebuilt `ui/dist/` when present — the server

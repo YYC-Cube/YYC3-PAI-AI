@@ -1,21 +1,22 @@
-# Octop desktop (Wails v3 + green portable)
+# YYC3-Pai desktop (Wails v3 + green portable)
 
 All desktop-client code lives here. This is **not** `src/octop/infra/desktop`
 (remote desktop streaming).
 
 | Path | Role |
-|------|------|
+| ------ | ------ |
 | [`portable/`](portable/) | Green zip packaging (was `scripts/green/`) |
-| [`src/`](src/) | Wails v3 shell: load bundled zip, spawn Octop, tray/settings |
+| [`src/`](src/) | Wails v3 shell: load bundled zip, spawn YYC3-Pai, tray/settings |
 | [`package-release.sh`](package-release.sh) | Native end-to-end portable + Wails release build |
 
 ## Data directory
 
-Same as the Octop CLI/server default:
+Same as the YYC3-Pai CLI/server default:
 
-- `OCTOP_HOME` → `~/.octop` (or the existing `OCTOP_HOME` env)
-- Green runtime extract → `~/.octop/portable/`
-- Shell prefs → `~/.octop/desktop-settings.json`
+- `~/.yyc3-pai` (the legacy `~/.octop` layout is adopted automatically;
+  `OCTOP_HOME` overrides both)
+- Green runtime extract → `~/.yyc3-pai/portable/`
+- Shell prefs → `~/.yyc3-pai/desktop-settings.json`
 
 ## Build green zip
 
@@ -38,7 +39,7 @@ the final native package:
 
 ```bash
 desktop/package-release.sh
-# Reuse an existing desktop/portable/release/Octop-portable-<plat>-<version>.zip:
+# Reuse an existing desktop/portable/release/YYC3-Pai-portable-<plat>-<version>.zip:
 desktop/package-release.sh darwin-arm64 --reuse-portable
 ```
 
@@ -59,47 +60,48 @@ cd desktop/src
 go mod tidy
 wails3 build            # development binary under desktop/src/bin/
 wails3 task package ARCH=arm64 VERSION=<version> \
-  PORTABLE_ZIP=../portable/release/Octop-portable-darwin-arm64-<version>.zip
+  PORTABLE_ZIP=../portable/release/YYC3-Pai-portable-darwin-arm64-<version>.zip
 ```
 
-Dev against an already-running Octop (skips the bundled green zip):
+Dev against an already-running YYC3-Pai (skips the bundled green zip):
 
 ```bash
 cd desktop/src
 OCTOP_DESKTOP_URL=http://127.0.0.1:8088 wails3 dev
 ```
 
-Without `OCTOP_DESKTOP_URL`, first launch uses `~/.octop/portable/` if valid,
+Without `OCTOP_DESKTOP_URL`, first launch uses `~/.yyc3-pai/portable/` if valid,
 otherwise extracts the matching zip shipped with the desktop package (embedded
 in the Windows and Linux binaries, under `Contents/Resources` on macOS). The
-Wails shell never downloads Octop. For local runtime debugging, set
-`OCTOP_DESKTOP_PORTABLE_ZIP=/absolute/path/Octop-portable-<plat>-<version>.zip`.
+Wails shell never downloads YYC3-Pai. For local runtime debugging, set
+`YYC3_DESKTOP_PORTABLE_ZIP=/absolute/path/YYC3-Pai-portable-<plat>-<version>.zip`
+(the legacy `OCTOP_DESKTOP_PORTABLE_ZIP` stays supported as a fallback).
 On later launches, a newer bundled portable version replaces the extracted
-runtime after creating a consistent SQLite backup under `~/.octop/backups/`.
-The upgraded Octop process then applies the normal database migrations during
+runtime after creating a consistent SQLite backup under `~/.yyc3-pai/backups/`.
+The upgraded YYC3-Pai process then applies the normal database migrations during
 startup. Newer extracted runtimes are never downgraded; PostgreSQL remains
 externally managed and is not copied by the desktop shell.
 
-GitHub Release names follow `Octop-<kind>-<os>-<arch>-<version>.<ext>`:
+GitHub Release names follow `YYC3-Pai-<kind>-<os>-<arch>-<version>.<ext>`:
 
-- Desktop GUI: `Octop-desktop-<plat>-<version>.dmg` (macOS; open and drag
-  `Octop.app` into Applications), `.exe` (Windows NSIS installer — copies
-  into `Program Files\Octop` and creates Start Menu + desktop shortcuts),
+- Desktop GUI: `YYC3-Pai-desktop-<plat>-<version>.dmg` (macOS; open and drag
+  `YYC3-Pai.app` into Applications), `.exe` (Windows NSIS installer — copies
+  into `Program Files\YYC3-Pai` and creates Start Menu + desktop shortcuts),
   `.tar.gz` (Linux)
-- Green runtime zip: `Octop-portable-<plat>-<version>.zip`
-- PyPI wheels stay `octop-<version>-py3-none-any.whl` (PEP 427)
+- Green runtime zip: `YYC3-Pai-portable-<plat>-<version>.zip`
+- PyPI wheels stay `yyc3_pai-<version>-py3-none-any.whl` (PEP 427)
 
 The Linux tar.gz contains only the GUI binary; it has no separate portable zip or
-server terminal process. Runtime upgrades remain owned by Octop:
-the shell sets `OCTOP_GREEN_PACKAGES`, so `octop update` upgrades the extracted
-`packages/` directory through Octop's existing `--target` logic.
+server terminal process. Runtime upgrades remain owned by YYC3-Pai:
+the shell sets `OCTOP_GREEN_PACKAGES`, so `pai update` upgrades the extracted
+`packages/` directory through YYC3-Pai's existing `--target` logic.
 
 Linux also needs GTK4 + WebKitGTK 6 to link. macOS 12+.
 
 ## Icons
 
 | File | Used for | Rule |
-|------|----------|------|
+| ------ | ---------- | ------ |
 | `src/build/appicon.png` | Windows `.ico`, Linux | Full-bleed 512x512 artwork |
 | `src/build/appicon-macos.png` | macOS `.icns` | 1024x1024 canvas, artwork 824x824 centred |
 | `src/assets/tray-icon.png` | Tray + app icon on Windows/Linux | Full-bleed |

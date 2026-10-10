@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { App, Collapse, Switch } from "antd";
 import {
+  AlertTriangle,
   BookOpen,
   CheckCircle,
   Info,
-  RefreshCw,
-  XCircle,
-  AlertTriangle,
   Power,
+  RefreshCw,
   Sparkles,
+  XCircle,
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   updateApi,
   UpdateStatus,
@@ -29,15 +29,15 @@ import styles from "./UpdateConfig.module.less";
 const UPGRADE_GUIDE_CODE = {
   installerUnix: `curl -fsSL https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.sh | bash`,
   installerWin: `irm https://finnie-1258344699.cos.ap-guangzhou.myqcloud.com/octop/install.ps1 | iex`,
-  cli: `octop update
+  cli: `pai update
 # or non-interactive:
-octop update --yes
+pai update --yes
 # pre-release (beta) requires --allow-prerelease:
-# octop update --allow-prerelease --yes`,
-  pip: `pip install -U octop
+# pai update --allow-prerelease --yes`,
+  pip: `pip install -U yyc3-pai
 # optional extras, e.g. browser automation:
-# pip install -U "octop[browser]"`,
-  source: `cd Octop
+# pip install -U "yyc3-pai[browser]"`,
+  source: `cd YYC3-Pai
 git pull
 make build-frontend
 # or: cd dashboard && npm ci && npm run build && cd ..
@@ -49,16 +49,16 @@ docker compose -f docker/docker-compose.yml up -d --build
 # or rebuild the image then run with a persistent data volume
 bash docker/docker_build.sh
 docker run -d \\
-  --name octop \\
+  --name yyc3-pai \\
   -p 8088:8088 \\
-  -v octop-data:/data/.octop \\
+  -v yyc3-pai-data:/data/.yyc3-pai \\
   -e HOME=/data \\
-  octop:latest`,
+  yyc3-pai:latest`,
   restart: `# system service (systemd / launchd / Windows service)
-octop service restart
+pai service restart
 
 # foreground process — stop the old process, then:
-octop run`,
+pai run`,
 } as const;
 
 type GuideMethodKey =

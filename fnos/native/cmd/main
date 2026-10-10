@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Octop 本地版（原生 app）— 生命周期管理
+# YYC3-Pai 本地版（原生 app）— 生命周期管理
 # 直接以进程方式运行在飞牛主机上（非 Docker），监听 0.0.0.0:8089。
-# start:  启动 Octop（setsid 后台，写 PID 文件）；端口未就绪则失败并写出原因
+# start:  启动 YYC3-Pai（setsid 后台，写 PID 文件）；端口未就绪则失败并写出原因
 # stop:   杀进程树并释放 8089；超时 SIGKILL。启动被中途杀掉也会收尸。
 # status: PID 存活或 8089 仍在监听（防止外壳已死、Python 孤儿仍占端口时显示已停止）
 #
@@ -18,7 +18,7 @@ PKGVAR="${TRIM_PKGVAR:-/var/apps/octop-native/var}"
 LOG_FILE="${PKGVAR}/info.log"
 PID_FILE="${PKGVAR}/octop.pid"
 PORT="${OCTOP_PORT:-8089}"
-BIN="$APPDEST/bin/octop"
+BIN="$APPDEST/bin/pai"
 START_WAIT_SECS="${OCTOP_START_WAIT_SECS:-90}"
 
 if [ -n "${TRIM_DATA_SHARE_PATHS:-}" ]; then
@@ -44,7 +44,7 @@ run_as_service() {
 }
 
 # 后台拉起服务：优先 setsid，整棵进程树同一进程组，stop 才能一次杀干净。
-# $! 是会话首进程（runuser 或启动器）；bin/octop 随后 exec 成 Python。
+# $! 是会话首进程（runuser 或启动器）；bin/pai 随后 exec 成 Python。
 run_as_service_bg() {
     if id octop-native >/dev/null 2>&1 && command -v runuser >/dev/null 2>&1; then
         if command -v setsid >/dev/null 2>&1; then
@@ -115,9 +115,10 @@ start_process() {
         fi
     fi
 
-    log_msg "Starting Octop (native) on port ${PORT} ..."
+    log_msg "Starting YYC3-Pai (native) on port ${PORT} ..."
 
-    if [ ! -f "${DATA_DIR}/.octop/octop.db" ] && [ ! -f "${DATA_DIR}/octop.db" ]; then
+    if [ ! -f "${DATA_DIR}/.octop/yyc3-pai.db" ] && [ ! -f "${DATA_DIR}/.octop/octop.db" ] \
+        && [ ! -f "${DATA_DIR}/yyc3-pai.db" ] && [ ! -f "${DATA_DIR}/octop.db" ]; then
         log_msg "数据库尚未初始化，先执行 --prepare"
         if ! OCTOP_PORT="$PORT" OCTOP_BIND_HOST=0.0.0.0 run_as_service "$BIN" --prepare >> "${LOG_FILE}" 2>&1; then
             fail_start "首次初始化失败。请打开数据目录 octop-start-error.txt，或确认已安装「Python 3.12」。"
@@ -153,7 +154,7 @@ start_process() {
         if port_ready; then
             trap - INT TERM HUP
             rm -f "${DATA_DIR}/octop-start-error.txt" "${PKGVAR}/last-error.txt"
-            log_msg "Octop pid=$octop_pid 端口 ${PORT} 已就绪"
+            log_msg "YYC3-Pai pid=$octop_pid 端口 ${PORT} 已就绪"
             return 0
         fi
         if ! kill -0 "$octop_pid" 2>/dev/null; then
@@ -171,7 +172,7 @@ start_process() {
 }
 
 stop_process() {
-    log_msg "Stopping Octop (native) ..."
+    log_msg "Stopping YYC3-Pai (native) ..."
 
     if [ -r "${PID_FILE}" ]; then
         pid=$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')
@@ -211,7 +212,7 @@ stop_process() {
     local i
     for i in $(seq 1 15); do
         if ! port_ready; then
-            log_msg "Octop (native) stopped, port ${PORT} released"
+            log_msg "YYC3-Pai (native) stopped, port ${PORT} released"
             return 0
         fi
         sleep 0.2

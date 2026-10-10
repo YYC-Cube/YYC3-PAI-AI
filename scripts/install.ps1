@@ -1,8 +1,9 @@
-# Octop Installer for Windows (PowerShell)
+# YYC3-Pai Installer for Windows (PowerShell)
 # Usage: irm <url>/install.ps1 | iex
 #    or: .\install.ps1 [-Version X.Y.Z] [-FromSource] [-SourceDir DIR] [-Extras "browser"]
 #
-# Installs Octop into ~/.octop with a uv-managed Python environment.
+# Installs YYC3-Pai into ~/.yyc3-pai with a uv-managed Python environment.
+# Legacy ~/.octop is detected and reused automatically.
 
 & {
 param(
@@ -16,19 +17,35 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$OctopHome     = if ($env:OCTOP_HOME) { $env:OCTOP_HOME } else { Join-Path $HOME ".octop" }
+# YYC3_PAI_HOME / YYC3_PAI_REPO 为主，旧 OCTOP_* 环境变量兜底兼容。
+if ($env:YYC3_PAI_HOME) {
+    $OctopHome = $env:YYC3_PAI_HOME
+} elseif ($env:OCTOP_HOME) {
+    $OctopHome = $env:OCTOP_HOME
+} elseif (Test-Path (Join-Path $HOME ".octop")) {
+    # 检测到旧安装目录时自动沿用，避免数据断裂
+    $OctopHome = Join-Path $HOME ".octop"
+} else {
+    $OctopHome = Join-Path $HOME ".yyc3-pai"
+}
 $OctopVenv     = Join-Path $OctopHome "venv"
 $OctopBin      = Join-Path $OctopHome "bin"
 $PythonVersion = "3.12"
-$OctopRepo     = if ($env:OCTOP_REPO) { $env:OCTOP_REPO } else { "https://github.com/TencentCloud/Octop.git" }
+if ($env:YYC3_PAI_REPO) {
+    $OctopRepo = $env:YYC3_PAI_REPO
+} elseif ($env:OCTOP_REPO) {
+    $OctopRepo = $env:OCTOP_REPO
+} else {
+    $OctopRepo = "https://github.com/YYC-Cube/YYC3-Pai.git"
+}
 
-function Write-Info { param([string]$Message) Write-Host "[octop] " -ForegroundColor Green  -NoNewline; Write-Host $Message }
-function Write-Warn { param([string]$Message) Write-Host "[octop] " -ForegroundColor Yellow -NoNewline; Write-Host $Message }
-function Stop-WithError { param([string]$Message) Write-Host "[octop] ERROR: $Message" -ForegroundColor Red; exit 1 }
+function Write-Info { param([string]$Message) Write-Host "[yyc3] " -ForegroundColor Green  -NoNewline; Write-Host $Message }
+function Write-Warn { param([string]$Message) Write-Host "[yyc3] " -ForegroundColor Yellow -NoNewline; Write-Host $Message }
+function Stop-WithError { param([string]$Message) Write-Host "[yyc3] ERROR: $Message" -ForegroundColor Red; exit 1 }
 
 if ($Help) {
     @"
-Octop Installer for Windows
+YYC3-Pai Installer for Windows
 
 Usage: .\install.ps1 [OPTIONS]
 
@@ -45,13 +62,15 @@ to install it, or install later from the dashboard. If a system Chrome already
 exists, that download is skipped even with -Extras browser.
 
 Environment:
-  OCTOP_HOME            Installation directory (default: ~/.octop)
-  OCTOP_REPO            Git clone URL for -FromSource without -SourceDir
+  YYC3_PAI_HOME         Installation directory (default: ~/.yyc3-pai; legacy ~/.octop is reused)
+  OCTOP_HOME            Deprecated fallback for YYC3_PAI_HOME
+  YYC3_PAI_REPO         Git clone URL for -FromSource without -SourceDir
+  OCTOP_REPO            Deprecated fallback for YYC3_PAI_REPO
 "@
     exit 0
 }
 
-Write-Host "[octop] Installing Octop into $OctopHome" -ForegroundColor Green
+Write-Host "[yyc3] Installing YYC3-Pai into $OctopHome" -ForegroundColor Green
 
 $policy = Get-ExecutionPolicy
 if ($policy -eq "Restricted") {
@@ -153,7 +172,7 @@ if (-not (Test-Path $VenvPython)) { Stop-WithError "Failed to create virtual env
 $pyVersion = & $VenvPython --version 2>&1
 Write-Info "Python environment ready ($pyVersion)"
 
-# TEMP: mcp 2.x breaks langchain-mcp-adapters; pin until published octop pulls octop-harness>=0.9.18.
+# TEMP: mcp 2.x breaks langchain-mcp-adapters; pin until published YYC3-Pai pulls octop-harness>=0.9.18.
 function Pin-McpCompat {
     Write-Info "Pinning mcp<2 (langchain-mcp-adapters compat; temporary)..."
     uv pip install "mcp>=1.27.1,<2" --python $VenvPython --quiet
@@ -212,7 +231,7 @@ function Prepare-Console {
     }
 }
 
-$VenvOctop = Join-Path $OctopVenv "Scripts\octop.exe"
+$VenvOctop = Join-Path $OctopVenv "Scripts\pai.exe"
 
 if ($FromSource) {
     if ($SourceDir) {
@@ -246,8 +265,8 @@ if ($FromSource) {
 Pin-McpCompat
 Test-Install
 
-if (-not (Test-Path $VenvOctop)) { Stop-WithError "Installation failed: octop CLI not found in venv" }
-Write-Info "Octop installed successfully"
+if (-not (Test-Path $VenvOctop)) { Stop-WithError "Installation failed: pai CLI not found in venv" }
+Write-Info "YYC3-Pai installed successfully"
 
 if (-not $script:ConsoleAvailable) {
     $check = & $VenvPython -c "import importlib.resources, octop; p=importlib.resources.files('octop')/'dashboard'/'index.html'; print('yes' if p.is_file() else 'no')" 2>&1
@@ -306,26 +325,32 @@ if (-not $wantPlaywrightChromium) {
 
 New-Item -ItemType Directory -Path $OctopBin -Force | Out-Null
 
-$wrapperPs1 = Join-Path $OctopBin "octop.ps1"
+$wrapperPs1 = Join-Path $OctopBin "pai.ps1"
 @'
 $ErrorActionPreference = "Stop"
-$OctopHome = if ($env:OCTOP_HOME) { $env:OCTOP_HOME } else { Join-Path $HOME ".octop" }
-$RealBin = Join-Path $OctopHome "venv\Scripts\octop.exe"
+$OctopHome = if ($env:YYC3_PAI_HOME) { $env:YYC3_PAI_HOME } elseif ($env:OCTOP_HOME) { $env:OCTOP_HOME } else { Join-Path $HOME ".yyc3-pai" }
+$RealBin = Join-Path $OctopHome "venv\Scripts\pai.exe"
 if (-not (Test-Path $RealBin)) {
-    Write-Error "Octop environment not found at $OctopHome\venv"
+    # 旧 ~/.octop 安装兜底
+    $OctopHome = Join-Path $HOME ".octop"
+    $RealBin = Join-Path $OctopHome "venv\Scripts\pai.exe"
+}
+if (-not (Test-Path $RealBin)) {
+    Write-Error "YYC3-Pai environment not found at $OctopHome\venv"
     exit 1
 }
 & $RealBin @args
 '@ | Set-Content -Path $wrapperPs1 -Encoding UTF8
 
-$cmdWrapper = Join-Path $OctopBin "octop.cmd"
+$cmdWrapper = Join-Path $OctopBin "pai.cmd"
 @'
 @echo off
 set "OCTOP_HOME=%OCTOP_HOME%"
-if "%OCTOP_HOME%"=="" set "OCTOP_HOME=%USERPROFILE%\.octop"
-set "REAL_BIN=%OCTOP_HOME%\venv\Scripts\octop.exe"
+if "%OCTOP_HOME%"=="" set "OCTOP_HOME=%USERPROFILE%\.yyc3-pai"
+if not exist "%OCTOP_HOME%\venv\Scripts\pai.exe" set "OCTOP_HOME=%USERPROFILE%\.octop"
+set "REAL_BIN=%OCTOP_HOME%\venv\Scripts\pai.exe"
 if not exist "%REAL_BIN%" (
-    echo Error: Octop environment not found at %OCTOP_HOME%\venv >&2
+    echo Error: YYC3-Pai environment not found at %OCTOP_HOME%\venv >&2
     exit /b 1
 )
 "%REAL_BIN%" %*
@@ -356,7 +381,7 @@ if ($env:Path -notlike "*$targetPath*") {
 }
 
 Write-Host ""
-Write-Host "Octop installed successfully!" -ForegroundColor Green
+Write-Host "YYC3-Pai installed successfully!" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Install location:  $OctopHome"
 Write-Host "  Python:            $pyVersion"
@@ -366,16 +391,16 @@ if ($script:ConsoleAvailable) {
     Write-Host "  Web UI:            not available" -ForegroundColor Yellow
 }
 Write-Host ""
-Write-Host "If 'octop' is not found in this session, run:"
+Write-Host "If 'pai' is not found in this session, run:"
 Write-Host "  `$env:Path = `"$targetPath;`$env:Path`"" -ForegroundColor White
 if ($pathSavedForNewSessions) {
     Write-Host "(Saved to User PATH; new terminals pick it up automatically.)"
 }
 Write-Host ""
 Write-Host "Then run:"
-Write-Host "  octop init" -ForegroundColor White
-Write-Host "  octop run" -ForegroundColor White
-Write-Host "  octop service start" -ForegroundColor White
+Write-Host "  pai init" -ForegroundColor White
+Write-Host "  pai run" -ForegroundColor White
+Write-Host "  pai service start" -ForegroundColor White
 Write-Host "  http://127.0.0.1:8088" -ForegroundColor White
 
 } @args

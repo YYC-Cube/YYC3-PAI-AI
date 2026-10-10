@@ -1,4 +1,4 @@
-"""octop models — provider presets and resolved model list."""
+"""`pai models` — provider presets and resolved model list."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ def models() -> None:
 
 @models.command("presets")
 def presets() -> None:
-    """List built-in provider templates from octop-harness."""
+    """List built-in provider templates from yyc3-harness."""
     from octop.cli.support.ctx import json_output_enabled
     from octop.cli.support.offline_ops import load_provider_presets_offline
 

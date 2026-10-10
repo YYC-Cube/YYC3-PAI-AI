@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 _BROWSER_TOOL = "browser_use"
 _MISSING_USER = (
-    "browser_use blocked: the current turn has no Octop user id, "
+    "browser_use blocked: the current turn has no YYC3-Pai user id, "
     "so a browser profile cannot be isolated."
 )
 
@@ -45,7 +45,7 @@ def _bind_browser_profile(request: ToolCallRequest) -> ToolCallRequest | ToolMes
 
 
 class BrowserProfileMiddleware(AgentMiddleware[Any, Any]):
-    """Prevent model-selected profiles from crossing Octop user boundaries."""
+    """Prevent model-selected profiles from crossing YYC3-Pai user boundaries."""
 
     def wrap_tool_call(
         self,

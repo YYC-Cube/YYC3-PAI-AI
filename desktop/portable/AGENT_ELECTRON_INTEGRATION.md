@@ -1,6 +1,6 @@
-# Octop Electron green-package integration
+# YYC3-Pai Electron green-package integration
 
-This document is the contract for embedding Octop's **green portable zip**
+This document is the contract for embedding YYC3-Pai's **green portable zip**
 in an Electron (or other) desktop shell. Do not invent a parallel install
 path (no system Python, no `PYTHONPATH=packages`).
 
@@ -9,7 +9,7 @@ path (no system Python, no `PYTHONPATH=packages`).
 CI / `make -f desktop/portable/Makefile green` produces:
 
 ```
-desktop/portable/release/Octop-portable-<plat>-<version>.zip
+desktop/portable/release/YYC3-Pai-portable-<plat>-<version>.zip
 ```
 
 Platforms: `darwin-arm64` `darwin-amd64` `linux-amd64` `linux-arm64`
@@ -18,7 +18,7 @@ Platforms: `darwin-arm64` `darwin-amd64` `linux-amd64` `linux-arm64`
 Layout after extract (outside asar):
 
 ```
-Octop-<plat>/
+YYC3-Pai-<plat>/
   runtime/     portable CPython
   packages/    site-packages
   launch.py
@@ -32,11 +32,12 @@ Octop-<plat>/
    beside the executable (Linux); the desktop shell does not download it at runtime.
 2. Extract to a writable user directory **outside** `app.asar`.
 3. On macOS, after checksum: `xattr -dr com.apple.quarantine <extractDir>`.
-4. Set `OCTOP_HOME` to Octop's default data dir (`~/.octop`, or `$OCTOP_HOME`
-   if already set). Do **not** use the zip's `./data` folder when launching
+4. Set `OCTOP_HOME` to YYC3-Pai's default data dir (`~/.yyc3-pai`, or
+   `$OCTOP_HOME` if already set; the legacy `~/.octop` layout stays supported).
+   Do **not** use the zip's `./data` folder when launching
    from the Wails desktop shell (`desktop/src`).
-   Extract the zip under `~/.octop/portable/` so runtime files stay next to
-   user data without overwriting `octop.db`.
+   Extract the zip under `~/.yyc3-pai/portable/` so runtime files stay next to
+   user data without overwriting the SQLite database (`yyc3-pai.db`).
 5. Set `PYTHONNOUSERSITE=1` and `OCTOP_GREEN_PACKAGES=<extract>/packages`.
    **Do not set `PYTHONPATH`.**
 
@@ -47,7 +48,7 @@ Octop-<plat>/
 
 7. Poll `http://127.0.0.1:<port>/api/health` until ready, then load the
    Dashboard (`http://127.0.0.1:<port>/`).
-8. First run uses the **normal Octop setup wizard** (create admin). The
+8. First run uses the **normal YYC3-Pai setup wizard** (create admin). The
    green zip does not skip setup or mint loopback sessions.
 9. On quit, kill the process **tree** (Windows: taskkill `/T`; POSIX: process group).
 

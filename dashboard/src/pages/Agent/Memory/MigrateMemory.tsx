@@ -7,7 +7,7 @@
  *   3. Run doctor checks and display migration health results.
  */
 
-import { useState } from "react";
+import { message } from "@/utils/antdMessage";
 import {
   Alert,
   Button,
@@ -22,8 +22,10 @@ import {
   Typography,
   Upload,
 } from "antd";
-import { message } from "@/utils/antdMessage";
+import { useState } from "react";
 
+import type { MenuProps } from "antd";
+import type { UploadFile } from "antd/es/upload/interface";
 import {
   CheckCircle,
   CloudDownload,
@@ -33,8 +35,6 @@ import {
   Upload as UploadIcon,
   XCircle,
 } from "lucide-react";
-import type { MenuProps } from "antd";
-import type { UploadFile } from "antd/es/upload/interface";
 import { useTranslation } from "react-i18next";
 
 import memoryPortableApi, {
@@ -259,7 +259,7 @@ export default function MigrateMemory({ agentId }: Props) {
         <Paragraph>
           {t(
             "memory.migrate.exportDesc",
-            "将当前 Octop 的全部记忆打包为 .hmpkg 文件并下载到本地。你可以在其他宿主（openclaw / hermes）上导入此文件继续使用。",
+            "将当前 YYC3-Pai 的全部记忆打包为 .hmpkg 文件并下载到本地。你可以在其他宿主（openclaw / hermes）上导入此文件继续使用。",
           )}
         </Paragraph>
         {error ? <Alert type="error" message={error} showIcon /> : null}
@@ -503,7 +503,7 @@ export default function MigrateMemory({ agentId }: Props) {
               <Paragraph>
                 {t(
                   "memory.migrate.doctorDesc",
-                  "对当前 Octop 的记忆库执行健康检查，验证 schema、索引、外键完整性等。",
+                  "对当前 YYC3-Pai 的记忆库执行健康检查，验证 schema、索引、外键完整性等。",
                 )}
               </Paragraph>
               <Form layout="vertical">

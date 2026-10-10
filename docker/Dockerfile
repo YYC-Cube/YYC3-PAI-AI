@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1
 # =============================================================================
-# Octop — 多阶段 Docker 构建
+# YYC3-Pai — 多阶段 Docker 构建
 #
 # 阶段 1: 构建 React/TypeScript 前端
 # 阶段 2: Python 运行时 + 预构建前端
 #
 # 用法（在仓库根目录执行，构建上下文为根目录）:
-#   docker build -f docker/Dockerfile -t octop:latest .
-#   docker run -d -p 8088:8088 -v octop-data:/data/.octop -e HOME=/data octop:latest
+#   docker build -f docker/Dockerfile -t yyc3-pai:latest .
+#   docker run -d -p 8088:8088 -v yyc3-pai-data:/data/.yyc3-pai -e HOME=/data yyc3-pai:latest
 #
 # 国内加速（可选，需 BuildKit，docker/docker_build.sh 默认已开启）:
 #   PIP_INDEX_URL=https://mirrors.cloud.tencent.com/pypi/simple \
@@ -24,7 +24,7 @@
 #     --build-arg NPM_REGISTRY=https://mirrors.cloud.tencent.com/npm/ \
 #     --build-arg APT_MIRROR=mirrors.cloud.tencent.com \
 #     --build-arg NODE_MAX_OLD_SPACE_SIZE=1024 \
-#     -t octop:latest .
+#     -t yyc3-pai:latest .
 #
 # 或使用 Compose:
 #   docker compose -f docker/docker-compose.yml up -d
@@ -63,18 +63,18 @@ RUN NODE_ENV=production NODE_OPTIONS="--max-old-space-size=${NODE_MAX_OLD_SPACE_
 # ---------------------------------------------------------------------------
 FROM python:3.12-slim AS runtime
 
-LABEL maintainer="OrcaKit Team"
-LABEL org.opencontainers.image.title="Octop"
-LABEL org.opencontainers.image.description="Smarter self-hosted AI assistant — multi-user, multi-agent."
-LABEL org.opencontainers.image.source="https://github.com/TencentCloud/orca"
+LABEL maintainer="YanYuCloudCube"
+LABEL org.opencontainers.image.title="YYC3-Pai"
+LABEL org.opencontainers.image.description="YYC3-Pai (YYC π³) — self-hosted AI assistant, multi-user, multi-agent."
+LABEL org.opencontainers.image.source="https://github.com/YYC-Cube/YYC3-Pai"
 LABEL org.opencontainers.image.licenses="MIT"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     HOME=/data \
-    OCTOP_BIND_HOST=0.0.0.0 \
-    OCTOP_PORT=8088 \
-    OCTOP_LOG_LEVEL=info \
+    YYC3_BIND_HOST=0.0.0.0 \
+    YYC3_PORT=8088 \
+    YYC3_LOG_LEVEL=info \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=never
@@ -129,12 +129,12 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     && apt-get purge -y --auto-remove build-essential \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-RUN mkdir -p /data/.octop
+RUN mkdir -p /data/.yyc3-pai
 
 EXPOSE 8088
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
-    CMD ["sh", "-c", "curl -f http://localhost:${OCTOP_PORT:-8088}/api/health || exit 1"]
+    CMD ["sh", "-c", "curl -f http://localhost:${YYC3_PORT:-${OCTOP_PORT:-8088}}/api/health || exit 1"]
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD []

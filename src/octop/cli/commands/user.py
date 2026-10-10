@@ -1,4 +1,4 @@
-"""octop user commands."""
+"""`pai user` commands."""
 
 from __future__ import annotations
 

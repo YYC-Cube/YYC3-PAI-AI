@@ -1,4 +1,4 @@
-"""octop completion: emit / install shell completion script."""
+"""pai completion: emit / install shell completion script."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from pathlib import Path
 import click
 
 _EVAL_TEMPLATE = {
-    "bash": 'eval "$(_OCTOP_COMPLETE=bash_source octop)"\n',
-    "zsh": 'autoload -U compinit && compinit\neval "$(_OCTOP_COMPLETE=zsh_source octop)"\n',
+    "bash": 'eval "$(_PAI_COMPLETE=bash_source pai)"\n',
+    "zsh": 'autoload -U compinit && compinit\neval "$(_PAI_COMPLETE=zsh_source pai)"\n',
 }
 
 _DEFAULT_RC = {
@@ -49,10 +49,10 @@ def install(shell: str | None, rc_file: str | None) -> None:
     snippet = _EVAL_TEMPLATE[sh]
 
     existing = rc_path.read_text() if rc_path.exists() else ""
-    if "_OCTOP_COMPLETE" in existing:
+    if "_PAI_COMPLETE" in existing:
         click.echo(f"already installed in {rc_path}")
         return
     with rc_path.open("a", encoding="utf-8") as f:
-        f.write("\n# octop shell completion\n")
+        f.write("\n# pai shell completion\n")
         f.write(snippet)
     click.echo(f"installed to {rc_path} — restart your shell to activate")

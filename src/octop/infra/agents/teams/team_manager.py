@@ -98,7 +98,7 @@ def host_system_prompt(row: Any, user_repo: Any) -> str:
 
 
 class TeamManager:
-    """Octop-side team room. Harness still owns ``ask_agent`` / inbox."""
+    """YYC3-Pai-side team room. Harness still owns ``ask_agent`` / inbox."""
 
     def __init__(
         self,

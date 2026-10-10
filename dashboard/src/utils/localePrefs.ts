@@ -46,7 +46,9 @@ function matchUiLocale(raw: string): UiLocale | null {
   const base = lang.split("-")[0];
   const exactBase = ordered.find((loc) => loc.toLowerCase() === base);
   if (exactBase) return exactBase;
-  return ordered.find((loc) => loc.toLowerCase().split("-")[0] === base) ?? null;
+  return (
+    ordered.find((loc) => loc.toLowerCase().split("-")[0] === base) ?? null
+  );
 }
 
 /** Map browser language tags to a supported dashboard locale. */

@@ -1,4 +1,4 @@
-"""octop CLI entry point with lazy command loading."""
+"""YYC3-Pai CLI entry point with lazy command loading."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ def _ensure_utf8_stdio(
 
     On Windows the ANSI code page is often GBK (cp936); Python then encodes
     piped/redirected stdout and stderr with it, so any non-GBK character
-    (e.g. the success checkmark printed by ``octop init``) raises
+    (e.g. the success checkmark printed by ``pai init``) raises
     ``UnicodeEncodeError`` and kills the process after the work was already
     done. Output is re-encoded to UTF-8 (``errors="replace"`` as a last
     resort) instead.
@@ -42,7 +42,7 @@ def _get_version() -> str:
     try:
         from importlib.metadata import version as pkg_version
 
-        return pkg_version("octop")
+        return pkg_version("yyc3-pai")
     except Exception:
         return "unknown"
 
@@ -50,7 +50,7 @@ def _get_version() -> str:
 def _print_version(ctx: click.Context, _param: click.Parameter, value: bool) -> None:
     if not value or ctx.resilient_parsing:
         return
-    click.echo(f"octop v{_get_version()}")
+    click.echo(f"pai v{_get_version()}")
     ctx.exit()
 
 
@@ -88,20 +88,20 @@ class _LazyCLI(click.Group):
     is_eager=True,
     expose_value=False,
     callback=_print_version,
-    help="Show the installed octop version.",
+    help="Show the installed yyc3-pai version.",
 )
 @click.option(
     "--user",
     "as_user",
     default=None,
-    envvar="OCTOP_USER",
+    envvar=("YYC3_USER", "OCTOP_USER"),
     help="Default --user for subcommands (admin acting on behalf of a user).",
 )
 @click.option(
     "--agent",
     "agent_id",
     default=None,
-    envvar="OCTOP_AGENT",
+    envvar=("YYC3_AGENT", "OCTOP_AGENT"),
     help="Default --agent for subcommands.",
 )
 @click.option(

@@ -319,10 +319,10 @@ def print_welcome(*, agent_id: str, model: str, session_key: str, thread_id: str
 
     console = Console()
     try:
-        ver = pkg_version("octop")
+        ver = pkg_version("yyc3-pai")
     except Exception:
         ver = "unknown"
-    console.print(f"  [bold green]Octop[/] [dim]v{ver}[/] — interactive chat")
+    console.print(f"  [bold green]YYC3-Pai[/] [dim]v{ver}[/] — interactive chat")
     console.print(f"  [dim]Agent: {agent_id}  Model: {model or 'default'}[/]")
     console.print(f"  [dim]Session: {session_key}[/]", end="")
     if thread_id:

@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+# `ollama` is an optional extra, imported lazily where available (mirrors
+# mypy ignore_missing_imports in pyproject.toml).
+# pyright: reportMissingImports=false
 import logging
 import os
 import platform

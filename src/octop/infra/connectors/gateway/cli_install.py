@@ -158,7 +158,7 @@ def install_connector_cli(kind: str) -> dict[str, Any]:
     if not npm:
         return _fail(
             status,
-            f"未找到 npm，请先在 Octop 主机安装 Node.js，然后执行：{status['install_command']}",
+            f"未找到 npm，请先在 YYC3-Pai 主机安装 Node.js，然后执行：{status['install_command']}",
         )
 
     # npm 全局目录（默认 /usr/local）不可写时（fnOS/容器内非 root 用户），

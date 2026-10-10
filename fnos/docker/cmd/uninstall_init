@@ -1,9 +1,9 @@
 #!/bin/bash
-# Octop — 卸载前回调
+# YYC3-Pai — 卸载前回调
 # 根据卸载向导 wizard_delete_data 的选择：
 #   - 保留数据：不清理 TRIM_DATA_SHARE_PATHS（一般为 /volX/@appshare/octop/data）。
 #   - 完全删除：在 uninstall_callback 中清理 data-share。
-# 同时释放 Octop 端口（8088=Docker 版，8089=本地版），避免卸载后残留进程占端口。
+# 同时释放 YYC3-Pai 端口（8088=Docker 版，8089=本地版），避免卸载后残留进程占端口。
 set -euo pipefail
 
 # 共享函数库（find_python312 / fix_ownership_and_perms / free_octop_ports）

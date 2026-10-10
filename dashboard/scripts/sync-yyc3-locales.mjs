@@ -24,7 +24,10 @@ const candidates = [
   path.resolve(process.env.HOME ?? "/Users/yanyu", "YYC-Cube/YYC3-i18n-Core"),
   // Archived mirror fallback: scripts -> dashboard -> YYC3-Pai -> YYC-Cube
   // -> YYC3-GitHub -> YanYuCloudCube
-  path.resolve(import.meta.dirname, "../../../../YanYuCloudCube/YYC3-i18n-Core"),
+  path.resolve(
+    import.meta.dirname,
+    "../../../../YanYuCloudCube/YYC3-i18n-Core",
+  ),
 ].filter(Boolean);
 
 const coreRoot = candidates.find((p) =>

@@ -1,17 +1,17 @@
-# Octop 插件示例
+# YYC3-Pai 插件示例
 
 [English](./README.md)
 
-本目录提供插件 demo，对应 Octop / octop-harness 支持的 `kind`，以及**前后端一体**的 UI 渲染示例。
+本目录提供插件 demo，对应 YYC3-Pai / octop-harness 支持的 `kind`，以及**前后端一体**的 UI 渲染示例。
 结构参考 [octop-toolkit](https://github.com/veenyi/octop-plugins/tree/main/octop-toolkit)。
 
-随 Octop 安装包一并分发的产品插件在 `src/octop/infra/agents/plugins/bundled/`。
-`octop init` 与 `octop run` 启动时会把缺失的插件复制到 `~/.octop/plugins/`，并在 `config.json` 里写成 **全局关闭**；管理员在 Dashboard 插件页打开后再给 Agent 用。卸载过的 id 不会自动装回。
+随 YYC3-Pai 安装包一并分发的产品插件在 `src/octop/infra/agents/plugins/bundled/`。
+`pai init` 与 `pai run` 启动时会把缺失的插件复制到 `~/.yyc3-pai/plugins/`，并在 `config.json` 里写成 **全局关闭**；管理员在 Dashboard 插件页打开后再给 Agent 用。卸载过的 id 不会自动装回。
 
 ## 示例一览
 
 | 目录 | `kind` | 作用 |
-|------|--------|------|
+| ------ | -------- | ------ |
 | [`demo-toolkit`](./demo-toolkit/) | `tool` | 注册可调用工具（时间、文本统计、可配置前缀回显） |
 | [`demo-greeting-skill`](./demo-greeting-skill/) | `skill` | 向 Agent 工作区同步一份示例 Skill |
 | [`demo-turn-logger`](./demo-turn-logger/) | `hook` | 注册 `AgentMiddleware`，在模型调用前后打日志 |
@@ -70,11 +70,11 @@ Dashboard 通过 `GET /api/plugins/{id}/ui/…` 加载 `index.js`，调用 `setu
 
 ```bash
 # 从目录安装（开发时常用）
-octop plugin install ./plugins/demo-toolkit --force
-octop plugin install ./plugins/demo-greeting-skill --force
-octop plugin install ./plugins/demo-turn-logger --force
-octop plugin install ./plugins/demo-ui-card --force
-octop plugin list
+pai plugin install ./plugins/demo-toolkit --force
+pai plugin install ./plugins/demo-greeting-skill --force
+pai plugin install ./plugins/demo-turn-logger --force
+pai plugin install ./plugins/demo-ui-card --force
+pai plugin list
 ```
 
 或先打包再安装：
@@ -82,16 +82,16 @@ octop plugin list
 ```bash
 cd plugins
 zip -r demo-ui-card.zip demo-ui-card/
-octop plugin install ./demo-ui-card.zip --force
+pai plugin install ./demo-ui-card.zip --force
 ```
 
 **Dashboard：** Admin → Plugins → 安装。请粘贴 ZIP 的 **直接下载地址**
 （GitHub 请用 `raw.githubusercontent.com` 或 Download / raw 链接，不要用 `/blob/` 页面）。
 
-- **tool**：安装后到「工具管理」为具体 Agent 启用工具  
-- **skill**：Agent 启动时同步到工作区 `skills/`  
-- **hook**：全局启用的插件会挂上对应 middleware  
-- **ui**：随插件安装；打开聊天页后自动加载渲染器  
+- **tool**：安装后到「工具管理」为具体 Agent 启用工具
+- **skill**：Agent 启动时同步到工作区 `skills/`
+- **hook**：全局启用的插件会挂上对应 middleware
+- **ui**：随插件安装；打开聊天页后自动加载渲染器
 
 ## 打包注意
 
@@ -128,7 +128,7 @@ PY
 
 期望结果：
 
-- `demo-toolkit` → `tool`，3 个工具  
-- `demo-greeting-skill` → `skill`，存在 `skills/`  
-- `demo-turn-logger` → `hook`，1 个 middleware  
-- `demo-ui-card` → `tool`，1 个工具  
+- `demo-toolkit` → `tool`，3 个工具
+- `demo-greeting-skill` → `skill`，存在 `skills/`
+- `demo-turn-logger` → `hook`，1 个 middleware
+- `demo-ui-card` → `tool`，1 个工具

@@ -118,7 +118,7 @@ class MemorySlimControl:
 def request_memory_slim(
     root: Path, agent_id: str, *, locale: str = "en"
 ) -> Iterator[dict[str, Any]]:
-    """Stream progress from an already running host; never starts another Octop."""
+    """Stream progress from an already running host; never starts another YYC3-Pai."""
     yield from _request_control(root, {"agent_id": agent_id, "locale": locale})
 
 
@@ -129,7 +129,7 @@ def list_memory_slim_agents(root: Path, *, locale: str = "en") -> list[dict[str,
             raise RuntimeError(status["error"])
         agents: list[dict[str, str]] = status["agents"]
         return agents
-    raise RuntimeError("Octop returned no agent list")
+    raise RuntimeError("YYC3-Pai returned no agent list")
 
 
 def _request_control(root: Path, request: dict[str, str]) -> Iterator[dict[str, Any]]:
@@ -143,4 +143,4 @@ def _request_control(root: Path, request: dict[str, str]) -> Iterator[dict[str, 
                 yield status
                 if status.get("phase") in {"done", "failed", "agents"}:
                     return
-    raise RuntimeError("Octop disconnected; check the dashboard before retrying maintenance")
+    raise RuntimeError("YYC3-Pai disconnected; check the dashboard before retrying maintenance")

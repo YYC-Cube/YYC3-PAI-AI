@@ -112,7 +112,10 @@ func portableVersion(root string) string {
 }
 
 func installedPackageVersion(root string) string {
-	matches, _ := filepath.Glob(filepath.Join(root, "packages", "octop-*.dist-info", "METADATA"))
+	// Primary package name is yyc3_pai; legacy installs keep octop-* dist-info.
+	matches, _ := filepath.Glob(filepath.Join(root, "packages", "yyc3_pai-*.dist-info", "METADATA"))
+	legacyMatches, _ := filepath.Glob(filepath.Join(root, "packages", "octop-*.dist-info", "METADATA"))
+	matches = append(matches, legacyMatches...)
 	version := ""
 	for _, metadata := range matches {
 		data, err := os.ReadFile(metadata)
@@ -131,7 +134,7 @@ func installedPackageVersion(root string) string {
 }
 
 func bundledPortableVersion() (string, error) {
-	if os.Getenv("OCTOP_DESKTOP_PORTABLE_ZIP") == "" && len(embeddedPortable) > 0 {
+	if portableZipEnv() == "" && len(embeddedPortable) > 0 {
 		reader, err := zip.NewReader(bytes.NewReader(embeddedPortable), int64(len(embeddedPortable)))
 		if err != nil {
 			return "", err
@@ -162,7 +165,8 @@ func versionFromZip(files []*zip.File) (string, error) {
 	}
 	return zipEntryVersion(files, func(name string) bool {
 		rel := filepath.ToSlash(name)
-		return strings.Contains(rel, "/octop-") && strings.HasSuffix(rel, ".dist-info/METADATA")
+		// yyc3_pai-*.dist-info is the current package; octop-* is legacy.
+		return (strings.Contains(rel, "/yyc3_pai-") || strings.Contains(rel, "/octop-")) && strings.HasSuffix(rel, ".dist-info/METADATA")
 	}, metadataVersion)
 }
 
@@ -215,7 +219,7 @@ func metadataVersion(text string) string {
 }
 
 func extractPortable(root string) error {
-	if os.Getenv("OCTOP_DESKTOP_PORTABLE_ZIP") != "" {
+	if portableZipEnv() != "" {
 		zipPath, err := bundledPortableZip()
 		if err != nil {
 			return err
@@ -232,8 +236,17 @@ func extractPortable(root string) error {
 	return unzipGreen(zipPath, root)
 }
 
+// portableZipEnv returns the override zip path: YYC3_DESKTOP_PORTABLE_ZIP
+// wins; OCTOP_DESKTOP_PORTABLE_ZIP stays as a backward-compatible fallback.
+func portableZipEnv() string {
+	if v := os.Getenv("YYC3_DESKTOP_PORTABLE_ZIP"); v != "" {
+		return v
+	}
+	return os.Getenv("OCTOP_DESKTOP_PORTABLE_ZIP")
+}
+
 func bundledPortableZip() (string, error) {
-	if override := os.Getenv("OCTOP_DESKTOP_PORTABLE_ZIP"); override != "" {
+	if override := portableZipEnv(); override != "" {
 		if _, err := os.Stat(override); err != nil {
 			return "", fmt.Errorf("bundled portable package: %w", err)
 		}
@@ -245,6 +258,7 @@ func bundledPortableZip() (string, error) {
 	}
 	dir := filepath.Dir(exe)
 	plat := greenPlat()
+	primary := fmt.Sprintf("YYC3-Pai-%s.zip", plat)
 	legacy := fmt.Sprintf("Octop-%s.zip", plat)
 	searchDirs := []string{
 		dir,
@@ -252,17 +266,28 @@ func bundledPortableZip() (string, error) {
 	}
 	for _, search := range searchDirs {
 		search = filepath.Clean(search)
-		legacyPath := filepath.Join(search, legacy)
-		if _, err := os.Stat(legacyPath); err == nil {
-			return legacyPath, nil
+		// Current artifacts first: YYC3-Pai-<plat>.zip, then the versioned glob.
+		primaryPath := filepath.Join(search, primary)
+		if _, err := os.Stat(primaryPath); err == nil {
+			return primaryPath, nil
 		}
-		matches, _ := filepath.Glob(filepath.Join(search, "Octop-portable-"+plat+"-*.zip"))
+		matches, _ := filepath.Glob(filepath.Join(search, "YYC3-Pai-portable-"+plat+"-*.zip"))
 		if len(matches) > 0 {
 			sort.Strings(matches)
 			return matches[len(matches)-1], nil
 		}
+		// Backward compatibility: older Octop artifacts already on user machines.
+		legacyPath := filepath.Join(search, legacy)
+		if _, err := os.Stat(legacyPath); err == nil {
+			return legacyPath, nil
+		}
+		legacyMatches, _ := filepath.Glob(filepath.Join(search, "Octop-portable-"+plat+"-*.zip"))
+		if len(legacyMatches) > 0 {
+			sort.Strings(legacyMatches)
+			return legacyMatches[len(legacyMatches)-1], nil
+		}
 	}
-	return "", fmt.Errorf("bundled portable package %s not found beside application", legacy)
+	return "", fmt.Errorf("bundled portable package %s not found beside application", primary)
 }
 
 func unzipGreen(zipPath, dest string) error {
@@ -287,7 +312,7 @@ func unzipGreenFiles(files []*zip.File, dest string) error {
 	if err := os.MkdirAll(dest, 0o755); err != nil {
 		return err
 	}
-	// Zip root is Octop-<plat>/… — strip that prefix.
+	// Zip root is YYC3-Pai-<plat>/… (legacy Octop-<plat>/…); strip that prefix.
 	for _, f := range files {
 		name := f.Name
 		parts := strings.SplitN(name, "/", 2)

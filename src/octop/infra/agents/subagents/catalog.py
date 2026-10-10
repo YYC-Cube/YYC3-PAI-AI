@@ -227,7 +227,7 @@ class SubagentCatalog:
             *(loc for loc in locales_present if loc != DEFAULT_LOCALE),
         ]
         # Re-order to honor priority.
-        ordered_locales = [loc for loc in priority if loc in locales_present]
+        ordered_locales: list[Locale] = [loc for loc in priority if loc in locales_present]
 
         merged: dict[str, SubagentDefinition] = {}
         # First pass: seed the catalog with the authoritative locale so

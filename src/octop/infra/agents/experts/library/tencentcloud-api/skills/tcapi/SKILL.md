@@ -1,7 +1,7 @@
 ---
 name: tcapi
 display_name: 腾讯云 API 助手
-description: Skill to call Cloud API for Tencent Cloud (腾讯云). Used for cloud automation or resource management. 当用户需要查询、创建、管理腾讯云资源，或执行云 API 自动化操作时触发。优先使用 Octop 自带 venv 中的 tccli，凭证支持全自动 OAuth 登录。
+description: Skill to call Cloud API for Tencent Cloud (腾讯云). Used for cloud automation or resource management. 当用户需要查询、创建、管理腾讯云资源，或执行云 API 自动化操作时触发。优先使用 YYC3-Pai 自带 venv 中的 tccli，凭证支持全自动 OAuth 登录。
 metadata:
   octop:
     emoji: "☁️"
@@ -51,12 +51,12 @@ examples:
 
 ### Step 0：环境自检（首次任务必做，一次探测串起所有分支）
 
-**优先使用 Octop 自带的 Python 虚拟环境（venv）中的 tccli**：与 Octop 同环境、版本可控、不污染系统 Python。探测顺序：① Octop venv → ② 系统 PATH → ③ 临时安装进 venv。
+**优先使用 YYC3-Pai 自带的 Python 虚拟环境（venv）中的 tccli**：与 YYC3-Pai 同环境、版本可控、不污染系统 Python。探测顺序：① YYC3-Pai venv → ② 系统 PATH → ③ 临时安装进 venv。
 
 ```sh
-# ① 定位 Octop venv（通过 octop 主进程的工作目录；找不到进程则退回常见路径）
-OCTOP_PID=$(pgrep -f '\.venv/bin/octop run' | head -1)
-OCTOP_ROOT=$([ -n "$OCTOP_PID" ] && readlink -f /proc/$OCTOP_PID/cwd || echo /workspace/octop)
+# ① 定位 YYC3-Pai venv（通过 pai 主进程的工作目录；找不到进程则退回常见路径）
+OCTOP_PID=$(pgrep -f '\.venv/bin/\(pai\|octop\) run' | head -1)
+OCTOP_ROOT=$([ -n "$OCTOP_PID" ] && readlink -f /proc/$OCTOP_PID/cwd || echo /workspace/YYC3-Pai)
 TCCLI="$OCTOP_ROOT/.venv/bin/tccli"
 
 # ② 逐级探测：venv 内 → PATH → 均无则装进 venv
@@ -73,9 +73,9 @@ else uv pip install --python "$OCTOP_ROOT/.venv/bin/python3" tccli; fi
 判定分支：
 
 | 探测结果 | 状态 | 处理 |
-|:--------|:-----|:-----|
+| :-------- | :----- | :----- |
 | 返回 `TCCLI_OK` | 已安装、可运行、凭证有效 | 直接进入 Step 1 |
-| `command not found` / 安装失败 | **未安装** | 按 [references/install.md](references/install.md) 装进 Octop venv（推荐）或系统安装 |
+| `command not found` / 安装失败 | **未安装** | 按 [references/install.md](references/install.md) 装进 YYC3-Pai venv（推荐）或系统安装 |
 | `bad interpreter` / `No module named tccli` | **装了但 shebang/环境坏** | 切换 Step 5 兼容模式（改用 venv 的 `python3 -c` 直接调 `tccli.main`），本会话后续统一使用 |
 | 报 `secretId is invalid` / `AuthFailure.SecretIdNotFound` | **凭证缺失** | 进入 Step 2 配置凭证 |
 
@@ -197,11 +197,11 @@ fi
 - **凭证已落盘就绝不重复 `auth login`**——重复登录会作废用户已完成授权的链接，逼用户再点一次。
 - **工具执行超时 ≠ 登录失败**：监听窗命令若被工具超时杀掉，紧接着单独跑一次 ⑤ 即可，结论以凭证文件为准，绝不据此重发链接。
 
-> 环境能打开浏览器时（如桌面版 Octop），去掉 `BROWSER=echo`，第 ② 步直接提示「浏览器已弹出，请完成授权」即可。
+> 环境能打开浏览器时（如桌面版 YYC3-Pai），去掉 `BROWSER=echo`，第 ② 步直接提示「浏览器已弹出，请完成授权」即可。
 
 #### 2.3 兜底路径（`AUTH_LOGIN_UNSUPPORTED`，旧版 tccli）
 
-旧版没有 `auth` 子命令。**先自动升级再走 2.2**（装进 Octop venv，不需要 sudo）：
+旧版没有 `auth` 子命令。**先自动升级再走 2.2**（装进 YYC3-Pai venv，不需要 sudo）：
 
 ```sh
 uv pip install --python "$OCTOP_ROOT/.venv/bin/python3" -U tccli
@@ -225,7 +225,7 @@ tccli <service> <Action> [--param value ...] [--region <地域>]
 输入参数：
 
 | 参数 | 类型 | 必填 | 说明 |
-|:-----|:-----|:-----|:-----|
+| :----- | :----- | :----- | :----- |
 | `service` | string | 是 | 产品标识，如 `cvm`、`cbs`、`vpc`。通过 Step 1.1 检索获取 |
 | `Action` | string | 是 | 接口名，如 `DescribeInstances`、`RunInstances`。通过 Step 1.3 检索获取 |
 | `--region` | string | 视接口 | 地域，如 `ap-guangzhou`。多数产品必传；全局接口（cam、account、dnspod、domain、ssl、ba、tag）可省略 |
@@ -247,6 +247,7 @@ tccli cvm DescribeInstances --region ap-guangzhou
 
 - 非简单类型参数必须为标准 JSON，例如：`--Placement '{"Zone":"ap-guangzhou-2"}'`。
 - 创建类接口示例（按需替换参数）：
+
   ```sh
   tccli cvm RunInstances --InstanceChargeType POSTPAID_BY_HOUR \
     --Placement '{"Zone":"ap-guangzhou-2"}' --InstanceType S1.SMALL1 --ImageId img-xxx \
@@ -298,14 +299,19 @@ tccli cvm DescribeInstances --region ap-guangzhou
 tccli 的 stdout 与 stderr 是两条独立流，解析时必须严格区分，否则会把警告/错误文本当结果吞掉导致解析崩溃。
 
 **① 分流捕获，禁止盲目 `2>&1`**
+
 - 正常调用只解析 stdout；stderr 单独落盘便于诊断：
+
   ```sh
   tccli <service> <Action> [--region <地域>] 2>/tmp/tccli_err.log
   ```
+
 - 不要把 `2>&1` 当作习惯写法——一旦 tccli 把 `WARNING` / `DeprecationWarning` / 版本提示吐到 stderr，合并流会让 stdout 前被塞入非 JSON 文本，导致 `json.loads` 直接崩溃。
 
 **② 解析前"抠 JSON"**
+
 - 即便做了分流，也先用正则提取首个 `{` 到末个 `}` 的闭区间（或 `[...]`）再 `json.loads`，避免前后缀文本（版本提示、空格、回车）导致失败：
+
   ```python
   import re, json
   m = re.search(r'\{.*\}|\[.*\]', raw, re.DOTALL)
@@ -313,6 +319,7 @@ tccli 的 stdout 与 stderr 是两条独立流，解析时必须严格区分，�
   ```
 
 **③ 解析失败兜底（不抛 Traceback）**
+
 - 若 stdout 无法解析为 JSON：提示"输出非预期 JSON"，并回显原始 stdout 前 N 字符供诊断，而非抛出 Python 堆栈。
 - 若 stdout 无 JSON 而 stderr 含异常信息，按以下规则解析：
   - **锚点优先**：以 `[TencentCloudSDKException]` 为唯一权威锚点提取 `code` / `message` / `requestId`，**忽略同行 stderr 里 `usage:` 帮助块等噪音**（它们常与异常挤在同一段，不能"出现 usage 就判参数错"而误伤）。
@@ -336,7 +343,7 @@ tccli 的 stdout 与 stderr 是两条独立流，解析时必须严格区分，�
 常见错误及处理：
 
 | 错误码 | 含义 | 处理方式 |
-|:------|:-----|:---------|
+| :------ | :----- | :--------- |
 | `AuthFailure.SecretIdNotFound` | 凭证缺失或无效 | 按 Step 2 全自动 OAuth 流程执行：`BROWSER=echo` 后台 `auth login` → 推送授权链接 → 轮询等待 → 验证回显；旧版则先自动升级（详见 Step 2 / references/auth.md） |
 | `AuthFailure.UnauthorizedOperation` | 无权限 | 检查 CAM 策略，确认子账号有该接口权限 |
 | `InvalidParameterValue` | 参数值不合法 | 查阅接口文档确认参数取值范围 |
@@ -353,10 +360,10 @@ tccli 的 stdout 与 stderr 是两条独立流，解析时必须严格区分，�
 
 ### Step 5：tccli 不可用时的兜底方案
 
-当直接执行 `tccli` 报错 `bad interpreter`、`No module named tccli` 或 `command not found` 时，通常是 tccli 的 shebang 指向了已卸载的 Python 解释器（环境问题，并非每个用户都会遇到）。此时**优先改用 Octop venv 的 Python 直接调 `tccli.main`**（venv 里 tccli 与 Octop 同源，最可靠）；没有 Octop venv 时才**动态探测**系统 Python 及其 site-packages，**不要硬编码任何平台特定路径**：
+当直接执行 `tccli` 报错 `bad interpreter`、`No module named tccli` 或 `command not found` 时，通常是 tccli 的 shebang 指向了已卸载的 Python 解释器（环境问题，并非每个用户都会遇到）。此时**优先改用 YYC3-Pai venv 的 Python 直接调 `tccli.main`**（venv 里 tccli 与 YYC3-Pai 同源，最可靠）；没有 YYC3-Pai venv 时才**动态探测**系统 Python 及其 site-packages，**不要硬编码任何平台特定路径**：
 
 ```sh
-# ① 优先：Octop venv 的 python（Step 0 已定位 $OCTOP_ROOT）
+# ① 优先：YYC3-Pai venv 的 python（Step 0 已定位 $OCTOP_ROOT）
 "$OCTOP_ROOT/.venv/bin/python3" -c "
 import sys
 sys.argv = ['tccli', 'cvm', 'DescribeInstances', '--region', 'ap-guangzhou']

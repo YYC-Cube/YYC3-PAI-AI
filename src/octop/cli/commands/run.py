@@ -1,4 +1,4 @@
-"""`octop run` — start the FastAPI app in the foreground."""
+"""`pai run` — start the FastAPI app in the foreground."""
 
 from __future__ import annotations
 
@@ -43,7 +43,9 @@ def _maybe_generate_self_signed(
         from cryptography.x509.oid import NameOID
 
         priv = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-        subject = issuer = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "octop-self-signed")])
+        subject = issuer = x509.Name(
+            [x509.NameAttribute(NameOID.COMMON_NAME, "yyc3-pai-self-signed")]
+        )
         cert_obj = (
             x509.CertificateBuilder()
             .subject_name(subject)
@@ -111,7 +113,7 @@ def _save_configfile_overrides(host: str | None, port: int | None) -> None:
 
     A corrupt config.json is a hard error, never an empty base: merging into
     ``{}`` and writing back destroys every other setting (issue #730 — one
-    trailing comma plus ``octop run --port`` wiped the ``database`` section and
+    trailing comma plus ``pai run --port`` wiped the ``database`` section and
     silently flipped a PostgreSQL instance back to greenfield SQLite).
     """
     paths = PathLayout.from_env()
@@ -167,13 +169,13 @@ def run(
     ssl_certfile: str | None,
     ssl_keyfile: str | None,
 ) -> None:
-    """Run octop-server in the foreground.
+    """Run the YYC3-Pai server in the foreground.
 
     Host and port are resolved with the following precedence: explicit CLI
-    flags > ``OCTOP_BIND_HOST``/``OCTOP_PORT`` env > ``~/.octop/config.json``
-    > launch defaults. When ``--host`` or ``--port`` is passed on the CLI,
-    that override is persisted to ``config.json`` immediately before uvicorn
-    starts.
+    flags > ``YYC3_BIND_HOST``/``YYC3_PORT`` env (legacy ``OCTOP_*`` also
+    accepted) > ``config.json`` > launch defaults. When ``--host`` or
+    ``--port`` is passed on the CLI, that override is persisted to
+    ``config.json`` immediately before uvicorn starts.
     """
     cli_host, cli_port = host, port
     try:

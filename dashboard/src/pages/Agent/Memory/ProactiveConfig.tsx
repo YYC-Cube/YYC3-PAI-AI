@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
+import { message } from "@/utils/antdMessage";
 import {
-  Form,
-  InputNumber,
+  Alert,
   Button,
   Card,
+  Divider,
+  Form,
+  InputNumber,
+  Spin,
   Switch,
   TimePicker,
-  Alert,
-  Divider,
-  Spin,
 } from "antd";
-import { message } from "@/utils/antdMessage";
+import { useEffect, useState } from "react";
 
-import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 import api from "../../../api";
 import type { ProactiveCareConfig } from "../../../api/types";
 import styles from "./ProactiveConfig.module.less";
@@ -150,7 +150,7 @@ export default function ProactiveConfig({
           <p className={styles.configDesc}>
             {t(
               "proactiveConfig.description",
-              "让 Octop 在合适的时机，主动向你发送一句关心",
+              "让 YYC3-Pai 在合适的时机，主动向你发送一句关心",
             )}
           </p>
         </div>
@@ -164,7 +164,7 @@ export default function ProactiveConfig({
           <span>
             {t(
               "proactiveConfig.episodeBannerText",
-              "Octop 会从你的情绪日记中挑选合适的时机，主动发来一句关心。你可以在「情绪日记」中查看哪些记录会被参考。",
+              "YYC3-Pai 会从你的情绪日记中挑选合适的时机，主动发来一句关心。你可以在「情绪日记」中查看哪些记录会被参考。",
             )}
             {onSwitchToEpisodes && (
               <>

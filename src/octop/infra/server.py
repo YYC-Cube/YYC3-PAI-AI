@@ -14,7 +14,7 @@ from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from octop.config import OctopConfig, load_config
+from octop.config import OctopConfig, env_override, load_config
 from octop.infra.agents.experts.catalog import ExpertCatalog, default_library_root
 from octop.infra.agents.manager import AgentManager
 from octop.infra.agents.plugins.manager import PluginManager
@@ -31,7 +31,7 @@ from octop.infra.setup import password_file as _wizard_pw
 from octop.infra.setup.password_file import WIZARD_FILE_NAME
 from octop.infra.setup.wizard_tokens import WizardTokenStore
 from octop.infra.users.manager import UserManager
-from octop.infra.utils.paths import PathLayout
+from octop.infra.utils.paths import LEGACY_LOG_FILENAME, LOG_FILENAME, PathLayout
 
 if TYPE_CHECKING:
     from octop.infra.auth.ldap.service import LdapAuthService
@@ -108,8 +108,18 @@ def gzip_rotated_log(path: Path) -> None:
 
 
 def _parse_log_compress() -> bool:
-    raw = (os.environ.get("OCTOP_LOG_COMPRESS", "1") or "1").strip().lower()
+    raw = (env_override("LOG_COMPRESS") or "1").strip().lower()
     return raw not in ("0", "false", "no", "off")
+
+
+def _iter_rotated_logs(log_dir: Path) -> list[Path]:
+    """Rotated files under both the current and legacy log-name prefixes."""
+    if not log_dir.is_dir():
+        return []
+    out: list[Path] = []
+    for prefix in (LOG_FILENAME, LEGACY_LOG_FILENAME):
+        out.extend(p for p in log_dir.glob(f"{prefix}.*") if p.is_file())
+    return out
 
 
 def delaycompress_rotated_logs(
@@ -124,13 +134,9 @@ def delaycompress_rotated_logs(
     previous log file until the next rotation cycle
     (https://github.com/logrotate/logrotate).
     """
-    if not enabled or not log_dir.is_dir():
+    if not enabled:
         return
-    plains = [
-        entry
-        for entry in log_dir.glob("octop.log.*")
-        if entry.is_file() and not entry.name.endswith(".gz")
-    ]
+    plains = [e for e in _iter_rotated_logs(log_dir) if not e.name.endswith(".gz")]
     if not plains:
         return
     keep_path = max(plains, key=lambda p: p.stat().st_mtime) if keep is None else keep
@@ -142,9 +148,7 @@ def delaycompress_rotated_logs(
 
 
 def _parse_log_retention_days() -> int:
-    raw = os.environ.get("OCTOP_LOG_RETENTION_DAYS", str(DEFAULT_LOG_RETENTION_DAYS)) or str(
-        DEFAULT_LOG_RETENTION_DAYS
-    )
+    raw = env_override("LOG_RETENTION_DAYS") or str(DEFAULT_LOG_RETENTION_DAYS)
     try:
         return int(raw)
     except ValueError:
@@ -152,9 +156,7 @@ def _parse_log_retention_days() -> int:
 
 
 def _parse_log_max_bytes() -> int:
-    raw = os.environ.get("OCTOP_LOG_MAX_BYTES", str(DEFAULT_LOG_MAX_BYTES)) or str(
-        DEFAULT_LOG_MAX_BYTES
-    )
+    raw = env_override("LOG_MAX_BYTES") or str(DEFAULT_LOG_MAX_BYTES)
     try:
         return max(0, int(raw))
     except ValueError:
@@ -178,7 +180,7 @@ def _build_log_handler(
         max_bytes=max_bytes,
         compress_rotated=compress_rotated,
     )
-    # Rotated files get a date suffix, e.g. octop.log.2026-07-16
+    # Rotated files get a date suffix, e.g. yyc3-pai.log.2026-07-16
     handler.suffix = "%Y-%m-%d"
     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)-5s %(name)s — %(message)s"))
     return handler
@@ -194,8 +196,8 @@ def _purge_stale_logs(log_dir: Path, retention_days: int) -> None:
     if retention_days <= 0:
         return
     cutoff = time.time() - retention_days * 86400
-    for entry in log_dir.glob("octop.log.*"):
-        if entry.is_file() and entry.stat().st_mtime < cutoff:
+    for entry in _iter_rotated_logs(log_dir):
+        if entry.stat().st_mtime < cutoff:
             with suppress(OSError):
                 entry.unlink()
 
@@ -593,10 +595,10 @@ class OctopServer:
             banner = (
                 "\n\033[33m"
                 "╔══════════════════════════════════════════════════════════╗\n"
-                "║  Octop first-run wizard password (one-time use):          ║\n"
+                "║  YYC3-Pai first-run wizard password (one-time use):       ║\n"
                 f"║  {new_pw:<54}  ║\n"
                 "║  Open the dashboard and paste it into the setup wizard.  ║\n"
-                "║  File: ~/octop-login.txt                                   ║\n"
+                "║  File: ~/yyc3-pai-login.txt                               ║\n"
                 "╚══════════════════════════════════════════════════════════╝"
                 "\033[0m\n"
             )
@@ -631,7 +633,7 @@ class OctopServer:
             self.services = None
             self.app_runtime = None
             self._started = False
-            logger.info("octop server stopped")
+            logger.info("yyc3-pai server stopped")
 
     # ----- helpers -----
 
@@ -640,8 +642,8 @@ class OctopServer:
         log_dir.mkdir(parents=True, exist_ok=True)
         log_path = self.paths.log
 
-        # Migrate the legacy single-file log (~/.octop/octop.log) into the new logs dir.
-        legacy = self.paths.root / "octop.log"
+        # Migrate the legacy single-file log (root/octop.log) into the logs dir.
+        legacy = self.paths.root / LEGACY_LOG_FILENAME
         if legacy.exists() and not log_path.exists():
             with suppress(OSError):
                 legacy.replace(log_path)
@@ -665,7 +667,7 @@ class OctopServer:
         for name in ("uvicorn", "uvicorn.access", "uvicorn.error"):
             _attach_log_handler(logging.getLogger(name), handler)
 
-        level = os.environ.get("OCTOP_LOG_LEVEL", "info").upper()
+        level = (env_override("LOG_LEVEL") or "info").upper()
         root.setLevel(getattr(logging, level, logging.INFO))
         if root.level > logging.DEBUG:
             # httpx logs full request URLs at INFO, leaking query-string

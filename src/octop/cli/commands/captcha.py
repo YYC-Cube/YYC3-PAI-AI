@@ -1,4 +1,4 @@
-"""`octop captcha` — offline captcha maintenance (lockout escape hatch)."""
+"""`pai captcha` — offline captcha maintenance (lockout escape hatch)."""
 
 from __future__ import annotations
 
@@ -20,9 +20,9 @@ def reset() -> None:
     Use this when a misconfigured provider (wrong keys, unreachable vendor,
     hostname not allowlisted) locks everyone out of the dashboard: the
     settings UI requires login, so the only offline escape is this command
-    or restoring a backup. Boot-env captcha (OCTOP_CAPTCHA_*) is not touched
+    or restoring a backup. Boot-env captcha (YYC3_CAPTCHA_*/OCTOP_CAPTCHA_*) is not touched
     — unset those in the environment file if they are the lockout cause.
-    If `octop run` is already running, restart it for the change to apply.
+    If `pai run` is already running, restart it for the change to apply.
     """
     with open_cli_services() as services:
         if services.settings_repo.get(SETTINGS_KEY) is None:
@@ -31,5 +31,5 @@ def reset() -> None:
         services.settings_repo.delete(SETTINGS_KEY)
     click.echo(
         "captcha settings cleared; login now uses the built-in slider "
-        "(restart `octop run` if it is running)"
+        "(restart `pai run` if it is running)"
     )

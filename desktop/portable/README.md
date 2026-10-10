@@ -1,7 +1,7 @@
-# Octop 绿色便携包（多平台）
+# YYC3-Pai 绿色便携包（多平台）
 
-解压即用：内置便携 CPython + Octop 及依赖，通过 `start.sh` / `start.bat` 启动。  
-**不依赖**系统 Python，也**不包含** Wails / 桌面壳——用浏览器打开 Dashboard。  
+解压即用：内置便携 CPython + YYC3-Pai 及依赖，通过 `start.sh` / `start.bat` 启动。
+**不依赖**系统 Python，也**不包含** Wails / 桌面壳——用浏览器打开 Dashboard。
 首启走上游正常 setup wizard（本目录**不含** OOB / UI 裁剪）。
 
 ## 与上游解耦
@@ -13,7 +13,7 @@
 - `desktop/portable/.gitignore`（`/release/` `/runtimes/` `/wheels/` 等忽略构建产物）
 - `tests/unit/test_green_launch.py`（launch.py PATH / addsitedir）
 
-**不修改** `src/`、`dashboard/`、`pyproject.toml`、`uv.lock`、根 `Makefile`。  
+**不修改** `src/`、`dashboard/`、`pyproject.toml`、`uv.lock`、根 `Makefile`。
 合并上游时只需留意上述路径；日常用：
 
 ```bash
@@ -29,12 +29,12 @@ make -f desktop/portable/Makefile green
 
 ## 产物布局
 
-公开文件名：`Octop-portable-<plat>-<version>.zip`。zip 内目录仍是：
+公开文件名：`YYC3-Pai-portable-<plat>-<version>.zip`。zip 内目录仍是：
 
 ```
-Octop-<plat>/
+YYC3-Pai-<plat>/
   runtime/       # python-build-standalone
-  packages/      # Octop + 依赖（site-packages，可搬迁）
+  packages/      # YYC3-Pai + 依赖（site-packages，可搬迁）
   launch.py      # 启动引导（site.addsitedir / Windows pywin32）
   start.sh       # macOS / Linux
   start.bat      # Windows
@@ -67,7 +67,7 @@ bash desktop/portable/rebuild.sh
 交叉组装其它平台时，**带 C 扩展的包**必须在目标 ABI 上构建：
 
 | 目标 | 推荐方式 |
-|------|----------|
+| ------ | ---------- |
 | 当前主机 | `make -f desktop/portable/Makefile green` |
 | Linux（从 macOS/Windows） | `make -f desktop/portable/Makefile green-linux` |
 | Windows | 在 Windows / CI 上执行同上 `green` |
@@ -114,5 +114,5 @@ Actions 使用 GitHub 上游 PBS（`PBS_BASE_URL`），本机构建默认 npmmir
 
 ## Electron 壳
 
-壳只消费 `Octop-portable-<plat>-<version>.zip`（zip 内仍是 `Octop-<plat>/`），不要把绿包编进 asar。步骤见
+壳只消费 `YYC3-Pai-portable-<plat>-<version>.zip`（zip 内仍是 `YYC3-Pai-<plat>/`），不要把绿包编进 asar。步骤见
 [`AGENT_ELECTRON_INTEGRATION.md`](AGENT_ELECTRON_INTEGRATION.md)。

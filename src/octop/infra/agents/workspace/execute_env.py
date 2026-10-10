@@ -98,7 +98,7 @@ def inject_agent_execute_env(
     workspace_dir: Path,
     cfg: dict[str, Any] | None = None,
 ) -> Any:
-    """Fold Octop platform identity into shell/sandbox backend specs."""
+    """Fold YYC3-Pai platform identity into shell/sandbox backend specs."""
     if not isinstance(backend, dict):
         return backend
 

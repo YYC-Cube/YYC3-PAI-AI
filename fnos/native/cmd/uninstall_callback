@@ -1,5 +1,5 @@
 #!/bin/bash
-# Octop 本地版 — 卸载后回调
+# YYC3-Pai 本地版 — 卸载后回调
 # 根据卸载向导选择：完全删除时清理 data-share 用户数据；保留数据时不作处理。
 # 无论是否删除数据，都清理本包安装时写入的特权（sudoers）与可能残留的桌面服务。
 set -uo pipefail
@@ -9,9 +9,10 @@ set -uo pipefail
 rm -f /etc/sudoers.d/octop-native 2>/dev/null || true
 echo "[octop-native] 已移除免密码 sudo 规则" > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>&1 || true
 
-# 移除安装时注册到 PATH 的 octop / octop-cli 命令
+# 移除安装时注册到 PATH 的 pai / pai-cli 命令，以及旧版残留的 octop / octop-cli 兼容别名
+rm -f /usr/local/bin/pai /usr/local/bin/pai-cli 2>/dev/null || true
 rm -f /usr/local/bin/octop /usr/local/bin/octop-cli 2>/dev/null || true
-echo "[octop-native] 已移除命令：octop / octop-cli" > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>&1 || true
+echo "[octop-native] 已移除命令：pai / pai-cli（含旧名 octop / octop-cli）" > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>&1 || true
 
 # 停止并禁用可能残留的虚拟桌面 systemd 单元（若用户卸载前未在 UI 内卸载桌面）。
 if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then

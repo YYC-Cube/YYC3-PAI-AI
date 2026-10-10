@@ -19,7 +19,7 @@ BROWSER_PROFILES_REL = "browser-profiles"
 
 
 def parse_octop_user_id(raw: object) -> int | None:
-    """Return a positive Octop ``users.id``, or ``None`` if *raw* is unusable."""
+    """Return a positive YYC3-Pai ``users.id``, or ``None`` if *raw* is unusable."""
     if isinstance(raw, bool) or not isinstance(raw, (int, str)):
         return None
     try:
@@ -49,7 +49,7 @@ def agent_outbound_screenshots_dir(workspace_dir: Path) -> Path:
 
 
 def legacy_harness_profiles_dir() -> Path:
-    """Pre-Octop default: ``~/.harness-browser/profiles``."""
+    """Legacy default: ``~/.harness-browser/profiles``."""
     return Path.home() / ".harness-browser" / "profiles"
 
 
@@ -130,7 +130,7 @@ def configure_browser_profiles_dir(profiles_dir: Path | None = None) -> Path:
 
 
 def configure_browser_idle_timeout(timeout_minutes: int) -> None:
-    """Apply Octop's browser idle policy to octop-browser."""
+    """Apply YYC3-Pai's browser idle policy to octop-browser."""
     timeout = max(int(timeout_minutes), 0)
     os.environ["BROWSER_USE_IDLE_TIMEOUT_MINUTES"] = str(timeout)
     with contextlib.suppress(Exception):

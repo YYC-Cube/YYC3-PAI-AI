@@ -1,4 +1,4 @@
-"""Octop↔Octop instance bridge — remote agents, HTTP tunnel, chat relay."""
+"""YYC3-Pai↔YYC3-Pai instance bridge — remote agents, HTTP tunnel, chat relay."""
 
 from __future__ import annotations
 

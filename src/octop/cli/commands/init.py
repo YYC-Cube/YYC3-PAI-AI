@@ -1,4 +1,4 @@
-"""`octop init` — bootstrap a fresh Octop install (DB + first admin)."""
+"""`pai init` — bootstrap a fresh YYC3-Pai install (DB + first admin)."""
 
 from __future__ import annotations
 
@@ -10,19 +10,19 @@ import click
 @click.command("init")
 @click.option(
     "--admin-username",
-    envvar="OCTOP_ADMIN_USERNAME",
+    envvar=("YYC3_ADMIN_USERNAME", "OCTOP_ADMIN_USERNAME"),
     default=None,
-    help="First admin username (or set OCTOP_ADMIN_USERNAME).",
+    help="First admin username (or set YYC3_ADMIN_USERNAME).",
 )
 @click.option(
     "--admin-password",
-    envvar="OCTOP_ADMIN_PASSWORD",
+    envvar=("YYC3_ADMIN_PASSWORD", "OCTOP_ADMIN_PASSWORD"),
     default=None,
-    help="First admin password (or set OCTOP_ADMIN_PASSWORD).",
+    help="First admin password (or set YYC3_ADMIN_PASSWORD).",
 )
 @click.option(
     "--admin-display-name",
-    envvar="OCTOP_ADMIN_DISPLAY_NAME",
+    envvar=("YYC3_ADMIN_DISPLAY_NAME", "OCTOP_ADMIN_DISPLAY_NAME"),
     default=None,
     help="Optional display name for the admin user.",
 )
@@ -30,7 +30,7 @@ import click
     "--force",
     is_flag=True,
     default=False,
-    help="Wipe existing ~/.octop contents before bootstrapping.",
+    help="Wipe existing install-home contents before bootstrapping.",
 )
 @click.option(
     "--yes",
@@ -46,7 +46,7 @@ def init(
     force: bool,
     non_interactive: bool,
 ) -> None:
-    """Bootstrap an Octop server (~/.octop dir, DB migrations, first admin)."""
+    """Bootstrap a YYC3-Pai install (home dir, DB migrations, first admin)."""
     from octop.config import load_config
     from octop.infra.agents.plugins.manager import PluginManager
     from octop.infra.db.factory import open_database
@@ -60,9 +60,9 @@ def init(
     paths = PathLayout.from_env()
     home = paths.root
 
-    # Sidecar files (octop-login.txt, NAS share metadata) must not block first
+    # Sidecar files (yyc3-pai-login.txt, NAS share metadata) must not block first
     # bootstrap. Only an existing control-plane DB counts as an install.
-    has_db = (home / "octop.db").is_file()
+    has_db = paths.db.is_file()
     if home.exists() and any(home.iterdir()):
         if has_db and not force:
             click.echo(
@@ -75,7 +75,7 @@ def init(
                 from octop.cli.support import prompts as _prompts
 
                 if not _prompts.confirm(
-                    f"Wipe {home}? This deletes ALL Octop state.", default=False
+                    f"Wipe {home}? This deletes ALL YYC3-Pai state.", default=False
                 ):
                     click.echo("aborted", err=True)
                     raise SystemExit(1)
@@ -121,6 +121,6 @@ def init(
     finally:
         db.close()
 
-    click.echo(f"\u2705 Octop bootstrapped at {home}")
+    click.echo(f"\u2705 YYC3-Pai bootstrapped at {home}")
     click.echo(f"   admin user: {username}")
-    click.echo("   next: `octop run` (optional: `octop agent use <id>` to pin default agent)")
+    click.echo("   next: `pai run` (optional: `pai agent use <id>` to pin default agent)")

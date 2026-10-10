@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 
-rem Octop green portable launcher (Windows)
+rem YYC3-Pai green portable launcher (Windows)
 rem Usage:
 rem   start.bat
 rem   start.bat --home D:\octop-data
@@ -54,9 +54,9 @@ shift
 goto parse
 
 :help
-echo Octop green portable launcher
+echo YYC3-Pai green portable launcher
 echo.
-echo Usage: start.bat [--home DIR] [--host HOST] [--port PORT] [octop run args...]
+echo Usage: start.bat [--home DIR] [--host HOST] [--port PORT] [pai run args...]
 echo.
 echo Defaults:
 echo   OCTOP_HOME / --home   %%ROOT%%\data
@@ -82,7 +82,7 @@ rem Prefer launch.py (site.addsitedir + pywin32 DLL path). Do not set PYTHONPATH
 set "PYTHONNOUSERSITE=1"
 set "PYTHONPATH="
 
-echo [octop] home=%OCTOP_HOME%
-echo [octop] http://%HOST%:%PORT%
+echo [pai] home=%OCTOP_HOME%
+echo [pai] http://%HOST%:%PORT%
 "%PY%" "%ROOT%\launch.py" run --host %HOST% --port %PORT% %EXTRA%
 exit /b %ERRORLEVEL%

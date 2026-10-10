@@ -1,4 +1,4 @@
-"""Setup wizard password file at ``<home>/octop-login.txt``."""
+"""Setup wizard password file at ``<home>/yyc3-pai-login.txt``."""
 
 from __future__ import annotations
 
@@ -6,13 +6,19 @@ import os
 import secrets
 from pathlib import Path
 
-WIZARD_FILE_NAME = "octop-login.txt"
+WIZARD_FILE_NAME = "yyc3-pai-login.txt"
+LEGACY_WIZARD_FILE_NAME = "octop-login.txt"
 _TOKEN_BYTES = 16
 _PASSWORD_LABEL_PREFIX = "Password:"
 
 
 def _password_path(home: Path) -> Path:
-    return home / WIZARD_FILE_NAME
+    """Preferred file; a legacy ``octop-login.txt`` is adopted when present."""
+    new_path = home / WIZARD_FILE_NAME
+    if new_path.exists():
+        return new_path
+    legacy_path = home / LEGACY_WIZARD_FILE_NAME
+    return legacy_path if legacy_path.exists() else new_path
 
 
 def ensure_password(home: Path) -> str | None:
@@ -70,7 +76,7 @@ def boot_self_heal(home: Path, user_count: int) -> str | None:
 
     When setup is still open (``user_count == 0``), ensure a password file exists
     and return the password so the CLI can print it — including when the file
-    already exists (e.g. the DB was wiped but ``octop-login.txt`` was not).
+    already exists (e.g. the DB was wiped but the wizard password file was not).
 
     The file is intentionally kept forever as a permanent record and is never
     deleted, even after setup completes.

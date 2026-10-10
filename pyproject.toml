@@ -6,6 +6,28 @@ build-backend = "hatchling.build"
 name = "yyc3-pai"
 version = "0.1.0"
 description = "YYC3-Pai (π³) — smarter self-hosted AI assistant for multiple users and agents, built on octop-harness"
+keywords = [
+    "ai-assistant",
+    "self-hosted",
+    "multi-agent",
+    "llm",
+    "chatbot",
+    "rag",
+    "knowledge-base",
+    "fastapi",
+    "react",
+    "typescript",
+    "mcp",
+    "feishu",
+    "wecom",
+    "telegram-bot",
+    "discord-bot",
+    "cli",
+    "sqlite",
+    "postgresql",
+    "fnos",
+    "yyc3",
+]
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.12"

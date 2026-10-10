@@ -1,4 +1,4 @@
-"""Built-in OAuth client credentials shipped with Octop (override via env/settings)."""
+"""Built-in OAuth client credentials shipped with YYC3-Pai (override via env/settings)."""
 
 from __future__ import annotations
 

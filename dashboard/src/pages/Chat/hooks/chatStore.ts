@@ -8,17 +8,17 @@
  */
 
 import { getApiUrl } from "../../../api/config";
+import { buildDashboardChatWsUrl } from "../../../api/modules/wsChat";
 import { getAuthToken } from "../../../api/request";
 import type { TokenUsage } from "../../../api/types";
-import { buildDashboardChatWsUrl } from "../../../api/modules/wsChat";
-import { rewritePeerSpeakerId } from "../../../utils/remoteExpert";
+import {
+  isAskHitl,
+  normalizeHitlRequest,
+  parseActionArgs,
+} from "../../../api/types/hitl";
+import { mergePatchedToolOutput } from "../../../plugins/toolRenderers/parseToolOutput";
+import { isChatStreamError } from "../../../utils/chatStreamError";
 import { generateId } from "../../../utils/messageParser";
-import type {
-  ChatAttachment,
-  ChatMessage,
-  SessionSnapshot,
-  SessionStreamState,
-} from "./sseHelpers";
 import {
   parseHarnessChunk,
   streamSpeakerId,
@@ -26,28 +26,28 @@ import {
   type ToolCallChunk,
   type UsageChunk,
 } from "../../../utils/parseHarnessChunk";
-import { isChatStreamError } from "../../../utils/chatStreamError";
+import { rewritePeerSpeakerId } from "../../../utils/remoteExpert";
 import { parseToolExecutionFeedback } from "../../../utils/toolMediaBlocks";
 import { buildUserMessageContent } from "../utils/chatAttachments";
-import { sealPriorStreamingAssistants as sealPriorStreamingAssistantsMessages } from "./sealPriorStreamingAssistants";
 import {
   findSpeakerTextToContinue,
   isRoomHostSpeaker,
   sameStreamingSpeaker,
   speakerTurnWasInterrupted,
 } from "../utils/messageGrouping";
-import { turnStatusAction } from "./turnStatusGate";
-import { mergePatchedToolOutput } from "../../../plugins/toolRenderers/parseToolOutput";
-import {
-  isAskHitl,
-  normalizeHitlRequest,
-  parseActionArgs,
-} from "../../../api/types/hitl";
 import {
   isPausedAskTool,
   promoteAskUserToolMessage,
 } from "../utils/pendingHitl";
 import { frameBelongsToThread } from "./frameThread";
+import { sealPriorStreamingAssistants as sealPriorStreamingAssistantsMessages } from "./sealPriorStreamingAssistants";
+import type {
+  ChatAttachment,
+  ChatMessage,
+  SessionSnapshot,
+  SessionStreamState,
+} from "./sseHelpers";
+import { turnStatusAction } from "./turnStatusGate";
 import {
   MAX_STREAM_RESUME_ATTEMPTS,
   STREAM_STALE_WITHOUT_SOCKET_MS,
@@ -1214,7 +1214,7 @@ function handleHarnessChunk(
             : "";
         state.pendingPlanPath = pending || null;
       }
-      if (Boolean(chunk.team_wrapup)) {
+      if (chunk.team_wrapup) {
         finalizeWrapupMessages(state, speaker);
         clearSpeakerLive(state, speaker);
         // Wrap-up means members already finished — drop stale live bits

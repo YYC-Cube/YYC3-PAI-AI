@@ -45,7 +45,7 @@ def _is_unique_violation(exc: BaseException) -> bool:
 
 
 class LdapAuthService:
-    """Owns the single LDAP provider row and turns binds into Octop users."""
+    """Owns the single LDAP provider row and turns binds into YYC3-Pai users."""
 
     def __init__(self, services: SharedServices, user_manager: UserManager) -> None:
         self._services = services
@@ -159,7 +159,7 @@ class LdapAuthService:
             ) from exc
 
     async def resolve_user(self, identity: LdapIdentity) -> User:
-        """Return the Octop user for a verified directory identity, provisioning if allowed."""
+        """Return the YYC3-Pai user for a verified directory identity, provisioning if allowed."""
         row = self._row()
         if row is None:
             raise OctopError(ErrorCode.LDAP_UNAVAILABLE, "LDAP is not configured")
@@ -187,7 +187,7 @@ class LdapAuthService:
             if not config.auto_provision:
                 raise OctopError(
                     ErrorCode.LDAP_USER_NOT_PROVISIONED,
-                    "this directory account has no Octop account yet",
+                    "this directory account has no YYC3-Pai account yet",
                 )
             return self._provision(row, config, identity)
 
@@ -213,7 +213,7 @@ class LdapAuthService:
             # Worth knowing operationally: this account is keyed on its DN, so a
             # later rename in the directory will look like a brand-new user.
             logger.warning(
-                "LDAP entry for %r exposes no %s; keying the Octop account on its DN",
+                "LDAP entry for %r exposes no %s; keying the YYC3-Pai account on its DN",
                 identity.username,
                 config.subject_attribute,
             )
@@ -281,7 +281,7 @@ class LdapAuthService:
         return assignment
 
     def _claimable_email(self, email: str | None, owner_id: int | None) -> str | None:
-        """Drop an email already owned by a different Octop account."""
+        """Drop an email already owned by a different YYC3-Pai account."""
         normalized = normalize_email(email)
         if normalized is None:
             return None

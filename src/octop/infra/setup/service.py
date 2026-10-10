@@ -22,7 +22,14 @@ from octop.infra.utils.json_file import (
     read_json_object,
     write_json_atomic,
 )
-from octop.infra.utils.paths import PathLayout
+from octop.infra.utils.paths import (
+    DIRNAME,
+    HOME_ENV,
+    LEGACY_DIRNAME,
+    LEGACY_HOME_ENV,
+    LOG_FILENAME,
+    PathLayout,
+)
 from octop.infra.utils.posix_compat import chown, geteuid, getuid, is_root
 
 logger = logging.getLogger(__name__)
@@ -30,7 +37,7 @@ logger = logging.getLogger(__name__)
 ServiceMode = Literal["systemd", "launchd"]
 ServiceScope = Literal["user", "system"]
 
-SERVICE_NAME = "octop"
+SERVICE_NAME = "yyc3-pai"
 SYSTEMD_UNIT = f"{SERVICE_NAME}.service"
 LAUNCHD_LABEL = SERVICE_NAME
 NOFILE_DROPIN_NAME = "10-nofile.conf"
@@ -220,17 +227,21 @@ def _account_home(user: str) -> Path:
 
 
 def resolve_service_home(*, run_as_user: str | None = None) -> Path:
-    """Resolve ``OCTOP_HOME`` for the service owner, not the installer's euid.
+    """Resolve the install home for the service owner, not the installer's euid.
 
     ``Path.home()`` follows the effective uid, so a ``sudo`` install as root
-    would otherwise point at ``/root/.octop`` while ``User=`` names the
-    invoking user — use that user's passwd home instead.
+    would otherwise point at the root's home while ``User=`` names the
+    invoking user — use that user's passwd home instead. ``YYC3_PAI_HOME``
+    wins over the legacy ``OCTOP_HOME``; a legacy directory is adopted when
+    the preferred one does not yet exist.
     """
-    raw = os.environ.get("OCTOP_HOME", "").strip()
+    raw = os.environ.get(HOME_ENV, "").strip() or os.environ.get(LEGACY_HOME_ENV, "").strip()
     if raw:
         return Path(raw).expanduser()
     user = run_as_user or resolve_run_as_user()
-    return _account_home(user) / ".octop"
+    account_home = _account_home(user)
+    new_home = account_home / DIRNAME
+    return new_home if new_home.exists() else account_home / LEGACY_DIRNAME
 
 
 def persist_bind_options(home: Path, *, host: str | None = None, port: int | None = None) -> None:
@@ -380,9 +391,10 @@ def render_systemd_unit(runtime: ServiceRuntime, *, user_unit: bool | None = Non
     if user_unit is None:
         user_unit = runtime.scope == "user"
     account_home = _account_home(runtime.run_as_user)
-    # LightClaw-style: HOME + service mode + config-driven ``run``.  Octop also
-    # sets ``OCTOP_HOME`` explicitly.  No ``WorkingDirectory`` — avoids CHDIR
-    # failures when ``User=`` and data paths disagree.
+    # HOME + service mode + config-driven ``run``. The install home is exported
+    # explicitly as ``YYC3_PAI_HOME`` (legacy ``OCTOP_HOME`` also accepted).
+    # No ``WorkingDirectory`` — avoids CHDIR failures when ``User=`` and data
+    # paths disagree.
     if user_unit or runtime.run_as_user == "root":
         user_line = ""
     else:
@@ -390,7 +402,7 @@ def render_systemd_unit(runtime: ServiceRuntime, *, user_unit: bool | None = Non
     wanted_by = "default.target" if user_unit else "multi-user.target"
     env_lines = (
         f'Environment="HOME={account_home}"\n'
-        f"Environment=OCTOP_HOME={runtime.home}\n"
+        f"Environment={HOME_ENV}={runtime.home}\n"
         "Environment=OCTOP_SERVICE_MODE=systemd\n"
     )
     if user_unit:
@@ -399,7 +411,7 @@ def render_systemd_unit(runtime: ServiceRuntime, *, user_unit: bool | None = Non
     nofile_line = f"LimitNOFILE={nofile}\n" if nofile is not None else ""
     return (
         "[Unit]\n"
-        "Description=Octop AI Server\n"
+        "Description=YYC3-Pai AI Server\n"
         "After=network.target\n"
         "\n"
         "[Service]\n"
@@ -424,7 +436,7 @@ def render_launchd_plist(runtime: ServiceRuntime) -> str:
     plists; launchd rejects it for user-domain agents and the agent runs as
     the logged-in user automatically.
     """
-    log_path = runtime.home / "logs" / "octop.log"
+    log_path = runtime.home / "logs" / LOG_FILENAME
     account_home = _account_home(runtime.run_as_user)
     user_block = (
         f"  <key>UserName</key>\n  <string>{runtime.run_as_user}</string>\n"
@@ -449,7 +461,7 @@ def render_launchd_plist(runtime: ServiceRuntime) -> str:
         "  <dict>\n"
         f"    <key>HOME</key>\n"
         f"    <string>{account_home}</string>\n"
-        f"    <key>OCTOP_HOME</key>\n"
+        f"    <key>{HOME_ENV}</key>\n"
         f"    <string>{runtime.home}</string>\n"
         "    <key>OCTOP_SERVICE_MODE</key>\n"
         "    <string>launchd</string>\n"

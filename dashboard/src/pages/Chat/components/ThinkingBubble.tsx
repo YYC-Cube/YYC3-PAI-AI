@@ -12,14 +12,14 @@ export default function ThinkingBubble({
   startedAt,
 }: ThinkingBubbleProps) {
   const { t } = useTranslation();
-  const typingSrc = `${import.meta.env.BASE_URL}octop-mascot-type.webp`;
+  const avatarSrc = `${import.meta.env.BASE_URL}pwa-192.png`;
   const elapsed = useElapsedSince(startedAt);
 
   return (
     <div className={styles.thinkingBubble}>
       <div className={styles.avatarCol}>
         <div className={styles.botAvatar}>
-          <img src={typingSrc} alt="" aria-hidden draggable={false} />
+          <img src={avatarSrc} alt="" aria-hidden draggable={false} />
         </div>
       </div>
       <div className={styles.thinkingContent}>

@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Octop 本地版 — 重新配置回调（应用「设置」窗口提交后执行）
+# YYC3-Pai 本地版 — 重新配置回调（应用「设置」窗口提交后执行）
 #
 # 只处理管理员改密：两栏都空则保持不变；填了则更新 PKGVAR/.env、
-# octop-login.txt 应急备份，并对已初始化实例调用 octop user passwd。
+# yyc3-pai-login.txt 应急备份，并对已初始化实例调用 pai user passwd。
 # 日志与 API Key 请在 Web 控制台配置。
 #
 set -euo pipefail
@@ -51,10 +51,10 @@ fi
 
 OCTOP_HOME="${DATA_DIR}/.octop"
 MAIN="$APPDEST/cmd/main"
-if [ "$PASS_CHANGED" = "1" ] && [ -f "$OCTOP_HOME/octop.db" ]; then
+if [ "$PASS_CHANGED" = "1" ] && { [ -f "$OCTOP_HOME/yyc3-pai.db" ] || [ -f "$OCTOP_HOME/octop.db" ]; }; then
     echo "[octop-native] 检测到已初始化实例，先停止服务再离线修改管理员密码 ..." > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>&1 || true
     [ -x "$MAIN" ] && "$MAIN" stop >/dev/null 2>&1 || true
-    if "$APPDEST/bin/octop-cli" user passwd "$CUR_USER" --password "$ADMIN_PASS" > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>&1; then
+    if "$APPDEST/bin/pai-cli" user passwd "$CUR_USER" --password "$ADMIN_PASS" > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>&1; then
         echo "[octop-native] 已通过官方 CLI 修改管理员密码" > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>&1 || true
     else
         octop_mark_fnos_passwd_pending "$DATA_DIR"

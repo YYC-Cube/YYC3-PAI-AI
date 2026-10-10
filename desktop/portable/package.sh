@@ -11,13 +11,13 @@
 #   OCTOP_GREEN_OFFLINE=1 bash desktop/portable/package.sh   # require local wheels
 #
 # Layout of each zip:
-#   Octop-<plat>/
+#   YYC3-Pai-<plat>/
 #     runtime/     portable CPython
 #     packages/    site-packages (uv --target, relocatable)
 #     start.sh / start.bat
 #     README.txt
 #
-# Public filename is Octop-portable-<plat>-<version>.zip (see portable_zip_basename).
+# Public filename is YYC3-Pai-portable-<plat>-<version>.zip (see portable_zip_basename).
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -30,18 +30,18 @@ require_uv
 build_octop_wheel() {
   local wheel_dir="$1"
   mkdir -p "$wheel_dir"
-  # Drop previous local octop wheels so we pick the fresh build.
-  find "$wheel_dir" -maxdepth 1 -type f -name 'octop-*.whl' -delete 2>/dev/null || true
+  # Drop previous local yyc3_pai wheels so we pick the fresh build.
+  find "$wheel_dir" -maxdepth 1 -type f -name 'yyc3_pai-*.whl' -delete 2>/dev/null || true
   if [[ ! -f "${REPO_ROOT}/src/octop/dashboard/index.html" ]]; then
     echo "[package] WARNING: dashboard not built (src/octop/dashboard/index.html missing)." >&2
     echo "  Run: make build-frontend" >&2
   fi
-  echo "[package] building octop wheel → ${wheel_dir}" >&2
+  echo "[package] building yyc3-pai wheel → ${wheel_dir}" >&2
   uv build --wheel --out-dir "$wheel_dir" "$REPO_ROOT" >&2
   local whl
-  whl="$(ls -1 "${wheel_dir}"/octop-*.whl 2>/dev/null | sort | tail -1 || true)"
+  whl="$(ls -1 "${wheel_dir}"/yyc3_pai-*.whl 2>/dev/null | sort | tail -1 || true)"
   if [[ -z "$whl" ]]; then
-    echo "[package] failed to build octop-*.whl" >&2
+    echo "[package] failed to build yyc3_pai-*.whl" >&2
     exit 1
   fi
   # stdout: wheel path only (captured by caller)
@@ -84,7 +84,7 @@ assemble_one() {
   local plat="$1"
   local runtime="${GREEN_RUNTIMES}/${plat}"
   local wheel_dir="${GREEN_WHEELS}/${plat}"
-  local staging="${GREEN_RELEASE}/Octop-${plat}"
+  local staging="${GREEN_RELEASE}/YYC3-Pai-${plat}"
   local zip_path="${GREEN_RELEASE}/$(portable_zip_basename "$plat")"
   local pyplat
 
@@ -262,7 +262,7 @@ assemble_one() {
   (
     cd "$GREEN_RELEASE"
     if command -v zip >/dev/null 2>&1; then
-      zip -qry "$zip_name" "Octop-${plat}"
+      zip -qry "$zip_name" "YYC3-Pai-${plat}"
     else
       # Windows runners often have `python` but not `python3` / `zip`.
       py=""
@@ -275,7 +275,7 @@ assemble_one() {
         echo "[package] need zip or python to create archive" >&2
         exit 1
       fi
-      "$py" -c "import shutil; shutil.make_archive('${zip_stem}', 'zip', '.', 'Octop-${plat}')"
+      "$py" -c "import shutil; shutil.make_archive('${zip_stem}', 'zip', '.', 'YYC3-Pai-${plat}')"
     fi
   )
   echo "[package] wrote ${zip_path}"

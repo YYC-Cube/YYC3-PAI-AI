@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# Octop — 配置后回调（应用「设置」窗口提交后执行）
+# YYC3-Pai — 配置后回调（应用「设置」窗口提交后执行）
 #
 # 只处理管理员改密：两栏都空则保持不变；填了则更新 docker/.env、
-# data-share 引导文件、octop-login.txt 应急备份，容器在运行时
-# docker exec ... octop user passwd。日志与 API Key 请在 Web 控制台配置。
+# data-share 引导文件、yyc3-pai-login.txt 应急备份，容器在运行时
+# docker exec ... pai user passwd。日志与 API Key 请在 Web 控制台配置。
 #
 set -euo pipefail
 
@@ -51,7 +51,7 @@ fi
 
 if [ "$PASS_CHANGED" = "1" ]; then
     if docker ps --format '{{.Names}}' 2>/dev/null | grep -qx "$CONTAINER" \
-        && docker exec "$CONTAINER" octop user passwd "$CUR_USER" --password "$ADMIN_PASS" > "$LOG" 2>&1; then
+        && docker exec "$CONTAINER" pai user passwd "$CUR_USER" --password "$ADMIN_PASS" > "$LOG" 2>&1; then
         echo "[octop] 已通过官方 CLI 修改管理员密码" > "$LOG" 2>&1 || true
     else
         octop_mark_fnos_passwd_pending "$DATA_DIR"

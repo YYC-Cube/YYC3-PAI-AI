@@ -1,4 +1,4 @@
-"""Octop helpers for harness ``type: "docker"`` backend specs."""
+"""YYC3-Pai helpers for harness ``type: "docker"`` backend specs."""
 
 from __future__ import annotations
 

@@ -1,10 +1,10 @@
-import { useEffect, useSyncExternalStore, useState } from "react";
-import { createPortal } from "react-dom";
 import { Tooltip } from "antd";
 import { Download, MonitorDown, Share, X } from "lucide-react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import {
-  subscribePwaPrompt,
   getPwaInstallSnapshot,
+  subscribePwaPrompt,
   triggerInstall,
   waitForInstallPrompt,
 } from "../../pwa-prompt";
@@ -52,7 +52,9 @@ export function IosGuide({ onClose }: { onClose: () => void }) {
           <X size={18} />
         </button>
         <div className={styles.guideTitle}>添加到主屏幕</div>
-        <p className={styles.guideDesc}>将 Octop 安装为 App，随时一键打开。</p>
+        <p className={styles.guideDesc}>
+          将 YYC3-Pai 安装为 App，随时一键打开。
+        </p>
         <ol className={styles.guideList}>
           <li>
             <span className={styles.guideStep}>1</span>
@@ -116,8 +118,8 @@ export function DesktopInstallGuide({ onClose }: { onClose: () => void }) {
           <li>
             <span className={styles.guideStep}>2</span>
             <span>
-              或打开浏览器菜单，选择「{isEdge ? "应用" : "安装"} Octop」/
-              Install Octop
+              或打开浏览器菜单，选择「{isEdge ? "应用" : "安装"} YYC3-Pai」/
+              Install YYC3-Pai
             </span>
           </li>
           <li>

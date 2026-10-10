@@ -1,4 +1,4 @@
-"""HTTP login against a peer Octop instance."""
+"""HTTP login against a peer YYC3-Pai instance."""
 
 from __future__ import annotations
 

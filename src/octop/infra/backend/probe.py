@@ -1,4 +1,4 @@
-"""Octop-specific storage backend probes (docker + row → harness probe)."""
+"""YYC3-Pai-specific storage backend probes (docker + row → harness probe)."""
 
 from __future__ import annotations
 
@@ -184,7 +184,7 @@ def _probe_docker(row: BackendRow) -> dict[str, Any]:
         if content != _PROBE_CONTENT:
             return {"ok": False, "message": "read content mismatch"}
         with contextlib.suppress(Exception):
-            execute = getattr(backend, "execute", None)
+            execute: Any = getattr(backend, "execute", None)
             if callable(execute):
                 execute(f"rm -f -- {test_path}")
         return {

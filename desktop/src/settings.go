@@ -15,7 +15,8 @@ const (
 	LocaleEN Locale = "en"
 )
 
-// Settings is persisted at ~/.octop/desktop-settings.json
+// Settings is persisted at ~/.yyc3-pai/desktop-settings.json
+// (legacy ~/.octop/desktop-settings.json stays supported).
 type Settings struct {
 	Locale         Locale `json:"locale"`
 	Autostart      bool   `json:"autostart"`
@@ -35,14 +36,25 @@ func defaultSettings() Settings {
 }
 
 func octopHome() string {
+	if v := os.Getenv("YYC3_PAI_HOME"); v != "" {
+		return v
+	}
 	if v := os.Getenv("OCTOP_HOME"); v != "" {
 		return v
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return ".octop"
+		return ".yyc3-pai"
 	}
-	return filepath.Join(home, ".octop")
+	primary := filepath.Join(home, ".yyc3-pai")
+	if _, err := os.Stat(primary); err == nil {
+		return primary
+	}
+	legacy := filepath.Join(home, ".octop")
+	if _, err := os.Stat(legacy); err == nil {
+		return legacy
+	}
+	return primary
 }
 
 func portableDir() string {

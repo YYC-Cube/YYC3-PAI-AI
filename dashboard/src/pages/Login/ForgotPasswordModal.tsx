@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Button, Modal, Segmented, Typography } from "antd";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import styles from "./ForgotPasswordModal.module.less";
@@ -41,13 +41,13 @@ export default function ForgotPasswordModal({ open, onClose }: Props) {
         <p className={styles.help}>
           {t(
             "login.forgotPasswordHelp",
-            "Ask an administrator to reset it under Users. If you manage this host, run the command below on the machine where Octop is installed, using the same OS account that runs the service.",
+            "Ask an administrator to reset it under Users. If you manage this host, run the command below on the machine where YYC3-Pai is installed, using the same OS account that runs the service.",
           )}
         </p>
         <CopyCommand
           text={t(
             "login.forgotPasswordCommand",
-            "octop user passwd <username> --password <new-password>",
+            "pai user passwd <username> --password <new-password>",
           )}
         />
         <p className={styles.hint}>
@@ -85,7 +85,7 @@ function PlatformHelp({ platform }: { platform: Platform }) {
         <CopyCommand
           text={t(
             "login.forgotPasswordDockerCommand",
-            "docker exec -it <container> octop user passwd <username> --password <new-password>",
+            "docker exec -it <container> pai user passwd <username> --password <new-password>",
           )}
         />
       </div>
@@ -98,7 +98,7 @@ function PlatformHelp({ platform }: { platform: Platform }) {
         <p className={styles.note}>
           {t(
             "login.forgotPasswordWindows",
-            "Open PowerShell or Command Prompt, then run the command above. If octop is not found:",
+            "Open PowerShell or Command Prompt, then run the command above. If pai is not found:",
           )}
         </p>
         <div className={styles.fallback}>
@@ -106,7 +106,7 @@ function PlatformHelp({ platform }: { platform: Platform }) {
           <CopyCommand
             text={t(
               "login.forgotPasswordWindowsPs",
-              '& "$env:USERPROFILE\\.octop\\bin\\octop.cmd" user passwd <username> --password <new-password>',
+              '& "$env:USERPROFILE\\.yyc3-pai\\bin\\pai.cmd" user passwd <username> --password <new-password>',
             )}
           />
           <p className={styles.label}>
@@ -115,7 +115,7 @@ function PlatformHelp({ platform }: { platform: Platform }) {
           <CopyCommand
             text={t(
               "login.forgotPasswordWindowsCmd",
-              "%USERPROFILE%\\.octop\\bin\\octop.cmd user passwd <username> --password <new-password>",
+              "%USERPROFILE%\\.yyc3-pai\\bin\\pai.cmd user passwd <username> --password <new-password>",
             )}
           />
         </div>
@@ -129,17 +129,17 @@ function PlatformHelp({ platform }: { platform: Platform }) {
         {platform === "mac"
           ? t(
               "login.forgotPasswordMac",
-              "Open Terminal (Applications → Utilities → Terminal), then run the command above. If octop is not found:",
+              "Open Terminal (Applications → Utilities → Terminal), then run the command above. If pai is not found:",
             )
           : t(
               "login.forgotPasswordLinux",
-              "Open Terminal, then run the command above. If octop is not found:",
+              "Open Terminal, then run the command above. If pai is not found:",
             )}
       </p>
       <CopyCommand
         text={t(
           "login.forgotPasswordUnixPath",
-          "~/.octop/bin/octop user passwd <username> --password <new-password>",
+          "~/.yyc3-pai/bin/pai user passwd <username> --password <new-password>",
         )}
       />
     </div>

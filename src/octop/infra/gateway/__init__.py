@@ -1,1 +1,1 @@
-"""Octop Gateway — global AI interaction entry point."""
+"""YYC3 Gateway — global AI interaction entry point."""

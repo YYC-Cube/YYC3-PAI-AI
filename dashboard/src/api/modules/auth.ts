@@ -31,7 +31,7 @@ export interface AuthStatus {
   enabled: boolean;
   /** Legacy field — octop always uses passwords. */
   has_password: boolean;
-  /** True when ~/.octop/octop-login.txt exists on the server (wizard-only). */
+  /** True when ~/yyc3-pai-login.txt exists on the server (wizard-only). */
   wizard_password_exists: boolean;
   /** When false, the wizard skips the CLI bootstrap password step. */
   wizard_password_required: boolean;
@@ -300,12 +300,14 @@ export const authApi = {
   /** @deprecated Octop always requires auth — there is no first-time set step. */
   setPassword: (): Promise<never> =>
     Promise.reject(
-      new Error("setPassword is not supported in octop; use change-password"),
+      new Error(
+        "setPassword is not supported in YYC3-Pai; use change-password",
+      ),
     ),
 
   /** @deprecated Octop cannot disable auth. */
   disableAuth: (): Promise<never> =>
-    Promise.reject(new Error("disableAuth is not supported in octop")),
+    Promise.reject(new Error("disableAuth is not supported in YYC3-Pai")),
 
   /** @deprecated Octop's setup wizard is single-step; nothing to mark done. */
   markSetupDone: (): Promise<{ ok: boolean }> => Promise.resolve({ ok: true }),

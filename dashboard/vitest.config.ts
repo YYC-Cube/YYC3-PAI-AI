@@ -24,6 +24,10 @@ export default defineConfig({
     css: false,
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     pool: "threads",
+    // Heavy oversubscription (workers = CPU count) starves slow-boot tests
+    // like AuthGuard on many-core dev machines; CI runners have 4 vCPU, so
+    // this cap matches CI and keeps local runs green.
+    maxWorkers: 4,
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],

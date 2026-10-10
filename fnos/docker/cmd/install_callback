@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Octop — 安装后回调
+# YYC3-Pai — 安装后回调
 #
 # 安装向导只收集用户自己设的管理员账号（用户名 / 密码确认，显示名与邮箱可选）。
-# 凭据写入 .env、data-share 引导文件与 octop-login.txt，供容器首次 init / 改密。
+# 凭据写入 .env、data-share 引导文件与 yyc3-pai-login.txt，供容器首次 init / 改密。
 #
 set -euo pipefail
 
@@ -15,7 +15,7 @@ _OCTOP_COMMON="$(dirname "$0")/common.sh"
 [ -f "$_OCTOP_COMMON" ] || _OCTOP_COMMON="/var/apps/octop/cmd/common.sh"
 [ -f "$_OCTOP_COMMON" ] && source "$_OCTOP_COMMON"
 
-# 释放 Octop 端口（8088=Docker 版，8089=本地版），杀掉残留/孤儿进程，避免重装端口冲突。
+# 释放 YYC3-Pai 端口（8088=Docker 版，8089=本地版），杀掉残留/孤儿进程，避免重装端口冲突。
 free_octop_ports
 
 ENV_FILE="${TRIM_APPDEST:-/var/apps/octop/target}/docker/.env"
@@ -61,13 +61,13 @@ chmod 600 "$ENV_FILE"
 octop_persist_docker_env "$ENV_FILE"
 octop_write_fnos_bootstrap "$DATA_DIR" "$ADMIN_USER" "$ADMIN_PASS" "$ADMIN_DISPLAY" "$ADMIN_EMAIL"
 octop_distribute_docker_env "$ENV_FILE" "$DATA_DIR"
-if [ -f "${DATA_DIR}/.octop/octop.db" ]; then
+if [ -f "${DATA_DIR}/.octop/yyc3-pai.db" ] || [ -f "${DATA_DIR}/.octop/octop.db" ]; then
     octop_mark_fnos_passwd_pending "$DATA_DIR"
 fi
 echo "[octop] 已写入配置: $ENV_FILE（data-share=${DATA_DIR}）" > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
-# 凭据应急备份（octop-login.txt）+ 渲染「设置」窗口用户名
+# 凭据应急备份（yyc3-pai-login.txt）+ 渲染「设置」窗口用户名
 # ---------------------------------------------------------------------------
 octop_write_login_file "$DATA_DIR" "$ADMIN_USER" "$ADMIN_PASS" 8088
 

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import styles from "./StreamConnectingIndicator.module.less";
 
-const MASCOT_TYPE = `${import.meta.env.BASE_URL}octop-mascot-type.webp`;
+const LOGO_SRC = `${import.meta.env.BASE_URL}pwa-192.png`;
 
 interface StreamConnectingIndicatorProps {
   /** Status line under the animation (e.g. 「连接中」). */
@@ -16,7 +16,7 @@ interface StreamConnectingIndicatorProps {
 
 /**
  * Shared connecting / waiting-frame indicator for remote browser & desktop.
- * Uses the same Octop mascot loop as chat thinking bubbles.
+ * Uses the YYC3-Pai logo.
  */
 export default function StreamConnectingIndicator({
   label,
@@ -36,7 +36,7 @@ export default function StreamConnectingIndicator({
     <div className={rootClass}>
       <img
         className={styles.mascot}
-        src={MASCOT_TYPE}
+        src={LOGO_SRC}
         alt=""
         aria-hidden
         draggable={false}

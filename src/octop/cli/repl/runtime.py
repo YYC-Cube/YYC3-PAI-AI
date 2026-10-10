@@ -1,4 +1,4 @@
-"""Embedded OctopServer chat runtime via the CLI gateway channel."""
+"""Embedded server chat runtime via the CLI gateway channel."""
 
 from __future__ import annotations
 

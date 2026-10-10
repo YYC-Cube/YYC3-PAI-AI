@@ -1,17 +1,17 @@
 #!/bin/bash
 #
-# octop — 飞牛本地版「官方 CLI」包装
+# pai — 飞牛本地版「官方 CLI」包装
 #
 # 复刻 octop 运行环境后调用 `python -m octop.cli.main`，因此可使用全部官方子命令：
-#   octop --help
-#   octop version
-#   octop provider list
-#   octop agent list
-#   octop user list
+#   pai --help
+#   pai version
+#   pai provider list
+#   pai agent list
+#   pai user list
 #   ...（还包括 init / run / config / backup / skills / update / clean 等）
 #
-# 注意：本机 Web 服务由飞牛应用中心托管（cmd/main 拉起 bin/octop），
-# 请勿手动执行 `octop run`（会与飞牛管理的实例抢 8089 端口）。
+# 注意：本机 Web 服务由飞牛应用中心托管（cmd/main 拉起 bin/pai），
+# 请勿手动执行 `pai run`（会与飞牛管理的实例抢 8089 端口）。
 #
 # 本包装以 octop-native 身份运行，避免产生 root 所有的数据文件
 # （Web 服务本身也以 octop-native 运行，混用 root 会导致后续权限问题）。
@@ -87,7 +87,7 @@ export OCTOP_FPK_SITE_PACKAGES="$SITE_PACKAGES"
 
 # 兜底：若包内 octop 未就绪，用内置核心 whl 离线安装（避免联网）
 if ! "$PY" -c "import octop" >/dev/null 2>&1; then
-    echo "[octop] 未检测到已安装的 Octop，正在用内置核心 whl 离线安装 ..."
+    echo "[octop] 未检测到已安装的 YYC3-Pai，正在用内置核心 whl 离线安装 ..."
     "$PY" -m pip install --no-cache --no-index --find-links "$SITE_PACKAGES" "$SITE_PACKAGES/octop.whl" >/dev/null 2>&1 || {
         echo "[octop] 离线安装失败，请检查网络或手动执行：$PY -m pip install $SITE_PACKAGES/octop.whl" >&2
         exit 1

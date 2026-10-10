@@ -71,3 +71,41 @@ func TestDesktopSQLitePathSkipsPostgreSQL(t *testing.T) {
 		t.Fatalf("PostgreSQL resolved as SQLite: path=%q isSQLite=%v", path, isSQLite)
 	}
 }
+
+func TestDesktopSQLitePathProbesNewAndLegacyDatabaseNames(t *testing.T) {
+	for _, test := range []struct {
+		name            string
+		legacy, current bool
+		want            string
+	}{
+		{"fresh install", false, false, "yyc3-pai.db"},
+		{"legacy database only", true, false, "octop.db"},
+		{"new database only", false, true, "yyc3-pai.db"},
+		{"both databases", true, true, "yyc3-pai.db"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			home := t.TempDir()
+			if test.legacy {
+				if err := os.WriteFile(filepath.Join(home, "octop.db"), []byte("legacy"), 0o600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if test.current {
+				if err := os.WriteFile(filepath.Join(home, "yyc3-pai.db"), []byte("current"), 0o600); err != nil {
+					t.Fatal(err)
+				}
+			}
+
+			path, isSQLite, err := desktopSQLitePath(home)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !isSQLite {
+				t.Fatalf("%s was not detected as SQLite", test.name)
+			}
+			if want := filepath.Join(home, test.want); path != want {
+				t.Fatalf("SQLite path = %q, want %q", path, want)
+			}
+		})
+	}
+}

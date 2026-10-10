@@ -1,4 +1,4 @@
-"""`octop service` — install and manage the Octop system service."""
+"""`pai service` — install and manage the YYC3-Pai system service."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from octop.infra.errors import OctopError
 from octop.infra.setup.service import (
     DEFAULT_HEALTH_ATTEMPTS,
     DEFAULT_HEALTH_DELAY_SECONDS,
+    SERVICE_NAME,
     ServiceRuntime,
     ServiceScope,
     ServiceStatus,
@@ -23,11 +24,12 @@ from octop.infra.setup.service import (
     stop_service,
     unit_path,
 )
+from octop.infra.utils.paths import LOG_FILENAME
 
 
 @click.group()
 def service() -> None:
-    """Manage the Octop system service (systemd on Linux, launchd on macOS)."""
+    """Manage the YYC3-Pai system service (systemd on Linux, launchd on macOS)."""
 
 
 def _runtime(host: str | None, port: int | None, scope: ServiceScope | None) -> ServiceRuntime:
@@ -58,12 +60,12 @@ def _resolve_scope(value: str) -> ServiceScope | None:
 
 
 def _health_failure_hint(runtime: ServiceRuntime) -> str:
-    log_path = runtime.home / "logs" / "octop.log"
+    log_path = runtime.home / "logs" / LOG_FILENAME
     if runtime.mode == "systemd":
         journal = (
-            "journalctl --user -u octop -n 80 --no-pager"
+            f"journalctl --user -u {SERVICE_NAME} -n 80 --no-pager"
             if runtime.scope == "user"
-            else "journalctl -u octop -n 80 --no-pager"
+            else f"journalctl -u {SERVICE_NAME} -n 80 --no-pager"
         )
         return f"hint: inspect logs with `{journal}` or `tail -n 80 {log_path}`"
     return (

@@ -34,7 +34,7 @@ def host_path_text(path: Path) -> str:
 
 
 def host_home_dir() -> Path:
-    """Absolute home directory of the OS user running the Octop process."""
+    """Absolute home directory of the OS user running the YYC3-Pai process."""
     return Path(os.path.realpath(os.path.expanduser(str(Path.home()))))
 
 

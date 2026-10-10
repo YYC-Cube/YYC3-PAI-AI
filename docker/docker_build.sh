@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # =============================================================================
-# 构建 Octop Docker 镜像
+# 构建 YYC3-Pai Docker 镜像
 #
 # 用法:
 #   bash docker/docker_build.sh [镜像标签] [额外 docker build 参数...]
 #
 # 示例:
 #   bash docker/docker_build.sh
-#   bash docker/docker_build.sh myreg/octop:v1
-#   bash docker/docker_build.sh octop:dev --no-cache
+#   bash docker/docker_build.sh myreg/yyc3-pai:v1
+#   bash docker/docker_build.sh yyc3-pai:dev --no-cache
 #
 # 国内加速（可选，需 BuildKit，本脚本默认已开启）:
 #   PIP_INDEX_URL=https://mirrors.cloud.tencent.com/pypi/simple \
@@ -22,7 +22,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-IMAGE_TAG="${1:-octop:latest}"
+IMAGE_TAG="${1:-yyc3-pai:latest}"
 shift 2>/dev/null || true
 
 # BuildKit 启用 Dockerfile 缓存挂载，加速 npm / pip / apt 下载
@@ -46,7 +46,7 @@ if [ -n "${APT_MIRROR:-}" ]; then
 fi
 
 echo "╔══════════════════════════════════════════════════╗"
-echo "║  正在构建 Octop Docker 镜像                      ║"
+echo "║  正在构建 YYC3-Pai Docker 镜像                   ║"
 echo "║  标签: ${IMAGE_TAG}"
 echo "╚══════════════════════════════════════════════════╝"
 echo ""
@@ -62,7 +62,7 @@ echo ""
 echo "✅ 构建完成: ${IMAGE_TAG}"
 echo ""
 echo "启动示例:"
-echo "  docker run -d -p 8088:8088 -v octop-data:/data/.octop -e HOME=/data ${IMAGE_TAG}"
+echo "  docker run -d -p 8088:8088 -v yyc3-pai-data:/data/.yyc3-pai -e HOME=/data ${IMAGE_TAG}"
 echo ""
 echo "或使用 Compose:"
 echo "  docker compose -f docker/docker-compose.yml up -d"

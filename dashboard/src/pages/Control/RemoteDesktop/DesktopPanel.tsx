@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   App,
@@ -12,6 +11,7 @@ import {
   Tag,
   Tooltip,
 } from "antd";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   CheckCircle2,
@@ -29,38 +29,37 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import StreamConnectingIndicator from "../../../components/StreamConnectingIndicator";
-import StreamEdgeControls from "../../../components/StreamEdgeControls/StreamEdgeControls";
-import StreamSetupGuide from "../../../components/StreamSetupGuide/StreamSetupGuide";
-import ForbiddenPage from "../../../components/ForbiddenPage";
-import PageShell from "../../../layouts/PageShell";
 import {
   desktopApi,
   type DesktopStatusResponse,
 } from "../../../api/modules/desktop";
+import { OctopEmptyMascot } from "../../../components/EmptyState";
+import ForbiddenPage from "../../../components/ForbiddenPage";
+import StreamConnectingIndicator from "../../../components/StreamConnectingIndicator";
+import StreamEdgeControls from "../../../components/StreamEdgeControls/StreamEdgeControls";
+import StreamSetupGuide from "../../../components/StreamSetupGuide/StreamSetupGuide";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
+import { useDesktopCanvasInteraction } from "../../../hooks/useDesktopCanvasInteraction";
 import {
-  paintBase64JpegToCanvas,
-  clearCanvas,
-} from "../../../utils/browserCanvas";
+  cancelDesktopInstall,
+  resetDesktopInstall,
+  startDesktopInstall,
+  useDesktopInstall,
+  type DesktopInstallPhase,
+} from "../../../hooks/useDesktopInstall";
 import {
   useDesktopStream,
   type DesktopStreamError,
 } from "../../../hooks/useDesktopStream";
-import {
-  useDesktopInstall,
-  startDesktopInstall,
-  cancelDesktopInstall,
-  resetDesktopInstall,
-  type DesktopInstallPhase,
-} from "../../../hooks/useDesktopInstall";
-import { useDesktopCanvasInteraction } from "../../../hooks/useDesktopCanvasInteraction";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import { useLandscapeFullscreen } from "../../../hooks/useLandscapeFullscreen";
-import { useCurrentUser } from "../../../hooks/useCurrentUser";
-import { userCan } from "../../../utils/permissions";
-import { copyText } from "../../../utils/copyText";
-import { showApiError } from "../../../utils/showApiToast";
+import PageShell from "../../../layouts/PageShell";
 import { wsStreamErrorMessage } from "../../../utils/apiError";
+import {
+  clearCanvas,
+  paintBase64JpegToCanvas,
+} from "../../../utils/browserCanvas";
+import { copyText } from "../../../utils/copyText";
 import {
   DESKTOP_FPS_PRESETS,
   DESKTOP_RESOLUTION_OPTIONS,
@@ -69,9 +68,10 @@ import {
   isDesktopResolution,
   type DesktopResolution,
 } from "../../../utils/desktopViewport";
-import { sendDesktopAction } from "./desktopShortcuts";
-import { OctopEmptyMascot } from "../../../components/EmptyState";
+import { userCan } from "../../../utils/permissions";
+import { showApiError } from "../../../utils/showApiToast";
 import styles from "./DesktopPanel.module.less";
+import { sendDesktopAction } from "./desktopShortcuts";
 
 const RESOLUTION_STORAGE_KEY = "octop:remote-desktop:resolution";
 const FPS_STORAGE_KEY = "octop:remote-desktop:max-fps";
@@ -448,7 +448,7 @@ export default function DesktopPanel({
         message.warning(
           t(
             "remoteDesktop.connectDisabledPerms",
-            "请先在系统设置中开启屏幕录制与辅助功能权限，然后重启 Octop",
+            "请先在系统设置中开启屏幕录制与辅助功能权限，然后重启 YYC3-Pai",
           ),
         );
         return;
@@ -858,7 +858,7 @@ export default function DesktopPanel({
             >
               {t(
                 "common.askOctopHint",
-                "若安装失败，可复制下方错误信息发给 Octop 排查。",
+                "若安装失败，可复制下方错误信息发给 YYC3-Pai 排查。",
               )}
             </div>
           </div>
@@ -996,7 +996,7 @@ export default function DesktopPanel({
   const pageTitle = t("nav.remoteDesktop", "远程桌面");
   const pageSubtitle = t(
     "pageShell.desktop.subtitle",
-    "查看并操控 Octop 主机操作系统桌面",
+    "查看并操控 YYC3-Pai 主机操作系统桌面",
   );
   const setupMascot = <OctopEmptyMascot />;
 
@@ -1062,7 +1062,7 @@ export default function DesktopPanel({
       : needsMacPermissions
       ? t(
           "remoteDesktop.connectDisabledPerms",
-          "请先在系统设置中开启屏幕录制与辅助功能权限，然后重启 Octop",
+          "请先在系统设置中开启屏幕录制与辅助功能权限，然后重启 YYC3-Pai",
         )
       : t("remoteDesktop.connectDisabled"),
   };
@@ -1157,7 +1157,10 @@ export default function DesktopPanel({
                         "remoteDesktop.macPermissionsTitle",
                         "需要 macOS 系统权限",
                       )
-                    : t("remoteDesktop.subtitle", "控制 Octop 主机操作系统桌面")
+                    : t(
+                        "remoteDesktop.subtitle",
+                        "控制 YYC3-Pai 主机操作系统桌面",
+                      )
                 }
                 description={
                   envReady
@@ -1210,7 +1213,7 @@ export default function DesktopPanel({
                         {
                           label: t(
                             "remoteDesktop.macPermStep3",
-                            "重启 Octop（octop run），再回到本页点击「重新检测」",
+                            "重启 YYC3-Pai（pai run），再回到本页点击「重新检测」",
                           ),
                         },
                       ]

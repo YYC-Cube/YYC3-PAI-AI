@@ -1,7 +1,7 @@
 {
     ".url": {
         "octop.Application": {
-            "title": "OCTOP",
+            "title": "YYC3-Pai",
             "icon": "images/icon_{0}.png",
             "type": "iframe",
             "protocol": "http",

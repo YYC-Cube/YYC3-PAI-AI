@@ -1,5 +1,5 @@
 #!/bin/bash
-# Octop — 卸载后回调
+# YYC3-Pai — 卸载后回调
 # 根据卸载向导选择：完全删除时清理 data-share 用户数据；保留数据时不作处理。
 set -euo pipefail
 

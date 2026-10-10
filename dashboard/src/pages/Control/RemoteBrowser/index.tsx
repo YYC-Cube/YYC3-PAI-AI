@@ -6,8 +6,6 @@
  *
  * Frames arrive over WebSocket (/browser-stream/ws) instead of screenshot polling.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import {
   Alert,
   App,
@@ -21,6 +19,8 @@ import {
   Tooltip,
   Typography,
 } from "antd";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import {
   AlertCircle,
@@ -31,54 +31,54 @@ import {
   Maximize2,
   Play,
   RefreshCw,
-  Square,
   Sparkles,
+  Square,
   Terminal,
   Trash2,
   X,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import StreamEdgeControls from "../../../components/StreamEdgeControls/StreamEdgeControls";
-import StreamSetupGuide from "../../../components/StreamSetupGuide/StreamSetupGuide";
-import { OctopEmptyMascot } from "../../../components/EmptyState";
-import PageShell from "../../../layouts/PageShell";
-import PeerOnlyRemoteAlert from "../../../components/PeerOnlyRemoteAlert";
+import { browserApi } from "../../../api/modules/browser";
+import type { RemoteBrowserBookmark } from "../../../api/modules/preferences";
+import { request } from "../../../api/request";
 import BrowserAiPanel from "../../../components/BrowserAiPanel";
-import SkillRecordGuideModal from "../../../components/SkillRecordGuideModal";
 import BrowserViewer, {
   type BrowserViewerHandle,
 } from "../../../components/BrowserViewer";
+import { OctopEmptyMascot } from "../../../components/EmptyState";
+import PeerOnlyRemoteAlert from "../../../components/PeerOnlyRemoteAlert";
+import SkillRecordGuideModal from "../../../components/SkillRecordGuideModal";
+import StreamEdgeControls from "../../../components/StreamEdgeControls/StreamEdgeControls";
+import StreamSetupGuide from "../../../components/StreamSetupGuide/StreamSetupGuide";
 import { useAgent } from "../../../context/AgentContext";
-import { browserApi } from "../../../api/modules/browser";
-import * as chatStore from "../../Chat/hooks/chatStore";
-import { request } from "../../../api/request";
-import { normalizeUrl } from "../../../utils/normalizeUrl";
-import { clearCanvas } from "../../../utils/browserCanvas";
-import {
-  REFRESH_INTERVAL_PRESETS,
-  refreshIntervalLabel,
-  viewportModeLabel,
-} from "../../../utils/browserViewport";
-import { useBrowserStream } from "../../../hooks/useBrowserStream";
 import { useAutoViewportResize } from "../../../hooks/useAutoViewportResize";
+import { useBrowserStream } from "../../../hooks/useBrowserStream";
 import {
-  useBrowserViewController,
   deriveActiveTabUrl,
+  useBrowserViewController,
 } from "../../../hooks/useBrowserViewController";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
+import { useIsMobile } from "../../../hooks/useIsMobile";
+import { useLandscapeFullscreen } from "../../../hooks/useLandscapeFullscreen";
 import { useRemoteBrowserBookmarks } from "../../../hooks/useRemoteBrowserBookmarks";
-import type { RemoteBrowserBookmark } from "../../../api/modules/preferences";
-import { copyText } from "../../../utils/copyText";
-import { showApiError } from "../../../utils/showApiToast";
 import {
   useViewportMode,
   VIEWPORT_MODE_OPTIONS,
   type ViewportMode,
 } from "../../../hooks/useViewportMode";
-import { useIsMobile } from "../../../hooks/useIsMobile";
-import { useLandscapeFullscreen } from "../../../hooks/useLandscapeFullscreen";
-import { useCurrentUser } from "../../../hooks/useCurrentUser";
+import PageShell from "../../../layouts/PageShell";
+import { clearCanvas } from "../../../utils/browserCanvas";
 import { resolveBrowserProfile } from "../../../utils/browserProfile";
+import {
+  REFRESH_INTERVAL_PRESETS,
+  refreshIntervalLabel,
+  viewportModeLabel,
+} from "../../../utils/browserViewport";
+import { copyText } from "../../../utils/copyText";
+import { normalizeUrl } from "../../../utils/normalizeUrl";
+import { showApiError } from "../../../utils/showApiToast";
+import * as chatStore from "../../Chat/hooks/chatStore";
 import styles from "./index.module.less";
 
 const { Text } = Typography;
@@ -608,7 +608,7 @@ export default function RemoteBrowserPage({
       title: t("remoteBrowser.uninstallTitle", "卸载内置浏览器"),
       content: t(
         "remoteBrowser.uninstallConfirm",
-        "将关闭当前浏览器窗口，并卸载 Octop 自动安装的浏览器。你电脑上已有的 Chrome 等浏览器不受影响。",
+        "将关闭当前浏览器窗口，并卸载 YYC3-Pai 自动安装的浏览器。你电脑上已有的 Chrome 等浏览器不受影响。",
       ),
       okText: t("remoteBrowser.uninstall", "卸载"),
       okButtonProps: { danger: true },
@@ -1113,7 +1113,7 @@ export default function RemoteBrowserPage({
             >
               {t(
                 "common.askOctopHint",
-                "若安装失败，可复制下方错误信息发给 Octop 排查。",
+                "若安装失败，可复制下方错误信息发给 YYC3-Pai 排查。",
               )}
             </div>
           </div>
@@ -1151,7 +1151,7 @@ export default function RemoteBrowserPage({
             )}
             description={t(
               "remoteBrowser.playwrightOptionalDesc",
-              "octop-browser (CDP) 已就绪，浏览器功能可用。如需 Playwright 备用模式，可安装 octop[browser] extras。",
+              "yyc3-browser (CDP) 已就绪，浏览器功能可用。如需 Playwright 备用模式，可安装 yyc3-pai[browser] extras。",
             )}
           />
         );
@@ -1172,7 +1172,7 @@ export default function RemoteBrowserPage({
         title={t("remoteBrowser.notInstalled", "未检测到可用浏览器")}
         subTitle={t(
           "remoteBrowser.notInstalledHint",
-          "Octop 需要浏览器才能帮你自动打开网页、填写表单和截图。点击下方按钮即可自动安装，无需手动配置。",
+          "YYC3-Pai 需要浏览器才能帮你自动打开网页、填写表单和截图。点击下方按钮即可自动安装，无需手动配置。",
         )}
         style={{ padding: "8px 0" }}
       />

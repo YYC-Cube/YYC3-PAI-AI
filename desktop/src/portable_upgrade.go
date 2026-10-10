@@ -29,7 +29,8 @@ type desktopDatabaseConfig struct {
 
 func desktopSQLitePath(home string) (string, bool, error) {
 	driver := "sqlite"
-	sqlitePath := "octop.db"
+	sqlitePath := ""
+	configured := false
 	configPath := filepath.Join(home, "config.json")
 	if data, err := os.ReadFile(configPath); err == nil {
 		var config desktopDatabaseConfig
@@ -41,6 +42,7 @@ func desktopSQLitePath(home string) (string, bool, error) {
 		}
 		if config.Database.SQLitePath != "" {
 			sqlitePath = config.Database.SQLitePath
+			configured = true
 		}
 	} else if !os.IsNotExist(err) {
 		return "", false, fmt.Errorf("read database config: %w", err)
@@ -54,12 +56,24 @@ func desktopSQLitePath(home string) (string, bool, error) {
 	}
 	if value := os.Getenv("OCTOP_DATABASE_SQLITE_PATH"); value != "" {
 		sqlitePath = value
+		configured = true
 	}
 	if driver == "postgresql" {
 		return "", false, nil
 	}
 	if driver != "sqlite" {
 		return "", false, fmt.Errorf("unsupported database driver %q", driver)
+	}
+	if !configured {
+		// New installs default to yyc3-pai.db; keep the legacy octop.db name
+		// working for existing homes (mirrors infra/utils/paths.py).
+		if _, err := os.Stat(filepath.Join(home, "yyc3-pai.db")); err == nil {
+			sqlitePath = "yyc3-pai.db"
+		} else if _, err := os.Stat(filepath.Join(home, "octop.db")); err == nil {
+			sqlitePath = "octop.db"
+		} else {
+			sqlitePath = "yyc3-pai.db"
+		}
 	}
 	if !filepath.IsAbs(sqlitePath) {
 		sqlitePath = filepath.Join(home, sqlitePath)

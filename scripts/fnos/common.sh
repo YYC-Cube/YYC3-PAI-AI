@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Octop FnOS 打包共享函数库。
+# YYC3-Pai FnOS 打包共享函数库。
 # 仓库唯一来源：scripts/fnos/common.sh
 # 打包时由 scripts/build-fpk.sh 注入到包内 cmd/common.sh；
 # fnos/docker/ 与 fnos/native/ 的 cmd 脚本及 app/bin 脚本统一 source 本文件，
@@ -75,7 +75,7 @@ octop_signal_pids() {
 }
 
 # ---------------------------------------------------------------------------
-# 释放 Octop 端口并清理本应用残留进程。
+# 释放 YYC3-Pai 端口并清理本应用残留进程。
 # 无参数：8088=Docker 版 + 8089=本地版（安装/卸载用）。
 # 有参数：只释放指定端口（本地版 stop 只清 8089，避免误伤 Docker 版）。
 # 仅清理：(1) 占用这些端口的进程；(2) 本安装目录下尚未 exec 的启动器；
@@ -213,7 +213,7 @@ octop_assert_native_arch() {
     [ -n "$packed" ] || return 0
     host="$(octop_host_fpk_arch)"
     if [ "$packed" != "$host" ]; then
-        echo "此本地版安装包是 ${packed}，当前设备是 ${host}。请改用对应架构的包：x86_64 用 Octop-fnos-native，ARM64 用 Octop-fnos-native-arm64。ARM 飞牛已装 Docker 时优先用 Docker 版。"
+        echo "此本地版安装包是 ${packed}，当前设备是 ${host}。请改用对应架构的包：x86_64 用 YYC3-Pai-fnos-native，ARM64 用 YYC3-Pai-fnos-native-arm64。ARM 飞牛已装 Docker 时优先用 Docker 版。"
         return 1
     fi
     return 0
@@ -656,42 +656,43 @@ fi
 mkdir -p "$OCTOP_HOME"
 PENDING="${OCTOP_HOME}/.fnos-apply-wizard-password"
 APPLIED="${OCTOP_HOME}/.fnos-wizard-password-applied"
-if [ ! -f "${OCTOP_HOME}/octop.db" ]; then
+# 双名兼容：yyc3-pai.db（新默认）或 octop.db（旧库）任一存在即视为已初始化。
+if [ ! -f "${OCTOP_HOME}/yyc3-pai.db" ] && [ ! -f "${OCTOP_HOME}/octop.db" ]; then
     echo "[fnos-boot] 首次初始化，使用安装向导密码 ..."
     if [ -n "$DISPLAY_NAME" ]; then
-        octop init --yes \
+        pai init --yes \
             --admin-username "$USER_NAME" \
             --admin-password "$PASSWORD" \
             --admin-display-name "$DISPLAY_NAME"
     else
-        octop init --yes \
+        pai init --yes \
             --admin-username "$USER_NAME" \
             --admin-password "$PASSWORD"
     fi
-    if [ ! -f "${OCTOP_HOME}/octop.db" ]; then
+    if [ ! -f "${OCTOP_HOME}/yyc3-pai.db" ] && [ ! -f "${OCTOP_HOME}/octop.db" ]; then
         echo "[fnos-boot] 初始化失败，未创建数据库。请查看上方日志后重启应用。" >&2
         exit 1
     fi
     if [ -n "$ADMIN_EMAIL" ]; then
-        octop user set-email "$USER_NAME" "$ADMIN_EMAIL" || true
+        pai user set-email "$USER_NAME" "$ADMIN_EMAIL" || true
     fi
     : > "$APPLIED"
     rm -f "$PENDING"
 elif [ -f "$PENDING" ]; then
     echo "[fnos-boot] 应用待处理的向导密码到管理员 ${USER_NAME} ..."
-    octop user passwd "$USER_NAME" --password "$PASSWORD" || true
+    pai user passwd "$USER_NAME" --password "$PASSWORD" || true
     if [ -n "$ADMIN_EMAIL" ]; then
-        octop user set-email "$USER_NAME" "$ADMIN_EMAIL" || true
+        pai user set-email "$USER_NAME" "$ADMIN_EMAIL" || true
     fi
     : > "$APPLIED"
     rm -f "$PENDING"
 elif [ ! -f "$APPLIED" ]; then
     echo "[fnos-boot] 首次升级到不再每次改密的引导脚本，同步一次向导密码 ..."
-    octop user passwd "$USER_NAME" --password "$PASSWORD" || true
+    pai user passwd "$USER_NAME" --password "$PASSWORD" || true
     : > "$APPLIED"
 fi
-echo "[fnos-boot] 正在启动 Octop，端口 $PORT ..."
-exec octop run --host 0.0.0.0 --port "$PORT"
+echo "[fnos-boot] 正在启动 YYC3-Pai，端口 $PORT ..."
+exec pai run --host 0.0.0.0 --port "$PORT"
 EOF
     chmod 755 "${data_dir}/fnos-boot.sh" 2>/dev/null || true
 }
@@ -705,7 +706,7 @@ octop_apply_wizard_password() {
     [ -n "$user" ] || user="admin"
     [ -n "$pass" ] || return 0
     if docker ps --format '{{.Names}}' 2>/dev/null | grep -qx octop; then
-        if docker exec octop octop user passwd "$user" --password "$pass" >/dev/null 2>&1; then
+        if docker exec octop pai user passwd "$user" --password "$pass" >/dev/null 2>&1; then
             echo "[octop] 已将向导密码同步到容器内管理员 ${user}" > "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>/dev/null || true
         fi
     fi
@@ -735,16 +736,17 @@ octop_prepare_docker_persist() {
     printf '%s' "$data_dir"
 }
 
-# 管理员凭据应急备份（数据目录 octop-login.txt，只随安装/设置窗口改密刷新）。
+# 管理员凭据应急备份（数据目录 yyc3-pai-login.txt，只随安装/设置窗口改密刷新）。
 # 设置窗口不再明文展示密码；本文件是找回安装密码的最后防线。
+# 旧版备份 octop-login.txt 在写入时一并移除（新密码已生效，旧备份作废）。
 # 调用方需保证 data_dir 已存在；文件属主交给 fix_ownership_and_perms 统一修正。
 octop_write_login_file() {
     local data_dir="$1" username="$2" password="$3" port="${4:-8089}" file
     [ -n "$data_dir" ] && [ -d "$data_dir" ] || return 0
-    file="${data_dir}/octop-login.txt"
+    file="${data_dir}/yyc3-pai-login.txt"
     cat > "$file" << EOF
 ==========================================================
- Octop 管理员登录信息（请妥善保管，勿泄露给他人）
+ YYC3-Pai 管理员登录信息（请妥善保管，勿泄露给他人）
 ==========================================================
 访问地址：http://<飞牛IP>:${port}
 管理员账号：${username}
@@ -756,6 +758,17 @@ octop_write_login_file() {
 - 模型 API Key 请在 Web 控制台「设置 → 模型」中配置。
 EOF
     chmod 600 "$file" 2>/dev/null || true
+    rm -f "${data_dir}/octop-login.txt" 2>/dev/null || true
+}
+
+# 升级迁移：旧版应急备份 octop-login.txt 更名为 yyc3-pai-login.txt
+# （仅当新名缺失且旧名存在；保留用户数据，不做任何内容改写）。
+octop_migrate_login_file() {
+    local data_dir="$1"
+    [ -n "$data_dir" ] && [ -d "$data_dir" ] || return 0
+    if [ -f "${data_dir}/octop-login.txt" ] && [ ! -f "${data_dir}/yyc3-pai-login.txt" ]; then
+        mv "${data_dir}/octop-login.txt" "${data_dir}/yyc3-pai-login.txt"
+    fi
 }
 
 # 用当前用户名渲染应用「设置」窗口表单（wizard/config）。
@@ -768,7 +781,7 @@ octop_render_config_wizard() {
     [ -d "$wizard_dir" ] || return 0
     target="${wizard_dir}/config"
     content="$(cat "$template" 2>/dev/null)" || return 0
-    dir_label="${data_dir:-应用共享 / Octop 数据目录}"
+    dir_label="${data_dir:-应用共享 / YYC3-Pai 数据目录}"
     content="${content//<octop-current-username>/${username}}"
     content="${content//<octop-current-password>/${password}}"
     content="${content//<octop-data-dir>/${dir_label}}"

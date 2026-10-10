@@ -473,12 +473,12 @@ async def uninstall_browser_stream(*, locale: str = "en") -> AsyncIterator[str]:
     """Remove Playwright-installed Chromium only (SSE).
 
     Does **not** touch the user's system Chrome/Chromium, and does **not**
-    delete ``~/.octop/browser-profiles`` or leftover ``~/.harness-browser`` data.
+    delete ``~/.yyc3-pai/browser-profiles`` or leftover ``~/.harness-browser`` data.
 
     ``locale`` is reserved for future i18n of log lines.
     """
     _ = locale
-    yield _sse({"log": "Closing Octop browser sessions…"})
+    yield _sse({"log": "Closing YYC3-Pai browser sessions…"})
     closed = await _close_harness_registry()
     if closed:
         yield _sse({"log": f"Closed {closed} in-process session(s)."})
@@ -488,7 +488,7 @@ async def uninstall_browser_stream(*, locale: str = "en") -> AsyncIterator[str]:
     # Chrome windows the user opened themselves.
     profiles_root = _profiles_root()
     if profiles_root.is_dir():
-        yield _sse({"log": "Stopping Octop-managed browser processes…"})
+        yield _sse({"log": "Stopping YYC3-Pai-managed browser processes…"})
         for child in sorted(profiles_root.iterdir()):
             if child.is_dir() and not child.name.startswith("."):
                 await asyncio.to_thread(pkill_chrome_profile, child)

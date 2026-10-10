@@ -1,8 +1,8 @@
-# Octop Docker 部署
+# YYC3-Pai Docker 部署
 
 ---
 
-本目录包含 Octop 的 Docker 构建与部署相关文件。
+本目录包含 YYC3-Pai 的 Docker 构建与部署相关文件。
 
 ### 文件说明
 
@@ -13,7 +13,7 @@
 | `docker_build.sh` | 从源码构建镜像（默认开启 BuildKit 缓存） |
 | `docker-compose.yml` | 本地开发 / 自托管一键启动 |
 | `docker-compose.postgres.yml` | 仅 PostgreSQL（+ pgvector）开发/测试库；扩展在 `postgres/init-vector.sql` |
-| `postgres/init-vector.sql` | 实例级 `CREATE EXTENSION vector`（initdb.d；**不**进 Octop 迁移） |
+| `postgres/init-vector.sql` | 实例级 `CREATE EXTENSION vector`（initdb.d；**不**进 YYC3-Pai 迁移） |
 | `docker-entrypoint.sh` | 容器入口：首次初始化数据库并启动服务 |
 
 ### 快速开始
@@ -26,18 +26,18 @@
 docker compose -f docker/docker-compose.yml up -d --build
 ```
 
-访问 `http://localhost:8088`。未设置 `OCTOP_DEFAULT_PASSWORD` 时，首次初始化会自动生成随机密码并写入 `/data/.octop/credential.txt`；设置了则按设置值初始化（须 ≥8 位且同时包含字母和数字；被应用密码策略拒绝的常见弱密码会自动回退为随机密码）。首次登录后请立即修改密码。
+访问 `http://localhost:8088`。未设置 `YYC3_DEFAULT_PASSWORD` 时，首次初始化会自动生成随机密码并写入 `/data/.yyc3-pai/credential.txt`；设置了则按设置值初始化（须 ≥8 位且同时包含字母和数字；被应用密码策略拒绝的常见弱密码会自动回退为随机密码）。首次登录后请立即修改密码。
 
 **方式二：构建脚本**
 
 ```bash
 bash docker/docker_build.sh
 docker run -d \
-  --name octop \
+  --name yyc3-pai \
   -p 8088:8088 \
-  -v octop-data:/data/.octop \
+  -v yyc3-pai-data:/data/.yyc3-pai \
   -e HOME=/data \
-  octop:latest
+  yyc3-pai:latest
 ```
 
 ### 国内镜像加速
@@ -56,22 +56,23 @@ bash docker/docker_build.sh
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `HOME` | `/data` | 必须为 `/data`，数据目录映射到 `~/.octop` |
-| `OCTOP_PORT` | `8088` | HTTP 服务端口 |
-| `OCTOP_DEFAULT_PASSWORD` | _(未设置)_ | 首次管理员密码（≥8 位，字母+数字）。未设置时自动生成随机密码并写入 `credential.txt` |
-| `OCTOP_ADMIN_USERNAME` | `admin` | 首次管理员用户名 |
-| `OCTOP_DATABASE_URL` | — | PostgreSQL DSN（或其他 `OCTOP_DATABASE_*`，见 [configuration.md](../docs/configuration.md)） |
-| `OCTOP_DATABASE_DRIVER` | — | 通过环境变量覆盖时：`sqlite` \| `postgresql` |
+| `HOME` | `/data` | 必须为 `/data`，数据目录映射到 `~/.yyc3-pai` |
+| `YYC3_PORT` | `8088` | HTTP 服务端口 |
+| `YYC3_DEFAULT_PASSWORD` | _(未设置)_ | 首次管理员密码（≥8 位，字母+数字）。未设置时自动生成随机密码并写入 `credential.txt` |
+| `YYC3_ADMIN_USERNAME` | `admin` | 首次管理员用户名 |
+| `YYC3_PAI_HOME` | `~/.yyc3-pai` | 数据根目录 |
+| `YYC3_DATABASE_URL` | — | PostgreSQL DSN（或其他 `YYC3_DATABASE_*`，见 [configuration.md](../docs/configuration.md)） |
+| `YYC3_DATABASE_DRIVER` | — | 通过环境变量覆盖时：`sqlite` \| `postgresql` |
 | `OPENAI_API_KEY` | — | OpenAI 兼容 API Key |
 | `DASHSCOPE_API_KEY` | — | 阿里云通义千问 API Key |
 
-Compose 可在 `docker/.env` 中配置上述变量。注意：`.env` 只参与 Compose 插值，变量必须出现在 `docker-compose.yml` 的 `environment:` 中才会进入容器。也可把相同键写入挂载数据目录下的 `~/.octop/env`。
+旧变量 `OCTOP_*` 仍作为兜底兼容。Compose 可在 `docker/.env` 中配置上述变量。注意：`.env` 只参与 Compose 插值，变量必须出现在 `docker-compose.yml` 的 `environment:` 中才会进入容器。也可把相同键写入挂载数据目录下的 `~/.yyc3-pai/env`。
 
 ### 数据持久化
 
-- Compose 默认将宿主机 `~/.octop` 挂载到容器 `/data/.octop`
-- `docker run` 示例使用命名卷 `octop-data`
-- 首次启动会自动执行 `octop init`，凭据写入容器内 `/data/.octop/credential.txt`。未设置 `OCTOP_DEFAULT_PASSWORD` 时自动生成随机密码；指定的密码被应用密码策略拒绝时自动回退为随机密码（首次初始化绝不因弱默认密码而失败）。
+- Compose 默认将宿主机 `~/.yyc3-pai` 挂载到容器 `/data/.yyc3-pai`
+- `docker run` 示例使用命名卷 `yyc3-pai-data`
+- 首次启动会自动执行 `pai init`，凭据写入容器内 `/data/.yyc3-pai/credential.txt`。未设置 `YYC3_DEFAULT_PASSWORD` 时自动生成随机密码；指定的密码被应用密码策略拒绝时自动回退为随机密码（首次初始化绝不因弱默认密码而失败）。
 
 ### 健康检查
 
@@ -84,8 +85,8 @@ curl http://localhost:8088/api/health
 ### 常用运维命令
 
 ```bash
-docker logs -f octop
-docker exec -it octop octop --version
+docker logs -f yyc3-pai
+docker exec -it yyc3-pai pai --version
 docker compose -f docker/docker-compose.yml down
 docker compose -f docker/docker-compose.yml up -d --build
 ```

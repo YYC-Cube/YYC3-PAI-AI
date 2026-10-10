@@ -1,4 +1,4 @@
-"""Octop host-side plugin management."""
+"""YYC3-Pai host-side plugin management."""
 
 from octop.infra.agents.plugins.manager import PluginManager
 from octop.infra.agents.plugins.plugin_tool_defaults import (

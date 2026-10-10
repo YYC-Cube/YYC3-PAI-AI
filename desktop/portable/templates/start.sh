@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Octop green portable launcher (macOS / Linux).
+# YYC3-Pai green portable launcher (macOS / Linux).
 # Usage:
 #   ./start.sh
 #   ./start.sh --home /path/to/data
@@ -32,9 +32,9 @@ while [[ $# -gt 0 ]]; do
       ;;
     -h|--help)
       cat <<EOF
-Octop green portable launcher
+YYC3-Pai green portable launcher
 
-Usage: ./start.sh [--home DIR] [--host HOST] [--port PORT] [octop run args...]
+Usage: ./start.sh [--home DIR] [--host HOST] [--port PORT] [pai run args...]
 
 Defaults:
   OCTOP_HOME / --home   ${ROOT}/data
@@ -70,8 +70,8 @@ fi
 export PYTHONNOUSERSITE=1
 unset PYTHONPATH || true
 
-echo "[octop] home=${OCTOP_HOME}"
-echo "[octop] http://${HOST}:${PORT}"
+echo "[pai] home=${OCTOP_HOME}"
+echo "[pai] http://${HOST}:${PORT}"
 if [[ ${#EXTRA[@]} -gt 0 ]]; then
   exec "$PY" "${ROOT}/launch.py" run --host "$HOST" --port "$PORT" "${EXTRA[@]}"
 else

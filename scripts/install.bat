@@ -1,14 +1,15 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-REM Octop Installer for Windows (cmd.exe)
+REM YYC3-Pai Installer for Windows (cmd.exe)
 REM Usage: install.bat [-Version X.Y.Z] [-FromSource] [-SourceDir DIR] [-Extras browser] [-Help]
 
-if defined OCTOP_HOME (set "OCTOP_HOME=%OCTOP_HOME%") else (set "OCTOP_HOME=%USERPROFILE%\.octop")
+REM YYC3_PAI_HOME 为主，旧 OCTOP_* 环境变量与 ~/.octop 目录兜底兼容。
+if defined YYC3_PAI_HOME (set "OCTOP_HOME=%YYC3_PAI_HOME%") else if defined OCTOP_HOME (set "OCTOP_HOME=%OCTOP_HOME%") else if exist "%USERPROFILE%\.octop" (set "OCTOP_HOME=%USERPROFILE%\.octop") else (set "OCTOP_HOME=%USERPROFILE%\.yyc3-pai")
 set "OCTOP_VENV=%OCTOP_HOME%\venv"
 set "OCTOP_BIN=%OCTOP_HOME%\bin"
 set "PYTHON_VERSION=3.12"
-if defined OCTOP_REPO (set "OCTOP_REPO=%OCTOP_REPO%") else (set "OCTOP_REPO=https://github.com/TencentCloud/Octop.git")
+if defined YYC3_PAI_REPO (set "OCTOP_REPO=%YYC3_PAI_REPO%") else if defined OCTOP_REPO (set "OCTOP_REPO=%OCTOP_REPO%") else (set "OCTOP_REPO=https://github.com/YYC-Cube/YYC3-Pai.git")
 
 set "ARG_VERSION="
 set "ARG_FROM_SOURCE=0"
@@ -29,7 +30,7 @@ shift
 goto :parse_args
 
 :show_help
-echo Octop Installer for Windows
+echo YYC3-Pai Installer for Windows
 echo.
 echo Usage: install.bat [OPTIONS]
 echo   -Version ^<VER^>     Install specific version
@@ -43,29 +44,29 @@ echo         to install it, or install later from the dashboard.
 exit /b 0
 
 :done_args
-echo [octop] Installing Octop into %OCTOP_HOME%
+echo [pai] Installing YYC3-Pai into %OCTOP_HOME%
 
 call :ensure_uv
 if errorlevel 1 exit /b 1
 
 if exist "%OCTOP_VENV%" (
-    echo [octop] Existing environment found, upgrading...
+    echo [pai] Existing environment found, upgrading...
 ) else (
-    echo [octop] Creating Python %PYTHON_VERSION% environment...
+    echo [pai] Creating Python %PYTHON_VERSION% environment...
 )
 
 uv venv "%OCTOP_VENV%" --python %PYTHON_VERSION% --quiet --clear
-if errorlevel 1 (echo [octop] ERROR: Failed to create venv & exit /b 1)
+if errorlevel 1 (echo [pai] ERROR: Failed to create venv & exit /b 1)
 
 set "VENV_PYTHON=%OCTOP_VENV%\Scripts\python.exe"
-if not exist "%VENV_PYTHON%" (echo [octop] ERROR: venv python missing & exit /b 1)
+if not exist "%VENV_PYTHON%" (echo [pai] ERROR: venv python missing & exit /b 1)
 
 for /f "delims=" %%v in ('"%VENV_PYTHON%" --version 2^>^&1') do set "PY_VERSION=%%v"
-echo [octop] Python environment ready (%PY_VERSION%)
+echo [pai] Python environment ready (%PY_VERSION%)
 
 set "EXTRAS_SUFFIX=[browser]"
 if defined ARG_EXTRAS set "EXTRAS_SUFFIX=[browser,%ARG_EXTRAS%]"
-set "VENV_OCTOP=%OCTOP_VENV%\Scripts\octop.exe"
+set "VENV_OCTOP=%OCTOP_VENV%\Scripts\pai.exe"
 
 if "%ARG_FROM_SOURCE%"=="1" goto :install_from_source
 goto :install_from_pypi
@@ -76,15 +77,15 @@ goto :install_from_git
 
 :install_from_local
 for %%I in ("%ARG_SOURCE_DIR%") do set "ARG_SOURCE_DIR=%%~fI"
-echo [octop] Installing from local source: %ARG_SOURCE_DIR%
+echo [pai] Installing from local source: %ARG_SOURCE_DIR%
 call :prepare_console "%ARG_SOURCE_DIR%"
 uv pip install "%ARG_SOURCE_DIR%%EXTRAS_SUFFIX%" --python "%VENV_PYTHON%"
-if errorlevel 1 (echo [octop] ERROR: install failed & exit /b 1)
+if errorlevel 1 (echo [pai] ERROR: install failed & exit /b 1)
 goto :install_verify
 
 :install_from_git
 where git >nul 2>&1
-if errorlevel 1 (echo [octop] ERROR: git required & exit /b 1)
+if errorlevel 1 (echo [pai] ERROR: git required & exit /b 1)
 set "CLONE_DIR=%TEMP%\octop-install-%RANDOM%"
 git clone --depth 1 %OCTOP_REPO% "%CLONE_DIR%"
 if errorlevel 1 exit /b 1
@@ -100,15 +101,15 @@ REM PEP 508: extras must sit between name and version specifier
 REM (octop[browser]==x.y.z); octop==x.y.z[browser] is an invalid requirement.
 set "_PACKAGE=octop%EXTRAS_SUFFIX%"
 if defined ARG_VERSION set "_PACKAGE=octop%EXTRAS_SUFFIX%==%ARG_VERSION%"
-echo [octop] Installing %_PACKAGE% from PyPI...
+echo [pai] Installing %_PACKAGE% from PyPI...
 uv pip install "%_PACKAGE%" --python "%VENV_PYTHON%"
-if errorlevel 1 (echo [octop] ERROR: install failed & exit /b 1)
+if errorlevel 1 (echo [pai] ERROR: install failed & exit /b 1)
 
 :install_verify
 call :verify_install
 if errorlevel 1 exit /b 1
-if not exist "%VENV_OCTOP%" (echo [octop] ERROR: octop CLI not found & exit /b 1)
-echo [octop] Octop installed successfully
+if not exist "%VENV_OCTOP%" (echo [pai] ERROR: pai CLI not found & exit /b 1)
+echo [pai] YYC3-Pai installed successfully
 
 if "%CONSOLE_AVAILABLE%"=="0" (
     "%VENV_PYTHON%" -c "import importlib.resources, octop; p=importlib.resources.files('octop')/'dashboard'/'index.html'; print('yes' if p.is_file() else 'no')" > "%TEMP%\_octop_ui.tmp" 2>&1
@@ -119,50 +120,51 @@ if "%CONSOLE_AVAILABLE%"=="0" (
 
 echo ",%ARG_EXTRAS%," | findstr /i /c:",browser," >nul
 if errorlevel 1 (
-    echo [octop] Skipping Playwright Chromium download.
-    echo [octop] For remote-browser automation, re-run with -Extras browser, use the dashboard, or:
-    echo [octop]   "%VENV_PYTHON%" -m playwright install chromium
+    echo [pai] Skipping Playwright Chromium download.
+    echo [pai] For remote-browser automation, re-run with -Extras browser, use the dashboard, or:
+    echo [pai]   "%VENV_PYTHON%" -m playwright install chromium
     goto :after_browser
 )
 call :detect_chrome
 if defined OCTOP_SYSTEM_CHROME (
-    echo [octop] Found system Chrome/Chromium: %OCTOP_SYSTEM_CHROME%
-    echo [octop] Using system browser; skipping Playwright Chromium download.
-    echo [octop] To use bundled Chromium instead, run: "%VENV_PYTHON%" -m playwright install chromium
+    echo [pai] Found system Chrome/Chromium: %OCTOP_SYSTEM_CHROME%
+    echo [pai] Using system browser; skipping Playwright Chromium download.
+    echo [pai] To use bundled Chromium instead, run: "%VENV_PYTHON%" -m playwright install chromium
     goto :after_browser
 )
-echo [octop] Installing Playwright Chromium browser...
+echo [pai] Installing Playwright Chromium browser...
 "%VENV_PYTHON%" -m playwright install chromium
 if errorlevel 1 (
-    echo [octop] WARNING: Playwright install failed. Run later: "%VENV_PYTHON%" -m playwright install chromium
+    echo [pai] WARNING: Playwright install failed. Run later: "%VENV_PYTHON%" -m playwright install chromium
 )
 :after_browser
 
 if not exist "%OCTOP_BIN%" mkdir "%OCTOP_BIN%"
 
-echo @echo off > "%OCTOP_BIN%\octop.cmd"
-echo set "OCTOP_HOME=%%OCTOP_HOME%%" >> "%OCTOP_BIN%\octop.cmd"
-echo if "%%OCTOP_HOME%%"=="" set "OCTOP_HOME=%%USERPROFILE%%\.octop" >> "%OCTOP_BIN%\octop.cmd"
-echo "%%OCTOP_HOME%%\venv\Scripts\octop.exe" %%* >> "%OCTOP_BIN%\octop.cmd"
+echo @echo off > "%OCTOP_BIN%\pai.cmd"
+echo set "OCTOP_HOME=%%OCTOP_HOME%%" >> "%OCTOP_BIN%\pai.cmd"
+echo if "%%OCTOP_HOME%%"=="" set "OCTOP_HOME=%%USERPROFILE%%\.yyc3-pai" >> "%OCTOP_BIN%\pai.cmd"
+echo if not exist "%%OCTOP_HOME%%\venv\Scripts\pai.exe" set "OCTOP_HOME=%%USERPROFILE%%\.octop" >> "%OCTOP_BIN%\pai.cmd"
+echo "%%OCTOP_HOME%%\venv\Scripts\pai.exe" %%* >> "%OCTOP_BIN%\pai.cmd"
 
 set "OCTOP_BIN_FOR_PS=%OCTOP_BIN%"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$bin=$env:OCTOP_BIN_FOR_PS; $cur=[Environment]::GetEnvironmentVariable('Path','User'); if(-not $cur){$cur=''}; $parts=$cur.Split(';')|?{$_}; $ok=$false; foreach($p in $parts){if($p.TrimEnd('\') -ieq $bin.TrimEnd('\')){$ok=$true}}; if(-not $ok){$new=if($cur){$cur.TrimEnd(';')+';'+$bin}else{$bin}; [Environment]::SetEnvironmentVariable('Path',$new,'User'); Write-Host '[octop] Added to User PATH'} else {Write-Host '[octop] Already in User PATH'}"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$bin=$env:OCTOP_BIN_FOR_PS; $cur=[Environment]::GetEnvironmentVariable('Path','User'); if(-not $cur){$cur=''}; $parts=$cur.Split(';')|?{$_}; $ok=$false; foreach($p in $parts){if($p.TrimEnd('\') -ieq $bin.TrimEnd('\')){$ok=$true}}; if(-not $ok){$new=if($cur){$cur.TrimEnd(';')+';'+$bin}else{$bin}; [Environment]::SetEnvironmentVariable('Path',$new,'User'); Write-Host '[pai] Added to User PATH'} else {Write-Host '[pai] Already in User PATH'}"
 set "OCTOP_BIN_FOR_PS="
 echo %PATH% | findstr /i /c:"%OCTOP_BIN%" >nul || set "PATH=%OCTOP_BIN%;%PATH%"
 
 echo.
-echo Octop installed successfully!
+echo YYC3-Pai installed successfully!
 echo   Location: %OCTOP_HOME%
 echo   Python:   %PY_VERSION%
 echo.
-echo If 'octop' is not found in this session, run:
+echo If 'pai' is not found in this session, run:
 echo   set PATH=%OCTOP_BIN%;%%PATH%%
 echo Or open a new terminal ^(saved to User PATH^).
 echo.
 echo Then run:
-echo   octop init
-echo   octop run
-echo   octop service start
+echo   pai init
+echo   pai run
+echo   pai service start
 echo   http://127.0.0.1:8088
 exit /b 0
 
@@ -199,7 +201,7 @@ exit /b 0
 
 :ensure_uv
 if defined ARG_UV_PATH (
-    if not exist "%ARG_UV_PATH%" (echo [octop] ERROR: uv not found & exit /b 1)
+    if not exist "%ARG_UV_PATH%" (echo [pai] ERROR: uv not found & exit /b 1)
     for %%I in ("%ARG_UV_PATH%") do set "PATH=%%~dpI;!PATH!"
     goto :ensure_uv_done
 )
@@ -208,10 +210,10 @@ if not errorlevel 1 goto :ensure_uv_done
 for %%c in ("%USERPROFILE%\.local\bin\uv.exe" "%LOCALAPPDATA%\uv\uv.exe") do (
     if exist %%c (set "PATH=%%~dpc;!PATH!" & goto :ensure_uv_done)
 )
-echo [octop] Installing uv...
+echo [pai] Installing uv...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://astral.sh/uv/install.ps1 -TimeoutSec 15 | iex" 2>nul
 if not errorlevel 1 goto :ensure_uv_refresh
-echo [octop] astral.sh failed, trying GitHub...
+echo [pai] astral.sh failed, trying GitHub...
 call :download_uv_github
 if errorlevel 1 exit /b 1
 goto :ensure_uv_done
@@ -220,7 +222,7 @@ goto :ensure_uv_done
 for %%p in ("%USERPROFILE%\.local\bin" "%LOCALAPPDATA%\uv") do (
     if exist %%p echo "!PATH!" | findstr /i /c:"%%~p" >nul || set "PATH=%%~p;!PATH!"
 )
-where uv >nul 2>&1 || (echo [octop] ERROR: uv install failed & exit /b 1)
+where uv >nul 2>&1 || (echo [pai] ERROR: uv install failed & exit /b 1)
 :ensure_uv_done
 exit /b 0
 
@@ -242,7 +244,7 @@ set "_DEST=%_RD%\src\octop\dashboard"
 if exist "%_DEST%\index.html" (set "CONSOLE_AVAILABLE=1" & exit /b 0)
 if not exist "%_RD%\dashboard\package.json" exit /b 0
 where npm >nul 2>&1 || exit /b 0
-echo [octop] Building dashboard...
+echo [pai] Building dashboard...
 pushd "%_RD%\dashboard"
 npm ci && npm run build
 popd
@@ -250,8 +252,8 @@ if exist "%_DEST%\index.html" set "CONSOLE_AVAILABLE=1"
 exit /b 0
 
 :verify_install
-echo [octop] Verifying installation...
+echo [pai] Verifying installation...
 "%VENV_PYTHON%" -c "from octop.infra.agents.manager import AgentManager" >nul 2>&1
-if errorlevel 1 (echo [octop] ERROR: install verification failed & exit /b 1)
-echo [octop] Install verification passed
+if errorlevel 1 (echo [pai] ERROR: install verification failed & exit /b 1)
+echo [pai] Install verification passed
 exit /b 0

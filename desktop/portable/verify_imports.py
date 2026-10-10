@@ -3,7 +3,7 @@
 
 Usage:
   python desktop/portable/verify_imports.py \\
-    --packages desktop/portable/release/Octop-<plat>/packages \\
+    --packages desktop/portable/release/YYC3-Pai-<plat>/packages \\
     --requirements desktop/portable/requirements-<plat>.txt \\
     [--overrides desktop/portable/overrides-<plat>.txt]
 """

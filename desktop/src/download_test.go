@@ -532,7 +532,7 @@ func TestFormatHealthWaitErrorIsActionableChinese(t *testing.T) {
 	}
 	msg := err.Error()
 	for _, needle := range []string{
-		"Octop 服务未在",
+		"YYC3-Pai 服务未在",
 		"1 分钟",
 		"http://127.0.0.1:8088",
 		"请确认",
@@ -552,10 +552,10 @@ func TestFormatHealthWaitErrorIsActionableChinese(t *testing.T) {
 func TestFormatHealthWaitErrorUsesEnglishWhenLocaleIsEn(t *testing.T) {
 	msg := formatHealthWaitError(LocaleEN, "http://127.0.0.1:8088", time.Minute, errors.New("connection refused"), 0).Error()
 	for _, needle := range []string{
-		"Octop did not become ready within",
+		"YYC3-Pai did not become ready within",
 		"1 minute",
 		"http://127.0.0.1:8088",
-		"make sure Octop is running",
+		"make sure YYC3-Pai is running",
 	} {
 		if !strings.Contains(msg, needle) {
 			t.Fatalf("English health error missing %q: %s", needle, msg)
@@ -595,7 +595,7 @@ func TestWaitHealthTimesOutWithFriendlyMessage(t *testing.T) {
 	if strings.Contains(err.Error(), "did not become healthy") {
 		t.Fatalf("should not use the old English diagnostic: %s", err)
 	}
-	if !strings.Contains(err.Error(), "Octop did not become ready within") {
+	if !strings.Contains(err.Error(), "YYC3-Pai did not become ready within") {
 		t.Fatalf("timeout should follow the desktop locale: %s", err)
 	}
 }

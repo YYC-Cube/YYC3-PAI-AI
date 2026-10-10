@@ -493,7 +493,7 @@ export default function Sidebar({
     <>
       <img
         src={isRailCollapsed ? "/pwa-192.png" : wordmarkSrc}
-        alt="Octop"
+        alt="YYC3-Pai"
         style={{
           height: isRailCollapsed ? 32 : isMobile ? 38 : 36,
           width: isRailCollapsed ? 32 : "auto",

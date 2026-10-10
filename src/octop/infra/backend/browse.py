@@ -10,7 +10,7 @@ import tempfile
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 from octop_harness.backends import resolve_backend
 from octop_harness.backends.storage_errors import (
@@ -215,19 +215,21 @@ async def _list_backend_entries(backend: Any, path: str) -> list[Any]:
 
 
 async def _download_via_backend(backend: Any, path: str) -> bytes:
-    adownload = getattr(backend, "adownload_files", None)
-    download = getattr(backend, "download_files", None)
+    adownload: Any = getattr(backend, "adownload_files", None)
+    download: Any = getattr(backend, "download_files", None)
     if callable(adownload):
-        results = await adownload([path])
+        download_many = cast("Callable[[list[str]], Awaitable[Any]]", adownload)
+        results = await download_many([path])
     elif callable(download):
-        results = await asyncio.to_thread(download, [path])
+        download_sync = cast("Callable[[list[str]], Any]", download)
+        results = await asyncio.to_thread(download_sync, [path])
     else:
         raise StorageBrowseError(
             classify_storage_error("download is not supported on this backend"),
         )
     if not results:
         raise FileNotFoundError(f"cannot read {path!r}")
-    first = results[0]
+    first: Any = results[0]
     err = _download_row_error(first)
     if err in {"file_not_found", "invalid_path", "is_directory"}:
         raise FileNotFoundError(f"cannot read {path!r}: {err}")

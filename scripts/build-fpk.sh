@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 # =============================================================================
-# 构建 Octop 飞牛 FnOS 安装包 (.fpk)
+# 构建 YYC3-Pai 飞牛 FnOS 安装包 (.fpk)
 #
 # 直接使用官方 fnpack CLI 打包（fnpack 在生成 .fpk 前会校验 manifest / cmd /
 # config / wizard / app 等结构，确保产物与飞牛 fnOS 安装校验完全一致）。
 #
 # 用法（在仓库根目录执行):
-#   bash scripts/build-fpk.sh docker      # 构建 Docker 版  -> dist/Octop-fnos-docker-<ver>.fpk
-#   bash scripts/build-fpk.sh native      # 构建本地版(非Docker) -> dist/Octop-fnos-native-<ver>.fpk
+#   bash scripts/build-fpk.sh docker      # 构建 Docker 版  -> dist/YYC3-Pai-fnos-docker-<ver>.fpk
+#   bash scripts/build-fpk.sh native      # 构建本地版(非Docker) -> dist/YYC3-Pai-fnos-native-<ver>.fpk
 #   bash scripts/build-fpk.sh             # 两个都构建
 #
 # 环境变量：
-#   FPK_NAME_PREFIX  输出文件名前缀，默认 "octop"
-#                    例如 FPK_NAME_PREFIX=Octop-fnos 会生成 Octop-fnos-docker-<ver>.fpk / Octop-fnos-native-<ver>.fpk
+#   FPK_NAME_PREFIX  输出文件名前缀，默认 "YYC3-Pai-fnos"
+#                    例如 FPK_NAME_PREFIX=YYC3-Pai-fnos 会生成 YYC3-Pai-fnos-docker-<ver>.fpk / YYC3-Pai-fnos-native-<ver>.fpk
 #   FPK_ITER         迭代号，默认空
 #                    例如 FPK_ITER=01 会生成 ...-<ver>-01.fpk（通常不需要，按版本号发布）
-#   FPK_ARCH         本地版架构。arm64 → Octop-fnos-native-arm64-<ver>.fpk，
+#   FPK_ARCH         本地版架构。arm64 → YYC3-Pai-fnos-native-arm64-<ver>.fpk，
 #                    并写入 manifest platform=arm64。空或其它值保持现有 x86 包名。
 #                    fnpack 官方只有 linux-amd64，ARM 包应在 amd64 主机上打包
 #                    （site-packages 先在 aarch64 上装好再拷过来）。
@@ -47,10 +47,10 @@ case "$VER" in
     exit 1
     ;;
 esac
-echo "[build-fpk] Octop 版本: $VER"
+echo "[build-fpk] YYC3-Pai 版本: $VER"
 
-# 输出文件名前缀与迭代号（由 CI 传入，实现 Octop-fnos-docker-0.9.30.fpk 风格）
-PREFIX="${FPK_NAME_PREFIX:-octop}"
+# 输出文件名前缀与迭代号（由 CI 传入，实现 YYC3-Pai-fnos-docker-0.9.30.fpk 风格）
+PREFIX="${FPK_NAME_PREFIX:-YYC3-Pai-fnos}"
 ITER_SUFFIX=""
 if [ -n "${FPK_ITER:-}" ]; then
   ITER_SUFFIX="-$FPK_ITER"
@@ -160,9 +160,9 @@ build_one() {
   if [ "$KIND" = "docker" ]; then
     local compose="$BUILD/app/docker/docker-compose.yaml" image_tag="${FPK_IMAGE_TAG:-$VER}"
     if [ -f "$compose" ]; then
-      sed -i.bak -E "s#ghcr.io/tencentcloud/octop:[^[:space:]]+#ghcr.io/tencentcloud/octop:${image_tag}#" "$compose"
+      sed -i.bak -E "s#ghcr.io/yyc-cube/yyc3-pai:[^[:space:]]+#ghcr.io/yyc-cube/yyc3-pai:${image_tag}#" "$compose"
       rm -f "${compose}.bak"
-      echo "[build-fpk] compose 镜像: ghcr.io/tencentcloud/octop:${image_tag}"
+      echo "[build-fpk] compose 镜像: ghcr.io/yyc-cube/yyc3-pai:${image_tag}"
     fi
   fi
 

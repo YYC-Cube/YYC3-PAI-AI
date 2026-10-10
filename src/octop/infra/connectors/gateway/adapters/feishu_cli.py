@@ -28,12 +28,12 @@ _USER_ONLY_SHORTCUTS = frozenset(
 
 _USER_AUTH_REQUIRED_MSG = (
     "文档搜索需要先完成飞书账号授权。"
-    "请用户打开 Octop「连接器 → 飞书 CLI」，点击「登录授权」并在弹出页完成授权，然后点「我已授权」。"
+    "请用户打开 YYC3-Pai「连接器 → 飞书 CLI」，点击「登录授权」并在弹出页完成授权，然后点「我已授权」。"
     "禁止建议、生成或执行任何终端命令（包括任何 CLI）。"
 )
 _MISSING_SEARCH_SCOPE_MSG = (
     "文档搜索权限尚未授予当前登录用户。"
-    "请用户打开 Octop「连接器 → 飞书 CLI」，点击「登录授权」重新授权；"
+    "请用户打开 YYC3-Pai「连接器 → 飞书 CLI」，点击「登录授权」重新授权；"
     "若仍失败，再到飞书开放平台确认已开通并发布「搜索云文档」权限。"
     "禁止建议、生成或执行任何终端命令（包括任何 CLI）。"
 )
@@ -42,9 +42,9 @@ TOOLS: list[dict[str, Any]] = [
     {
         "name": "doc",
         "description": (
-            "Feishu docs via Octop Connectors (gateway). "
+            "Feishu docs via YYC3-Pai Connectors (gateway). "
             "method examples: '+search', '+fetch', '+create'. "
-            "On auth/permission errors: tell the user to open Octop "
+            "On auth/permission errors: tell the user to open YYC3-Pai "
             "Connectors → 飞书 CLI → 登录授权. "
             "NEVER suggest or run shell/CLI commands. NEVER invent auth login commands."
         ),

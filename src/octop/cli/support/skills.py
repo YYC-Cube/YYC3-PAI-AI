@@ -12,7 +12,7 @@ from octop.infra.errors import ErrorCode, OctopError
 
 
 async def list_skills_async(agent_id: str) -> list[dict[str, Any]]:
-    """List installed skills via a short-lived embedded OctopServer."""
+    """List installed skills via a short-lived embedded server."""
     async with embedded_runtime() as server:
         assert server.app_runtime is not None
         return await server.app_runtime.agent_registry.list_skill_summaries(agent_id)

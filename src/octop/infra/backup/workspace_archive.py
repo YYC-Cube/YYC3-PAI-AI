@@ -257,7 +257,7 @@ async def import_workspace_zip(
     skipped = len(entries) - len(pairs)
     if skipped:
         warnings.append(
-            f"skipped {skipped} {OCTOP_BUILTIN_SKILLS_ROOT!r} entry/entries (owned by Octop)"
+            f"skipped {skipped} {OCTOP_BUILTIN_SKILLS_ROOT!r} entry/entries (owned by YYC3-Pai)"
         )
     if pairs:
         await workspace.aupload_many(pairs)

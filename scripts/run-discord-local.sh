@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Run Octop against the sibling gateway source for local development.
+# Run YYC3-Pai against the sibling gateway source for local development.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 bridge_dir="$(cd ../octop-gateway && pwd)"
 if [[ ! -x .venv/bin/python ]]; then
-  echo "Create the Octop development environment first: uv sync --extra dev" >&2
+  echo "Create the YYC3-Pai development environment first: uv sync --extra dev" >&2
   exit 1
 fi
 if ! .venv/bin/python - "$bridge_dir" <<'PY'
@@ -22,4 +22,4 @@ then
   uv pip install --python .venv/bin/python --no-deps --editable "$bridge_dir"
 fi
 # A normal uv run would replace the editable gateway with the locked PyPI release.
-exec uv run --no-sync octop run "$@"
+exec uv run --no-sync pai run "$@"
