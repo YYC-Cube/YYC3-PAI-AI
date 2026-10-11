@@ -42,7 +42,7 @@ from typing import Any, cast
 
 import yaml
 from fastapi import APIRouter, Depends, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from octop.api.common.agent import require_agent_owner_row, require_agent_row
 from octop.api.deps import current_user, get_server, require_permission
@@ -69,6 +69,7 @@ from octop.infra.skills.skill_transfer import (
     copy_workspace_skill_to_package,
     copy_workspace_skill_to_workspace,
 )
+from octop.infra.skills.synthesis_service import TrajectorySkillSynthesizer
 from octop.infra.utils.locale import Locale, resolve_request_locale
 
 logger = logging.getLogger(__name__)
@@ -471,6 +472,45 @@ async def validate_chat_skills(
     from octop.api.common.validators import validate_chat_skills as _validate
 
     return await _validate(server, agent_id=agent_id, user=user, names=names)
+
+
+# --- trajectory synthesis ---------------------------------------------------
+
+
+class SynthesizeSkillBody(BaseModel):
+    thread_id: str = Field(min_length=1, max_length=100)
+    title: str = Field(min_length=1, max_length=200)
+
+
+class SynthesizedSkillOut(BaseModel):
+    name: str
+    markdown: str
+
+
+@router.post(
+    "/skills/synthesize",
+    response_model=SynthesizedSkillOut,
+    summary="Draft a SKILL.md from a thread trajectory",
+    description=(
+        "Generate a skill draft from the calling user's own thread "
+        "trajectory (tool-call pairs distilled into a reusable procedure). "
+        "The draft is returned only — nothing is persisted; review it, then "
+        "save via the agent-scoped skill create endpoint."
+    ),
+)
+async def synthesize_skill_from_thread(
+    body: SynthesizeSkillBody,
+    user: Any = Depends(current_user),
+    server: Any = Depends(get_server),
+) -> SynthesizedSkillOut:
+    if server.services is None:
+        raise OctopError(ErrorCode.INTERNAL_ERROR, "services not initialized")
+    synthesizer = TrajectorySkillSynthesizer(
+        trajectory_repo=server.services.trajectory_event_repo,
+        thread_repo=server.services.thread_repo,
+    )
+    draft = synthesizer.draft(thread_id=body.thread_id, user_id=user.id, title=body.title)
+    return SynthesizedSkillOut(name=draft.name, markdown=draft.markdown)
 
 
 # --- read endpoints ---------------------------------------------------------

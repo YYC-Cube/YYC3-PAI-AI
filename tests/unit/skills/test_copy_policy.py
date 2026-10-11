@@ -5,7 +5,6 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
-from tests.unit.skills.test_skill_transfer import _MemWorkspace
 
 from octop.infra.errors import ErrorCode, OctopError
 from octop.infra.skills.skill_package_store import (
@@ -15,6 +14,7 @@ from octop.infra.skills.skill_transfer import (
     _stamp_locked_manifest,
     copy_package_skills_to_workspace,
 )
+from tests.unit.skills.test_skill_transfer import _MemWorkspace
 
 
 def _user(uid: int, *, admin: bool = False) -> SimpleNamespace:

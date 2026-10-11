@@ -208,6 +208,7 @@
     "TEAM_NOT_SHAREABLE": "Teams cannot be shared in this version.",
     "SKILL_PACKAGE_COPY_DENIED": "The creator of this skill package has disabled copying its skills.",
     "SKILL_PACKAGE_LOCKED": "This skill was copied from a locked skill package and cannot be edited in the workspace.",
+"SKILL_SYNTHESIS_EMPTY": "The thread trajectory has no tool calls to distill into a skill.",
     "TASK_NOT_FOUND": "Task not found.",
     "TASK_INVALID_TRANSITION": "Invalid task state transition.",
     "TASK_INVALID_STATUS": "Unknown task state."
