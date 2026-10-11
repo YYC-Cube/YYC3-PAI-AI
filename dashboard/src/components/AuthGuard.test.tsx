@@ -5,10 +5,10 @@ import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import AuthGuard from "./AuthGuard";
 
-// The shell-mount test only fails under full-suite load: the default 1s
-// async-util timeout can elapse before the mocked boot chain resolves when
-// sibling files compete for the worker (2-vCPU CI runners are the worst
-// case). Give this file a bounded 15s budget.
+// Full-suite runs put this file on a worker alongside CPU-heavy siblings;
+// keep a bounded 15s async-util budget so a genuinely stuck boot chain
+// still fails instead of hanging the suite. (The historical flake here was
+// NOT this timeout — see the detach-race note inside the shell-mount test.)
 configure({ asyncUtilTimeout: 15000 });
 
 vi.mock("../api/modules/auth", () => ({
@@ -75,12 +75,19 @@ describe("AuthGuard offline boot", () => {
       locale: "zh",
     } as never);
 
+    // NavProbe's /a output is TRANSIENT: the navigation effect unmounts it
+    // as soon as the gate opens. Asserting toBeInTheDocument on an element
+    // findByText grabbed from that route raced the unmount — the element
+    // detached between findByText's resolution and the attachment check
+    // under full-suite worker load (fast "element could not be found in
+    // the document" failures, not timeouts). Only the /b element — the
+    // stable post-navigation shell — carries the marker text.
     function NavProbe() {
       const navigate = useNavigate();
       useEffect(() => {
         navigate("/b");
       }, [navigate]);
-      return <div>protected-shell</div>;
+      return <div>probe-a</div>;
     }
 
     render(
@@ -102,6 +109,8 @@ describe("AuthGuard offline boot", () => {
     await waitFor(() => {
       expect(screen.getByText("protected-shell")).toBeInTheDocument();
     });
+    // The transient /a route must be gone — the navigation really happened.
+    expect(screen.queryByText("probe-a")).not.toBeInTheDocument();
     expect(authApi.getAuthStatus).toHaveBeenCalledTimes(1);
     expect(authApi.me).toHaveBeenCalledTimes(1);
   });
