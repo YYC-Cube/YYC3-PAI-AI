@@ -66,5 +66,17 @@
       "color": "#fef9c3",
       "icon_name": "compass"
     }
-  ]
+  ],
+  "task_examples": {
+    "zh": [
+      "每天「09:00」检查 DGX Spark 语义目录是否有新增 NIM 模型，有变化则推送名称与单机适配摘要",
+      "每周一「10:00」汇总本周 DGX Spark 社区生态域新增的部署指南与资源链接",
+      "每周五「18:00」盘点 AI 资源矩阵的更新，精选 5 条最值得关注的资源推送给我"
+    ],
+    "en": [
+      "Every day at 09:00, check the DGX Spark semantic catalog for new NIM models and push a summary with single-node fit when anything changed",
+      "Every Monday at 10:00, round up new deployment guides and resource links added this week in the DGX Spark community domain",
+      "Every Friday at 18:00, review AI resource matrix updates and push the 5 most noteworthy picks"
+    ]
+  }
 }
