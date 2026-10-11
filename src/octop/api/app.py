@@ -157,6 +157,7 @@ def build_app(server: OctopServer) -> FastAPI:
         return PlainTextResponse(body)
 
     from octop.api.routers import (
+        a2a,
         acp,
         admin,
         agent_files,
@@ -236,6 +237,8 @@ def build_app(server: OctopServer) -> FastAPI:
             _RouterMount(agents.router, "/api/agents", ["agents"]),
             _RouterMount(agent_tools.router, "/api", ["agents"]),
             _RouterMount(acp.router, "/api", ["agents"]),
+            _RouterMount(a2a.router, "/api", ["a2a"]),
+            _RouterMount(a2a.well_known_router, "", ["a2a"]),
             _RouterMount(chat.router, "/api", ["chat"]),
             _RouterMount(slash.router, "/api", ["slash"]),
             _RouterMount(connectors.router, "/api", ["connectors"]),

@@ -94,6 +94,10 @@ OPENAPI_TAGS: list[dict[str, str]] = [
         "description": "Internal MCP gateway used by harness agents (no dashboard auth).",
     },
     {
+        "name": "a2a",
+        "description": "Agent2Agent (A2A) v1.0 discovery: well-known platform card, authenticated per-user card index, and per-agent capability manifests.",
+    },
+    {
         "name": "channels",
         "description": "Instant-messaging bridges (WeCom, Feishu, Telegram, …) per agent.",
     },
