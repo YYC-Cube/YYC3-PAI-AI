@@ -1,0 +1,70 @@
+{
+  "id": "dgx-spark-catalog",
+  "label": {
+    "zh": "DGX Spark 语义目录",
+    "en": "DGX Spark Semantic Catalog"
+  },
+  "description": {
+    "zh": "DGX Spark 语义目录检索专家——从 NVIDIA-DGX-Workbench 的机器可读 catalog（963 条目：226 部署指南 / 401 NVIDIA 技能 / 140 NIM 模型 / 196 AI 资源）中检索部署路径、模型选型与资源链接，支持直连 YAML 或本地 MCP server 两种消费方式。",
+    "en": "DGX Spark semantic catalog retrieval — search the machine-readable NVIDIA-DGX-Workbench catalog (963 entries: 226 guides / 401 NVIDIA skills / 140 NIM models / 196 AI resources) for deployment paths, model selection and resource links, via direct YAML access or a local MCP server."
+  },
+  "welcome_message": {
+    "zh": "需要查 DGX Spark 部署指南、选 NIM 模型或找 AI 资源？直接说场景，比如「单机 Spark 怎么跑 DeepSeek」「有没有 RAG 相关的 NIM 模型」",
+    "en": "Need DGX Spark deployment guides, NIM model selection, or AI resources? Just describe your scenario, e.g. \"run DeepSeek on a single Spark\" or \"any NIM models for RAG\""
+  },
+  "icon_name": "cpu",
+  "color": "#76B900",
+  "prompt_files": [
+    "SOUL.md"
+  ],
+  "quick_prompts": [
+    {
+      "title": {
+        "zh": "检索部署指南",
+        "en": "Find deployment guides"
+      },
+      "description": {
+        "zh": "按场景检索 226 篇 DGX Spark 部署指南（难度/耗时/前置条件）",
+        "en": "Search 226 DGX Spark deployment guides by scenario (difficulty, time, prerequisites)"
+      },
+      "prompt": {
+        "zh": "帮我找在 DGX Spark 上部署本地大模型的入门指南",
+        "en": "Find getting-started guides for deploying local LLMs on DGX Spark"
+      },
+      "color": "#f0fdf4",
+      "icon_name": "book-open"
+    },
+    {
+      "title": {
+        "zh": "NIM 模型选型",
+        "en": "NIM model selection"
+      },
+      "description": {
+        "zh": "按场景查 NIM 模型库：单机/双机适配与部署配置要点",
+        "en": "Search the NIM model library: single/dual-node fit and deployment notes"
+      },
+      "prompt": {
+        "zh": "单机 DGX Spark 适合跑哪些编码模型？双机呢？",
+        "en": "Which coding models fit a single DGX Spark? What about a dual-node setup?"
+      },
+      "color": "#ecfccb",
+      "icon_name": "bar-chart-3"
+    },
+    {
+      "title": {
+        "zh": "找 AI 资源",
+        "en": "Find AI resources"
+      },
+      "description": {
+        "zh": "在 6 大域资源矩阵中检索工具、平台与社区资源",
+        "en": "Search tools, platforms and community resources across 6 domains"
+      },
+      "prompt": {
+        "zh": "帮我找 RAG / 向量数据库相关的开源资源",
+        "en": "Find open-source resources related to RAG / vector databases"
+      },
+      "color": "#fef9c3",
+      "icon_name": "compass"
+    }
+  ]
+}
