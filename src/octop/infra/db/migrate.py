@@ -1564,6 +1564,25 @@ def _ensure_skill_copy_policy_schema(db: DatabasePool) -> None:
     _ensure_column(db, "skill_packages", "copy_policy", "TEXT NOT NULL DEFAULT 'snapshot'")
 
 
+def _ensure_tasks_family_loop_schema(db: DatabasePool) -> None:
+    """Idempotent v22: family task loop (assignee + due date) on tasks."""
+    if not _table_exists(db, "tasks"):
+        return
+    _ensure_column(
+        db,
+        "tasks",
+        "assignee_user_id",
+        "INTEGER REFERENCES users(id) ON DELETE SET NULL",
+    )
+    _ensure_column(db, "tasks", "due_at", "INTEGER")
+    with db.connect() as conn:
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_tasks_assignee_updated "
+            "ON tasks(assignee_user_id, updated_at) "
+            "WHERE assignee_user_id IS NOT NULL"
+        )
+
+
 def _ensure_bridge_connections_schema(db: DatabasePool) -> None:
     """Fold notes + unique display_name + auto_reconnect into unreleased v19."""
     if not _table_exists(db, "bridge_connections"):
@@ -1783,6 +1802,8 @@ def _apply_sqlite_migration(db: DatabasePool, version: int, path: Path) -> None:
     Version 16 adds ``agents.kind`` so team hosts can be listed.
     Version 17 adds sticky ``conversation_mode`` and ``pending_plan_path`` on threads.
     Version 18 adds ``user_role`` templates and non-FK role id/name snapshots.
+    Version 22 adds family task loop columns (``assignee_user_id``, ``due_at``)
+    and the assignee partial index idempotently.
     """
     if version == 2:
         if _table_exists(db, "cron_jobs"):
@@ -1903,6 +1924,11 @@ def _apply_sqlite_migration(db: DatabasePool, version: int, path: Path) -> None:
         with db.connect() as conn:
             conn.execute("UPDATE _schema_version SET version = ?", (version,))
         return
+    if version == 22:
+        _ensure_tasks_family_loop_schema(db)
+        with db.connect() as conn:
+            conn.execute("UPDATE _schema_version SET version = ?", (version,))
+        return
     sql = path.read_text(encoding="utf-8")
     with db.connect() as conn:
         conn.executescript(sql)
@@ -1960,3 +1986,4 @@ def run_migrations(db: DatabasePool) -> None:
     _ensure_sso_provider_kind_schema(db)
     _ensure_user_role_schema(db)
     _ensure_bridge_connections_schema(db)
+    _ensure_tasks_family_loop_schema(db)

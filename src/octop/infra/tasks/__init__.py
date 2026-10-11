@@ -14,6 +14,7 @@ from octop.infra.tasks.lifecycle import (
     TASK_STATES,
     TERMINAL_STATES,
     TaskState,
+    assert_actor_transition,
     assert_transition,
     can_transition,
 )
@@ -24,6 +25,7 @@ __all__ = [
     "TERMINAL_STATES",
     "TaskService",
     "TaskState",
+    "assert_actor_transition",
     "assert_transition",
     "can_transition",
 ]

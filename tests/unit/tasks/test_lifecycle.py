@@ -8,6 +8,7 @@ from octop.infra.errors import ErrorCode, OctopError
 from octop.infra.tasks import (
     TASK_STATES,
     TERMINAL_STATES,
+    assert_actor_transition,
     assert_transition,
     can_transition,
     lifecycle,
@@ -64,3 +65,152 @@ def test_unknown_states_raise_invalid_status() -> None:
     assert not lifecycle.is_valid_state("bogus")
     assert lifecycle.is_terminal("completed")
     assert not lifecycle.is_terminal("working")
+
+
+# --- family loop: actor-aware transitions -------------------------------------
+
+
+def test_assignee_accepts_questions_and_completes() -> None:
+    # 接受
+    assert_actor_transition(
+        actor_is_creator=False,
+        actor_is_assignee=True,
+        from_state="submitted",
+        to_state="working",
+    )
+    # 执行中提问
+    assert_actor_transition(
+        actor_is_creator=False,
+        actor_is_assignee=True,
+        from_state="working",
+        to_state="input_required",
+    )
+    # 补充后继续
+    assert_actor_transition(
+        actor_is_creator=False,
+        actor_is_assignee=True,
+        from_state="input_required",
+        to_state="working",
+    )
+    # 完成 / 失败汇报
+    assert_actor_transition(
+        actor_is_creator=False,
+        actor_is_assignee=True,
+        from_state="working",
+        to_state="completed",
+    )
+    assert_actor_transition(
+        actor_is_creator=False,
+        actor_is_assignee=True,
+        from_state="working",
+        to_state="failed",
+    )
+
+
+def test_assignee_can_reject_and_cancel() -> None:
+    assert_actor_transition(
+        actor_is_creator=False,
+        actor_is_assignee=True,
+        from_state="submitted",
+        to_state="canceled",
+    )
+    assert_actor_transition(
+        actor_is_creator=False,
+        actor_is_assignee=True,
+        from_state="working",
+        to_state="canceled",
+    )
+    assert_actor_transition(
+        actor_is_creator=False,
+        actor_is_assignee=True,
+        from_state="input_required",
+        to_state="canceled",
+    )
+
+
+def test_assignee_cannot_skip_states_or_touch_terminal() -> None:
+    with pytest.raises(OctopError) as excinfo:
+        assert_actor_transition(
+            actor_is_creator=False,
+            actor_is_assignee=True,
+            from_state="submitted",
+            to_state="completed",
+        )
+    assert excinfo.value.code == ErrorCode.TASK_INVALID_TRANSITION
+    with pytest.raises(OctopError) as excinfo:
+        assert_actor_transition(
+            actor_is_creator=False,
+            actor_is_assignee=True,
+            from_state="completed",
+            to_state="canceled",
+        )
+    assert excinfo.value.code == ErrorCode.TASK_INVALID_TRANSITION
+
+
+def test_creator_can_recall_but_not_progress() -> None:
+    assert_actor_transition(
+        actor_is_creator=True,
+        actor_is_assignee=False,
+        from_state="submitted",
+        to_state="canceled",
+    )
+    with pytest.raises(OctopError) as excinfo:
+        assert_actor_transition(
+            actor_is_creator=True,
+            actor_is_assignee=False,
+            from_state="submitted",
+            to_state="working",
+        )
+    assert excinfo.value.code == ErrorCode.TASK_INVALID_TRANSITION
+    with pytest.raises(OctopError) as excinfo:
+        assert_actor_transition(
+            actor_is_creator=True,
+            actor_is_assignee=False,
+            from_state="working",
+            to_state="completed",
+        )
+    assert excinfo.value.code == ErrorCode.TASK_INVALID_TRANSITION
+
+
+def test_creator_cannot_cancel_terminal() -> None:
+    with pytest.raises(OctopError) as excinfo:
+        assert_actor_transition(
+            actor_is_creator=True,
+            actor_is_assignee=False,
+            from_state="completed",
+            to_state="canceled",
+        )
+    assert excinfo.value.code == ErrorCode.TASK_INVALID_TRANSITION
+
+
+def test_unrelated_actor_rejected_even_for_cancel() -> None:
+    for to_state in ("working", "canceled"):
+        with pytest.raises(OctopError) as excinfo:
+            assert_actor_transition(
+                actor_is_creator=False,
+                actor_is_assignee=False,
+                from_state="submitted",
+                to_state=to_state,
+            )
+        assert excinfo.value.code == ErrorCode.TASK_INVALID_TRANSITION
+
+
+def test_personal_task_full_control() -> None:
+    assert_actor_transition(
+        actor_is_creator=True,
+        actor_is_assignee=True,
+        from_state="submitted",
+        to_state="working",
+    )
+    assert_actor_transition(
+        actor_is_creator=True,
+        actor_is_assignee=True,
+        from_state="working",
+        to_state="completed",
+    )
+    assert_actor_transition(
+        actor_is_creator=True,
+        actor_is_assignee=True,
+        from_state="submitted",
+        to_state="canceled",
+    )
