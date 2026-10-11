@@ -496,7 +496,10 @@
     "TEAM_MEMBER_BUSY": "该专家有进行中的团队任务，请等结束后再调整成员或删除。",
     "TEAM_NOT_SHAREABLE": "当前版本不支持分享团队。",
     "SKILL_PACKAGE_COPY_DENIED": "该技能包的创建者已禁止复制其中的技能。",
-    "SKILL_PACKAGE_LOCKED": "此技能复制自锁定策略的技能包，无法在工作区编辑。"
+    "SKILL_PACKAGE_LOCKED": "此技能复制自锁定策略的技能包，无法在工作区编辑。",
+    "TASK_NOT_FOUND": "任务不存在。",
+    "TASK_INVALID_TRANSITION": "非法的任务状态流转。",
+    "TASK_INVALID_STATUS": "未知的任务状态。"
   },
   "desktop": {
     "install_log_deps": "正在安装 Python 依赖…",

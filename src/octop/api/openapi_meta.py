@@ -94,6 +94,10 @@ OPENAPI_TAGS: list[dict[str, str]] = [
         "description": "Internal MCP gateway used by harness agents (no dashboard auth).",
     },
     {
+        "name": "tasks",
+        "description": "A2A-style stateful task lifecycle: dispatch (submitted), execution (working / input_required), and terminal states (completed / failed / canceled).",
+    },
+    {
         "name": "a2a",
         "description": "Agent2Agent (A2A) v1.0 discovery: well-known platform card, authenticated per-user card index, and per-agent capability manifests.",
     },

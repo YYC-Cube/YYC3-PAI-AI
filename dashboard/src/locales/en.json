@@ -207,7 +207,10 @@
     "TEAM_MEMBER_BUSY": "This expert has an in-flight team job. Wait until it finishes.",
     "TEAM_NOT_SHAREABLE": "Teams cannot be shared in this version.",
     "SKILL_PACKAGE_COPY_DENIED": "The creator of this skill package has disabled copying its skills.",
-    "SKILL_PACKAGE_LOCKED": "This skill was copied from a locked skill package and cannot be edited in the workspace."
+    "SKILL_PACKAGE_LOCKED": "This skill was copied from a locked skill package and cannot be edited in the workspace.",
+    "TASK_NOT_FOUND": "Task not found.",
+    "TASK_INVALID_TRANSITION": "Invalid task state transition.",
+    "TASK_INVALID_STATUS": "Unknown task state."
   },
   "nav": {
     "chat": "Conversation",
