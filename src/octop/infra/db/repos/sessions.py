@@ -236,6 +236,33 @@ class SessionRepo:
             ).fetchall()
         return [SessionRow.from_row(r) for r in rows]
 
+    def list_recent_for_user(
+        self,
+        user_id: int,
+        *,
+        agent_id: str | None = None,
+        exclude_channel_types: tuple[str, ...] = (),
+        limit: int = 5,
+    ) -> list[SessionRow]:
+        """A user's most-recent sessions, optionally scoped to one agent.
+
+        ``exclude_channel_types`` filters out in-process channels (callers pass
+        ``("dashboard", "cli")`` to keep only IM delivery targets).
+        """
+        sql = "SELECT * FROM sessions WHERE user_id = ?"
+        params: list[object] = [user_id]
+        if agent_id:
+            sql += " AND agent_id = ?"
+            params.append(agent_id)
+        if exclude_channel_types:
+            sql += f" AND channel_type NOT IN ({sql_in_placeholders(len(exclude_channel_types))})"
+            params.extend(exclude_channel_types)
+        sql += " ORDER BY updated_at DESC LIMIT ?"
+        params.append(limit)
+        with self._db.connect() as conn:
+            rows = conn.execute(sql, params).fetchall()
+        return [SessionRow.from_row(r) for r in rows]
+
     def unread_totals_by_agent(self, user_id: int, agent_ids: list[str]) -> dict[str, int]:
         if not agent_ids:
             return {}

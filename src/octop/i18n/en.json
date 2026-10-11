@@ -497,10 +497,11 @@
     "TEAM_NOT_SHAREABLE": "Teams cannot be shared in this version.",
     "SKILL_PACKAGE_COPY_DENIED": "The creator of this skill package has disabled copying its skills.",
     "SKILL_PACKAGE_LOCKED": "This skill was copied from a locked skill package and cannot be edited in the workspace.",
-"SKILL_SYNTHESIS_EMPTY": "The thread trajectory has no tool calls to distill into a skill.",
+    "SKILL_SYNTHESIS_EMPTY": "The thread trajectory has no tool calls to distill into a skill.",
     "TASK_NOT_FOUND": "Task not found.",
     "TASK_INVALID_TRANSITION": "Invalid task state transition.",
-    "TASK_INVALID_STATUS": "Unknown task state."
+    "TASK_INVALID_STATUS": "Unknown task state.",
+    "TASK_ASSIGNEE_NOT_FOUND": "Assignee not found."
   },
   "desktop": {
     "install_log_deps": "Installing Python dependencies…",
@@ -876,5 +877,12 @@
       "bind_failed": "The directory rejected the bind DN or password",
       "search_failed": "The directory refused the user search"
     }
+  },
+  "tasks": {
+    "notify_dispatched": "{actor} dispatched a task to you: \"{title}\". Please acknowledge.",
+    "notify_accepted": "Task \"{title}\" was accepted and is now in progress.",
+    "notify_completed": "Task \"{title}\" is completed.",
+    "notify_canceled": "Task \"{title}\" was canceled.",
+    "notify_input_required": "Task \"{title}\" needs more information."
   }
 }
