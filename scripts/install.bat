@@ -9,7 +9,7 @@ if defined YYC3_PAI_HOME (set "OCTOP_HOME=%YYC3_PAI_HOME%") else if defined OCTO
 set "OCTOP_VENV=%OCTOP_HOME%\venv"
 set "OCTOP_BIN=%OCTOP_HOME%\bin"
 set "PYTHON_VERSION=3.12"
-if defined YYC3_PAI_REPO (set "OCTOP_REPO=%YYC3_PAI_REPO%") else if defined OCTOP_REPO (set "OCTOP_REPO=%OCTOP_REPO%") else (set "OCTOP_REPO=https://github.com/YYC-Cube/YYC3-Pai.git")
+if defined YYC3_PAI_REPO (set "OCTOP_REPO=%YYC3_PAI_REPO%") else if defined OCTOP_REPO (set "OCTOP_REPO=%OCTOP_REPO%") else (set "OCTOP_REPO=https://github.com/YYC-Cube/YYC3-PAI-AI.git")
 
 set "ARG_VERSION="
 set "ARG_FROM_SOURCE=0"

@@ -9,7 +9,7 @@ from urllib.parse import quote
 import httpx
 from octop_harness.plugins import PluginContext
 
-_UA = "YYC3-Pai-movie-search/0.1.0 (https://github.com/YYC-Cube/YYC3-Pai)"
+_UA = "YYC3-Pai-movie-search/0.1.0 (https://github.com/YYC-Cube/YYC3-PAI-AI)"
 
 
 def _payload(data: dict[str, Any], text: str) -> str:

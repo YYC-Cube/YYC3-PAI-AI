@@ -54,7 +54,7 @@ YYC3-Pai（YYC π³）由上游 Octop 硬分叉，由 YanYuCloudCube 维护。�
 ### 亮点
 
 | | 特性 | 说明 |
-|---|------|------|
+| --- | ------ | ------ |
 | 👥 | 多用户多 Agent | 一人管理、全家或小团队共用；内置专家库与专家市场 |
 | 🤝 | 专家共享 | 发布专家，以及技能 / 子智能体共享池，同实例内复用配置 |
 | 🎭 | MBTI 人格 | 16 种人格模板和互动测试 |
@@ -75,9 +75,9 @@ YYC3-Pai（YYC π³）由上游 Octop 硬分叉，由 YanYuCloudCube 维护。�
 ### 入口
 
 | 去处 | 地址 | 什么时候给 |
-|------|------|------------|
-| **源码仓库** | https://github.com/YYC-Cube/YYC3-Pai | 想了解产品、看发行版、提 issue、从源码安装 |
-| **仓库文档** | https://github.com/YYC-Cube/YYC3-Pai/tree/main/docs | 安装、概念、具体操作与团队规范 |
+| ------ | ------ | ------------ |
+| **源码仓库** | <https://github.com/YYC-Cube/YYC3-PAI-AI> | 想了解产品、看发行版、提 issue、从源码安装 |
+| **仓库文档** | <https://github.com/YYC-Cube/YYC3-PAI-AI/tree/main/docs> | 安装、概念、具体操作与团队规范 |
 | **本机 API 文档** | `/api/docs`（Scalar 交互式文档） | 查看 HTTP / WebSocket API 与字段 |
 
 回答时用用户的语言。当前实例的交互式 API 文档始终在 `/api/docs`；更深入的说明见源码仓库的 `docs/` 目录。
@@ -87,8 +87,8 @@ YYC3-Pai（YYC π³）由上游 Octop 硬分叉，由 YanYuCloudCube 维护。�
 YYC3-Pai 目前从源码安装（使用 uv）：
 
 ```bash
-git clone https://github.com/YYC-Cube/YYC3-Pai.git
-cd YYC3-Pai
+git clone https://github.com/YYC-Cube/YYC3-PAI-AI.git
+cd YYC3-PAI-AI
 uv sync                       # 安装依赖
 uv run pai init               # 创建 ~/.yyc3-pai/、管理员账号
 uv run pai run                # 前台启动，默认 http://127.0.0.1:8088
@@ -119,7 +119,7 @@ uv run pai run                # 前台启动，默认 http://127.0.0.1:8088
 `/status` 由服务端根据 **当前对话的 JWT / 通道身份** 解析用户，输出包含：
 
 | 字段 | 用途 |
-|------|------|
+| ------ | ------ |
 | **Agent ID** | 后续 `pai --agent <id>` 的必填参数 |
 | **归属用户** | Agent 所有者（共享 Agent 会标注「无单一归属」） |
 | **对话用户** | **本次对话** 的 YYC3-Pai 用户（username + id）— 比 CLI `config show` 可靠 |
@@ -140,7 +140,7 @@ Agent 自身无法代替用户触发斜杠指令时，明确提示用户发送 `
 CLI 信任对本机文件系统的访问，**没有** `pai user login` 命令；用 `pai config set-user` 或根参数 `--user` 指定操作用户。
 
 | 来源 | 当前用户如何确定 | `pai config show` 能否代表该用户 |
-|------|------------------|-----------------------------------|
+| ------ | ------------------ | ----------------------------------- |
 | **Web Dashboard** | 浏览器 JWT；服务端在消息里带 `user_id`（`channel_subject.subject_id`） | **不能** |
 | **IM Channel** | 通道映射的 YYC3-Pai 用户 id（同上） | **不能** |
 | **服务器终端 CLI** | `pai config set-user` 写入 `~/.yyc3-pai/cli_state.json` | **能**（仅反映该文件里的账号） |
@@ -156,7 +156,7 @@ CLI 信任对本机文件系统的访问，**没有** `pai user login` 命令；
 **当前对话中可直接确定的上下文（无需 CLI）：**
 
 | 信息 | 如何获得 |
-|------|----------|
+| ------ | ---------- |
 | **Agent ID** | 让用户发 `/status`，或从工作区路径 `~/.yyc3-pai/agents/<id>/` 推断 |
 | **对话用户** | `/status` 的 **对话用户** 行（权威来源） |
 | **归属用户** | `/status` 的 **归属用户** 行 |
@@ -208,7 +208,7 @@ pai config show
 ```
 
 | 字段 | 含义 |
-|------|------|
+| ------ | ------ |
 | `base_url` | API 地址，默认 `http://127.0.0.1:8088` |
 | `default_user` | CLI 固定的操作用户（`pai config set-user` 写入；≠ Dashboard 当前用户，见 0.1） |
 | `default_agent` | CLI 固定的默认 Agent（`pai agent use` 写入） |
@@ -388,7 +388,7 @@ pai --agent "$AGENT_ID" channel feishu-setup --dry-run
 ### 各通道 `kind` 与常见 config 字段
 
 | kind | 常见 config 字段 |
-|------|-------------------|
+| ------ | ------------------- |
 | `feishu` / `lark` | `app_id`, `app_secret` |
 | `discord` | `bot_token` |
 | `wecom` | `corp_id`, `agent_id`, `secret` |
@@ -543,7 +543,7 @@ pai plugin uninstall <plugin_id>
 两层，不要混用：
 
 | 层 | 位置 | 谁继承 |
-|---|---|---|
+| --- | --- | --- |
 | 全局 | `~/.yyc3-pai/env` | 所有 Agent（shell / Docker 沙箱 / ACP） |
 | Agent | 工作区 `.env` | 仅该 Agent（同名覆盖全局；不可覆盖 `YYC3_*` / `HOME` / `USER`） |
 
@@ -561,7 +561,7 @@ pai plugin uninstall <plugin_id>
 ### 场景：YYC3-Pai 是什么 / 能做什么 / 求助
 
 1. 用「产品介绍与求助」里的简介和亮点直接回答，不要先要 `/status`
-2. 给出源码仓库 https://github.com/YYC-Cube/YYC3-Pai ；具体操作看仓库 `docs/` 或本机 `/api/docs`
+2. 给出源码仓库 <https://github.com/YYC-Cube/YYC3-PAI-AI> ；具体操作看仓库 `docs/` 或本机 `/api/docs`
 3. 用户要在当前实例上动手时，再进入第零节
 
 ### 场景：换 AI 模型
@@ -600,7 +600,7 @@ pai plugin uninstall <plugin_id>
 ## 十、与 Web 控制台的分工
 
 | 任务 | 推荐方式 |
-|------|----------|
+| ------ | ---------- |
 | 产品介绍、概念、安装说明 | 直接回答，并给源码仓库或本机 `/api/docs` |
 | 首次向导、Provider、用户 | Web 控制台或 `pai init` / `models config` |
 | 脚本化、批量、排障 | CLI（本 skill） |

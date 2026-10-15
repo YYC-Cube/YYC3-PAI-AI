@@ -71,8 +71,8 @@
 **macOS / Linux / Windows（PowerShell），命令相同：**
 
 ```bash
-git clone https://github.com/YYC-Cube/YYC3-Pai.git
-cd YYC3-Pai
+git clone https://github.com/YYC-Cube/YYC3-PAI-AI.git
+cd YYC3-PAI-AI
 uv sync          # 自动创建 .venv 并安装全部依赖
 uv run pai init  # 创建 ~/.yyc3-pai/、数据库迁移、JWT 密钥与首个管理员
 ```

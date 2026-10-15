@@ -7,13 +7,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/ci.yml/badge.svg" /></a>
-  <a href="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/YYC-Cube/YYC3-Pai/actions/workflows/codeql.yml/badge.svg" /></a>
-  <a href="https://github.com/YYC-Cube/YYC3-Pai/releases"><img alt="Release" src="https://img.shields.io/github/v/release/YYC-Cube/YYC3-Pai?include_prereleases&label=release" /></a>
-  <a href="https://github.com/YYC-Cube/YYC3-Pai/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-PAI-AI/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/YYC-Cube/YYC3-PAI-AI/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-PAI-AI/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/YYC-Cube/YYC3-PAI-AI/actions/workflows/codeql.yml/badge.svg" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-PAI-AI/releases"><img alt="Release" src="https://img.shields.io/github/v/release/YYC-Cube/YYC3-PAI-AI?include_prereleases&label=release" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-PAI-AI/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green" /></a>
   <a href="https://www.python.org/downloads/"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12%2B-blue?logo=python&logoColor=white" /></a>
-  <img alt="Docker" src="https://img.shields.io/badge/docker-ghcr.io%2Fyyc--cube%2Fyyc3--pai-2496ED?logo=docker&logoColor=white" />
-  <a href="https://github.com/YYC-Cube/YYC3-Pai/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/YYC-Cube/YYC3-Pai?style=social" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-PAI-AI/pkgs/container/yyc3-pai"><img alt="Docker" src="https://img.shields.io/badge/docker-ghcr.io%2Fyyc--cube%2Fyyc3--pai-2496ED?logo=docker&logoColor=white" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-PAI-AI/issues"><img alt="Issues" src="https://img.shields.io/github/issues/YYC-Cube/YYC3-PAI-AI" /></a>
+  <a href="https://github.com/YYC-Cube/YYC3-PAI-AI/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/YYC-Cube/YYC3-PAI-AI?style=social" /></a>
 </p>
 
 <p align="center">
@@ -185,8 +186,8 @@ YYC3-Pai 支持两个方向的 ACP 集成：
 ### 1. 从源码安装
 
 ```bash
-git clone https://github.com/YYC-Cube/YYC3-Pai.git
-cd YYC3-Pai
+git clone https://github.com/YYC-Cube/YYC3-PAI-AI.git
+cd YYC3-PAI-AI
 uv sync                       # 创建隔离虚拟环境并安装依赖
 ```
 

@@ -7,8 +7,8 @@ Thank you for your interest in contributing! YYC3-Pai (YYC π³) is a hard fork 
 **Prerequisites:** Python 3.12+, Node.js 18+, [uv](https://docs.astral.sh/uv/)
 
 ```bash
-git clone https://github.com/YYC-Cube/YYC3-Pai.git
-cd YYC3-Pai
+git clone https://github.com/YYC-Cube/YYC3-PAI-AI.git
+cd YYC3-PAI-AI
 make install          # backend dev dependencies
 make install-hooks    # once per clone: pre-commit runs make all + dashboard build
 make all              # format-all + backend lint + typecheck + test (ship bar)
@@ -90,8 +90,8 @@ Branch from `main` → PR into `main` (tag if shipping a patch) → PR into `dev
 **前置条件：** Python 3.12+、Node.js 18+、[uv](https://docs.astral.sh/uv/)
 
 ```bash
-git clone https://github.com/YYC-Cube/YYC3-Pai.git
-cd YYC3-Pai
+git clone https://github.com/YYC-Cube/YYC3-PAI-AI.git
+cd YYC3-PAI-AI
 make install
 make install-hooks    # 每个 clone 执行一次：提交前跑 make all + 前端 build
 make all              # format-all + 后端 lint / typecheck / test

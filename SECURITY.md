@@ -11,7 +11,7 @@
 
 **Please do not open a public GitHub issue for security vulnerabilities.**
 
-- **GitHub Security Advisory:** [Create advisory](https://github.com/YYC-Cube/YYC3-Pai/security/advisories/new)
+- **GitHub Security Advisory:** [Create advisory](https://github.com/YYC-Cube/YYC3-PAI-AI/security/advisories/new)
 - **Email:** <admin@0379.email>
 
 We aim to acknowledge reports within **3 business days** and provide a fix timeline within **7 business days** for confirmed issues.

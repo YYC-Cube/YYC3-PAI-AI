@@ -25,7 +25,7 @@ def test_split_tag_accepts_with_or_without_v() -> None:
 def test_render_download_section_matches_github_asset_names() -> None:
     mod = _load()
     body = mod.render_download_section("0.9.31")
-    base = "https://github.com/YYC-Cube/YYC3-Pai/releases/download/v0.9.31"
+    base = "https://github.com/YYC-Cube/YYC3-PAI-AI/releases/download/v0.9.31"
     assert f"{base}/YYC3-Pai-desktop-windows-amd64-0.9.31.exe" in body
     assert f"{base}/YYC3-Pai-desktop-windows-arm64-0.9.31.exe" in body
     assert f"{base}/YYC3-Pai-portable-windows-amd64-0.9.31.zip" in body

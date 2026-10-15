@@ -1,6 +1,6 @@
 # YYC3-Pai — 飞牛 FnOS 安装包
 
-本目录包含将 [YYC-Cube/YYC3-Pai](https://github.com/YYC-Cube/YYC3-Pai)（由 Octop 硬分叉）打包为飞牛 fnOS `.fpk` 安装包所需的全部文件，并附带自动构建的 GitHub Actions。
+本目录包含将 [YYC-Cube/YYC3-PAI-AI](https://github.com/YYC-Cube/YYC3-PAI-AI)（由 Octop 硬分叉）打包为飞牛 fnOS `.fpk` 安装包所需的全部文件，并附带自动构建的 GitHub Actions。
 
 ## 首次使用（初始账号）
 
@@ -40,7 +40,7 @@ pai backup --help     # 备份/恢复
 - **Docker 版**实现为 FnOS `docker-project`：包体只含 `docker-compose.yaml` 与向导配置，运行时由飞牛从 GHCR 拉取镜像。x86 / ARM 飞牛共用这一份 FPK，Docker 按本机架构拉对应镜像层。ARM 飞牛优先用这一份。镜像已内置 `desktop` 桌面控制与前端；Playwright Chromium 不预装，可在控制台按需安装。
 - **本地版**实现为 FnOS 原生 `app`：解释器复用飞牛「Python 3.12」开发工具；包内是 YYC3-Pai 核心依赖与前端。专家 shell / 技能若要跑 `node` / `npx`，会复用飞牛已装的 Node.js（不强制安装）。扩展里的 `.so` 与 CPU 架构绑定，因此 x86 与 ARM 各打一份；装错架构会在安装或启动时报错。
 
-> 上述包随正式版一起挂在 **`v*` GitHub Release** 上（见 [YYC-Cube/YYC3-Pai Releases](https://github.com/YYC-Cube/YYC3-Pai/releases/latest)）：`YYC3-Pai-fnos-docker-<ver>.fpk` / `YYC3-Pai-fnos-native-<ver>.fpk` / `YYC3-Pai-fnos-native-arm64-<ver>.fpk`。
+> 上述包随正式版一起挂在 **`v*` GitHub Release** 上（见 [YYC-Cube/YYC3-PAI-AI Releases](https://github.com/YYC-Cube/YYC3-PAI-AI/releases/latest)）：`YYC3-Pai-fnos-docker-<ver>.fpk` / `YYC3-Pai-fnos-native-<ver>.fpk` / `YYC3-Pai-fnos-native-arm64-<ver>.fpk`。
 >
 > **版本基线说明**：`.fpk` 包版本（`manifest` 的 `version=1.0.2b6`）沿用 fnOS 应用商店的发布 lineage；Python wheel 版本自 fork 起从 `pyproject.toml` 的 `0.1.0` 重新起线。两条版本线独立推进——fpk 以 fnOS 升级链为准，wheel 以 PyPI 发布为准，互不联动。
 

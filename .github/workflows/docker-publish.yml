@@ -61,7 +61,8 @@ jobs:
       - name: Image names
         id: image
         run: |
-          echo "ghcr=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          # 固定 GHCR 镜像名（不随仓库名变化）：文档与 fnos FPK 均引用 ghcr.io/yyc-cube/yyc3-pai
+          echo "ghcr=ghcr.io/yyc-cube/yyc3-pai" >> "$GITHUB_OUTPUT"
           echo "hub=${{ secrets.DOCKERHUB_USERNAME }}/yyc3-pai" >> "$GITHUB_OUTPUT"
 
   build:

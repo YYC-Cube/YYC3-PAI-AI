@@ -12,7 +12,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-GITHUB_REPO = "YYC-Cube/YYC3-Pai"
+GITHUB_REPO = "YYC-Cube/YYC3-PAI-AI"
 DOWNLOAD_BASE = f"https://github.com/{GITHUB_REPO}/releases/download"
 
 

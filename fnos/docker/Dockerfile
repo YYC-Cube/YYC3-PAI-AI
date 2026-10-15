@@ -40,7 +40,7 @@ FROM python:3.12-slim AS runtime
 LABEL maintainer="YanYuCloudCube"
 LABEL org.opencontainers.image.title="YYC3-Pai"
 LABEL org.opencontainers.image.description="Smarter self-hosted AI assistant — multi-user, multi-agent (FnOS build with all addons)."
-LABEL org.opencontainers.image.source="https://github.com/YYC-Cube/YYC3-Pai"
+LABEL org.opencontainers.image.source="https://github.com/YYC-Cube/YYC3-PAI-AI"
 LABEL org.opencontainers.image.licenses="MIT"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \

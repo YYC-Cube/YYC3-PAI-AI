@@ -37,7 +37,7 @@ pai update --yes
   pip: `pip install -U yyc3-pai
 # optional extras, e.g. browser automation:
 # pip install -U "yyc3-pai[browser]"`,
-  source: `cd YYC3-Pai
+  source: `cd YYC3-PAI-AI
 git pull
 make build-frontend
 # or: cd dashboard && npm ci && npm run build && cd ..

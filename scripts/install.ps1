@@ -36,7 +36,7 @@ if ($env:YYC3_PAI_REPO) {
 } elseif ($env:OCTOP_REPO) {
     $OctopRepo = $env:OCTOP_REPO
 } else {
-    $OctopRepo = "https://github.com/YYC-Cube/YYC3-Pai.git"
+    $OctopRepo = "https://github.com/YYC-Cube/YYC3-PAI-AI.git"
 }
 
 function Write-Info { param([string]$Message) Write-Host "[yyc3] " -ForegroundColor Green  -NoNewline; Write-Host $Message }
