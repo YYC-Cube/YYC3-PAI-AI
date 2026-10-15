@@ -114,3 +114,10 @@ fnos/native/app/site-packages/
 docs/superpowers/
 scripts/lh_image_install_octop_tencentos.sh
 .worktrees/
+
+# Local analysis artifacts: large offline HTML snapshots
+.analysis/DGX-SPARK-HUB-OFFLINE.html
+.analysis/YYC-CUBE-HUB.html
+
+# Nested git clones staged for reference (embedded repos; do not commit)
+.staging/
