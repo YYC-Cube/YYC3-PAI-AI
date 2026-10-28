@@ -107,6 +107,28 @@ interface NasApiTrack {
   format: string
 }
 
+/** AI-Family 内置主题曲（public/ 根目录随前端分发，本地/NAS 双模式恒可用） */
+const BUILTIN_THEME_TRACKS: ManifestTrackEntry[] = [
+  {
+    fileName: 'AI-Family.mp3',
+    title: 'AI-Family · YYC³ 家族主题曲',
+    artist: 'YYC³',
+    artistName: 'YYC³',
+    album: 'AI-Family 主题曲',
+    url: '/AI-Family.mp3',
+    tags: ['主题曲', 'AI-Family'],
+  },
+  {
+    fileName: 'Family-工坊.mp3',
+    title: 'Family 工坊',
+    artist: 'YYC³',
+    artistName: 'YYC³',
+    album: 'AI-Family 主题曲',
+    url: '/Family-工坊.mp3',
+    tags: ['主题曲', 'AI-Family'],
+  },
+]
+
 type AudioEventListener = (state: AudioEngineState) => void
 
 // ============================================================================
@@ -238,6 +260,9 @@ export class AudioEngine {
         manifest = await res.json()
         manifestVersion = String(manifest.updatedAt)
       }
+
+      // AI-Family 内置主题曲：双模式下都追加，家族资产恒在库
+      manifest.tracks = [...manifest.tracks, ...BUILTIN_THEME_TRACKS]
 
       // 用 manifest.updatedAt 做版本校验，当 music/ 目录变化时 manifest 自动更新
       if (forceReload || storedVersion !== manifestVersion) {
