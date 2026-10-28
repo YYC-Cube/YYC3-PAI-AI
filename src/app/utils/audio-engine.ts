@@ -92,6 +92,19 @@ export interface ManifestTrackEntry {
   album: string
   url: string
   tags: string[]
+  /** 远程曲库模式下由 API 直接提供，免去逐首跨域探测时长 */
+  durationSec?: number
+}
+
+/** yyc3-music-api /api/music/tracks 单曲条目（NAS 远程曲库） */
+interface NasApiTrack {
+  id: string
+  title: string
+  artist: string | null
+  album: string | null
+  duration: number
+  fileSize: string
+  format: string
 }
 
 type AudioEventListener = (state: AudioEngineState) => void
@@ -191,10 +204,40 @@ export class AudioEngine {
     const loadedTracks: AudioTrack[] = []
 
     try {
-      const res = await fetch('/music-manifest.json')
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const manifest: { tracks: ManifestTrackEntry[]; updatedAt: number } = await res.json()
-      const manifestVersion = String(manifest.updatedAt)
+      // ===== 曲库来源：VITE_MUSIC_API_BASE 指向 NAS yyc3-music-api 时走远程流式，
+      // 否则维持本地静态 manifest（默认行为不变）=====
+      const apiBase = (import.meta.env.VITE_MUSIC_API_BASE as string | undefined)
+        ?.trim()
+        .replace(/\/+$/, '')
+      let manifest: { tracks: ManifestTrackEntry[]; updatedAt: number }
+      let manifestVersion: string
+
+      if (apiBase) {
+        const res = await fetch(`${apiBase}/api/music/tracks`)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const payload: { data?: NasApiTrack[] } = await res.json()
+        const rows = Array.isArray(payload.data) ? payload.data : []
+        const totalBytes = rows.reduce((sum, t) => sum + (Number(t.fileSize) || 0), 0)
+        manifestVersion = `nas-${rows.length}-${totalBytes}`
+        manifest = {
+          updatedAt: 0,
+          tracks: rows.map((t) => ({
+            fileName: `${t.title}.${t.format || 'mp3'}`,
+            title: t.title,
+            artist: t.artist || 'YYC³',
+            artistName: t.artist || 'YYC³',
+            album: t.album || 'YYC³ 音乐库',
+            url: `${apiBase}/api/music/stream/${t.id}`,
+            tags: [],
+            durationSec: Number(t.duration) || undefined,
+          })),
+        }
+      } else {
+        const res = await fetch('/music-manifest.json')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        manifest = await res.json()
+        manifestVersion = String(manifest.updatedAt)
+      }
 
       // 用 manifest.updatedAt 做版本校验，当 music/ 目录变化时 manifest 自动更新
       if (forceReload || storedVersion !== manifestVersion) {
@@ -216,7 +259,7 @@ export class AudioEngine {
 
       for (const entry of manifest.tracks) {
         try {
-          const duration = await this.getAudioDurationFromUrl(entry.url)
+          const duration = entry.durationSec ?? (await this.getAudioDurationFromUrl(entry.url))
           const trackId = `track-${this.generateTrackId(entry.fileName, entry.url)}`
           const track: AudioTrack = {
             id: trackId,
