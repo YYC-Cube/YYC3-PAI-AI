@@ -79,6 +79,7 @@ import {
   AILyricsTranslatePanel,
   CollabPlaylistPanel,
   CrossfadePanel,
+  FamilyThemePanel,
   GiftTipPanel,
   KaraokePanel,
   SpatialAudioPanel,
@@ -600,6 +601,7 @@ export function EnhancedAudioPlayerV3({ isOpen, onClose }: { isOpen: boolean; on
   const [showCollabPlaylist, setShowCollabPlaylist] = useState(false)
   const [showTimedComment, setShowTimedComment] = useState(false)
   const [showGiftTip, setShowGiftTip] = useState(false)
+  const [showFamilyTheme, setShowFamilyTheme] = useState(false)
   const [showSpatialAudio, setShowSpatialAudio] = useState(false)
   const [showKaraoke, setShowKaraoke] = useState(false)
   const [showCrossfade, setShowCrossfade] = useState(false)
@@ -1135,6 +1137,11 @@ export function EnhancedAudioPlayerV3({ isOpen, onClose }: { isOpen: boolean; on
                 title="🎁 打赏支持"
               >
                 <Gift size={18} style={{ color: showGiftTip ? '#ff4488' : tokens.foregroundMuted }} />
+              </button>
+              <button onClick={() => setShowFamilyTheme(true)} className="p-2 rounded-lg hover:bg-white/10 transition-all"
+                title="🎵 AI-Family 主题曲"
+              >
+                <span style={{ fontSize: 16, color: showFamilyTheme ? '#ffaa00' : tokens.foregroundMuted }}>🎵</span>
               </button>
 
               {/* 🎚️ 高级音频组 */}
@@ -1782,6 +1789,18 @@ export function EnhancedAudioPlayerV3({ isOpen, onClose }: { isOpen: boolean; on
           onClose={() => setShowAIEmotion(false)}
           trackName={currentTrack?.name || '未知歌曲'}
           artist={currentTrack?.metadata?.artist || '未知艺术家'}
+        />
+
+        {/* 3.5 AI-Family 主题曲面板 */}
+        <FamilyThemePanel
+          isOpen={showFamilyTheme}
+          onClose={() => setShowFamilyTheme(false)}
+          tracks={audioEngine
+            .getTracks()
+            .filter((t) => t.metadata?.album === 'AI-Family 主题曲')
+            .map((t) => ({ id: t.id, name: t.name, url: t.url, duration: t.duration }))}
+          onPlay={(t) => { void audioEngine.play(t.id) }}
+          currentlyPlayingId={currentTrack?.id || null}
         />
 
         {/* 4. 协作播放列表面板 */}

@@ -1029,6 +1029,70 @@ export function CrossfadePanel({ isOpen, onClose, processor }: {
   )
 }
 
+// ── 10. AI-Family 主题曲面板 ──
+
+export interface FamilyThemeTrack {
+  id: string
+  name: string
+  url: string
+  duration?: number
+}
+
+export function FamilyThemePanel({ isOpen, onClose, tracks, onPlay, currentlyPlayingId }: {
+  isOpen: boolean
+  onClose: () => void
+  tracks: FamilyThemeTrack[]
+  onPlay: (track: FamilyThemeTrack) => void
+  currentlyPlayingId?: string | null
+}) {
+  const { tokens } = useThemeStore()
+  return (
+    <PanelWrapper
+      isOpen={isOpen}
+      onClose={onClose}
+      title="AI-Family 主题曲"
+      icon={<span className="text-xl">🎵</span>}
+    >
+      <div className="rounded-xl overflow-hidden mb-4" style={{ border: `1px solid ${tokens.border}` }}>
+        <img
+          src="/AI-FAmily/音乐空间.png"
+          alt="AI-Family 音乐空间"
+          className="w-full h-40 object-cover"
+          loading="lazy"
+        />
+      </div>
+      <p className="text-sm mb-4" style={{ color: tokens.foregroundMuted }}>
+        YYC³ 家族之声 —— 原创主题曲随端分发，离线亦可播放
+      </p>
+      <div className="space-y-2">
+        {tracks.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => onPlay(t)}
+            className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:bg-white/5"
+            style={{
+              border: `1px solid ${currentlyPlayingId === t.id ? tokens.primary : tokens.border}`,
+            }}
+          >
+            <span
+              className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+              style={{ background: currentlyPlayingId === t.id ? tokens.primary : `${tokens.primary}22` }}
+            >
+              ▶
+            </span>
+            <span className="flex-1 min-w-0">
+              <span className="block truncate text-sm font-medium">{t.name}</span>
+              <span className="block text-xs" style={{ color: tokens.foregroundMuted }}>
+                {t.duration ? formatTime(t.duration) : 'AI-Family 主题曲'}
+              </span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </PanelWrapper>
+  )
+}
+
 // ── 辅助函数 ──
 
 function formatTime(seconds: number): string {
