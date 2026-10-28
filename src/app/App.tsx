@@ -106,6 +106,15 @@ function AppContent() {
   // ===== Monaco Editor Ref for Performance Monitoring =====
   const monacoEditorRef = useRef<unknown>(null)
 
+  // ===== 隐藏白屏兜底启动屏（React 成功渲染后） =====
+  useEffect(() => {
+    const splash = document.getElementById('yyc3-splash')
+    if (splash) {
+      splash.classList.add('hidden')
+      setTimeout(() => splash.remove(), 400)
+    }
+  }, [])
+
   // ===== Performance Monitoring =====
   const settings = useSettingsStore()
   const performanceSettings = settings.performance

@@ -14,7 +14,7 @@
          script-src 'unsafe-eval':  WebAssembly (transformers.js) 需要
          style-src 'unsafe-inline': @emotion/react CSS-in-JS 运行时注入需要
          worker-src blob:          Web Worker (transformers.js) 需要
-         connect-src:              仅允许已知 AI API 端点，Yjs 协作 WebSocket 使用 wss:
+         connect-src:              允许已知 AI API、本地/局域网 Ollama 节点、Yjs wss
     -->
     <meta
       http-equiv="Content-Security-Policy"
@@ -24,7 +24,15 @@
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com data:;
       img-src 'self' data: blob: https:;
-      connect-src 'self' https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com https://open.bigmodel.cn http://localhost:11434 wss:;
+      connect-src 'self'
+        https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com https://open.bigmodel.cn
+        http://localhost:* https://localhost:*
+        http://192.168.3.101:11434 https://192.168.3.101:11434
+        http://192.168.3.102:11434 https://192.168.3.102:11434
+        http://192.168.3.45:11434 https://192.168.3.45:11434
+        http://39.97.53.176:11434 https://39.97.53.176:11434
+        http://47.94.135.202:11434 https://47.94.135.202:11434
+        wss:;
       worker-src 'self' blob:;
       child-src 'self' blob:;
       frame-src 'self';
@@ -35,12 +43,121 @@
     "
     />
 
+    <!-- 白屏兜底：在 JS 加载/渲染前显示品牌启动屏，避免用户看到纯白页面 -->
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #0a0a0a;
+        color: #e0e0e0;
+        overflow: hidden;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      }
+      #yyc3-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #0a0a0a;
+        color: #e0e0e0;
+        transition: opacity 0.4s ease;
+      }
+      #yyc3-splash.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .splash-spinner {
+        width: 40px;
+        height: 40px;
+        border: 2px solid rgba(0, 240, 255, 0.2);
+        border-top-color: #00f0ff;
+        border-radius: 50%;
+        animation: splash-spin 1s linear infinite;
+        margin-bottom: 16px;
+        box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+      }
+      @keyframes splash-spin {
+        to { transform: rotate(360deg); }
+      }
+      .splash-title {
+        font-size: 18px;
+        letter-spacing: 3px;
+        color: #00f0ff;
+        text-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+      }
+      .splash-subtitle {
+        font-size: 12px;
+        margin-top: 8px;
+        color: #888888;
+        letter-spacing: 1px;
+      }
+      .splash-stuck {
+        margin-top: 24px;
+        font-size: 12px;
+        color: #888888;
+        opacity: 0;
+        animation: splash-fade-in 0.6s ease 10s forwards;
+        text-align: center;
+        max-width: 320px;
+        line-height: 1.6;
+      }
+      @keyframes splash-fade-in {
+        to { opacity: 1; }
+      }
+      .splash-error {
+        color: #ff0044;
+        font-size: 12px;
+        max-width: 420px;
+        line-height: 1.6;
+        text-align: center;
+        word-break: break-word;
+        padding: 0 24px;
+      }
+    </style>
+
+    <!-- 启动监控：捕获主脚本异常并在启动屏上提示，module 脚本与 Vite 注入脚本同源执行 -->
+    <script type="module">
+      (function () {
+        const splash = document.getElementById('yyc3-splash')
+        function showFatalError(msg) {
+          if (!splash) return
+          splash.innerHTML = '<div style="text-align:center;padding:24px;">' +
+            '<div style="font-size:32px;margin-bottom:12px;">⚠️</div>' +
+            '<div style="font-size:16px;color:#ff0044;margin-bottom:8px;">启动失败</div>' +
+            '<div class="splash-error">' + (msg || '未知错误，请刷新页面或查看控制台。') + '</div>' +
+          '</div>'
+        }
+        window.addEventListener('error', (e) => showFatalError(e.message || String(e.error)))
+        window.addEventListener('unhandledrejection', (e) => showFatalError(e.reason?.message || String(e.reason)))
+        setTimeout(() => {
+          const root = document.getElementById('root')
+          if (root && !root.hasChildNodes()) {
+            showFatalError('React 应用未能在 12 秒内完成渲染，请检查控制台错误。')
+          }
+        }, 12000)
+      })()
+    </script>
+
     <!-- CSRF Token Meta (for server-side rendering) -->
     <meta name="csrf-token" content="" />
 
     <title>YYC³ AI - 智能开发环境</title>
   </head>
   <body>
+    <div id="yyc3-splash">
+      <div class="splash-spinner"></div>
+      <div class="splash-title">YYC³ AI</div>
+      <div class="splash-subtitle">智能开发环境 · 启动中</div>
+      <div class="splash-stuck">
+        加载时间较长，请检查网络或刷新页面。<br>
+        若持续白屏，请按 F12 打开控制台查看错误。
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
