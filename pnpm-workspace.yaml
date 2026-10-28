@@ -7,3 +7,6 @@ allowBuilds:
   protobufjs: false
   puppeteer: false
   sharp: false
+overrides:
+  vite: 6.3.5
+  lodash: 4.17.21
