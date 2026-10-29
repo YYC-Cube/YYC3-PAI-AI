@@ -209,7 +209,7 @@ jobs:
           sed -i "s/\${VERSION}/$VERSION/g" RELEASE_NOTES.md
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           name: "YYC³ AI-PAI ${{ github.ref_name }}"
