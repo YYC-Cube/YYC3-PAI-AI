@@ -86,24 +86,8 @@ export const translations = {
   },
 
   // ===== AI Responses =====
-  aiResponses: {
-    response1: {
-      zh: "\u901A\u8FC7\u91CF\u5B50\u795E\u7ECF\u77E9\u9635\u5206\u6790\u8BF7\u6C42... \u5904\u7406\u5B8C\u6210\u3002\u7ED3\u679C\u5DF2\u7F16\u8BD1\uFF0C\u51C6\u5907\u5C31\u7EEA\u3002",
-      en: "Analyzing request through quantum neural matrix... Processing complete. Results compiled and ready for review.",
-    },
-    response2: {
-      zh: "ICE \u534F\u8BAE\u5DF2\u542F\u52A8\u3002\u6B63\u5728\u626B\u63CF\u6F5C\u5728\u5A01\u80C1... \u533A\u57DF\u5B89\u5168\u3002\u672A\u68C0\u6D4B\u5230\u6572\u610F\u5165\u4FB5\u3002",
-      en: "ICE protocols engaged. Scanning for potential threats... Area secured. No hostile intrusions detected.",
-    },
-    response3: {
-      zh: "\u6DF1\u5EA6\u5B66\u4E60\u5206\u6790\u5DF2\u542F\u52A8\u3002\u4EA4\u53C9\u5F15\u7528 470 \u4EBF\u6570\u636E\u70B9... \u6A21\u5F0F\u5339\u914D\u7F6E\u4FE1\u5EA6 99.2%\u3002",
-      en: "Deep learning analysis initiated. Cross-referencing 47 billion data points... Pattern match found with 99.2% confidence.",
-    },
-    response4: {
-      zh: "\u6B63\u5728\u5EFA\u7ACB\u5230\u6697\u7F51\u8282\u70B9\u7684\u52A0\u5BC6\u8FDE\u63A5... \u96A7\u9053\u5DF2\u5B89\u5168\u3002\u6570\u636E\u4F20\u8F93\u901F\u7387\uFF1A847 TB/s\u3002",
-      en: "Establishing encrypted connection to darknet node... Tunnel secured. Data transfer rate: 847 TB/s.",
-    },
-  },
+  // 历史 response1-4 假回复话术已随零 mock 决战整体移除（消费方 IDEChat/
+  // Fullscreen/FloatingWidget 均改真 SSE + 真错误），该 section 一并退役
 
   // ===== System Status Panel =====
   systemStatus: {

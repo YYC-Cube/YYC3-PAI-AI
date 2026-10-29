@@ -109,7 +109,6 @@ const systemInfoKeys = [
   { icon: Zap, key: "powerCore", value: "98.2%" },
 ];
 
-const responseKeys = ["response1", "response2", "response3", "response4"];
 
 export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, onOpenNotifications, onOpenCommandPalette, onOpenGlobalSearch, onOpenAIWriting, onOpenContentTemplate, onOpenMaterialManager, onOpenPublishQueue, onOpenTrendingTopics, onOpenChat }: {
   onSwitchMode: () => void;
@@ -128,7 +127,7 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
   onOpenChat?: () => void;
 }) {
   const { t, locale } = useI18n();
-  const { openModelSettings, getActiveModel, sendToActiveModel, activeModelId, connectivityMap, lastSuccessTime } = useModelStore();
+  const { openModelSettings, getActiveModel, sendToActiveModelStream, activeModelId, connectivityMap, lastSuccessTime } = useModelStore();
   const { tokens, isCyberpunk } = useThemeStore();
 
   const getModelStatusColor = useCallback(() => {
@@ -216,6 +215,7 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
     setMessages((prev) => [
       ...prev,
       { role: "user", content: userMsg, timestamp: ts },
+      { role: "ai", content: "", timestamp: ts }, // SSE 占位：onChunk 将增量写入
     ]);
     setInput("");
     setAiLoading(true);
@@ -228,35 +228,7 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
 
     const activeModel = getActiveModel();
 
-    // 流式打字效果：逐字显示 AI 回复
-    const streamResponse = (fullText: string) => {
-      const responseTs = new Date().toLocaleTimeString(locale === "zh" ? "zh-CN" : "en-US", { hour12: false });
-      // 先添加空消息
-      setMessages((prev) => [
-        ...prev,
-        { role: "ai", content: "", timestamp: responseTs },
-      ]);
-      setAiLoading(false);
-
-      // 逐字打字
-      let charIdx = 0;
-      const chunkSize = Math.max(1, Math.floor(fullText.length / 80)); // 自适应速度
-      streamingRef.current = setInterval(() => {
-        charIdx = Math.min(charIdx + chunkSize, fullText.length);
-        setMessages((prev) => {
-          const updated = [...prev];
-          const lastIdx = updated.length - 1;
-          if (lastIdx >= 0 && updated[lastIdx].role === "ai") {
-            updated[lastIdx] = { ...updated[lastIdx], content: fullText.slice(0, charIdx) };
-          }
-          return updated;
-        });
-        if (charIdx >= fullText.length) {
-          if (streamingRef.current) clearInterval(streamingRef.current);
-          streamingRef.current = null;
-        }
-      }, 25);
-    };
+    // （历史假打字机 streamResponse 已随真 SSE 改造移除）
 
     if (activeModel) {
       // 构建对话历史（最近 HISTORY_WINDOW 条消息）
@@ -271,25 +243,36 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
       // 系统提示词
       const systemPrompt = locale === "zh" ? SYSTEM_PROMPT_ZH : SYSTEM_PROMPT_EN;
 
-      sendToActiveModel(userMsg, {
+      sendToActiveModelStream(userMsg, {
         systemPrompt,
-        history: historySlice.slice(0, -1), // 去掉最后一条（sendToActiveModel 会自动追加）
+        history: historySlice.slice(0, -1), // 去掉最后一条（入口会自动追加）
+      }, (_d, full) => {
+        // 真 SSE：增量写入最后一条 AI 消息（streamResponse 为历史假打字机，已退役）
+        setMessages((prev) => {
+          const updated = [...prev];
+          for (let i = updated.length - 1; i >= 0; i--) {
+            if (updated[i].role === "ai") { updated[i] = { ...updated[i], content: full }; break; }
+          }
+          return updated;
+        });
       })
-        .then((content) => {
-          streamResponse(content);
-        })
-        .catch(() => {
-          const rk = responseKeys[Math.floor(Math.random() * responseKeys.length)];
-          streamResponse(`[${t("modelSettings", "modelError")}]\n\n${t("aiResponses", rk)}`);
+        .then(() => { setAiLoading(false); })
+        .catch((err: unknown) => {
+          setAiLoading(false);
+          const detail = err instanceof Error ? err.message : String(err);
+          setMessages((prev) => {
+            const updated = [...prev];
+            for (let i = updated.length - 1; i >= 0; i--) {
+              if (updated[i].role === "ai") { updated[i] = { ...updated[i], content: `[${t("modelSettings", "modelError")}] ${detail}` }; break; }
+            }
+            return updated;
+          });
         });
     } else {
-      // 无活跃模型 — mock 响应 + 打字效果
-      setTimeout(() => {
-        const rk = responseKeys[Math.floor(Math.random() * responseKeys.length)];
-        streamResponse(t("aiResponses", rk));
-      }, 800);
+      // 无活跃模型 — 诚实指引（拒绝伪造 AI 回复）
+      setMessages((prev) => [...prev, { role: "ai", content: "未激活模型——请打开 设置 → 模型管理 激活后重试。" }]);
     }
-  }, [input, locale, messages, getActiveModel, sendToActiveModel, t]);
+  }, [input, locale, messages, getActiveModel, sendToActiveModelStream, t]);
 
   // 清理流式输出定时器
   useEffect(() => {

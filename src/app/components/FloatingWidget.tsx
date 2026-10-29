@@ -27,11 +27,10 @@ import type { ChatMessage } from "../types";
 
 // Font/color constants removed — use tokens from useThemeStore() instead
 
-const responseKeys = ["response1", "response2", "response3", "response4"];
 
 export function FloatingWidget({ onSwitchMode }: { onSwitchMode: () => void }) {
   const { t } = useI18n();
-  const { getActiveModel, sendToActiveModel } = useModelStore();
+  const { getActiveModel, sendToActiveModelStream } = useModelStore();
   const { tokens, isCyberpunk } = useThemeStore();
   const [pos, setPos] = useState({ x: 100, y: 100 });
   const [size, setSize] = useState({ w: 420, h: 520 });
@@ -85,15 +84,36 @@ export function FloatingWidget({ onSwitchMode }: { onSwitchMode: () => void }) {
   const handleSend = () => {
     if (!input.trim()) return;
     const userMsg = input;
-    setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
+    setMessages((prev) => [...prev,
+      { role: "user", content: userMsg },
+      { role: "ai", content: "" }, // SSE 占位
+    ]);
     setInput("");
     const activeModel = getActiveModel();
     if (activeModel) {
-      sendToActiveModel(userMsg)
-        .then((content) => { setMessages((prev) => [...prev, { role: "ai", content }]); })
-        .catch(() => { const rk = responseKeys[Math.floor(Math.random() * responseKeys.length)]; setMessages((prev) => [...prev, { role: "ai", content: t("aiResponses", rk) }]); });
+      sendToActiveModelStream(userMsg, undefined, (_d, full) => {
+        setMessages((prev) => {
+          const updated = [...prev];
+          const lastIdx = updated.length - 1;
+          if (lastIdx >= 0 && updated[lastIdx].role === "ai") {
+            updated[lastIdx] = { ...updated[lastIdx], content: full };
+          }
+          return updated;
+        });
+      })
+        .catch((err: unknown) => {
+          const detail = err instanceof Error ? err.message : String(err);
+          setMessages((prev) => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (lastIdx >= 0 && updated[lastIdx].role === "ai") {
+              updated[lastIdx] = { ...updated[lastIdx], content: `[错误] ${detail}` };
+            }
+            return updated;
+          });
+        });
     } else {
-      setTimeout(() => { const rk = responseKeys[Math.floor(Math.random() * responseKeys.length)]; setMessages((prev) => [...prev, { role: "ai", content: t("aiResponses", rk) }]); }, 800);
+      setMessages((prev) => [...prev.slice(0, -1), { role: "ai", content: "未激活模型——请先在设置中激活。" }]);
     }
   };
 
