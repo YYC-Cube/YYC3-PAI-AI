@@ -58,9 +58,10 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'pnpm dev',
+    // npx 形式兼容无全局 pnpm 的环境（CI runner）；本地已有 server 时直接复用
+    command: 'npx -y pnpm@9 dev',
     url: 'http://localhost:3200',
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
+    timeout: 120_000,
   },
 })
