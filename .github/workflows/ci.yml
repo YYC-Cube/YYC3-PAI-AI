@@ -240,8 +240,14 @@ jobs:
       - name: Install dependencies
         run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
 
-      - name: Run npm audit
-        run: npx pnpm@${{ env.PNPM_VERSION }} audit --audit-level=moderate || true
+      - name: Run npm audit (block on high/critical)
+        run: |
+          npx pnpm@${{ env.PNPM_VERSION }} audit --audit-level=high --json > audit.json || true
+          CRITICAL=$(python3 -c "import json;d=json.load(open('audit.json'));print(d['metadata']['vulnerabilities']['critical'])" 2>/dev/null || echo 0)
+          HIGH=$(python3 -c "import json;d=json.load(open('audit.json'));print(d['metadata']['vulnerabilities']['high'])" 2>/dev/null || echo 0)
+          echo "critical=$CRITICAL high=$HIGH"
+          if [ "$CRITICAL" != "0" ]; then echo "::error::发现 $CRITICAL 个 critical 漏洞，阻断"; exit 1; fi
+          if [ "$HIGH" != "0" ]; then echo "::error::发现 $HIGH 个 high 漏洞，阻断"; exit 1; fi
 
       - name: Dependency review
         if: github.event_name == 'pull_request'

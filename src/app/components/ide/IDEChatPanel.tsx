@@ -37,13 +37,11 @@ import { CyberTooltip } from "../CyberTooltip";
 import { AIMessageActions } from "./AIMessageActions";
 import { AIMessageRenderer } from "./AIMessageRenderer";
 
-const responseKeys = ["response1", "response2", "response3", "response4"] as const;
-
 /** AI Chat body — fully self-contained with own state */
 export function IDEChatPanel() {
   const { t, locale } = useI18n();
   const { tokens, isCyberpunk } = useThemeStore();
-  const { openModelSettings, getActiveModel, sendToActiveModel, activeModelId, connectivityMap } = useModelStore();
+  const { openModelSettings, getActiveModel, sendToActiveModelStream, activeModelId, connectivityMap } = useModelStore();
   const projectStore = useProjectStore();
   const borderColor = tokens.border;
 
@@ -54,7 +52,6 @@ export function IDEChatPanel() {
   const [chatToolbarOpen, setChatToolbarOpen] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const initRef = useRef(false);
-  const chatStreamRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── MCP tools (local) ──
   // 配置支持可选 endpoint/token（Streamable HTTP）：提供时走真协议拉取工具清单，
@@ -119,40 +116,18 @@ export function IDEChatPanel() {
     ];
   }, [projectStore.projects, locale]);
 
-  // ── Stream response ──
-  const streamChatResponse = useCallback((fullText: string) => {
-    const responseTs = new Date().toLocaleTimeString(locale === "zh" ? "zh-CN" : "en-US", { hour12: false });
-    setMessages((prev) => [...prev, { role: "ai", content: "", timestamp: responseTs }]);
-    setAiLoading(false);
-    let charIdx = 0;
-    const chunkSize = Math.max(1, Math.floor(fullText.length / 80));
-    if (chatStreamRef.current) clearInterval(chatStreamRef.current);
-    chatStreamRef.current = setInterval(() => {
-      charIdx = Math.min(charIdx + chunkSize, fullText.length);
-      setMessages((prev) => {
-        const updated = [...prev];
-        const lastIdx = updated.length - 1;
-        if (lastIdx >= 0 && updated[lastIdx].role === "ai") {
-          updated[lastIdx] = { ...updated[lastIdx], content: fullText.slice(0, charIdx) };
-        }
-        return updated;
-      });
-      if (charIdx >= fullText.length) {
-        if (chatStreamRef.current) clearInterval(chatStreamRef.current);
-        chatStreamRef.current = null;
-      }
-    }, 25);
-  }, [locale]);
-
-  // ── Send handler ──
+  // ── Send handler ──（真 SSE：响应由 sendToActiveModelStream 的 onChunk 增量写入，
+  //     历史假打字机 streamChatResponse 已随零 mock 决战移除）
   const handleChatSend = useCallback(() => {
     if (!chatInput.trim()) return;
     const ts = new Date().toLocaleTimeString(locale === "zh" ? "zh-CN" : "en-US", { hour12: false });
     const msg = chatInput;
-    setMessages((prev) => [...prev, { role: "user", content: msg, timestamp: ts }]);
+    setMessages(prev => [...prev,
+      { role: "user", content: msg, timestamp: ts },
+      { role: "ai", content: "", timestamp: ts }, // SSE 占位：onChunk 将增量写入
+    ]);
     setChatInput("");
     setAiLoading(true);
-    if (chatStreamRef.current) { clearInterval(chatStreamRef.current); chatStreamRef.current = null; }
 
     const langDirective = `Respond in ${locale === "zh" ? "Chinese" : "English"}.`;
     const rulesInjection = settingsActions.getActiveRulesAsSystemPrompt();
@@ -175,19 +150,39 @@ export function IDEChatPanel() {
 
     const activeModel = getActiveModel();
     if (activeModel) {
-      sendToActiveModel(msg, { systemPrompt: mcpSystemPrompt, history: chatHistory })
-        .then((content) => { streamChatResponse(content); })
-        .catch(() => {
-          const rk = responseKeys[Math.floor(Math.random() * responseKeys.length)];
-          streamChatResponse(`[${t("modelSettings", "modelError")}]\n${t("aiResponses", rk)}`);
+      sendToActiveModelStream(msg, { systemPrompt: mcpSystemPrompt, history: chatHistory }, (_d, full) => {
+        // 真 SSE：增量直接渲染（覆盖历史假打字机 streamChatResponse）
+        setMessages(prev => {
+          const updated = [...prev];
+          const lastIdx = updated.length - 1;
+          if (lastIdx >= 0 && updated[lastIdx].role === "ai") {
+            updated[lastIdx] = { ...updated[lastIdx], content: full };
+          }
+          return updated;
+        });
+      })
+        .then(() => { setAiLoading(false); })
+        .catch((err: unknown) => {
+          const detail = err instanceof Error ? err.message : String(err);
+          setMessages(prev => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (lastIdx >= 0 && updated[lastIdx].role === "ai") {
+              updated[lastIdx] = { ...updated[lastIdx], content: `[${t("modelSettings", "modelError")}] ${detail}` };
+            }
+            return updated;
+          });
+          setAiLoading(false);
         });
     } else {
-      setTimeout(() => {
-        const rk = responseKeys[Math.floor(Math.random() * responseKeys.length)];
-        streamChatResponse(t("aiResponses", rk));
-      }, 800);
+      setMessages(prev => [...prev, {
+        role: "ai",
+        content: `未激活模型——请点击上方模型栏选择或配置（模型设置 → 激活）。`,
+        timestamp: new Date().toLocaleTimeString(locale === "zh" ? "zh-CN" : "en-US", { hour12: false }),
+      }]);
+      setAiLoading(false);
     }
-  }, [chatInput, locale, messages, enabledMCPTools, getActiveModel, sendToActiveModel, streamChatResponse, t]);
+  }, [chatInput, locale, messages, enabledMCPTools, mcpToolsPrompt, getActiveModel, sendToActiveModelStream, t]);
 
   return (
     <>

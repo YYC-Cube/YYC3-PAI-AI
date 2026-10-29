@@ -445,7 +445,9 @@ export const LivePreview = memo(function LivePreview({
   // Listen for console messages & errors from iframe
   useEffect(() => {
     const handler = (e: MessageEvent) => {
-      if (!e.data) return
+      // 来源校验：预览 iframe 为 srcdoc（null origin）；拒绝任意第三方页面注入
+      if (e.origin !== 'null' && e.origin !== window.location.origin) return
+      if (!e.data || typeof e.data !== 'object') return
       if (e.data.type === 'yyc3-console') {
         addConsoleEntry(e.data.logType, e.data.message)
       } else if (e.data.type === 'yyc3-error') {

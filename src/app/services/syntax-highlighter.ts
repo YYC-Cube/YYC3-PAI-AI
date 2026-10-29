@@ -99,7 +99,8 @@ export class SyntaxHighlighter {
   private cache: Map<string, HighlightResult>
   private pendingUpdates: Map<string, Set<number>>
   private largeFileQueue: Set<string>
-  private isInitializing = false
+  /** 共享初始化 Promise：并发调用共享同一次初始化；失败可重试（无轮询死等） */
+  private initPromise: Promise<void> | null = null
 
   constructor(config: SyntaxHighlighterConfig = {}) {
     this.config = {
@@ -116,68 +117,57 @@ export class SyntaxHighlighter {
   }
 
   /**
-   * 初始化高亮器
+   * 初始化高亮器（并发安全：共享单次初始化；失败清空句柄允许重试，
+   * 替代历史的 setInterval 轮询——首次失败会让等待者永远空转）
    */
   async initialize(): Promise<void> {
     if (this.highlighter) {
       return
     }
 
-    if (this.isInitializing) {
-      // 等待初始化完成
-      await new Promise((resolve) => {
-        const checkInterval = setInterval(() => {
-          if (this.highlighter) {
-            clearInterval(checkInterval)
-            resolve(undefined)
-          }
-        }, 100)
+    if (!this.initPromise) {
+      const startTime = performance.now()
+      this.initPromise = (async () => {
+        const shiki = await import('shiki')
+        this.highlighter = await shiki.createHighlighter({
+          themes: [this.config.theme as BundledTheme],
+          langs: [
+            this.config.defaultLanguage as BundledLanguage,
+            'javascript',
+            'typescript',
+            'tsx',
+            'jsx',
+            'python',
+            'java',
+            'cpp',
+            'c',
+            'go',
+            'rust',
+            'html',
+            'css',
+            'json',
+            'markdown',
+            'yaml',
+            'bash',
+            'shell',
+            'sql',
+          ],
+        })
+        const initTime = performance.now() - startTime
+        logger.info(`Initialized in ${initTime.toFixed(2)}ms`)
+      })().catch((error) => {
+        // 失败：清空共享句柄，让后续调用可重试而非永久挂起
+        this.initPromise = null
+        logger.error('[SyntaxHighlighter] Initialization failed:', error)
+        const initError = new Error('Failed to initialize syntax highlighter')
+        if (error instanceof Error) {
+          ;(initError as Error & { cause?: Error }).cause = error
+        }
+        throw initError
       })
-      return
     }
 
-    this.isInitializing = true
-    const startTime = performance.now()
-
-    try {
-      const shiki = await import('shiki')
-      this.highlighter = await shiki.createHighlighter({
-        themes: [this.config.theme as BundledTheme],
-        langs: [
-          this.config.defaultLanguage as BundledLanguage,
-          'javascript',
-          'typescript',
-          'tsx',
-          'jsx',
-          'python',
-          'java',
-          'cpp',
-          'c',
-          'go',
-          'rust',
-          'html',
-          'css',
-          'json',
-          'markdown',
-          'yaml',
-          'bash',
-          'shell',
-          'sql',
-        ],
-      })
-
-      const initTime = performance.now() - startTime
-      logger.info(`Initialized in ${initTime.toFixed(2)}ms`)
-    } catch (error) {
-      logger.error('[SyntaxHighlighter] Initialization failed:', error)
-      const initError = new Error('Failed to initialize syntax highlighter')
-      if (error instanceof Error) {
-        ;(initError as Error & { cause?: Error }).cause = error
-      }
-      throw initError
-    } finally {
-      this.isInitializing = false
-    }
+    return this.initPromise
   }
 
   /**

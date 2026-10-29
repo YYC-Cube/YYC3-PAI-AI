@@ -72,16 +72,21 @@ export class KeyManager {
   async initialize(password: string): Promise<boolean> {
     try {
       const storedHash = localStorage.getItem(MASTER_KEY_KEY)
-      const passwordHash = await this.hashPassword(password)
 
       if (storedHash) {
-        if (storedHash !== passwordHash) {
+        // PBKDF2 摘要带随机盐：必须 verify（等值比较永远失败）
+        if (!(await this.verifyPassword(password, storedHash))) {
           logger.error('[KeyManager] Invalid master password')
           return false
         }
+        // 旧格式验证通过 → 透明升级为 PBKDF2
+        if (!storedHash.startsWith('pbkdf2$')) {
+          localStorage.setItem(MASTER_KEY_KEY, await this.pbkdf2Hash(password))
+          logger.info('[KeyManager] Master password hash upgraded to PBKDF2')
+        }
       } else {
-        localStorage.setItem(MASTER_KEY_KEY, passwordHash)
-        logger.info('[KeyManager] Master password set')
+        localStorage.setItem(MASTER_KEY_KEY, await this.pbkdf2Hash(password))
+        logger.info('[KeyManager] Master password set (PBKDF2 210k)')
       }
 
       this.masterKey = password
@@ -98,9 +103,8 @@ export class KeyManager {
   async changePassword(oldPassword: string, newPassword: string): Promise<boolean> {
     try {
       const storedHash = localStorage.getItem(MASTER_KEY_KEY)
-      const oldHash = await this.hashPassword(oldPassword)
 
-      if (storedHash !== oldHash) {
+      if (!storedHash || !(await this.verifyPassword(oldPassword, storedHash))) {
         logger.error('[KeyManager] Old password is incorrect')
         return false
       }
@@ -122,7 +126,7 @@ export class KeyManager {
         }
       }
 
-      const newHash = await this.hashPassword(newPassword)
+      const newHash = await this.pbkdf2Hash(newPassword)
       localStorage.setItem(MASTER_KEY_KEY, newHash)
 
       this.masterKey = newPassword
@@ -286,12 +290,42 @@ export class KeyManager {
     }
   }
 
-  private async hashPassword(password: string): Promise<string> {
-    const encoder = new TextEncoder()
-    const data = encoder.encode(password + 'yyc3-salt')
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-    const hashArray = Array.from(new Uint8Array(hashBuffer))
-    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+  /**
+   * 主口令哈希：PBKDF2-SHA256（210k 迭代 + 每库随机盐）。
+   * 历史实现为 SHA-256(password + 静态盐)——单轮快哈希可被离线秒级爆破；
+   * 兼容策略：旧格式（纯 64 hex 无 $）首次验证通过后透明升级。
+   */
+  private async legacySha256(password: string): Promise<string> {
+    const data = new TextEncoder().encode(password + 'yyc3-salt')
+    const buf = await crypto.subtle.digest('SHA-256', data)
+    return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('')
+  }
+
+  /** PBKDF2 摘要：pbkdf2$<saltHex>$<iterations>$<hashHex> */
+  private async pbkdf2Hash(password: string, saltHex?: string, iterations = 210_000): Promise<string> {
+    const salt = saltHex
+      ? new Uint8Array((saltHex.match(/.{2}/g) ?? []).map((h) => parseInt(h, 16)))
+      : crypto.getRandomValues(new Uint8Array(16))
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(password), { name: 'PBKDF2' }, false, ['deriveBits'],
+    )
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: 'SHA-256' },
+      keyMaterial, 256,
+    )
+    const hash = Array.from(new Uint8Array(bits)).map((b) => b.toString(16).padStart(2, '0')).join('')
+    const saltStr = Array.from(salt).map((b) => b.toString(16).padStart(2, '0')).join('')
+    return `pbkdf2$${saltStr}$${iterations}$${hash}`
+  }
+
+  /** 校验口令匹配已存摘要（PBKDF2 或旧 SHA-256 格式） */
+  private async verifyPassword(password: string, stored: string): Promise<boolean> {
+    if (stored.startsWith('pbkdf2$')) {
+      const [, saltHex, itersStr, expected] = stored.split('$')
+      const actual = await this.pbkdf2Hash(password, saltHex, parseInt(itersStr, 10))
+      return actual === stored && actual.endsWith(expected)
+    }
+    return (await this.legacySha256(password)) === stored
   }
 
   private generateSalt(): Uint8Array {

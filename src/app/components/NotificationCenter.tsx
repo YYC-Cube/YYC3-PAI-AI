@@ -17,6 +17,7 @@ import {
   Bot, Cpu, FolderOpen,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
+import { useActivityStore, type ActivityEntry } from '../store/activity-store'
 import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
 
 // ===== Notification Types =====
@@ -33,53 +34,33 @@ export interface Notification {
   read: boolean
 }
 
-// ===== Mock notifications =====
-function generateMockNotifications(): Notification[] {
-  const now = Date.now()
-  return [
-    {
-      id: 'n1', category: 'system', level: 'success',
-      title: { zh: '系统就绪', en: 'System Ready' },
-      message: { zh: '所有子系统初始化完成，神经网络连接正常', en: 'All subsystems initialized, neural network connections nominal' },
-      timestamp: now - 30000, read: false,
-    },
-    {
-      id: 'n2', category: 'ai', level: 'info',
-      title: { zh: 'AI 模型已加载', en: 'AI Model Loaded' },
-      message: { zh: 'GPT-4 Turbo 模型已激活，延迟 145ms', en: 'GPT-4 Turbo model activated, latency 145ms' },
-      timestamp: now - 120000, read: false,
-    },
-    {
-      id: 'n3', category: 'project', level: 'info',
-      title: { zh: '项目自动保存', en: 'Project Auto-saved' },
-      message: { zh: '项目 "YYC3 Dashboard" 已自动保存至本地', en: 'Project "YYC3 Dashboard" auto-saved locally' },
-      timestamp: now - 300000, read: true,
-    },
-    {
-      id: 'n4', category: 'ai', level: 'warning',
-      title: { zh: 'Ollama 连接异常', en: 'Ollama Connection Issue' },
-      message: { zh: '本地 Ollama 实例未响应，请检查服务状态', en: 'Local Ollama instance not responding, check service status' },
-      timestamp: now - 600000, read: true,
-    },
-    {
-      id: 'n5', category: 'system', level: 'success',
-      title: { zh: '主题切换完成', en: 'Theme Switched' },
-      message: { zh: '已切换至赛博朋克主题，所有组件已更新', en: 'Switched to Cyberpunk theme, all components updated' },
-      timestamp: now - 1800000, read: true,
-    },
-    {
-      id: 'n6', category: 'project', level: 'success',
-      title: { zh: '代码生成完成', en: 'Code Generation Complete' },
-      message: { zh: '已为 3 个组件生成 TypeScript + CSS 代码', en: 'Generated TypeScript + CSS code for 3 components' },
-      timestamp: now - 3600000, read: true,
-    },
-    {
-      id: 'n7', category: 'system', level: 'error',
-      title: { zh: '网络中断', en: 'Network Disrupted' },
-      message: { zh: '外部 API 连接中断 2.3s，已自动恢复', en: 'External API connection dropped for 2.3s, auto-recovered' },
-      timestamp: now - 7200000, read: true,
-    },
-  ]
+// ===== 真实事件源：activity-store 持久化活动日志（file/git/ai/system）→ 通知 =====
+// 历史 mock 七条假通知已删；无活动时显示空态而非编造内容
+function categoryLabelZh(category: ActivityEntry['category']): string {
+  switch (category) {
+    case 'ai': return 'AI 助手'
+    case 'git': return '项目/Git'
+    case 'file': return '文件'
+    default: return '系统'
+  }
+}
+
+function notificationsFromActivities(entries: ActivityEntry[]): Notification[] {
+  return entries
+    .slice(0, 50)
+    .map((e) => {
+      const category: NotifCategory =
+        e.category === 'ai' ? 'ai' : e.category === 'git' ? 'project' : 'system'
+      return {
+        id: e.id,
+        category,
+        level: 'info' as NotifLevel,
+        title: { zh: categoryLabelZh(e.category), en: e.category },
+        message: { zh: e.messageZh, en: e.message },
+        timestamp: e.timestamp,
+        read: true,
+      }
+    })
 }
 
 type TabFilter = 'all' | NotifCategory
@@ -92,7 +73,8 @@ interface NotificationCenterProps {
 export function NotificationCenter({ visible, onClose }: NotificationCenterProps) {
   const { t, locale } = useI18n()
   const { tokens: tk, isCyberpunk } = useThemeStore()
-  const [notifications, setNotifications] = useState<Notification[]>(generateMockNotifications)
+  const activities = useActivityStore()
+  const [notifications, setNotifications] = useState<Notification[]>(() => notificationsFromActivities(activities.entries))
   const [activeTab, setActiveTab] = useState<TabFilter>('all')
   const [currentTime, setCurrentTime] = useState(() => Date.now())
 

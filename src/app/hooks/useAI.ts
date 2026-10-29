@@ -146,7 +146,7 @@ export function useAI(): UseAIReturn {
       try {
         // 创建超时控制器 / Create timeout controller
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2秒超时检查
+        const timeoutId = setTimeout(() => controller.abort(), 60_000); // 60s：大模型首 token 常超 2s，旧值几乎必中断
 
         try {
           const response = await fetch(

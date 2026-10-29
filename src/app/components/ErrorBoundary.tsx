@@ -72,7 +72,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   private reportError(_error: Error, _errorInfo: ErrorInfo) {
-    logger.info('[YYC3] Error reported to monitoring service')
+    // 无监控服务接入——仅记录本地日志，不输出"已上报"假话术
+    logger.info('[YYC3] Error captured locally (no monitoring service configured)')
   }
 
   handleRetry = () => {
