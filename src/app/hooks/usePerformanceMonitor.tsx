@@ -257,8 +257,8 @@ async function estimateNetworkLatency(): Promise<number> {
   const start = performance.now()
 
   try {
-    // 发送一个小请求测量延迟
-    await fetch(window.location.href, {
+    // 发送一个小请求测量延迟（相对路径 = 恒为同源，探测的是当前站点自身的响应延迟）
+    await fetch('./', {
       method: 'HEAD',
       cache: 'no-store',
       signal: AbortSignal.timeout(5000),

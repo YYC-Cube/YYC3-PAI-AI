@@ -127,8 +127,17 @@ class YYC3TemplateEngine:
 **五化转型**：流程化 | 数字化 | 生态化 | 工具化 | 服务化
 **五维评估**：时间维 | 空间维 | 属性维 | 事件维 | 关联维"""
 
+    @staticmethod
+    def _ensure_within_root(p: Path, root: Path) -> Path:
+        """路径守卫：解析后必须落在 root 之内，阻断 '../' 逃逸"""
+        resolved = p.resolve()
+        base = root.resolve()
+        if resolved != base and base not in resolved.parents:
+            raise ValueError(f"路径越界（超出允许根目录 {base}）: {p}")
+        return resolved
+
     def __init__(self, output_dir: str = "docs", config_path: str = ""):
-        self.output_dir = Path(output_dir)
+        self.output_dir = self._ensure_within_root(Path(output_dir), Path.cwd())
         self.config_path = config_path
         self.templates: Dict[str, TemplateConfig] = {}
         self.document_registry: Dict[str, DocumentMetadata] = {}
@@ -339,8 +348,9 @@ class YYC3TemplateEngine:
                 "updated": meta.updated,
             }
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        with open(self.registry_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+        self.registry_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8'
+        )
 
     def _load_registry(self) -> None:
         try:
@@ -390,7 +400,7 @@ class YYC3TemplateEngine:
 
     def save_document(self, content: str, output_path: str, metadata: DocumentMetadata = None) -> bool:
         try:
-            path = Path(output_path)
+            path = self._ensure_within_root(Path(output_path), self.output_dir)
             path.parent.mkdir(parents=True, exist_ok=True)
 
             diff_summary = ""
@@ -402,8 +412,7 @@ class YYC3TemplateEngine:
                     return True
                 self._archive_version(path, metadata)
 
-            with open(path, 'w', encoding='utf-8') as f:
-                f.write(content)
+            path.write_text(content, encoding='utf-8')
 
             if metadata:
                 metadata.checksum = self.generate_checksum(content)

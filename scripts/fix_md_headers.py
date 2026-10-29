@@ -61,28 +61,35 @@ def get_description_and_tags(filepath: str) -> tuple:
 def fix_md_file(filepath: str) -> bool:
     """修复单个Markdown文件"""
     try:
+        # 路径守卫：仅允许处理本仓库根目录内的文件（阻断 ../ 逃逸）
+        repo_root = Path(__file__).resolve().parent.parent
+        safe_path = Path(filepath).resolve()
+        if not safe_path.is_relative_to(repo_root):
+            print(f"❌ 路径越界，已拒绝: {filepath}")
+            return False
+        filepath = str(safe_path)
+
         # 读取文件内容
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
-        
+
         # 检查是否已经有YAML Front Matter
         if content.startswith('---\n'):
             print(f"✅ 已修复: {filepath}")
             return False
-        
+
         # 获取描述和标签
         description, tags = get_description_and_tags(filepath)
-        
+
         # 生成YAML头部
         yaml_header = YAML_TEMPLATE.format(
             filepath=filepath,
             description=description,
             tags=tags
         )
-        
+
         # 写入新内容
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(yaml_header + content)
+        Path(filepath).write_text(yaml_header + content, encoding='utf-8')
         
         print(f"✅ 已修复: {filepath}")
         return True
@@ -92,8 +99,8 @@ def fix_md_file(filepath: str) -> bool:
 
 def main():
     """主函数"""
-    # 获取项目根目录
-    project_root = Path('/Volumes/Development/yyc3-77/YYC3-AI-PAI')
+    # 获取项目根目录（以脚本自身位置为准，避免硬编码个人机器路径）
+    project_root = Path(__file__).resolve().parent.parent
     
     # 需要修复的文件列表 - 扩展列表
     files_to_fix = [
@@ -152,9 +159,12 @@ def main():
     
     fixed_count = 0
     for file_path in files_to_fix:
-        full_path = project_root / file_path
-        if full_path.exists():
-            if fix_md_file(str(full_path)):
+        target = (project_root / file_path).resolve()
+        if not target.is_relative_to(project_root):
+            print(f"❌ 路径越界，跳过: {file_path}")
+            continue
+        if target.exists():
+            if fix_md_file(str(target)):
                 fixed_count += 1
         else:
             print(f"⚠️  文件不存在: {file_path}")

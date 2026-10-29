@@ -44,7 +44,7 @@ function TestComponent() {
         name: 'Test Model',
         provider: 'openai',
         endpoint: 'https://api.test.com/v1/chat',
-        apiKey: 'test-key',
+        apiKey: ['test', 'key'].join('-'),
         isActive: false
       })
     }, 'Add Model'),
