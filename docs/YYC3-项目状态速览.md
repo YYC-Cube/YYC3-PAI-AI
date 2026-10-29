@@ -5,7 +5,7 @@
 > - Python 平台 ＝ **`YYC-Cube/YYC3-Pai-Platform`**（原仓库原地改名，一切自动化/漏洞告警/PR 原地保留）；
 > - 本地工作树已切到新 `main`，WIP 完整；
 > - ✅ **域名已分割并双站上线（2026-10-29）**：`pai.yyc3.vip` ＝ 本仓 React 应用（HTTP 200 ✅）；`pai-ai.yyc3.vip` ＝ Platform 仓（HTTP 200 ✅）。`ai-pai.yyc3.vip` 被个人账号 Pages 占用（见 FAQ Q4）；
-> - ⏳ 待办：Platform 仓漏洞治理进行中（PR #20 uv 组升级 + dashboard npm 侧 fast-uri/serialize-javascript/deepmerge + 恢复 Security Scan 工作流）。
+> - ⏳ 待办：Platform 仓漏洞治理 **已闭环大半**（PR #21 已合并：pillow 13.0.0 / filelock 4.2.4 / langgraph 1.2.18 / dashboard fast-uri 3.1.9 + serialize-javascript 7.1.3 + dompurify 3.4.17，告警 30→8 重算中；deepmerge 上游无修复版）。剩两件需要**你**操作（token 缺 workflow scope）：① Platform 仓 `.github/workflows/ci.yml` dashboard job 的 `node-version: "20"` → `"24"`（一行；npm 10 对 file: 依赖的 registry 拼接 bug 已被 runner 更新引入，npm 12 无此问题且 .npmrc 已配好 allow-remote/replace-registry-host）；② 同理 `security-scan.yml` 的 node-version（改完手动 dispatch 一次即可全绿）。
 
 ---
 
