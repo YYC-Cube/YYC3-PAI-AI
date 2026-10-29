@@ -49,7 +49,7 @@
 > | 仓库 | 产品 | 线上地址 |
 > |---|---|---|
 > | **本仓 `YYC3-PAI-AI`** | YYC³ AI-PAI —— React 18 + Vite 纯前端智能编程助手（一人一端 · 数据本地优先 · 无自建后端） | **[pai.yyc3.vip](https://pai.yyc3.vip)** |
-> | 姊妹仓 [`YYC3-Pai-Platform`](https://github.com/YYC-Cube/YYC3-Pai-Platform) | YYC3-Pai —— Python 多用户 / 多 Agent 自托管平台（langgraph · MCP · A2A + antd dashboard + desktop） | [ai-pai.yyc3.vip](https://ai-pai.yyc3.vip) |
+> | 姊妹仓 [`YYC3-Pai-Platform`](https://github.com/YYC-Cube/YYC3-Pai-Platform) | YYC3-Pai —— Python 多用户 / 多 Agent 自托管平台（langgraph · MCP · A2A + antd dashboard + desktop） | [pai-ai.yyc3.vip](https://pai-ai.yyc3.vip) |
 >
 > 两仓同源（git 历史共享血脉），2026-10-29 按「一个项目一条线」原则分离：本仓专注 React 前端产品，Platform 仓专注 Python 平台。质量基线：**2810 个单元测试全绿 · tsc 零错误 · 依赖 critical 漏洞清零**。项目状态速查见 [`docs/YYC3-项目状态速览.md`](./docs/YYC3-项目状态速览.md)。
 

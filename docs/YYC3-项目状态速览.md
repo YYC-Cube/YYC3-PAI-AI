@@ -4,8 +4,8 @@
 > - `YYC-Cube/YYC3-PAI-AI` ＝ **React 前端独立仓**（新建）：`main` = 原 archive 主线（`a9aeedcc`）+ 4 个修复提交（`13038afe`）；本地 9 提交血脉保留在 `archive/local-main-2026-06-12` 分支；
 > - Python 平台 ＝ **`YYC-Cube/YYC3-Pai-Platform`**（原仓库原地改名，一切自动化/漏洞告警/PR 原地保留）；
 > - 本地工作树已切到新 `main`，WIP 完整；
-> - ✅ **域名已分割（2026-10-29）**：`pai.yyc3.vip` ＝ 本仓 React 应用（Pages 已配置，`PAGES_ENABLED=true` 已设）；`ai-pai.yyc3.vip` ＝ Platform 仓（组织级域名验证中——遇到"已被占用"提示，见文末 FAQ）；
-> - ⏳ 待办：ai-pai.yyc3.vip 组织级验证；Platform 仓 30 个依赖漏洞仍待修。
+> - ✅ **域名已分割并双站上线（2026-10-29）**：`pai.yyc3.vip` ＝ 本仓 React 应用（HTTP 200 ✅）；`pai-ai.yyc3.vip` ＝ Platform 仓（HTTP 200 ✅）。`ai-pai.yyc3.vip` 被个人账号 Pages 占用（见 FAQ Q4）；
+> - ⏳ 待办：Platform 仓漏洞治理进行中（PR #20 uv 组升级 + dashboard npm 侧 fast-uri/serialize-javascript/deepmerge + 恢复 Security Scan 工作流）。
 
 ---
 
@@ -107,8 +107,6 @@ main 已换道为 Python 平台（工作树整体替换），本项目代码只�
 **Q3：pai.yyc3.vip 为什么是个落地页？**
 ~~Pages 归 Python 平台仓库管~~ ✅ 已解决（2026-10-29）：域名已移交本仓，Pages 部署 React 应用本体（HTTP 200 ✅）。
 
-**Q4：Platform 仓绑 `ai-pai.yyc3.vip` 提示"已被占用"怎么办？**
-域名需要**组织级验证**后才能释放给仓库使用。你已完成两步：DNS CNAME → `yyc-cube.github.io` ✅、TXT 挑战记录 `_github-pages-challenge-YYC-Cube.ai-pai.yyc3.vip` ✅（实测已生效）。剩最后一步：
-> GitHub 网页 → YYC-Cube 组织 → **Settings → Domains** → *Add a domain* → 填 `ai-pai.yyc3.vip` → GitHub 自动校验 TXT → 状态变 **Verified**
-（或用有 `admin:org` 权限的 token：`gh api -X POST orgs/YYC-Cube/domains -f domain='ai-pai.yyc3.vip'`）
-验证通过后：Platform 仓 → Settings → Pages → Custom domain 填入 `ai-pai.yyc3.vip` 即可。
+**Q4：Platform 仓的域名为什么是 `pai-ai.yyc3.vip`（而不是 `ai-pai`）？**
+因为 **`ai-pai.yyc3.vip` 早已被个人账号 `yanyucloudcube.github.io` 的 Pages 站点占用**（实测 CNAME 指向个人账号且 HTTP 200）——这才是当初 GitHub 报"自定义域名已被占用"的真正原因，与组织验证无关。解法：Platform 仓改绑 `pai-ai.yyc3.vip`（DNS CNAME → `yyc-cube.github.io` ✅），2026-10-29 Pages 部署成功，**已 HTTP 200 上线**。
+> 若将来一定要用 `ai-pai`：先去个人账号 yanyucloudcube → Settings → Pages 解绑该域名，再做组织级 Domains 验证后即可迁回。
