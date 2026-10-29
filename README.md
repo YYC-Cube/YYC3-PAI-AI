@@ -25,23 +25,33 @@
 >
 > **All things converge in cloud pivot; Deep stacks ignite a new era of intelligence**
 
-[![Release](https://img.shields.io/github/v/release/YYC-Cube/YYC3-PAI?style=flat-square&logo=github&color=blue)](https://github.com/YYC-Cube/YYC3-PAI/releases)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/YYC-Cube/YYC3-PAI/ci.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/YYC-Cube/YYC3-PAI/actions)
+[![Release](https://img.shields.io/github/v/release/YYC-Cube/YYC3-PAI-AI?style=flat-square&logo=github&color=blue)](https://github.com/YYC-Cube/YYC3-PAI-AI/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/YYC-Cube/YYC3-PAI-AI/ci.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/YYC-Cube/YYC3-PAI-AI/actions)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg?style=flat-square&logo=open-source-initiative&logoColor=white)](./LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6%2B-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.3%2B-61dafb?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-6.3%2B-646cff?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0%2B-06b6d4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3-61dafb?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.4-646cff?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-06b6d4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square&logo=git&logoColor=white)](./CONTRIBUTING.md)
 
-[![Test Coverage](https://img.shields.io/badge/coverage-85%25-success?style=flat-square&logo=vitest&logoColor=white)](https://github.com/YYC-Cube/YYC3-PAI/actions)
-[![Node](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-9%2B-f69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
+[![Tests](https://img.shields.io/badge/tests-2810%20passing-brightgreen?style=flat-square&logo=vitest&logoColor=white)](https://github.com/YYC-Cube/YYC3-PAI-AI/actions)
+[![Dependencies](https://img.shields.io/badge/critical%20vulns-0-success?style=flat-square&logo=github&logoColor=white)](https://github.com/YYC-Cube/YYC3-PAI-AI/security/dependabot)
+[![Node](https://img.shields.io/badge/Node.js-20%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-9%20%7C%2010-f69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![Radix UI](https://img.shields.io/badge/Radix_UI-latest-9cf?style=flat-square&logo=radixui&logoColor=white)](https://www.radix-ui.com/)
-[![Code Size](https://img.shields.io/github/languages/code-size/YYC-Cube/YYC3-PAI?style=flat-square&color=purple)](https://github.com/YYC-Cube/YYC3-PAI)
-[![Last Commit](https://img.shields.io/github/last-commit/YYC-Cube/YYC3-PAI?style=flat-square&color=orange)](https://github.com/YYC-Cube/YYC3-PAI/commits/main)
+[![Code Size](https://img.shields.io/github/languages/code-size/YYC-Cube/YYC3-PAI-AI?style=flat-square&color=purple)](https://github.com/YYC-Cube/YYC3-PAI-AI)
+[![Last Commit](https://img.shields.io/github/last-commit/YYC-Cube/YYC3-PAI-AI?style=flat-square&color=orange)](https://github.com/YYC-Cube/YYC3-PAI-AI/commits/main)
 
-**🌐 [pai.yyc3.vip](https://pai.yyc3.vip)** · 📖 [文档](./docs) · 🚀 [快速开始](#-quick-start-快速开始) · 🤝 [贡献指南](./CONTRIBUTING.md) · 💬 [Discussions](https://github.com/YYC-Cube/YYC3-PAI/discussions)
+**🌐 [pai.yyc3.vip](https://pai.yyc3.vip)** · 📖 [文档](./docs) · 🚀 [快速开始](#-quick-start-快速开始) · 🤝 [贡献指南](./CONTRIBUTING.md) · 💬 [Discussions](https://github.com/YYC-Cube/YYC3-PAI-AI/discussions)
+
+> **📦 仓库定位（2026-10 仓库分离后）**
+>
+> | 仓库 | 产品 | 线上地址 |
+> |---|---|---|
+> | **本仓 `YYC3-PAI-AI`** | YYC³ AI-PAI —— React 18 + Vite 纯前端智能编程助手（一人一端 · 数据本地优先 · 无自建后端） | **[pai.yyc3.vip](https://pai.yyc3.vip)** |
+> | 姊妹仓 [`YYC3-Pai-Platform`](https://github.com/YYC-Cube/YYC3-Pai-Platform) | YYC3-Pai —— Python 多用户 / 多 Agent 自托管平台（langgraph · MCP · A2A + antd dashboard + desktop） | [ai-pai.yyc3.vip](https://ai-pai.yyc3.vip) |
+>
+> 两仓同源（git 历史共享血脉），2026-10-29 按「一个项目一条线」原则分离：本仓专注 React 前端产品，Platform 仓专注 Python 平台。质量基线：**2810 个单元测试全绿 · tsc 零错误 · 依赖 critical 漏洞清零**。项目状态速查见 [`docs/YYC3-项目状态速览.md`](./docs/YYC3-项目状态速览.md)。
 
 </div>
 
@@ -175,7 +185,7 @@
 
 ```bash
 # 1. Clone · 克隆仓库
-git clone https://github.com/YYC-Cube/YYC3-PAI.git
+git clone https://github.com/YYC-Cube/YYC3-PAI-AI.git
 cd YYC3-PAI
 
 # 2. Install dependencies · 安装依赖
@@ -521,6 +531,6 @@ copies or substantial portions of the Software.
 *言启象限 · 语枢未来*
 *Words Initiate Quadrants, Language Serves as Core for Future*
 
-**🌐 [pai.yyc3.vip](https://pai.yyc3.vip)** · 📧 [admin@0379.email](mailto:admin@0379.email) · 🐛 [Issues](https://github.com/YYC-Cube/YYC3-PAI/issues)
+**🌐 [pai.yyc3.vip](https://pai.yyc3.vip)** · 📧 [admin@0379.email](mailto:admin@0379.email) · 🐛 [Issues](https://github.com/YYC-Cube/YYC3-PAI-AI/issues)
 
 </div>

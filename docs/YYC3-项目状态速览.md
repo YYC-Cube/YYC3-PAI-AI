@@ -4,7 +4,8 @@
 > - `YYC-Cube/YYC3-PAI-AI` ＝ **React 前端独立仓**（新建）：`main` = 原 archive 主线（`a9aeedcc`）+ 4 个修复提交（`13038afe`）；本地 9 提交血脉保留在 `archive/local-main-2026-06-12` 分支；
 > - Python 平台 ＝ **`YYC-Cube/YYC3-Pai-Platform`**（原仓库原地改名，一切自动化/漏洞告警/PR 原地保留）；
 > - 本地工作树已切到新 `main`，WIP 完整；
-> - ⏳ 待办：pai.yyc3.vip 域名从 Platform 仓 Pages 转移到本仓 → 设仓库变量 `PAGES_ENABLED=true` 启用部署；Python 仓 30 个依赖漏洞仍待修。
+> - ✅ **域名已分割（2026-10-29）**：`pai.yyc3.vip` ＝ 本仓 React 应用（Pages 已配置，`PAGES_ENABLED=true` 已设）；`ai-pai.yyc3.vip` ＝ Platform 仓（组织级域名验证中——遇到"已被占用"提示，见文末 FAQ）；
+> - ⏳ 待办：ai-pai.yyc3.vip 组织级验证；Platform 仓 30 个依赖漏洞仍待修。
 
 ---
 
