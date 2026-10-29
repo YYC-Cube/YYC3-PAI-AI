@@ -81,7 +81,16 @@ describe('NativeDatabaseDumper - 集成测试', () => {
         ...baseOptions,
         username: 'admin',
       })
-      expect(command).toContain('-U admin')
+      expect(command).toContain("-U 'admin'")
+    })
+
+    it('用户可控值应被 shellQuote 转义（防命令注入）', () => {
+      const command = dumper.generateDumpCommand({
+        ...baseOptions,
+        database: "testdb'; rm -rf / #",
+      })
+      // 恶意值必须以转义形态出现（'\'' 闭合再重开），shell 不会截断命令
+      expect(command).toContain("'testdb'\\''; rm -rf / #'")
     })
 
     it('schemaOnly应添加--schema-only参数', () => {
@@ -122,8 +131,8 @@ describe('NativeDatabaseDumper - 集成测试', () => {
         ...baseOptions,
         tables: ['users', 'orders'],
       })
-      expect(command).toContain('"users"')
-      expect(command).toContain('"orders"')
+      expect(command).toContain("-t 'users'")
+      expect(command).toContain("'orders'")
     })
 
     it('自定义端口应包含-p参数', () => {
@@ -139,7 +148,7 @@ describe('NativeDatabaseDumper - 集成测试', () => {
         ...baseOptions,
         host: '192.168.1.100',
       })
-      expect(command).toContain('-h 192.168.1.100')
+      expect(command).toContain("-h '192.168.1.100'")
     })
 
     it('extraArgs应追加到命令末尾', () => {

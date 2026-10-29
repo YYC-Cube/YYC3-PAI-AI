@@ -90,6 +90,11 @@ interface OllamaDetectedModel {
 }
 
 // ===== Provider Definitions =====
+
+// Ollama 直连地址：生产为静态站（无 dev 代理），统一浏览器直连。
+// 跨域需本机 Ollama 放行来源：OLLAMA_ORIGINS=https://pai.yyc3.vip ollama serve
+const OLLAMA_BASE = (import.meta.env.VITE_OLLAMA_BASE_URL || "http://localhost:11434").replace(/\/+$/, "");
+
 const PROVIDERS: ProviderDef[] = [
   {
     id: "zhipu", name: "Z.ai 智谱", shortName: "GLM", icon: Cpu,
@@ -120,7 +125,7 @@ const PROVIDERS: ProviderDef[] = [
     id: "ollama", name: "Ollama (本地)", shortName: "Local", icon: Server,
     color: "#ffaa00", bgColor: "rgba(255,170,0,0.06)", borderColor: "rgba(255,170,0,0.2)",
     description: "本地部署 · 私有数据",
-    baseURL: "/api/ollama/chat",
+    baseURL: OLLAMA_BASE + "/api/chat",
     apiKeyUrl: "", apiKeyPlaceholder: "",
     openaiCompatible: false, docsUrl: "https://ollama.com",
     models: [],
@@ -983,18 +988,16 @@ export function ModelSettings() {
         let resp: Response;
         const msg = [{ role: "user", content: "Hi, respond with exactly: YANYUCLOUD_OK" }];
         if (providerId === "ollama") {
-          // 使用代理路径，直接使用配置的URL
-          const chatUrl = url || "/api/ollama/chat";
+          const chatUrl = url || OLLAMA_BASE + "/api/chat";
           resp = await fetch(chatUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: model.id, messages: msg, stream: false }), signal: ctrl.signal });
         } else {
-          // 使用代理发送外部API请求，解决CORS问题
-          const proxyUrl = "/api/proxy";
-          resp = await fetch(proxyUrl, {
+          // 浏览器直连：智谱端点已验证支持 CORS（预检 200 + ACAO 回显来源），
+          // 生产（静态 Pages）无 dev 代理，统一直连目标端点
+          resp = await fetch(url, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: "Bearer " + key,
-              "X-Target-Url": url
             },
             body: JSON.stringify({ model: model.id, messages: msg, stream: false, max_tokens: 20, temperature: 0 }),
             signal: ctrl.signal
@@ -1149,13 +1152,12 @@ export function ModelSettings() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    // 判断是否使用代理
-    const isLocalhost = ollamaHost.includes('localhost') || ollamaHost.includes('127.0.0.1') || ollamaHost.includes('[::1]');
-    const url = isLocalhost ? "/api/ollama/tags" : ollamaHost.replace(/\/+$/, "") + "/api/tags";
+    // 直连 Ollama tags（静态站无代理；跨域需本机 Ollama 设置 OLLAMA_ORIGINS）
+    const url = ollamaHost.replace(/\/+$/, "") + "/api/tags";
 
     fetch(url, {
       signal: controller.signal,
-      mode: isLocalhost ? 'same-origin' : 'cors',
+      mode: "cors",
     })
       .then(r => {
         clearTimeout(timeoutId);
@@ -1191,6 +1193,7 @@ export function ModelSettings() {
         setOllamaScanning(false);
         setOllamaConnected(false);
 
+        const isLocalhost = ollamaHost.includes('localhost') || ollamaHost.includes('127.0.0.1') || ollamaHost.includes('[::1]');
         let errorMessage = t("modelSettings", "ollamaConnectionFailed");
 
         if (err.name === 'AbortError') {
@@ -1198,7 +1201,8 @@ export function ModelSettings() {
         } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
           errorMessage = isLocalhost
             ? t("modelSettings", "ollamaNotRunning")
-            : t("modelSettings", "ollamaCorsError");
+            : t("modelSettings", "ollamaCorsError") +
+              `（OLLAMA_ORIGINS=${window.location.origin} ollama serve）`;
         } else if (err.message.includes('ECONNREFUSED') || err.message.includes('Network request failed')) {
           errorMessage = t("modelSettings", "ollamaNotRunning");
         } else if (err.message.includes('HTTP')) {
@@ -1229,7 +1233,7 @@ export function ModelSettings() {
       addAIModel({
         name: model.name,
         provider: "ollama",
-        endpoint: "/api/ollama/chat",
+        endpoint: OLLAMA_BASE + "/api/chat",
         apiKey: "",
         isActive: false,
         isDetected: true

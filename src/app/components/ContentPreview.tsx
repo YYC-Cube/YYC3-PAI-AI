@@ -27,6 +27,7 @@ import {
   ThumbsUp,
   X
 } from 'lucide-react'
+import DOMPurify from 'dompurify'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelfMediaStore } from '../store/self-media-store'
 import { BLUR, Z_INDEX, useThemeStore } from '../store/theme-store'
@@ -132,7 +133,13 @@ function renderMarkdownToHTML(content: string): string {
     html = '<p style="margin:12px 0;line-height:1.8">' + html + '</p>'
   }
 
-  return html
+  // Security: sanitize before any dangerouslySetInnerHTML use —
+  // 内容来自 AI 输出与用户粘贴，属不可信输入（P0 修复，同 LivePreview 范式）
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'code', 'pre', 'blockquote', 'hr', 'img', 'br', 'span', 'div'],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'style', 'class'],
+    ALLOW_DATA_ATTR: false,
+  })
 }
 
 function getCurrentDate(): string {

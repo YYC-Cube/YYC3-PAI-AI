@@ -29,6 +29,11 @@ export interface NativeDumpOptions {
   extraArgs?: string[]
 }
 
+/** POSIX 单引号转义：把用户可控值安全嵌入 shell 命令（防命令注入） */
+function shellQuote(value: string): string {
+  return `'` + value.replace(/'/g, `'\\''`) + `'`
+}
+
 export interface NativeDumpProgress {
   stage: 'detecting' | 'connecting' | 'validating' | 'dropping' | 'creating-schema' | 'importing-data' | 'dumping' | 'compressing' | 'verifying' | 'completed' | 'error'
   percentComplete: number
@@ -226,6 +231,8 @@ class NativeDatabaseDumper {
   }
 
   private async checkCommandExists(command: string): Promise<boolean> {
+    // 命令白名单：checkCommandExists 的入参只允许本服务已知的工具名
+    if (!['pg_dump', 'mysqldump', 'sqlite3'].includes(command)) return false
     try {
       const result = await this.executeCommand(`which ${command}`, [])
       return result.code === 0
@@ -265,26 +272,14 @@ class NativeDatabaseDumper {
   }
 
   private async executeNodeCommand(command: string, _envVars: string[]): Promise<CommandResult> {
-    try {
-      const mod = await eval(`import('child_process')`) as { execSync: (cmd: string, opts?: Record<string, unknown>) => Uint8Array | string }
-      const stdout = mod.execSync(command, {
-        encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe'],
-        timeout: 300000,
-      })
-
-      return {
-        code: 0,
-        stdout: String(stdout),
-        stderr: '',
-      }
-    } catch (error) {
-      const execError = error as { status?: number; message?: string; stderr?: unknown }
-      return {
-        code: execError.status ?? -1,
-        stdout: '',
-        stderr: typeof execError.stderr === 'string' ? execError.stderr : String(execError.stderr ?? ''),
-      }
+    // 纯浏览器环境不存在 child_process：本分支仅为语义完整性保留，
+    // Web 下恒不可用；真实桌面执行由 executeTauriCommand（Tauri shell 插件）承担。
+    // 原实现经 eval 动态 import child_process——既是注入面又不可达，已按审核意见删除。
+    logger.warn('executeNodeCommand unavailable in browser runtime', { command: command.split(' ')[0] })
+    return {
+      code: -1,
+      stdout: '',
+      stderr: 'child_process is unavailable in the browser runtime',
     }
   }
 
@@ -307,7 +302,7 @@ class NativeDatabaseDumper {
     try {
       await this.executeCommand(`mkdir -p /tmp/yycai-backups`, [])
 
-      const fullCommand = `${command} -f "${outputPath}"`
+      const fullCommand = `${command} -f ${shellQuote(outputPath)}`
 
       const result = await this.executeCommand(fullCommand, options.password ? [`PGPASSWORD=${options.password}`] : [])
 
@@ -315,10 +310,10 @@ class NativeDatabaseDumper {
         throw new Error(`pg_dump failed: ${result.stderr}`)
       }
 
-      const statResult = await this.executeCommand(`stat -f%z "${outputPath}"`, [])
+      const statResult = await this.executeCommand(`stat -f%z ${shellQuote(outputPath)}`, [])
       const sizeBytes = parseInt(statResult.stdout.trim(), 10) || 0
 
-      const checksumResult = await this.executeCommand(`shasum -a 256 "${outputPath}"`, [])
+      const checksumResult = await this.executeCommand(`shasum -a 256 ${shellQuote(outputPath)}`, [])
       const checksum = checksumResult.stdout.split(' ')[0]
 
       onProgress?.({
@@ -370,7 +365,7 @@ class NativeDatabaseDumper {
     try {
       await this.executeCommand(`mkdir -p /tmp/yycai-backups`, [])
 
-      const fullCommand = `${command} > "${outputPath}" 2>&1`
+      const fullCommand = `${command} > ${shellQuote(outputPath)} 2>&1`
       const envVars: string[] = []
 
       if (options.password) {
@@ -383,10 +378,10 @@ class NativeDatabaseDumper {
         throw new Error(`mysqldump failed: ${result.stderr}`)
       }
 
-      const statResult = await this.executeCommand(`stat -f%z "${outputPath}"`, [])
+      const statResult = await this.executeCommand(`stat -f%z ${shellQuote(outputPath)}`, [])
       const sizeBytes = parseInt(statResult.stdout.trim(), 10) || 0
 
-      const checksumResult = await this.executeCommand(`shasum -a 256 "${outputPath}"`, [])
+      const checksumResult = await this.executeCommand(`shasum -a 256 ${shellQuote(outputPath)}`, [])
       const checksum = checksumResult.stdout.split(' ')[0]
 
       onProgress?.({
@@ -449,14 +444,14 @@ class NativeDatabaseDumper {
     })
 
     const args: string[] = []
-    if (options.username) args.push(`-U ${options.username}`)
-    if (options.host !== 'localhost') args.push(`-h ${options.host}`)
+    if (options.username) args.push(`-U ${shellQuote(options.username)}`)
+    if (options.host !== 'localhost') args.push(`-h ${shellQuote(options.host)}`)
     if (options.port !== 5432) args.push(`-p ${options.port}`)
     if (options.cleanBeforeRestore) args.push('--clean')
     if (options.singleTransaction) args.push('--single-transaction')
     if (options.extraArgs) args.push(...options.extraArgs)
 
-    const command = `psql ${args.join(' ')} -d ${options.database} < "${options.backupPath}"`
+    const command = `psql ${args.join(' ')} -d ${shellQuote(options.database)} < ${shellQuote(options.backupPath)}`
 
     const envVars: string[] = []
     if (options.password) {
@@ -487,12 +482,12 @@ class NativeDatabaseDumper {
     })
 
     const args: string[] = []
-    if (options.username) args.push(`-u${options.username}`)
-    if (options.host !== 'localhost') args.push(`-h${options.host}`)
+    if (options.username) args.push(`-u${shellQuote(options.username)}`)
+    if (options.host !== 'localhost') args.push(`-h${shellQuote(options.host)}`)
     if (options.port !== 3306) args.push(`-P${options.port}`)
     if (options.extraArgs) args.push(...options.extraArgs)
 
-    const command = `mysql ${args.join(' ')} ${options.database} < "${options.backupPath}"`
+    const command = `mysql ${args.join(' ')} ${shellQuote(options.database)} < ${shellQuote(options.backupPath)}`
 
     const envVars: string[] = []
     if (options.password) {
@@ -542,8 +537,8 @@ class NativeDatabaseDumper {
   private buildPgDumpArgs(options: NativeDumpOptions): string[] {
     const args: string[] = []
 
-    if (options.username) args.push(`-U ${options.username}`)
-    if (options.host !== 'localhost') args.push(`-h ${options.host}`)
+    if (options.username) args.push(`-U ${shellQuote(options.username)}`)
+    if (options.host !== 'localhost') args.push(`-h ${shellQuote(options.host)}`)
     if (options.port !== 5432) args.push(`-p ${options.port}`)
 
     if (options.schemaOnly) {
@@ -565,12 +560,13 @@ class NativeDatabaseDumper {
     }
 
     if (options.tables && options.tables.length > 0) {
-      args.push('-t', ...options.tables.map(t => `"${t}"`))
+      args.push('-t', ...options.tables.map(shellQuote))
     }
 
-    args.push(options.database)
+    args.push(shellQuote(options.database))
 
     if (options.extraArgs) {
+      // 高级透传参数按原样拼接（文档化行为）；用户可控的标识字段均已经 shellQuote
       args.push(...options.extraArgs)
     }
 
@@ -585,8 +581,8 @@ class NativeDatabaseDumper {
   private buildMysqlDumpArgs(options: NativeDumpOptions): string[] {
     const args: string[] = []
 
-    if (options.username) args.push(`-u${options.username}`)
-    if (options.host !== 'localhost') args.push(`-h${options.host}`)
+    if (options.username) args.push(`-u${shellQuote(options.username)}`)
+    if (options.host !== 'localhost') args.push(`-h${shellQuote(options.host)}`)
     if (options.port !== 3306) args.push(`-P${options.port}`)
 
     if (options.schemaOnly) {
@@ -602,12 +598,13 @@ class NativeDatabaseDumper {
     args.push('--routines', '--triggers', '--events')
 
     if (options.tables && options.tables.length > 0) {
-      args.push(...options.tables)
+      args.push(...options.tables.map(shellQuote))
     } else {
-      args.push(options.database)
+      args.push(shellQuote(options.database))
     }
 
     if (options.extraArgs) {
+      // 高级透传参数按原样拼接（文档化行为）；用户可控的标识字段均已经 shellQuote
       args.push(...options.extraArgs)
     }
 
