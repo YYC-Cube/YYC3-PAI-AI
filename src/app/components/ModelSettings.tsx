@@ -23,7 +23,6 @@ import {
   ChevronDown, ChevronRight,
   Clock,
   Cloud,
-  Code2,
   Copy,
   Cpu,
   Edit3,
@@ -39,10 +38,9 @@ import {
   RefreshCw,
   Search,
   Server,
-  Settings2,
   Shield,
+  ShieldCheck,
   Sparkles,
-  Terminal,
   Trash2,
   Wifi,
   X,
@@ -50,6 +48,7 @@ import {
   Zap
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { panelActions } from "../store/panel-store";
 import { useI18n, type TranslationSection } from "../i18n/context";
 import type { AggregatedMetrics, CostSummary, ErrorStats } from "../store/ai-metrics-store";
 import { aiMetricsStore, getErrorTypeLabel, useAIMetrics } from "../store/ai-metrics-store";
@@ -57,6 +56,9 @@ import { useModelStore, type AIModel } from "../store/model-store";
 import { BLUR, themeStore, useThemeStore, Z_INDEX, type ThemeTokens } from "../store/theme-store";
 import type { NetworkError as _NetworkError } from "../types/errors";
 import { createLogger } from "../utils/logger";
+import { loadAllProviderKeys, migratePlaintextKeysToVault, saveProviderKey } from "../utils/key-storage";
+import { loadJ, OLLAMA_BASE, PROVIDERS, saveJ, SK, type ModelDef, type ProviderDef } from "./settings-model";
+import { MCPPanel } from "./MCPPanel";
 import { trackModelImport, trackModelSwitch, trackModelTest, trackOllamaDetection } from "../utils/model-performance-tracker";
 import { ThemePreview } from "./ThemePreview";
 
@@ -64,22 +66,7 @@ const logger = createLogger('ModelSettings');
 
 // Font/color constants removed — use tokens from useThemeStore() instead
 
-// ===== Types =====
-interface ProviderDef {
-  id: string; name: string; shortName: string; icon: typeof Cloud;
-  color: string; bgColor: string; borderColor: string;
-  description: string; baseURL: string;
-  apiKeyUrl: string; apiKeyPlaceholder: string;
-  models: ModelDef[]; openaiCompatible: boolean; docsUrl: string;
-}
-interface ModelDef {
-  id: string; name: string; description: string;
-  contextWindow?: string; pricing?: string;
-}
-interface MCPServerConfig {
-  id: string; name: string; description: string;
-  command: string; args: string[]; env: Record<string, string>; enabled: boolean;
-}
+// ===== Types（Provider/Model/MCP 类型与目录已拆至 settings-model.ts） =====
 interface DiagnosticResult {
   providerId: string; modelName: string;
   status: "idle" | "testing" | "success" | "error";
@@ -88,60 +75,6 @@ interface DiagnosticResult {
 interface OllamaDetectedModel {
   name: string; size: string; status: "online" | "offline"; quantization: string;
 }
-
-// ===== Provider Definitions =====
-
-// Ollama 直连地址：生产为静态站（无 dev 代理），统一浏览器直连。
-// 跨域需本机 Ollama 放行来源：OLLAMA_ORIGINS=https://pai.yyc3.vip ollama serve
-const OLLAMA_BASE = (import.meta.env.VITE_OLLAMA_BASE_URL || "http://localhost:11434").replace(/\/+$/, "");
-
-const PROVIDERS: ProviderDef[] = [
-  {
-    id: "zhipu", name: "Z.ai 智谱", shortName: "GLM", icon: Cpu,
-    color: "#4488ff", bgColor: "rgba(68,136,255,0.06)", borderColor: "rgba(68,136,255,0.2)",
-    description: "Z.ai 通用端点 · GLM-5 / GLM-4 系列",
-    baseURL: "https://open.bigmodel.cn/api/paas/v4/chat/completions",
-    apiKeyUrl: "https://open.bigmodel.cn/usercenter/apikeys", apiKeyPlaceholder: "输入智谱 API Key...",
-    openaiCompatible: true, docsUrl: "https://open.bigmodel.cn/dev/api/normal-model/glm-4",
-    models: [
-      { id: "glm-5.1", name: "GLM-5.1", description: "最新旗舰推理模型", contextWindow: "128K" },
-      { id: "glm-5-turbo", name: "GLM-5-Turbo", description: "高速版旗舰模型", contextWindow: "128K" },
-      { id: "glm-4.7", name: "GLM-4.7", description: "高性能对话模型", contextWindow: "128K" },
-      { id: "glm-4.5-air", name: "GLM-4.5-Air", description: "轻量高速模型", contextWindow: "128K" },
-    ],
-  },
-  {
-    id: "zhipu-coding", name: "Z.ai Coding", shortName: "Code", icon: Code2,
-    color: "#22c55e", bgColor: "rgba(34,197,94,0.06)", borderColor: "rgba(34,197,94,0.2)",
-    description: "Z.ai Coding 端点 · 代码专用",
-    baseURL: "https://open.bigmodel.cn/api/coding/paas/v4/chat/completions",
-    apiKeyUrl: "https://open.bigmodel.cn/usercenter/apikeys", apiKeyPlaceholder: "输入智谱 API Key (与通用端点共享)",
-    openaiCompatible: true, docsUrl: "https://open.bigmodel.cn/dev/api/coding-model/coding-model",
-    models: [
-      { id: "codegeex-4", name: "CodeGeeX-4", description: "代码生成专用模型", contextWindow: "128K" },
-    ],
-  },
-  {
-    id: "ollama", name: "Ollama (本地)", shortName: "Local", icon: Server,
-    color: "#ffaa00", bgColor: "rgba(255,170,0,0.06)", borderColor: "rgba(255,170,0,0.2)",
-    description: "本地部署 · 私有数据",
-    baseURL: OLLAMA_BASE + "/api/chat",
-    apiKeyUrl: "", apiKeyPlaceholder: "",
-    openaiCompatible: false, docsUrl: "https://ollama.com",
-    models: [],
-  },
-];
-
-const DEFAULT_MCP_SERVERS: MCPServerConfig[] = [
-  { id: "mcp-filesystem", name: "Filesystem", description: "\u6587\u4EF6\u7CFB\u7EDF\u8BFB\u5199", command: "npx", args: ["-y", "@modelcontextprotocol/server-filesystem", "/app/designs"], env: {}, enabled: true },
-  { id: "mcp-fetch", name: "Fetch", description: "HTTP \u8BF7\u6C42\u5DE5\u5177", command: "npx", args: ["-y", "@modelcontextprotocol/server-fetch"], env: {}, enabled: true },
-  { id: "mcp-postgres", name: "PostgreSQL", description: "\u6570\u636E\u5E93\u67E5\u8BE2", command: "npx", args: ["-y", "@modelcontextprotocol/server-postgres"], env: { DATABASE_URL: "postgresql://user:password@localhost:5432/mydb" }, enabled: false },
-];
-
-// ===== Storage =====
-const SK = { keys: "yyc3-provider-api-keys", urls: "yyc3-provider-urls", mcp: "yyc3-mcp-servers", custom: "yyc3-custom-providers", disabled: "yyc3-disabled-providers", customModels: "yyc3-custom-models" };
-function loadJ<T>(k: string, fb: T): T { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : fb; } catch { return fb; } }
-function saveJ(k: string, v: unknown) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* ignore */ } }
 
 // ===== Cyber input style helper =====
 const cyInput = "w-full px-3 py-2 rounded-lg text-[11px] font-mono outline-none transition-all";
@@ -433,137 +366,6 @@ function ProviderCard({ provider, apiKey, customUrl, diags, expanded, activeMode
   );
 }
 
-// ===== MCP Config Panel =====
-function MCPPanel({ t }: { t: (section: TranslationSection, key: string) => string }) {
-  const { tokens: tk } = useThemeStore();
-  const [servers, setServers] = useState<MCPServerConfig[]>(() => loadJ(SK.mcp, DEFAULT_MCP_SERVERS));
-  const [addingServer, setAddingServer] = useState(false);
-  const [newSrv, setNewSrv] = useState({ name: "", command: "", args: "", env: "", description: "" });
-  const [jsonMode, setJsonMode] = useState(false);
-  const [jsonDraft, setJsonDraft] = useState("");
-  const [jsonError, setJsonError] = useState("");
-  const [editId, setEditId] = useState<string | null>(null);
-
-  useEffect(() => { saveJ(SK.mcp, servers); }, [servers]);
-
-  const handleAdd = () => {
-    if (!newSrv.name || !newSrv.command) return;
-    let envObj: Record<string, string> = {};
-    try { if (newSrv.env) envObj = JSON.parse(newSrv.env); } catch { /* ignore invalid JSON */ }
-    setServers(p => [...p, { id: "mcp-" + Date.now(), name: newSrv.name, description: newSrv.description || newSrv.name, command: newSrv.command, args: newSrv.args ? newSrv.args.split(/\s+/) : [], env: envObj, enabled: true }]);
-    setNewSrv({ name: "", command: "", args: "", env: "", description: "" });
-    setAddingServer(false);
-  };
-
-  const exportJson = () => {
-    const cfg: Record<string, Record<string, unknown>> = { mcpServers: {} };
-    servers.filter(s => s.enabled).forEach(s => { cfg.mcpServers[s.name.toLowerCase()] = { command: s.command, args: s.args, ...(Object.keys(s.env).length > 0 ? { env: s.env } : {}) }; });
-    setJsonDraft(JSON.stringify(cfg, null, 2));
-    setJsonMode(true);
-    setJsonError("");
-  };
-
-  const importJson = () => {
-    try {
-      const parsed = JSON.parse(jsonDraft);
-      const ms = parsed.mcpServers || parsed;
-      const imported: MCPServerConfig[] = Object.entries(ms).map(([name, conf]) => {
-        const cfg = conf as Record<string, unknown>;
-        return {
-          id: "mcp-" + Date.now() + "-" + name,
-          name,
-          description: cfg.description as string || name,
-          command: cfg.command as string || "",
-          args: (cfg.args as string[]) || [],
-          env: (cfg.env as Record<string, string>) || {},
-          enabled: true
-        };
-      });
-      setServers(imported);
-      setJsonMode(false);
-      setJsonError("");
-    } catch (e: Error | unknown) { setJsonError("JSON parse error: " + (e instanceof Error ? e.message : "Unknown error")); }
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Plug size={14} color={tk.secondary} />
-          <span style={{ fontFamily: tk.fontMono, fontSize: "12px", color: tk.foreground }}>{t("modelSettings", "mcpTitle")}</span>
-          <span className="px-1.5 py-0.5 rounded" style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.foregroundMuted, background: tk.cardBg }}>
-            {servers.filter(s => s.enabled).length}/{servers.length} {t("modelSettings", "mcpEnabled")}
-          </span>
-        </div>
-        <button onClick={exportJson} className="flex items-center gap-1 px-2 py-1 rounded transition-all hover:opacity-80" style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.foregroundMuted }}>
-          <Terminal size={10} />{jsonMode ? t("modelSettings", "mcpListMode") : t("modelSettings", "mcpJsonMode")}
-        </button>
-      </div>
-
-      {jsonMode && (
-        <div className="space-y-2">
-          <textarea value={jsonDraft} onChange={e => { setJsonDraft(e.target.value); setJsonError(""); }} rows={10} className="w-full px-3 py-2 rounded-lg text-[10px] font-mono resize-none outline-none" style={{ color: tk.foreground, background: tk.inputBg, border: `1px solid ${tk.inputBorder}`, caretColor: tk.primary }} aria-label={t("modelSettings", "mcpJsonMode")} />
-          {jsonError && <div className="flex items-center gap-1" style={{ fontFamily: tk.fontMono, fontSize: "10px", color: tk.error }}><AlertCircle size={10} />{jsonError}</div>}
-          <div className="flex items-center gap-2">
-            <button onClick={importJson} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all hover:opacity-80" style={{ fontFamily: tk.fontMono, fontSize: "10px", color: tk.secondary, background: `${tk.secondary}1a`, border: `1px solid ${tk.secondary}33` }}><Check size={10} />{t("modelSettings", "mcpImport")}</button>
-            <button onClick={() => setJsonMode(false)} className="px-3 py-1.5 rounded-lg transition-all hover:opacity-80" style={{ fontFamily: tk.fontMono, fontSize: "10px", color: tk.foregroundMuted }}>{t("modelSettings", "cancel")}</button>
-            <CopyBtn text={jsonDraft} />
-          </div>
-          <div style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.foregroundMuted, padding: "0 4px" }}>{t("modelSettings", "mcpCompatHint")}</div>
-        </div>
-      )}
-
-      {!jsonMode && (
-        <div className="space-y-2">
-          {servers.map(srv => (
-            <div key={srv.id} className="rounded-xl p-3 space-y-2 transition-all" style={{ background: srv.enabled ? tk.cardBg : tk.backgroundAlt, border: `1px solid ${srv.enabled ? tk.cardBorder : tk.borderDim}`, opacity: srv.enabled ? 1 : 0.5, borderRadius: tk.borderRadius }}>
-              <div className="flex items-center gap-2.5">
-                <button onClick={() => setServers(p => p.map(s => s.id === srv.id ? { ...s, enabled: !s.enabled } : s))} className="shrink-0" aria-label={`${srv.enabled ? t("modelSettings", "disable") : t("modelSettings", "enable")} ${srv.name}`} title={`${srv.enabled ? t("modelSettings", "disable") : t("modelSettings", "enable")} ${srv.name}`}>
-                  <div className="w-8 h-4 rounded-full transition-all" style={{ background: srv.enabled ? `${tk.secondary}4d` : tk.borderDim }}>
-                    <div className="w-3.5 h-3.5 rounded-full transition-all" style={{ background: srv.enabled ? tk.secondary : tk.foregroundMuted, marginTop: 1, marginLeft: srv.enabled ? 17 : 1 }} />
-                  </div>
-                </button>
-                <div className="flex-1 min-w-0">
-                  <div style={{ fontFamily: tk.fontMono, fontSize: "11px", color: tk.foreground }}>{srv.name}</div>
-                  <div style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.foregroundMuted }}>{srv.description}</div>
-                </div>
-                <button onClick={() => setEditId(editId === srv.id ? null : srv.id)} className="p-1 rounded transition-all hover:opacity-80" style={{ color: tk.foregroundMuted }} aria-label={`${t("modelSettings", "edit")} ${srv.name}`} title={`${t("modelSettings", "edit")} ${srv.name}`}><Settings2 size={10} /></button>
-                <button onClick={() => setServers(p => p.filter(s => s.id !== srv.id))} className="p-1 rounded transition-all hover:opacity-80" style={{ color: tk.foregroundMuted }} aria-label={`${t("modelSettings", "remove")} ${srv.name}`} title={`${t("modelSettings", "remove")} ${srv.name}`}><Trash2 size={10} /></button>
-              </div>
-              {editId === srv.id && (
-                <div className="pl-10 space-y-1" style={{ fontFamily: tk.fontMono, fontSize: "9px" }}>
-                  <div className="flex items-center gap-2"><span style={{ color: tk.foregroundMuted, width: 56, flexShrink: 0 }}>command:</span><span style={{ color: tk.foreground }}>{srv.command}</span></div>
-                  <div className="flex items-start gap-2"><span style={{ color: tk.foregroundMuted, width: 56, flexShrink: 0 }}>args:</span><span className="break-all" style={{ color: tk.foreground }}>{JSON.stringify(srv.args)}</span></div>
-                  {Object.keys(srv.env).length > 0 && <div className="flex items-start gap-2"><span style={{ color: tk.foregroundMuted, width: 56, flexShrink: 0 }}>env:</span><span className="break-all" style={{ color: tk.foreground }}>{JSON.stringify(srv.env)}</span></div>}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {addingServer ? (
-            <div className="rounded-xl p-3 space-y-2" style={{ border: `1px dashed ${tk.secondary}33`, background: `${tk.secondary}08` }}>
-              <div className="grid grid-cols-2 gap-2">
-                <input value={newSrv.name} onChange={e => setNewSrv({ ...newSrv, name: e.target.value })} placeholder="Name" className={cyInput} style={{ ...getCyInputStyle(), fontSize: "10px" }} />
-                <input value={newSrv.command} onChange={e => setNewSrv({ ...newSrv, command: e.target.value })} placeholder="Command (e.g. npx)" className={cyInput} style={{ ...getCyInputStyle(), fontSize: "10px" }} />
-              </div>
-              <input value={newSrv.args} onChange={e => setNewSrv({ ...newSrv, args: e.target.value })} placeholder="Args (space-separated)" className={cyInput} style={{ ...getCyInputStyle(), fontSize: "10px" }} />
-              <div className="flex gap-2">
-                <button onClick={handleAdd} disabled={!newSrv.name || !newSrv.command} className="flex items-center gap-1 px-3 py-1.5 rounded-lg transition-all disabled:opacity-30" style={{ fontFamily: tk.fontMono, fontSize: "10px", color: tk.secondary, background: `${tk.secondary}1a`, border: `1px solid ${tk.secondary}33` }}><Plus size={10} />{t("modelSettings", "addModelBtn")}</button>
-                <button onClick={() => setAddingServer(false)} className="px-3 py-1.5 rounded-lg" style={{ fontFamily: tk.fontMono, fontSize: "10px", color: tk.foregroundMuted }}>{t("modelSettings", "cancel")}</button>
-              </div>
-            </div>
-          ) : (
-            <button onClick={() => setAddingServer(true)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl transition-all hover:opacity-70" style={{ border: `1px dashed ${tk.borderDim}`, color: tk.foregroundMuted, fontFamily: tk.fontMono, fontSize: "11px" }}>
-              <Plus size={12} />{t("modelSettings", "mcpAdd")}
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ===== Performance Monitor Panel =====
 function PerformancePanel({ t, tk }: { t: (section: TranslationSection, key: string) => string; tk: ThemeTokens }) {
   const { getAggregatedMetrics, getErrorStats, getCostSummaries, getTotalCost, getRecentErrors, getBestProvider, clearAll } = useAIMetrics();
 
@@ -889,7 +691,7 @@ export function ModelSettings() {
   }, [modelSettingsOpen, modelSettingsInitialTab]);
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedProvider, setExpandedProvider] = useState<string | null>("zhipu");
-  const [apiKeys, setApiKeys] = useState<Record<string, string>>(() => loadJ(SK.keys, {}));
+  const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
   const [customUrls, setCustomUrls] = useState<Record<string, string>>(() => loadJ(SK.urls, {}));
   const [customProviders, setCustomProviders] = useState<ProviderDef[]>(() => {
     const loaded = loadJ(SK.custom, []);
@@ -912,7 +714,17 @@ export function ModelSettings() {
   const [aiDiagReport, setAiDiagReport] = useState<string | null>(null);
   const [aiDiagLoading, setAiDiagLoading] = useState(false);
 
-  useEffect(() => { saveJ(SK.keys, apiKeys); }, [apiKeys]);
+  // API Key 存储：启动时从统一门面（加密保险库优先）载入；写入时经门面持久化，
+  // 不再整表明文写 localStorage（yyc3-provider-api-keys 仅作为保险库未解锁时的降级层）
+  useEffect(() => {
+    loadAllProviderKeys().then((all) => setApiKeys(all)).catch(() => { /* 降级为空 */ })
+    // 保险库已解锁（如本会话内刚设置主口令）→ 顺带迁移历史明文
+    migratePlaintextKeysToVault().catch(() => { /* 迁移失败不阻塞 UI */ })
+  }, [])
+  const updateApiKey = useCallback((providerId: string, key: string) => {
+    setApiKeys(p => ({ ...p, [providerId]: key }))
+    saveProviderKey(providerId, key).catch(() => { /* 存储失败时保留在内存态 */ })
+  }, [])
   useEffect(() => { saveJ(SK.urls, customUrls); }, [customUrls]);
   useEffect(() => { saveJ(SK.custom, customProviders); }, [customProviders]);
   useEffect(() => { saveJ(SK.disabled, Array.from(disabledProviders)); }, [disabledProviders]);
@@ -968,7 +780,7 @@ export function ModelSettings() {
     const model = provider.models.find(m => m.id === modelId);
     if (!model) return;
     const dk = providerId + ":" + modelId;
-    const key = apiKeys[providerId] || apiKeys["zhipu"] || "";
+    const key = apiKeys[providerId] || "";
     const url = customUrls[providerId] || provider.baseURL;
 
     if (providerId !== "ollama" && !key) { setDiagnostics(p => ({ ...p, [dk]: { providerId, modelName: model.name, status: "error", message: t("modelSettings", "noApiKey"), timestamp: Date.now() } })); return; }
@@ -1051,7 +863,7 @@ export function ModelSettings() {
     const model = provider.models.find(m => m.id === modelId);
     if (!model) return;
     const url = customUrls[providerId] || provider.baseURL;
-    const key = apiKeys[providerId] || apiKeys["zhipu"] || "";
+    const key = apiKeys[providerId] || "";
     const pt: AIModel["provider"] = providerId === "openai" ? "openai" : providerId === "ollama" ? "ollama" : "custom";
     const existing = aiModels.find(m => (m.name === model.id || m.name === model.name) && m.endpoint === url);
     if (existing) { updateAIModel(existing.id, { apiKey: key, name: model.id }); activateAIModel(existing.id); }
@@ -1336,6 +1148,15 @@ export function ModelSettings() {
             <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search..." className="bg-transparent text-[11px] outline-none w-36" style={{ fontFamily: tokens.fontMono, color: tokens.foreground, caretColor: tokens.primary }} />
           </div>
           <button
+            onClick={() => { closeModelSettings(); panelActions.open('keyVault'); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all hover:opacity-80"
+            style={{ fontFamily: tokens.fontMono, fontSize: "10px", color: tokens.secondary, background: `${tokens.secondary}1a`, border: `1px solid ${tokens.secondary}33` }}
+            title="API Key 加密保险库（PBKDF2 + AES-256-GCM）"
+          >
+            <ShieldCheck size={11} />
+            保险库
+          </button>
+          <button
             onClick={closeModelSettings}
             className="p-2 rounded-lg transition-all hover:opacity-80"
             style={{ border: `1px solid ${tokens.border}` }}
@@ -1421,7 +1242,7 @@ export function ModelSettings() {
                   <ProviderCard key={provider.id} provider={provider} apiKey={apiKeys[provider.id] || ""} customUrl={customUrls[provider.id] || ""}
                     diags={pd} expanded={expandedProvider === provider.id} activeModelKey={activeModelKey}
                     onToggle={() => setExpandedProvider(p => p === provider.id ? null : provider.id)}
-                    onApiKeyChange={k => setApiKeys(p => ({ ...p, [provider.id]: k }))}
+                    onApiKeyChange={k => updateApiKey(provider.id, k)}
                     onUrlChange={u => setCustomUrls(p => ({ ...p, [provider.id]: u }))}
                     onTestConnection={mId => handleTest(provider.id, mId)}
                     onSelectModel={mId => handleSelect(provider.id, mId)}
@@ -1437,7 +1258,8 @@ export function ModelSettings() {
                           name: provider.name + ' ' + t("modelSettings", "customSuffix"),
                         };
                         setCustomProviders(pr => [...pr, customCopy]);
-                        setApiKeys(p => ({ ...p, [customCopy.id]: apiKeys[provider.id] || '' }));
+                        const inheritedKey = apiKeys[provider.id] || '';
+                        if (inheritedKey) updateApiKey(customCopy.id, inheritedKey);
                         setCustomUrls(p => ({ ...p, [customCopy.id]: customUrls[provider.id] || '' }));
                         setExpandedProvider(customCopy.id);
                       }

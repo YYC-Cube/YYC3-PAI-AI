@@ -14,6 +14,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { createLogger } from '../utils/logger'
+import { HF_MODEL_MAP, loadPipeline, runCompletion, runEmbedding, unloadPipeline } from '../services/local-inference-engine'
 
 const logger = createLogger('webgpu')
 
@@ -526,53 +527,21 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
       try {
         logger.info(`[WebGPU] Loading model ${modelId}...`)
 
-        // 检查缓存
-        const cached = await idbManager.getModel(modelId)
-        if (cached) {
-          logger.debug(`[WebGPU] Loading model ${modelId} from cache...`)
-          set((state) => {
-            const m = state.models.get(modelId)
-            if (m) m.loadProgress = 50
-          })
+        // 真实加载：transformers.js pipeline（权重经浏览器 Cache API 复用，
+        // IndexedDB 记录元数据用于缓存统计与列表展示）
+        await loadPipeline(modelId, {
+          device: model.engine === 'wasm' ? 'wasm' : 'webgpu',
+          onProgress: (pct, note) => {
+            set((state) => {
+              const m = state.models.get(modelId)
+              if (m) m.loadProgress = pct
+            })
+            logger.debug(`[WebGPU] ${modelId} ${pct}% ${note}`)
+          },
+        })
 
-          // 模拟从缓存加载
-          await new Promise((resolve) => setTimeout(resolve, 500))
-
-          set((state) => {
-            const m = state.models.get(modelId)
-            if (m) {
-              m.loaded = true
-              m.loadProgress = 100
-            }
-            state.isLoadingModel = false
-          })
-
-          logger.info(`[WebGPU] Model ${modelId} loaded from cache`)
-          return
-        }
-
-        // 模拟模型加载进度
-        const loadInterval = setInterval(() => {
-          set((state) => {
-            const m = state.models.get(modelId)
-            if (m && m.loadProgress < 90) {
-              m.loadProgress = Math.min(90, m.loadProgress + Math.random() * 20)
-            }
-          })
-        }, 200)
-
-        // 这里应该是实际的模型加载逻辑
-        // 使用 @xenova/transformers 库加载模型
-        // 由于是示例，我们使用setTimeout模拟
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-
-        clearInterval(loadInterval)
-
-        // 模拟模型数据（实际应该是模型权重）
-        const modelData = new ArrayBuffer(model.size * 1024 * 1024 / 2) // 模拟一半大小
-
-        // 缓存模型
-        await idbManager.saveModel(modelId, modelData)
+        // 缓存登记（transformers 权重在 Cache API；此处记录元数据驱动缓存面板）
+        await idbManager.saveModel(modelId, `pipeline:${HF_MODEL_MAP[modelId]?.repo ?? modelId}`)
 
         // 更新缓存大小
         const cacheSize = await idbManager.getTotalCacheSize()
@@ -603,6 +572,7 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
 
     // 卸载模型
     unloadModel: (modelId) => {
+      unloadPipeline(modelId)
       set((state) => {
         const m = state.models.get(modelId)
         if (m) {
@@ -672,12 +642,15 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
       try {
         logger.debug(`[WebGPU] Starting inference with model ${modelId}...`)
 
-        // 模拟推理时间（基于模型大小）
-        const inferenceTime = model.size * 2 + Math.random() * 500
-        await new Promise((resolve) => setTimeout(resolve, inferenceTime))
-
-        // 模拟推理结果
-        const output = generateMockOutput(input, model.type)
+        // 真实推理：embeddings 走 feature-extraction，其余走 text-generation
+        const spec = HF_MODEL_MAP[modelId]
+        let output: string
+        if (spec?.task === 'feature-extraction' || model.type === 'embeddings') {
+          const vec = await runEmbedding(modelId, input)
+          output = `[${model.type} 向量 dim=${vec.length}] ${JSON.stringify(vec.slice(0, 16)).slice(0, 200)}…`
+        } else {
+          output = (await runCompletion(modelId, input, 160)).trim()
+        }
 
         const endTime = Date.now()
 
@@ -699,7 +672,7 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
           state.isInferencing = false
         })
 
-        logger.info(`[WebGPU] Inference completed in ${inferenceTime.toFixed(0)}ms`)
+        logger.info(`[WebGPU] Inference completed in ${endTime - (get().tasks.find((t) => t.id === taskId)?.startTime ?? endTime)}ms`)
         return output
       } catch (error) {
         logger.error(`[WebGPU] Inference failed:`, error)
@@ -778,48 +751,3 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
     },
   }))
 )
-
-/**
- * 生成模拟推理结果
- */
-function generateMockOutput(input: string, type: AIModelType): string {
-  const inputLines = input.split('\n')
-  const lastLine = inputLines[inputLines.length - 1].trim()
-
-  switch (type) {
-    case 'code':
-      // 模拟代码补全
-      if (lastLine.startsWith('function ')) {
-        return `  // TODO: implement ${lastLine.match(/function (\w+)/)?.[1] || 'this'}\n  {\n    return null;\n  }\n`
-      } else if (lastLine.startsWith('const ') && lastLine.includes('=')) {
-        return ` {\n  key: 'value',\n};\n`
-      } else if (lastLine.startsWith('import ')) {
-        return " from 'package';\n"
-      } else {
-        return `\n  // auto-generated code\n`
-      }
-
-    case 'chat': {
-      // 模拟对话回复
-      const responses = [
-        '这是一个很好的问题！让我来解释一下...',
-        '根据我的理解，这里有几个关键点需要考虑...',
-        '您可以尝试这样做，应该能解决问题...',
-        '这个功能可以通过以下方式实现...',
-      ]
-      return responses[Math.floor(Math.random() * responses.length)]
-    }
-
-    case 'embeddings':
-      // 模拟嵌入向量（简化）
-      return JSON.stringify({
-        dimensions: 768,
-        vector: Array(10)
-          .fill(0)
-          .map(() => (Math.random() * 2 - 1).toFixed(4)),
-      })
-
-    default:
-      return ''
-  }
-}

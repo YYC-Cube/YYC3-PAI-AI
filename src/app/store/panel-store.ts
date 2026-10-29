@@ -51,6 +51,8 @@ export type PanelId =
   | 'contentTemplate'
   // Infrastructure
   | 'localModelDash'
+  // Security
+  | 'keyVault'
   // Chat
   | 'chat'
 

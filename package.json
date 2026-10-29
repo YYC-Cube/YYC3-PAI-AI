@@ -21,6 +21,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\""
   },
   "dependencies": {
+    "@huggingface/transformers": "^4.3.2",
+    "@isomorphic-git/lightning-fs": "^4.10.3",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-accordion": "1.2.3",
     "@radix-ui/react-alert-dialog": "1.1.6",
@@ -71,6 +73,7 @@
     "howler": "^2.2.4",
     "immer": "^10.2.0",
     "input-otp": "1.4.2",
+    "isomorphic-git": "^1.44.8",
     "jsdom": "^28.1.0",
     "katex": "^0.18.2",
     "lucide-react": "0.487.0",

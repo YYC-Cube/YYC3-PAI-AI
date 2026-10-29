@@ -14,6 +14,24 @@ import {
   useWebGPUInferenceStore,
 } from '../webgpu-inference-store'
 
+// 推理引擎真实现改造后（transformers.js）：测试内 stub 掉权重下载与推理
+vi.mock('../../services/local-inference-engine', () => ({
+  HF_MODEL_MAP: {
+    'tinyllama-1.1b': { repo: 'mock/tinyllama', task: 'text-generation' as const },
+    'codebert-base': { repo: 'mock/codebert', task: 'feature-extraction' as const },
+    'distilgpt2': { repo: 'mock/distilgpt2', task: 'text-generation' as const },
+  },
+  loadPipeline: vi.fn(async (_id: string, opts?: { onProgress?: (p: number, n: string) => void }) => {
+    opts?.onProgress?.(100, 'stub')
+    return (async () => ({})) as unknown
+  }),
+  runCompletion: vi.fn(async () => 'stub-completion'),
+  runEmbedding: vi.fn(async () => [0.1, 0.2, 0.3]),
+  unloadPipeline: vi.fn(),
+  isPipelineLoaded: vi.fn(() => true),
+  isWebGPUAvailable: vi.fn(async () => true),
+}))
+
 // 启用 Immer MapSet 插件
 enableMapSet()
 

@@ -413,6 +413,17 @@ export function SettingsPanel({ visible, onClose }: SettingsPanelProps) {
                     </div>
                   ))}
                 </div>
+
+                {/* 双站互通：姊妹产品深链（YYC3-Pai-Platform） */}
+                <div className="flex items-center gap-3 px-4 py-3 rounded-lg" style={{ border: `1px dashed ${tk.secondary}44`, background: `${tk.secondary}0a` }}>
+                  <div className="flex-1">
+                    <div style={{ fontFamily: tk.fontMono, fontSize: '11px', color: tk.foreground }}>YYC3-Pai Platform</div>
+                    <div style={{ fontFamily: tk.fontMono, fontSize: '9px', color: tk.foregroundMuted, marginTop: 2 }}>多用户 / 多 Agent 自托管平台（Python）· 姊妹仓 YYC3-Pai-Platform</div>
+                  </div>
+                  <a href="https://pai-ai.yyc3.vip" target="_blank" rel="noreferrer" className="flex items-center gap-1 px-3 py-1.5 rounded transition-all hover:opacity-80" style={{ fontFamily: tk.fontMono, fontSize: '10px', color: tk.secondary, border: `1px solid ${tk.secondary}44`, textDecoration: 'none' }}>
+                    <ExternalLink size={11} /> 控制台
+                  </a>
+                </div>
                 <div className="border-t pt-4" style={{ borderColor: tk.border }}>
                   <label style={{ fontFamily: tk.fontMono, fontSize: '10px', color: tk.primary, letterSpacing: '1px' }}>{t('settings', 'importExport')}</label>
                   <div className="flex gap-2 mt-3">

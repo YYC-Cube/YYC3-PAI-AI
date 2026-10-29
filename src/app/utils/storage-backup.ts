@@ -40,7 +40,7 @@ export interface RestoreResult {
 
 export class BackupManager {
   private static instance: BackupManager
-  private backupInterval: number | null = null
+  private backupInterval: ReturnType<typeof setInterval> | null = null
   private readonly BACKUP_KEY_PREFIX = 'yyc3_backup_'
   private readonly MAX_BACKUPS = 10
 

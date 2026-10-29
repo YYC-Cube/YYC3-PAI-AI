@@ -33,6 +33,7 @@ import {
 import { useThemeStore } from '../store/theme-store'
 import { useI18n } from '../i18n/context'
 import { keyManager, type KeyInfo } from '../utils/key-manager'
+import { migratePlaintextKeysToVault } from '../utils/key-storage'
 import { createLogger } from '../utils/logger'
 
 const logger = createLogger('KeyManagerPanel')
@@ -91,6 +92,12 @@ export function KeyManagerPanel() {
         loadKeys()
         setMessage({ type: 'success', text: '解锁成功' })
         setPassword('')
+        // 解锁即迁移：把历史明文 API Key（ModelSettings/useAI/model-store）收编入保险库
+        const moved = await migratePlaintextKeysToVault()
+        if (moved > 0) {
+          setMessage({ type: 'success', text: `解锁成功，${moved} 个明文 Key 已加密入库` })
+          loadKeys()
+        }
       } else {
         setMessage({ type: 'error', text: '主密码错误' })
       }

@@ -28,6 +28,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { AIConfig, AIMessage, AIStreamCallback } from './ai-types';
+import { loadProviderKey, saveProviderKey } from '../utils/key-storage';
 
 /**
  * useAI Hook 返回类型 / useAI Hook return type
@@ -61,6 +62,8 @@ const DEFAULT_CONFIG: AIConfig = {
  * 本地存储键 / Local storage key
  */
 const STORAGE_KEY = 'yyc3_ai_config';
+/** apiKey 在 key-storage 门面中的槽位（不复用 provider 表，避免与 ModelSettings 串键） */
+const KEY_STORAGE_ID = 'legacy:useai';
 
 /**
  * 当前配置版本 / Current config version
@@ -95,25 +98,22 @@ export function useAI(): UseAIReturn {
   const [loading, setLoading] = useState(true);
   const [isStreaming, setIsStreaming] = useState(false);
 
-  // 加载配置 / Load config
+  // 加载配置 / Load config（apiKey 经 key-storage 门面：保险库优先，明文降级）
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-
-        // 配置迁移 / Config migration
-        if (parsed.version !== CURRENT_VERSION) {
-          const migrated = {
-            ...DEFAULT_CONFIG,
-            ...parsed,
-            version: CURRENT_VERSION,
-          };
-          setConfig(migrated);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        } else {
-          setConfig(parsed);
-        }
+        // 兼容历史明文：迁移窗口内立即改道门面并从配置体剥离
+        const legacyKey = typeof parsed.apiKey === 'string' && parsed.apiKey && parsed.apiKey !== 'ollama' ? parsed.apiKey : '';
+        loadProviderKey(KEY_STORAGE_ID).then((vaultKey) => {
+          const apiKey = legacyKey || vaultKey;
+          if (legacyKey) saveProviderKey(KEY_STORAGE_ID, legacyKey).catch(() => { /* 门面内部降级 */ });
+          const merged = { ...DEFAULT_CONFIG, ...parsed, apiKey, version: CURRENT_VERSION };
+          const { apiKey: _stripped, ...persistSafe } = merged;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(persistSafe));
+          setConfig(merged);
+        }).catch(() => setConfig({ ...DEFAULT_CONFIG, ...parsed }));
       }
     } catch {
       // 加载失败使用默认配置 / Use default config on load failure
@@ -122,10 +122,14 @@ export function useAI(): UseAIReturn {
     }
   }, []);
 
-  // 保存配置 / Save config helper
+  // 保存配置 / Save config helper（apiKey 不落配置体，走门面）
   const saveConfig = useCallback((newConfig: AIConfig) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newConfig));
+      const { apiKey, ...persistSafe } = newConfig;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(persistSafe));
+      if (apiKey && apiKey !== 'ollama') {
+        saveProviderKey(KEY_STORAGE_ID, apiKey).catch(() => { /* 门面内部降级 */ });
+      }
       setConfig(newConfig);
     } catch {
       // 保存失败静默处理 / Silent on save failure

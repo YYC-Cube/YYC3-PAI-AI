@@ -13,7 +13,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useChatSession } from '../../app/hooks/useChatSession'
-import { useStreamText } from '../../app/hooks/useStreamText'
 import { useSystemTheme } from '../../app/hooks/useSystemTheme'
 import { useModelStore } from '../../app/store/model-store'
 import { useThemeStore } from '../../app/store/theme-store'
@@ -40,7 +39,7 @@ function downloadFile(fname: string, text: string, mime: string) {
 
 export default function ChatPage({ className = '' }: ChatPageProps) {
   const { tokens } = useThemeStore()
-  const { sendToActiveModel } = useModelStore()
+  const { sendToActiveModelStream } = useModelStore()
 
   // ── 功能1：暗黑模式 ──
   const { mode: themeMode, setMode: setThemeMode } = useSystemTheme()
@@ -57,15 +56,15 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
     getCurrentMsg,
   } = useChatSession()
 
-  // ── 功能2：流式打字机 ──
-  const { renderText, startStream } = useStreamText()
+  // ── 功能2：流式打字机（保留 hook 供旧调用方；真流已由 sendToActiveModelStream 承担）──
 
   // ── 消息状态 ──
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [aiLoading, setAiLoading] = useState(false)
   const [activeMsgId, setActiveMsgId] = useState<string | undefined>()
   const [quoteContent, setQuoteContent] = useState<string | undefined>()
-  const [streamingMsgId, setStreamingMsgId] = useState('')
+  // 真 SSE 流式后消息内容即增量渲染（status==='streaming' 驱动 UI），仅保留 setter 兼容旧调用
+  const [, setStreamingMsgId] = useState('')
 
   // ── 功能4：全局搜索 ──
   const [searchKey, setSearchKey] = useState('')
@@ -161,10 +160,14 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
       setActiveMsgId(tempAiId)
 
       try {
-        const raw = await sendToActiveModel(text)
-        await startStream(raw, 12)
+        // 真 SSE 流式：onChunk 实时写入消息（fallback 到非流式端点时为一次性全量）
+        const raw = await sendToActiveModelStream(text, undefined, (_delta, full) => {
+          setMessages(prev =>
+            prev.map(item => (item.id === tempAiId ? { ...item, content: full } : item)),
+          )
+        })
 
-        // 流式完成，替换完整内容
+        // 流式完成，落定最终状态
         setMessages(prev =>
           prev.map(item =>
             item.id === tempAiId
@@ -186,7 +189,7 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
         setStreamingMsgId('')
       }
     },
-    [sendToActiveModel, startStream],
+    [sendToActiveModelStream],
   )
 
   // ── 重生成 ──
@@ -212,8 +215,9 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
       setActiveMsgId(msgId)
 
       try {
-        const raw = await sendToActiveModel(lastUserText)
-        await startStream(raw, 12)
+        const raw = await sendToActiveModelStream(lastUserText, undefined, (_d, full) => {
+          setMessages(prev => prev.map(m => (m.id === msgId ? { ...m, content: full } : m)))
+        })
 
         setMessages(prev =>
           prev.map(m =>
@@ -233,7 +237,7 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
         setStreamingMsgId('')
       }
     },
-    [messages, sendToActiveModel, startStream],
+    [messages, sendToActiveModelStream],
   )
 
   // ── 追问引用 ──
@@ -246,13 +250,8 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
     // 保留接口供 IDE 模式下上层注入
   }, [])
 
-  // ── 计算当前正在流式输出的消息，用于渲染 ──
-  const streamPatchedMessages = useMemo(() => {
-    if (!streamingMsgId) return messages
-    return messages.map(msg =>
-      msg.id === streamingMsgId ? { ...msg, content: renderText } : msg,
-    )
-  }, [messages, streamingMsgId, renderText])
+  // ── 真 SSE 流式：消息内容由 onChunk 直接增量更新，无需打字机补丁 ──
+  const streamPatchedMessages = useMemo(() => messages, [messages])
 
   return (
     <div

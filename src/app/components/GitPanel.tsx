@@ -11,7 +11,7 @@
  * @tags panel,git,ui,component
  */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   X, GitBranch, GitCommit,
   Plus, Minus, Check, RefreshCw, Upload, Download,
@@ -19,6 +19,7 @@ import {
   Edit3, RotateCcw, Copy,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
+import { gitEngine } from '../services/git-service'
 import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
 
 type GitTab = 'changes' | 'branches' | 'history' | 'stash'
@@ -43,48 +44,107 @@ interface GitPanelProps {
   onClose: () => void
 }
 
-// Simulated Git state
-const MOCK_BRANCHES = ['main', 'feature/ai-diagnostics', 'feature/perf-dashboard', 'hotfix/theme-fix', 'develop']
+// 真实 Git 引擎（isomorphic-git + IndexedDB）；下列 MOCK 仅作为无仓库时的演示降级
+const MOCK_BRANCHES = ['main']
 
-const MOCK_FILES: GitFile[] = [
-  { name: 'src/app/components/IDEMode.tsx', status: 'modified', staged: false, diff: '@@ -340,6 +340,8 @@\n  const [aiAssistVisible, setAiAssistVisible] = useState(false);\n+ const [gitPanelVisible, setGitPanelVisible] = useState(false);\n+ const [perfDashVisible, setPerfDashVisible] = useState(false);' },
-  { name: 'src/app/components/GitPanel.tsx', status: 'added', staged: true },
-  { name: 'src/app/components/PerformanceDashboard.tsx', status: 'added', staged: true },
-  { name: 'src/app/store/task-store.ts', status: 'added', staged: false },
-  { name: 'src/app/i18n/translations.ts', status: 'modified', staged: false },
-  { name: 'src/styles/old-theme.css', status: 'deleted', staged: false },
-]
+const MOCK_FILES: GitFile[] = []
 
-const MOCK_COMMITS: GitCommitEntry[] = [
-  { hash: 'a3f7c2d', message: 'feat: add Git integration panel', author: 'YYC3 Team', date: '2026-03-14 10:30', branch: 'main' },
-  { hash: 'b8e1f4a', message: 'feat: performance dashboard with recharts', author: 'YYC3 Team', date: '2026-03-14 09:15', branch: 'main' },
-  { hash: 'c2d5a9e', message: 'feat: AI code diagnostics panel', author: 'YYC3 Team', date: '2026-03-13 22:45', branch: 'main' },
-  { hash: 'd1a8b3c', message: 'fix: shortcut rebinding edge case', author: 'YYC3 Team', date: '2026-03-13 20:30', branch: 'main' },
-  { hash: 'e4f2c7d', message: 'feat: global search overlay', author: 'YYC3 Team', date: '2026-03-13 18:00', branch: 'main' },
-  { hash: 'f6b9d1e', message: 'feat: auto-save with editor prefs', author: 'YYC3 Team', date: '2026-03-13 15:20', branch: 'main' },
-  { hash: 'g7c3e5f', message: 'refactor: dual-theme token system', author: 'YYC3 Team', date: '2026-03-13 12:00', branch: 'main' },
-  { hash: 'h8d4f6a', message: 'feat: command palette with i18n', author: 'YYC3 Team', date: '2026-03-12 23:10', branch: 'main' },
-]
+const MOCK_COMMITS: GitCommitEntry[] = []
 
 export function GitPanel({ visible, onClose }: GitPanelProps) {
   const { t } = useI18n()
   const { tokens: tk, isCyberpunk } = useThemeStore()
   const [tab, setTab] = useState<GitTab>('changes')
+  const [hasRepo, setHasRepo] = useState(false)
   const [currentBranch, setCurrentBranch] = useState('main')
+  const [branchList, setBranchList] = useState<string[]>(MOCK_BRANCHES)
   const [files, setFiles] = useState<GitFile[]>(MOCK_FILES)
+  const [commits, setCommits] = useState<GitCommitEntry[]>(MOCK_COMMITS)
   const [commitMsg, setCommitMsg] = useState('')
+  const [commitBusy, setCommitBusy] = useState(false)
+  const [gitNotice, setGitNotice] = useState<string | null>(null)
   const [showDiff, setShowDiff] = useState<string | null>(null)
   const [branchDropdown, setBranchDropdown] = useState(false)
+
+  // 打开面板时从真实引擎刷新全部状态
+  const refresh = async () => {
+    const isRepo = await gitEngine.isRepo()
+    setHasRepo(isRepo)
+    if (!isRepo) return
+    const [brs, sts, log, cur] = await Promise.all([
+      gitEngine.branches(),
+      gitEngine.status(),
+      gitEngine.log(30),
+      gitEngine.branches().then((b) => b.find((x) => x.current)?.name ?? 'main'),
+    ])
+    setBranchList(brs.map((b) => b.name))
+    setCurrentBranch(cur)
+    setFiles(sts.map((s) => ({
+      name: s.path,
+      status: s.staged ? 'added' : s.untracked ? 'added' : 'modified',
+      staged: s.staged,
+    } as GitFile)))
+    setCommits(log.map((c) => ({
+      hash: c.oid.slice(0, 7),
+      message: c.message,
+      author: c.author,
+      date: new Date(c.timestamp).toLocaleString('zh-CN', { hour12: false }),
+      branch: 'main',
+    })))
+  }
+
+  useEffect(() => {
+    if (visible) refresh().catch(() => { /* 引擎异常保持降级 */ })
+  }, [visible])
+
+  const handleInit = async () => {
+    await gitEngine.init()
+    await gitEngine.writeFile('README.md', '# YYC³ Workspace\n\n由 AI-PAI Git 面板创建。\n')
+    await gitEngine.commit('chore: initialize workspace')
+    await refresh()
+  }
 
   const stagedFiles = useMemo(() => files.filter(f => f.staged), [files])
   const unstagedFiles = useMemo(() => files.filter(f => !f.staged), [files])
 
-  const toggleStage = (name: string) => {
-    setFiles(prev => prev.map(f => f.name === name ? { ...f, staged: !f.staged } : f))
+  const toggleStage = async (name: string) => {
+    const target = files.find(f => f.name === name)
+    if (!target) return
+    try {
+      if (target.staged) {
+        await gitEngine.unstageFile(name)
+      } else {
+        await gitEngine.stageFile(name)
+      }
+      setFiles(prev => prev.map(f => f.name === name ? { ...f, staged: !f.staged } : f))
+    } catch (e) {
+      setGitNotice(`stage 操作失败：${e instanceof Error ? e.message : String(e)}`)
+      setTimeout(() => setGitNotice(null), 3000)
+    }
   }
 
   const stageAll = () => setFiles(prev => prev.map(f => ({ ...f, staged: true })))
   const unstageAll = () => setFiles(prev => prev.map(f => ({ ...f, staged: false })))
+
+  const handleCommit = async () => {
+    if (!commitMsg.trim() || commitBusy) return
+    setCommitBusy(true)
+    try {
+      const oid = await gitEngine.commit(commitMsg.trim())
+      if (!oid) {
+        setGitNotice('没有可提交的变更（先 stage 文件）')
+      } else {
+        setCommitMsg('')
+        setGitNotice(`已提交 ${oid.slice(0, 7)}`)
+        await refresh()
+      }
+    } catch (e) {
+      setGitNotice(`提交失败：${e instanceof Error ? e.message : String(e)}`)
+    } finally {
+      setCommitBusy(false)
+      setTimeout(() => setGitNotice(null), 3000)
+    }
+  }
 
   const statusIcon = (status: GitFile['status']) => {
     switch (status) {
@@ -106,8 +166,8 @@ export function GitPanel({ visible, onClose }: GitPanelProps) {
 
   const tabs: { key: GitTab; label: string; count?: number }[] = [
     { key: 'changes', label: t('git', 'changes'), count: files.length },
-    { key: 'branches', label: t('git', 'branches'), count: MOCK_BRANCHES.length },
-    { key: 'history', label: t('git', 'history'), count: MOCK_COMMITS.length },
+    { key: 'branches', label: t('git', 'branches'), count: branchList.length },
+    { key: 'history', label: t('git', 'history'), count: commits.length },
     { key: 'stash', label: t('git', 'stash') },
   ]
 
@@ -155,7 +215,7 @@ export function GitPanel({ visible, onClose }: GitPanelProps) {
                   className="absolute right-0 top-full mt-1 py-1 rounded-lg overflow-hidden"
                   style={{ width: 200, background: tk.panelBg, border: `1px solid ${tk.cardBorder}`, boxShadow: tk.shadowHover, zIndex: 10 }}
                 >
-                  {MOCK_BRANCHES.map(b => (
+                  {branchList.map(b => (
                     <button
                       key={b}
                       onClick={() => { setCurrentBranch(b); setBranchDropdown(false) }}
@@ -206,7 +266,27 @@ export function GitPanel({ visible, onClose }: GitPanelProps) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto neon-scrollbar">
-          {tab === 'changes' && (
+          {gitNotice && (
+            <div className="mx-3 mt-3 px-3 py-2 rounded-lg" style={{ fontFamily: tk.fontMono, fontSize: '10px', background: `${tk.primary}12`, border: `1px solid ${tk.primary}33`, color: tk.primary }}>
+              {gitNotice}
+            </div>
+          )}
+          {!hasRepo ? (
+            <div className="flex flex-col items-center justify-center gap-3 py-16 px-6 text-center">
+              <GitBranch size={28} color={tk.primary} style={{ opacity: 0.5 }} />
+              <div style={{ fontFamily: tk.fontMono, fontSize: '11px', color: tk.foregroundMuted, lineHeight: 1.8 }}>
+                尚未初始化工作区仓库。<br />
+                isomorphic-git + IndexedDB 纯浏览器实现，数据不出本机。
+              </div>
+              <button
+                onClick={handleInit}
+                className="px-4 py-2 rounded-lg transition-all hover:opacity-90"
+                style={{ fontFamily: tk.fontMono, fontSize: '11px', color: tk.background, background: tk.primary, letterSpacing: '1px' }}
+              >
+                初始化仓库（main）
+              </button>
+            </div>
+          ) : tab === 'changes' && (
             <div className="p-3 space-y-3">
               {/* Staged */}
               <div>
@@ -304,17 +384,18 @@ export function GitPanel({ visible, onClose }: GitPanelProps) {
                   }}
                 />
                 <button
+                  onClick={handleCommit}
                   className="w-full flex items-center justify-center gap-2 py-2 rounded-lg transition-all hover:opacity-90"
                   style={{
                     fontFamily: tk.fontMono, fontSize: '11px', color: tk.background,
                     background: tk.primary, letterSpacing: '1px',
-                    opacity: stagedFiles.length === 0 || !commitMsg.trim() ? 0.4 : 1,
+                    opacity: stagedFiles.length === 0 || !commitMsg.trim() || commitBusy ? 0.4 : 1,
                     boxShadow: isCyberpunk ? `0 0 12px ${tk.primaryGlow}` : 'none',
                   }}
-                  disabled={stagedFiles.length === 0 || !commitMsg.trim()}
+                  disabled={stagedFiles.length === 0 || !commitMsg.trim() || commitBusy}
                 >
                   <GitCommit size={12} />
-                  {t('git', 'commit')} ({stagedFiles.length})
+                  {commitBusy ? '提交中…' : `${t('git', 'commit')} (${stagedFiles.length})`}
                 </button>
                 <div className="flex gap-2">
                   <button className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg transition-all hover:opacity-80"
@@ -362,12 +443,12 @@ export function GitPanel({ visible, onClose }: GitPanelProps) {
 
           {tab === 'history' && (
             <div className="p-3 space-y-1">
-              {MOCK_COMMITS.map((c, i) => (
+              {commits.map((c, i) => (
                 <div key={c.hash} className="flex items-start gap-3 px-3 py-2.5 rounded-lg transition-all hover:opacity-80"
                   style={{ background: i === 0 ? tk.primaryGlow : 'transparent', borderBottom: `1px solid ${tk.borderDim}` }}>
                   <div className="flex flex-col items-center shrink-0" style={{ paddingTop: 2 }}>
                     <GitCommit size={12} color={i === 0 ? tk.primary : tk.foregroundMuted} />
-                    {i < MOCK_COMMITS.length - 1 && <div className="w-px flex-1 mt-1" style={{ background: tk.borderDim, minHeight: 16 }} />}
+                    {i < commits.length - 1 && <div className="w-px flex-1 mt-1" style={{ background: tk.borderDim, minHeight: 16 }} />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="truncate" style={{ fontFamily: tk.fontBody, fontSize: '11px', color: tk.foreground }}>{c.message}</p>

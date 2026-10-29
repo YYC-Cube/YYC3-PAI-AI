@@ -25,6 +25,7 @@ import {
     Send,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createMCPClient } from "../../services/mcp-client";
 import { useI18n } from "../../i18n/context";
 import { useModelStore } from "../../store/model-store";
 import { useProjectStore } from "../../store/project-store";
@@ -56,13 +57,36 @@ export function IDEChatPanel() {
   const chatStreamRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── MCP tools (local) ──
+  // 配置支持可选 endpoint/token（Streamable HTTP）：提供时走真协议拉取工具清单，
+  // 否则回退为名称列表（stdio 型服务需要宿主进程，浏览器内不可达）
   const enabledMCPTools = useMemo(() => {
     try {
       const raw = localStorage.getItem("yyc3-mcp-servers");
-      if (!raw) return [] as { id: string; name: string; enabled: boolean }[];
-      const servers: { id: string; name: string; enabled: boolean }[] = JSON.parse(raw);
+      if (!raw) return [] as { id: string; name: string; enabled: boolean; endpoint?: string; token?: string }[];
+      const servers: { id: string; name: string; enabled: boolean; endpoint?: string; token?: string }[] = JSON.parse(raw);
       return servers.filter(s => s.enabled);
-    } catch { return [] as { id: string; name: string; enabled: boolean }[]; }
+    } catch { return [] as { id: string; name: string; enabled: boolean; endpoint?: string; token?: string }[]; }
+  }, []);
+
+  // 真协议工具清单（按 endpoint 连接；失败静默降级）
+  const [mcpToolsPrompt, setMcpToolsPrompt] = useState('');
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const parts: string[] = [];
+      for (const s of enabledMCPTools) {
+        if (!s.endpoint) continue;
+        try {
+          const client = createMCPClient(s.endpoint, s.token);
+          await client.connect();
+          const text = await client.toolsAsPromptText();
+          if (text) parts.push(`# MCP server: ${s.name}\n${text}`);
+        } catch { /* CORS/网络失败 → 名称列表降级 */ }
+      }
+      if (!cancelled) setMcpToolsPrompt(parts.join('\n\n'));
+    })().catch(() => { /* 全链失败保持空 */ });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Init message ──
@@ -133,7 +157,10 @@ export function IDEChatPanel() {
     const langDirective = `Respond in ${locale === "zh" ? "Chinese" : "English"}.`;
     const rulesInjection = settingsActions.getActiveRulesAsSystemPrompt();
     const systemPromptParts = [`You are YYC\u00B3 AI Code assistant. ${langDirective}`];
-    if (enabledMCPTools.length > 0) {
+    if (mcpToolsPrompt) {
+      // 真协议：来自 MCP 服务端的实时工具清单（含调用约定）
+      systemPromptParts.push(`\n---\n\n${mcpToolsPrompt}`);
+    } else if (enabledMCPTools.length > 0) {
       systemPromptParts.push(`You have access to the following MCP tools: [${enabledMCPTools.map(tool => tool.name).join(", ")}]. You may reference these tools when helping the user with relevant tasks.`);
     }
     if (rulesInjection) {

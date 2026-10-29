@@ -44,6 +44,7 @@ const ContentPreview = lazy(() => import('../components/ContentPreview').then(m 
 const ContentTemplatePanel = lazy(() => import('../components/ContentTemplatePanel').then(m => ({ default: m.ContentTemplatePanel })))
 const LocalModelDashboard = lazy(() => import('../components/LocalModelDashboard').then(m => ({ default: m.LocalModelDashboard })))
 const ChatPage = lazy(() => import('../../components/Chat/ChatPage').then(m => ({ default: m.default })))
+const KeyManagerPanel = lazy(() => import('../components/KeyManagerPanel').then(m => ({ default: m.KeyManagerPanel })))
 
 // ===== Props interfaces =====
 export interface PanelManagerProps {
@@ -203,6 +204,13 @@ export function PanelManager({
       <Suspense fallback={<PanelSkeleton />}>
         {visible.has('contentTemplate') && (
           <ContentTemplatePanel visible onClose={() => close('contentTemplate')} />
+        )}
+      </Suspense>
+
+      {/* ===== Security Vault ===== */}
+      <Suspense fallback={<PanelSkeleton />}>
+        {visible.has('keyVault') && (
+          <KeyManagerPanel />
         )}
       </Suspense>
 

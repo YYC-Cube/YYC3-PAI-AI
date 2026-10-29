@@ -27,9 +27,20 @@ const COLLAB_CONFIG = {
     const envVal = import.meta.env.VITE_COLLAB_SIGNALING_URL
     return envVal ? [envVal] : ['wss://signaling.yyc3.io']
   },
+  /** 房间令牌：自建协作服务端（见 docs/YYC3-协作服务端-部署指南.md）按房间签发；
+   *  令牌经查询参数下发给 y-websocket / signaling，服务端校验后才允许加入房间。
+   *  未配置时服务端应默认拒绝写操作（只读）或按其自身策略处理。 */
+  get roomToken() { return import.meta.env.VITE_COLLAB_ROOM_TOKEN || '' },
   maxConnsBase: 20,
   maxConnsRandom: 10,
 } as const
+
+/** 拼接带 token 的连接 URL（无 token 原样返回） */
+function withRoomToken(url: string): string {
+  const token = COLLAB_CONFIG.roomToken
+  if (!token) return url
+  return url + (url.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token)
+}
 
 /**
  * 协作连接类型
@@ -422,7 +433,7 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
       // 为每个文档创建WebSocket Provider
       for (const [docId, doc] of state.documents) {
         const wsProvider = new WebsocketProvider(
-          COLLAB_CONFIG.wsUrl,
+          withRoomToken(COLLAB_CONFIG.wsUrl),
           docId,
           doc.doc,
           { connect: true }
@@ -472,7 +483,7 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
       // 为每个文档创建WebRTC Provider
       for (const [docId, doc] of state.documents) {
         const rtcProvider = new WebrtcProvider(docId, doc.doc, {
-          signaling: COLLAB_CONFIG.signalingUrls,
+          signaling: COLLAB_CONFIG.signalingUrls.map(withRoomToken),
           maxConns: COLLAB_CONFIG.maxConnsBase + Math.floor(Math.random() * COLLAB_CONFIG.maxConnsRandom),
           filterBcConns: true,
           peerOpts: {},

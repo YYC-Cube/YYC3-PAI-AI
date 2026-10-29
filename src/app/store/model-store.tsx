@@ -15,6 +15,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { NetworkError } from "../types/errors";
 import { createLogger } from "../utils/logger";
+import { loadProviderKey, saveProviderKey } from "../utils/key-storage";
 import { aiMetricsStore } from "./ai-metrics-store";
 
 const logger = createLogger('model-store');
@@ -64,6 +65,12 @@ interface ModelStoreContextType {
   checkConnectivity: (modelId: string) => Promise<ConnectivityStatus>;
   testModel: (modelId: string) => Promise<ModelTestResult>;
   sendToActiveModel: (message: string, options?: { systemPrompt?: string; history?: { role: string; content: string }[] }) => Promise<string>;
+  /** 真 SSE 流式入口：onChunk 收增量，Promise resolve 全文（含 fallback 容错） */
+  sendToActiveModelStream: (
+    message: string,
+    options?: { systemPrompt?: string; history?: { role: string; content: string }[] },
+    onChunk?: (delta: string, full: string) => void,
+  ) => Promise<string>;
 }
 
 // ===== localStorage =====
@@ -71,11 +78,30 @@ const LS_MODELS = "yyc3_ai_models";
 const LS_ACTIVE = "yyc3_active_model_id";
 
 function loadModels(): AIModel[] {
-  try { const r = localStorage.getItem(LS_MODELS); return r ? JSON.parse(r) : []; }
+  try {
+    const r = localStorage.getItem(LS_MODELS);
+    if (!r) return [];
+    const parsed = JSON.parse(r) as AIModel[];
+    // 兼容历史明文：首次载入即剥离 apiKey（迁移窗口，随后写入加密门面）
+    return parsed;
+  }
   catch { return []; }
 }
+/**
+ * 持久化：模型元数据进 localStorage（不含 apiKey）；
+ * apiKey 经 key-storage 门面（保险库优先）按 model:<id> 存储。
+ */
 function saveModels(m: AIModel[]) {
-  try { localStorage.setItem(LS_MODELS, JSON.stringify(m)); } catch {/* */ }
+  try {
+    const stripped = m.map((model) => {
+      const { apiKey, ...rest } = model;
+      // 异步落库；失败时保险库降级层（明文表）兜底，key 不丢
+      saveProviderKey(`model:${model.id}`, apiKey || "")
+        .catch(() => { /* 门面内部已有降级 */ });
+      return rest as Omit<AIModel, "apiKey"> & { apiKey?: string };
+    });
+    localStorage.setItem(LS_MODELS, JSON.stringify(stripped));
+  } catch {/* */ }
 }
 function loadActiveId(): string | null {
   try { return localStorage.getItem(LS_ACTIVE); } catch { return null; }
@@ -161,6 +187,80 @@ async function callChatAPI(
   return { content, latencyMs };
 }
 
+/**
+ * 真 SSE 流式调用：OpenAI 兼容 stream 响应（智谱/GLM 等），
+ * 每个 delta 触发 onChunk；返回完整内容与首 token 延迟。
+ * 服务端不支持 stream（无 body 或非事件流）时回退到一次性 JSON。
+ */
+async function callChatAPIStream(
+  endpoint: string, apiKey: string, model: string,
+  messages: { role: string; content: string }[],
+  onChunk: (delta: string, full: string) => void,
+  signal?: AbortSignal,
+) {
+  const start = performance.now();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+  const resp = await fetch(endpoint, {
+    method: "POST", headers, signal,
+    body: JSON.stringify({ model, messages, stream: true }),
+  });
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => "");
+    throw new Error(`HTTP ${resp.status}: ${text.slice(0, 200)}`);
+  }
+
+  const ctype = resp.headers.get("content-type") || "";
+  // 回退：端点不支持 SSE（返回 application/json）→ 一次性给全量
+  if (!resp.body || !ctype.includes("text/event-stream")) {
+    const data = await resp.json();
+    const content = data?.choices?.[0]?.message?.content || data?.message?.content || "";
+    if (content) onChunk(content, content);
+    return { content, firstTokenMs: Math.round(performance.now() - start) };
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  let full = "";
+  let firstTokenMs = 0;
+
+  const emitDataLine = (line: string) => {
+    if (line === "[DONE]") return;
+    try {
+      const j = JSON.parse(line);
+      const delta: string =
+        j?.choices?.[0]?.delta?.content ??
+        j?.choices?.[0]?.message?.content ??
+        j?.delta ??
+        j?.message?.content ??
+        j?.response ?? "";
+      if (delta) {
+        if (!firstTokenMs) firstTokenMs = Math.round(performance.now() - start);
+        full += delta;
+        onChunk(delta, full);
+      }
+    } catch { /* 忽略心跳/非 JSON 行 */ }
+  };
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const parts = buf.split("\n");
+    buf = parts.pop() ?? ""; // 最后一段可能不完整，留到下一轮
+    for (const raw of parts) {
+      const line = raw.trim();
+      if (!line || line.startsWith(":")) continue; // SSE 注释/心跳
+      if (line.startsWith("data:")) emitDataLine(line.slice(5).trim());
+      else emitDataLine(line); // 兼容不带 data: 前缀的实现
+    }
+  }
+  if (buf.trim().startsWith("data:")) emitDataLine(buf.trim().slice(5).trim());
+
+  return { content: full, firstTokenMs: firstTokenMs || Math.round(performance.now() - start) };
+}
+
 // ===== Context =====
 const Ctx = createContext<ModelStoreContextType | null>(null);
 
@@ -178,6 +278,29 @@ export function ModelStoreProvider({ children }: { children: ReactNode }) {
   }, [aiModels]);
 
   useEffect(() => { saveModels(aiModels); }, [aiModels]);
+
+  // 启动时异步回填各模型 apiKey（保险库/降级层），并在迁移窗口内带走历史明文
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const stored = localStorage.getItem(LS_MODELS);
+      if (!stored) return;
+      let parsed: AIModel[] = [];
+      try { parsed = JSON.parse(stored); } catch { return; }
+      const hydrated: AIModel[] = [];
+      for (const model of parsed) {
+        const legacyKey = typeof model.apiKey === "string" ? model.apiKey : "";
+        const key = legacyKey || (await loadProviderKey(`model:${model.id}`));
+        hydrated.push({ ...model, apiKey: key });
+        if (legacyKey) {
+          // 历史明文在库 → 立即改道门面，下次 saveModels 即完成剥离
+          await saveProviderKey(`model:${model.id}`, legacyKey);
+        }
+      }
+      if (!cancelled) setAiModels(hydrated);
+    })().catch(() => { /* 保持无 Key 状态 */ });
+    return () => { cancelled = true; };
+  }, []);
   useEffect(() => { saveActiveId(activeModelId); }, [activeModelId]);
   useEffect(() => {
     if (activeModelId && !aiModels.find((m) => m.id === activeModelId)) queueMicrotask(() => setActiveModelId(null));
@@ -415,14 +538,87 @@ export function ModelStoreProvider({ children }: { children: ReactNode }) {
     }
   }, [activeModelId]);
 
+  /**
+   * 真 SSE 流式入口：与 sendToActiveModel 同管线（限流/指标/fallback），
+   * 区别：请求带 stream:true，onChunk 实时回吐增量。缓存只在命中时整段返回。
+   */
+  const sendToActiveModelStream = useCallback(async (
+    message: string,
+    options?: { systemPrompt?: string; history?: { role: string; content: string }[] },
+    onChunk?: (delta: string, full: string) => void,
+  ): Promise<string> => {
+    const model = activeModelId ? modelsRef.current.find((m) => m.id === activeModelId) : null;
+    if (!model) throw new Error("No active model");
+
+    const msgs: { role: string; content: string }[] = [];
+    if (options?.systemPrompt) msgs.push({ role: "system", content: options.systemPrompt });
+    if (options?.history) msgs.push(...options.history);
+    msgs.push({ role: "user", content: message });
+
+    const cacheKey = getCacheKey(model.name, msgs);
+    const cached = getCachedResponse(cacheKey);
+    if (cached) {
+      onChunk?.(cached.response, cached.response);
+      return cached.response;
+    }
+
+    const rateLimitKey = `${model.provider}:${model.name}`;
+    if (!checkRateLimit(rateLimitKey)) {
+      throw new Error("Rate limit exceeded. Please wait a moment.");
+    }
+
+    const tryModel = async (m: AIModel): Promise<string> => {
+      const ctrl = new AbortController();
+      const tm = setTimeout(() => ctrl.abort(), 120000);
+      const startTime = performance.now();
+      try {
+        recordRateLimit(`${m.provider}:${m.name}`);
+        const { content, firstTokenMs } = await callChatAPIStream(m.endpoint, m.apiKey, m.name, msgs, onChunk ?? (() => {}), ctrl.signal);
+        clearTimeout(tm);
+        setCachedResponse(getCacheKey(m.name, msgs), content, firstTokenMs);
+        aiMetricsStore.recordSuccess({
+          providerId: m.provider, modelId: m.name, modelName: m.name,
+          latencyMs: firstTokenMs,
+          inputTokens: Math.ceil(msgs.reduce((s, mg) => s + mg.content.length, 0) / 4),
+          outputTokens: Math.ceil(content.length / 4),
+        });
+        setConnectivityMap((p) => ({ ...p, [m.id]: { modelId: m.id, status: "online", latencyMs: firstTokenMs, lastChecked: Date.now() } }));
+        setLastSuccessTime(Date.now());
+        return content;
+      } catch (err) {
+        clearTimeout(tm);
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
+        aiMetricsStore.recordError({
+          providerId: m.provider, providerName: m.provider, modelId: m.name, modelName: m.name,
+          latencyMs: Math.round(performance.now() - startTime), errorMessage, httpStatus: undefined,
+        });
+        setConnectivityMap((p) => ({ ...p, [m.id]: { modelId: m.id, status: "offline", lastChecked: Date.now(), error: errorMessage } }));
+        throw err;
+      }
+    };
+
+    try {
+      return await tryModel(model);
+    } catch (primaryErr) {
+      const fallbacks = modelsRef.current.filter((m) => m.id !== model.id && m.endpoint && m.name);
+      for (const fb of fallbacks) {
+        try {
+          return await tryModel(fb);
+        } catch { /* 尝试下一个 */ }
+      }
+      throw primaryErr;
+    }
+  }, [activeModelId]);
+
   const value = useMemo<ModelStoreContextType>(() => ({
     aiModels, activeModelId,
     addAIModel, removeAIModel, updateAIModel, activateAIModel, deactivateAIModel, getActiveModel,
     modelSettingsOpen, modelSettingsInitialTab, openModelSettings, closeModelSettings,
     connectivityMap, lastSuccessTime, checkConnectivity, testModel, sendToActiveModel,
+    sendToActiveModelStream,
   }), [aiModels, activeModelId, modelSettingsOpen, modelSettingsInitialTab, connectivityMap, lastSuccessTime,
     addAIModel, removeAIModel, updateAIModel, activateAIModel, deactivateAIModel, getActiveModel,
-    openModelSettings, closeModelSettings, checkConnectivity, testModel, sendToActiveModel]);
+    openModelSettings, closeModelSettings, checkConnectivity, testModel, sendToActiveModel, sendToActiveModelStream]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
@@ -445,6 +641,7 @@ const fallbackModelStore: ModelStoreContextType = {
   checkConnectivity: async (modelId: string) => ({ modelId, status: "unknown" as const }),
   testModel: async () => ({ success: false, latencyMs: 0, error: "No provider" }),
   sendToActiveModel: async () => "",
+  sendToActiveModelStream: async () => "",
 };
 
 export function useModelStore() {
