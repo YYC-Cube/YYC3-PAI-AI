@@ -142,5 +142,11 @@
     "react-dom": {
       "optional": true
     }
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "6.3.5",
+      "lodash": "4.17.21"
+    }
   }
 }
