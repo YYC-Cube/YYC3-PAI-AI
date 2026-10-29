@@ -212,7 +212,9 @@ export function PanelManager({
           className="fixed inset-0 z-[9999]"
           style={{ background: tokens.background }}
         >
-          <ChatPage />
+          <Suspense fallback={<PanelSkeleton />}>
+            <ChatPage />
+          </Suspense>
           <button
             onClick={() => close('chat')}
             className="absolute top-4 right-4 z-[10000] px-3 py-1.5 rounded text-xs font-semibold transition-all hover:opacity-80"
