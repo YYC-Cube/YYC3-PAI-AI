@@ -121,7 +121,7 @@ export function TrendingTopics({ visible, onClose }: TrendingTopicsProps) {
     }
     // Sort by heat descending
     return [...list].sort((a, b) => b.heat - a.heat)
-  }, [activeCategory, searchQuery])
+  }, [activeCategory, searchQuery, liveTopics])
 
   // 刷新：配置了真实数据源则拉取（失败诚实提示）；未配置则明确告知离线
   const handleRefresh = useCallback(async () => {

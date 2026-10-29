@@ -28,7 +28,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BLUR, Z_INDEX, useThemeStore } from '../store/theme-store'
 import type { LayoutPlatform } from '../utils/layout-engine'
 
@@ -141,16 +141,6 @@ export function PublishQueue({ visible, onClose, initialContent, initialTitle }:
   // Filters
   const [statusFilter, setStatusFilter] = useState<PublishStatus | 'all'>('all')
 
-  // Refs
-  const publishTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
-
-  // Cleanup timeouts on unmount
-  useEffect(() => {
-    return () => {
-      publishTimeoutsRef.current.forEach(timeout => clearTimeout(timeout))
-      publishTimeoutsRef.current.clear()
-    }
-  }, [])
 
   // Save tasks
   const saveTasks = useCallback((updated: PublishTask[]) => {
