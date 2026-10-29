@@ -23,12 +23,15 @@ export default defineConfig({
   },
 
   expect: {
-    // 视觉回归测试的阈值
+    // 视觉回归测试的阈值（跨平台基线：字体抗锯齿差异用比例容差吸收）
     toHaveScreenshot: {
-      maxDiffPixels: 1000, // 允许最多1000像素差异
-      threshold: 0.2,     // 允许20%的像素差异
+      maxDiffPixelRatio: 0.03, // 3% 像素级容差（跨 OS 字体渲染差异）
+      threshold: 0.2,
     },
   },
+
+  // 快照路径去平台后缀：单一基线跨 darwin/linux 复用（配 3% 容差）
+  snapshotPathTemplate: '{testDir}/tests/{testFileDir}/visual-regression.spec.ts-snapshots/{arg}{ext}',
 
   projects: [
     {

@@ -10,13 +10,24 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Visual Regression Tests', () => {
   test.beforeEach(async ({ page }) => {
+    // 视觉基线稳定性：禁用动画/过渡/光标闪烁（跨运行像素级可复现）
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.addInitScript(() => {
+      const style = document.createElement('style')
+      style.textContent = `*, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        caret-color: transparent !important;
+      }`
+      document.documentElement.appendChild(style)
+    })
     await page.goto('/')
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(1000) // 等待动画完成
+    await page.waitForTimeout(1000)
   })
 
   test('Home page visual', async ({ page }) => {
-    expect(await page.screenshot()).toMatchSnapshot('home-page.png')
+    await expect(page).toHaveScreenshot('home-page.png')
   })
 
   test('Agent Dashboard visual', async ({ page }) => {
@@ -27,7 +38,7 @@ test.describe('Visual Regression Tests', () => {
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(500)
 
-      expect(await page.screenshot()).toMatchSnapshot('agent-dashboard.png')
+      await expect(page).toHaveScreenshot('agent-dashboard.png')
     }
   })
 
@@ -38,7 +49,7 @@ test.describe('Visual Regression Tests', () => {
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(500)
 
-      expect(await page.screenshot()).toMatchSnapshot('webgpu-panel.png')
+      await expect(page).toHaveScreenshot('webgpu-panel.png')
     }
   })
 
@@ -49,7 +60,7 @@ test.describe('Visual Regression Tests', () => {
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(500)
 
-      expect(await page.screenshot()).toMatchSnapshot('collab-panel.png')
+      await expect(page).toHaveScreenshot('collab-panel.png')
     }
   })
 
@@ -60,7 +71,7 @@ test.describe('Visual Regression Tests', () => {
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(500)
 
-      expect(await page.screenshot()).toMatchSnapshot('ide-mode.png')
+      await expect(page).toHaveScreenshot('ide-mode.png')
     }
   })
 
@@ -71,7 +82,7 @@ test.describe('Visual Regression Tests', () => {
       await themeToggle.click()
       await page.waitForTimeout(500)
 
-      expect(await page.screenshot()).toMatchSnapshot('dark-theme.png')
+      await expect(page).toHaveScreenshot('dark-theme.png')
     }
   })
 
@@ -83,7 +94,7 @@ test.describe('Visual Regression Tests', () => {
       await themeToggle.click() // 再切换一次回到亮色
       await page.waitForTimeout(500)
 
-      expect(await page.screenshot()).toMatchSnapshot('light-theme.png')
+      await expect(page).toHaveScreenshot('light-theme.png')
     }
   })
 
@@ -92,7 +103,7 @@ test.describe('Visual Regression Tests', () => {
     await page.setViewportSize({ width: 375, height: 667 })
     await page.waitForLoadState('networkidle')
 
-    expect(await page.screenshot()).toMatchSnapshot('mobile-home.png')
+    await expect(page).toHaveScreenshot('mobile-home.png')
 
     // 恢复桌面视口
     await page.setViewportSize({ width: 1920, height: 1080 })
@@ -103,7 +114,7 @@ test.describe('Visual Regression Tests', () => {
     await page.setViewportSize({ width: 768, height: 1024 })
     await page.waitForLoadState('networkidle')
 
-    expect(await page.screenshot()).toMatchSnapshot('tablet-home.png')
+    await expect(page).toHaveScreenshot('tablet-home.png')
 
     // 恢复桌面视口
     await page.setViewportSize({ width: 1920, height: 1080 })
@@ -151,7 +162,7 @@ test.describe('Responsive Design Visual Regression', () => {
     await page.setViewportSize({ width: 1920, height: 1080 })
     await page.waitForLoadState('networkidle')
 
-    expect(await page.screenshot()).toMatchSnapshot('desktop-1920x1080.png')
+    await expect(page).toHaveScreenshot('desktop-1920x1080.png')
   })
 
   test('Laptop viewport (1366x768)', async ({ page }) => {
@@ -159,7 +170,7 @@ test.describe('Responsive Design Visual Regression', () => {
     await page.setViewportSize({ width: 1366, height: 768 })
     await page.waitForLoadState('networkidle')
 
-    expect(await page.screenshot()).toMatchSnapshot('laptop-1366x768.png')
+    await expect(page).toHaveScreenshot('laptop-1366x768.png')
   })
 
   test('Mobile Small viewport (320x568)', async ({ page }) => {
@@ -167,7 +178,7 @@ test.describe('Responsive Design Visual Regression', () => {
     await page.setViewportSize({ width: 320, height: 568 })
     await page.waitForLoadState('networkidle')
 
-    expect(await page.screenshot()).toMatchSnapshot('mobile-small-320x568.png')
+    await expect(page).toHaveScreenshot('mobile-small-320x568.png')
   })
 })
 
@@ -183,7 +194,7 @@ test.describe('Interactive States Visual Regression', () => {
       await button.hover()
       await page.waitForTimeout(200)
 
-      expect(await page.screenshot()).toMatchSnapshot('button-hover.png')
+      await expect(page).toHaveScreenshot('button-hover.png')
     }
   })
 
@@ -193,7 +204,7 @@ test.describe('Interactive States Visual Regression', () => {
       await input.focus()
       await page.waitForTimeout(200)
 
-      expect(await page.screenshot()).toMatchSnapshot('input-focus.png')
+      await expect(page).toHaveScreenshot('input-focus.png')
     }
   })
 })
