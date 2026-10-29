@@ -115,7 +115,10 @@ jobs:
     name: 🚀 Deploy to GitHub Pages
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # 由仓库变量 PAGES_ENABLED=true 启用（Settings → Secrets and variables → Actions）。
+    # 前置条件：pai.yyc3.vip 自定义域名从 YYC3-Pai-Platform 转移至本仓库后再开启，
+    # 避免与旧仓库的 Pages 绑定冲突（方案A第5步，见 docs/YYC3-AI-PAI-深度审核总结与建议-20261029.md 第4章）。
+    if: vars.PAGES_ENABLED == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
       pages: write
       id-token: write

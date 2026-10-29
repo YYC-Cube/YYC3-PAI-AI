@@ -1,0 +1,17 @@
+# Dependabot 配置 — YYC³ AI-PAI（React 前端独立仓）
+# Python 平台侧的 uv/npm(dashboard) 依赖更新已随仓库分离，归属 YYC3-Pai-Platform
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "ci"
