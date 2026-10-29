@@ -105,4 +105,10 @@ gh api "repos/YYC-Cube/YYC3-PAI-AI/dependabot/alerts?state=open" --jq 'length'
 main 已换道为 Python 平台（工作树整体替换），本项目代码只在 `archive/2026-06-four-feature-snapshot` 分支上（以及 main 的历史里）。**别在 main 上找本项目，也千万别把本地 React 代码往 main 上推。**
 
 **Q3：pai.yyc3.vip 为什么是个落地页？**
-Pages 归 Python 平台仓库管，它的 `pages.yml` 只发布 `public/` 里的静态品牌页。把应用发上去的方案见主报告第 4 章（推荐：pages.yml 改为 checkout archive 主线构建发布）。
+~~Pages 归 Python 平台仓库管~~ ✅ 已解决（2026-10-29）：域名已移交本仓，Pages 部署 React 应用本体（HTTP 200 ✅）。
+
+**Q4：Platform 仓绑 `ai-pai.yyc3.vip` 提示"已被占用"怎么办？**
+域名需要**组织级验证**后才能释放给仓库使用。你已完成两步：DNS CNAME → `yyc-cube.github.io` ✅、TXT 挑战记录 `_github-pages-challenge-YYC-Cube.ai-pai.yyc3.vip` ✅（实测已生效）。剩最后一步：
+> GitHub 网页 → YYC-Cube 组织 → **Settings → Domains** → *Add a domain* → 填 `ai-pai.yyc3.vip` → GitHub 自动校验 TXT → 状态变 **Verified**
+（或用有 `admin:org` 权限的 token：`gh api -X POST orgs/YYC-Cube/domains -f domain='ai-pai.yyc3.vip'`）
+验证通过后：Platform 仓 → Settings → Pages → Custom domain 填入 `ai-pai.yyc3.vip` 即可。
