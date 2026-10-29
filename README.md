@@ -41,6 +41,9 @@
 [![Radix UI](https://img.shields.io/badge/Radix_UI-latest-9cf?style=flat-square&logo=radixui&logoColor=white)](https://www.radix-ui.com/)
 [![Code Size](https://img.shields.io/github/languages/code-size/YYC-Cube/YYC3-PAI-AI?style=flat-square&color=purple)](https://github.com/YYC-Cube/YYC3-PAI-AI)
 [![Last Commit](https://img.shields.io/github/last-commit/YYC-Cube/YYC3-PAI-AI?style=flat-square&color=orange)](https://github.com/YYC-Cube/YYC3-PAI-AI/commits/main)
+[![Stars](https://img.shields.io/github/stars/YYC-Cube/YYC3-PAI-AI?style=flat-square&logo=github&color=yellow)](https://github.com/YYC-Cube/YYC3-PAI-AI/stargazers)
+[![Issues](https://img.shields.io/github/issues/YYC-Cube/YYC3-PAI-AI?style=flat-square&logo=github&color=red)](https://github.com/YYC-Cube/YYC3-PAI-AI/issues)
+[![Discussions](https://img.shields.io/github/discussions/YYC-Cube/YYC3-PAI-AI?style=flat-square&logo=github&color=blue)](https://github.com/YYC-Cube/YYC3-PAI-AI/discussions)
 
 **🌐 [pai.yyc3.vip](https://pai.yyc3.vip)** · 📖 [文档](./docs) · 🚀 [快速开始](#-quick-start-快速开始) · 🤝 [贡献指南](./CONTRIBUTING.md) · 💬 [Discussions](https://github.com/YYC-Cube/YYC3-PAI-AI/discussions)
 
@@ -112,62 +115,97 @@
 ### 🔌 Extensible Ecosystem · 扩展生态
 
 - **Plugin system** — flexible plugin architecture
-- **MCP protocol** — Model Context Protocol support
+- **MCP protocol** 🚧 — Model Context Protocol support（接入配置 UI 已就绪，协议执行层开发中）
 - **Open API** — complete API surface
 - **Webhook** — event-driven integration
+
+> 📍 功能成熟度速览：AI 对话/写作/模型管理/主题/音乐/数据导出 **可用**；Git 面板/终端/文件系统/MCP/协作服务端为**规划中或部分模拟**（详见 [`docs/YYC3-AI-PAI-深度审核总结与建议-20261029.md`](./docs/YYC3-AI-PAI-深度审核总结与建议-20261029.md) §3.3）。
 
 ---
 
 ## 🏗️ Architecture · 架构
 
+> 四层本地优先架构，纯前端静态应用——数据不出浏览器，AI 直连所选 Provider。
+
 ### System Architecture · 系统架构
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           YYC³ AI-PAI · π                               │
-├─────────────────────────────────────────────────────────────────────────┤
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐         │
-│  │   UI Layer      │  │  State Layer    │  │  Service Layer  │         │
-│  │  React + Radix  │◄┤  Zustand + Immer │◄┤  AI · File · DB │         │
-│  │  Tailwind 4     │  │  Context        │  │  Sync · Crypto  │         │
-│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘         │
-│           │                    │                    │                   │
-│           ▼                    ▼                    ▼                   │
-│  ┌─────────────────────────────────────────────────────────────┐       │
-│  │                    Storage Layer                             │       │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐   │       │
-│  │  │  IndexedDB   │  │ localStorage │  │  File System     │   │       │
-│  │  │  (Dexie.js)  │  │  (Config)    │  │  (Tauri / Web)   │   │       │
-│  │  └──────────────┘  └──────────────┘  └──────────────────┘   │       │
-│  └─────────────────────────────────────────────────────────────┘       │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph UI["🖥️ 展示层 · React 18 + Radix UI + Tailwind 4"]
+        PANELS["业务面板 ×20+<br/>AI 对话 · 写作 · 素材 · 多平台发布 · 音乐 · 热点选题"]
+        PM["PanelManager<br/>lazy + Suspense 骨架屏 · 快捷键 · 拖拽布局"]
+        MODES["三形态：IDE 模式 · 全屏模式 · 悬浮球"]
+    end
+
+    subgraph STATE["🧠 状态层 · 30 个 Store，三范式按需选型"]
+        Z["Zustand + Immer<br/>agent · crdt-collab · unified-data"]
+        SES["useSyncExternalStore<br/>panel · theme · file · ide · shortcut"]
+        CTX["React Context<br/>model · self-media · i18n"]
+    end
+
+    subgraph SERVICE["⚙️ 服务层 · 17 个 Service"]
+        AI["model-store 统一 AI 通道<br/>LRU 缓存 · 限流 · 多模型回退"]
+        SYNC["sync-engine<br/>WebDAV / S3 / 自定义 HTTP"]
+        SEC["key-manager · security-vault<br/>PBKDF2 100k + AES-256-GCM"]
+        PORT["data-portability<br/>导入导出 · 口令加密"]
+    end
+
+    subgraph STORE["💾 存储层 · 本地优先，数据不出浏览器"]
+        IDB[("IndexedDB<br/>文档 · 协作 · 模型缓存")]
+        LS[("localStorage<br/>配置 · 布局 · 主题")]
+    end
+
+    UI --> STATE
+    STATE --> SERVICE
+    SERVICE --> IDB
+    SERVICE --> LS
 ```
 
 ### AI Gateway Architecture · AI 网关架构
 
+```mermaid
+flowchart LR
+    subgraph P["AI Providers · 浏览器直连"]
+        ZHIPU["智谱 GLM<br/>open.bigmodel.cn"]
+        ZAI["Z.ai Coding<br/>CodeGeeX-4"]
+        OLLAMA["Ollama<br/>localhost:11434"]
+        CUSTOM["自定义<br/>OpenAI 兼容端点"]
+    end
+
+    subgraph G["model-store · 统一适配层"]
+        CACHE["响应缓存<br/>LRU · 5min TTL"]
+        RATE["客户端限流<br/>30 req/min"]
+        FB["故障回退<br/>多模型 Fallback"]
+        METRICS["指标埋点<br/>成功率 · 延迟"]
+    end
+
+    subgraph C["消费方"]
+        CHAT["AI 对话"]
+        WRITE["AI 写作 ×6 模式"]
+        CODE["代码补全 · 诊断"]
+        IMG["图文生成"]
+    end
+
+    P --> G --> C
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         AI Model Gateway                                │
-├─────────────────────────────────────────────────────────────────────────┤
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐     │
-│  │ OpenAI   │ │ Claude   │ │ Zhipu    │ │ Qwen     │ │ Ollama   │     │
-│  │ GPT-4o   │ │ Claude 4 │ │ GLM-5    │ │ Qwen3-Max│ │ Local    │     │
-│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘     │
-│       │            │            │            │            │           │
-│       └────────────┴────────────┴─────┬──────┴────────────┘           │
-│                                       ▼                                │
-│                          ┌────────────────────┐                        │
-│                          │  Unified Adapter    │                        │
-│                          │  (统一适配层)        │                        │
-│                          └────────────────────┘                        │
-│                                       │                                │
-│                    ┌──────────────────┼──────────────────┐             │
-│                    ▼                  ▼                  ▼             │
-│           ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│           │  Cache Layer │  │ Rate Limiter │  │   Fallback   │         │
-│           └──────────────┘  └──────────────┘  └──────────────┘         │
-└─────────────────────────────────────────────────────────────────────────┘
+
+### Release Pipeline · 构建发布管线
+
+```mermaid
+flowchart LR
+    DEV["pnpm dev<br/>localhost:3200"] --> PUSH["push main"]
+    PUSH --> CI["GitHub Actions<br/>lint → tsc → 2810 tests → build"]
+    CI --> PAGES["Deploy Pages<br/>pai.yyc3.vip"]
+    PUSH --> TAG["tag v*"] --> REL["GitHub Release"]
 ```
+
+### Security Model · 安全模型
+
+- 所有数据仅存于浏览器（IndexedDB / localStorage），**无自建后端、零上传**；
+- AI 请求由浏览器直连所选 Provider，API Key 不经过任何中间服务器；
+- 可选 KeyManager 保险库：PBKDF2（100k 迭代）+ AES-256-GCM 加密 API Key，30 分钟自动锁定；
+- 导出包支持口令加密；CSP 白名单限定可连接端点（见 `index.html`）；
+- 依赖安全：critical 漏洞清零，dependabot 周度巡检。
 
 ---
 
