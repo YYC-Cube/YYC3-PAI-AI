@@ -14,10 +14,16 @@ export function useChatSession() {
   const [currentSid, setCurrentSid] = useState('')
   const [initialized, setInitialized] = useState(false)
 
-  // 初始化：读取 localStorage
+  // 初始化：读取 localStorage（坏数据防御：损坏存储丢弃重建，不崩溃）
   useEffect(() => {
     const raw = localStorage.getItem(SESSION_STORE_KEY)
-    const arr: ChatSession[] = raw ? JSON.parse(raw) : []
+    let arr: ChatSession[] = []
+    try {
+      const parsed: unknown = raw ? JSON.parse(raw) : []
+      if (Array.isArray(parsed)) arr = parsed as ChatSession[]
+    } catch {
+      localStorage.removeItem(SESSION_STORE_KEY)
+    }
     setSessionList(arr)
     if (arr.length > 0) {
       setCurrentSid(arr[0].sid)

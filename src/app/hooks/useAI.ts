@@ -210,17 +210,10 @@ export function useAI(): UseAIReturn {
               }
             }
           }
-        } catch {
-          // 网络失败时的模拟响应 / Simulated response on network failure
-          const fallbackMessage =
-            'Local inference node unreachable. Using simulated response.\n\n' +
-            `Your message has been processed. In production, this would be the actual AI response from ${currentConfig.model}.`;
-
-          const chunks = fallbackMessage.split(' ');
-          for (const chunk of chunks) {
-            await new Promise((r) => setTimeout(r, 50)); // 模拟打字 / Simulate typing
-            onChunk(chunk + ' ');
-          }
+        } catch (networkErr) {
+          // 网络失败：诚实报错（拒绝伪造 AI 回复）
+          const msg = networkErr instanceof Error ? networkErr.message : String(networkErr);
+          onChunk(`\n[ERROR] 请求失败：${msg}\n请检查 Ollama 服务是否运行（OLLAMA_ORIGINS=${window.location.origin} ollama serve）或在模型设置中切换可用模型。`);
         }
       } catch (error: unknown) {
         const errorMessage =

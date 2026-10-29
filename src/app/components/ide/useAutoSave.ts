@@ -15,8 +15,19 @@ import { useEffect, useState, useCallback } from "react";
 import { useEditorPrefs } from "../../store/editor-prefs-store";
 import { useI18n } from "../../i18n/context";
 import { fileStore as fileStoreActions } from "../../store/file-store";
+import { gitEngine } from "../../services/git-service";
 
 const STORAGE_KEY = "yyc3_file_content_map";
+
+/** 落盘直通：工作区仓库存在时同步写入 LightningFS（Git 面板/终端可见），fire-and-forget */
+function writeThroughToWorkspace(fileContentMap: Record<string, string>) {
+  gitEngine.isRepo().then((has) => {
+    if (!has) return;
+    for (const [name, content] of Object.entries(fileContentMap)) {
+      gitEngine.writeFile(name, content).catch(() => { /* 单文件失败不阻塞 */ });
+    }
+  }).catch(() => { /* FS 不可用忽略 */ });
+}
 
 export interface UseAutoSaveOptions {
   /** Current file content map */
@@ -58,6 +69,7 @@ export function useAutoSave(opts: UseAutoSaveOptions): AutoSaveAPI {
     const timer = setInterval(() => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(fileContentMap));
+        writeThroughToWorkspace(fileContentMap);
         setLastAutoSave(formatTime());
       } catch { /* ignore */ }
     }, 10_000);
@@ -70,6 +82,7 @@ export function useAutoSave(opts: UseAutoSaveOptions): AutoSaveAPI {
     const debounce = setTimeout(() => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(fileContentMap));
+        writeThroughToWorkspace(fileContentMap);
         setLastAutoSave(formatTime());
         if (selectedFile && editorCode) {
           fileStoreActions.createVersion(selectedFile, editorCode, "auto");

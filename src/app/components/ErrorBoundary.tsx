@@ -31,22 +31,25 @@ interface State {
   error: Error | null
   errorInfo: ErrorInfo | null
   copied: boolean
+  /** 出错时的 resetKeys 快照（供变更检测） */
+  resetKeysSnapshot?: unknown[] | null
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false, error: null, errorInfo: null, copied: false }
+  state: State = { hasError: false, error: null, errorInfo: null, copied: false, resetKeysSnapshot: null }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error }
   }
 
   static getDerivedStateFromProps(props: Props, state: State): State {
+    // resetKeys 语义：任一 key 与"出错时快照"不同 → 重置边界（历史实现误与
+    // componentStack 逐位比较，导致重置永不生效）
     if (props.resetKeys && state.hasError) {
-      const hasResetKeyChanged = props.resetKeys.some(
-        (key, index) => key !== state.errorInfo?.componentStack?.split('\n')[index]
-      )
-      if (hasResetKeyChanged) {
-        return { hasError: false, error: null, errorInfo: null, copied: false }
+      const snapshot = state.resetKeysSnapshot ?? props.resetKeys
+      const changed = props.resetKeys.some((key, i) => key !== snapshot[i])
+      if (changed) {
+        return { hasError: false, error: null, errorInfo: null, copied: false, resetKeysSnapshot: null }
       }
     }
     return state

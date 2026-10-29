@@ -26,7 +26,12 @@ export interface AIMessageRendererProps {
 function CodeBlock({ children, language = 'text', maxHeight = 400, ...props }: { children?: ReactNode; language?: string; maxHeight?: number } & React.HTMLAttributes<HTMLElement>) {
   const { tokens } = useThemeStore()
   const [copied, setCopied] = useState(false)
-  const codeText = typeof children === 'string' ? children : ''
+  // react-markdown 代码块 children 常为文本节点数组——拼接提取纯文本（修复复制空串）
+  const codeText = typeof children === 'string'
+    ? children
+    : Array.isArray(children)
+      ? children.map((c) => (typeof c === 'string' ? c : '')).join('')
+      : ''
 
   const handleCopy = useCallback(async () => {
     try {

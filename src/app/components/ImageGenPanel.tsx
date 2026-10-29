@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useModelStore } from '../store/model-store'
+import { loadProviderKey } from '../utils/key-storage'
 import { BLUR, Z_INDEX, useThemeStore, type ThemeTokens } from '../store/theme-store'
 
 // ── Types ──
@@ -147,6 +148,10 @@ export function ImageGenPanel({ visible, onClose }: ImageGenPanelProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [customNegative, setCustomNegative] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+  // ── 真实图像生成（智谱 CogView）：复用 provider Key，浏览器直连 ──
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [imageBusy, setImageBusy] = useState(false)
+  const [imageError, setImageError] = useState<string | null>(null)
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -229,6 +234,38 @@ ${customNegative ? `额外负面词：${customNegative}` : ''}
   }, [rawPrompt, selectedStyle, aspectRatio, customNegative, sendToActiveModel, getActiveModel])
 
   // ── Copy to clipboard ──
+  /** 真实图像生成：智谱 CogView-3（复用 zhipu provider Key，浏览器 CORS 直连已验证） */
+  const handleGenerateImage = useCallback(async (prompt?: string) => {
+    const finalPrompt = (prompt ?? result?.enhancedPrompt ?? rawPrompt).trim()
+    if (!finalPrompt) return
+    const key = await loadProviderKey('zhipu')
+    if (!key) {
+      setImageError('需要智谱 API Key（模型设置 → Z.ai 智谱 → 填入 Key）才能调用 CogView 图像生成')
+      return
+    }
+    setImageBusy(true)
+    setImageError(null)
+    setImageUrl(null)
+    try {
+      const resp = await fetch('https://open.bigmodel.cn/api/paas/v4/images/generations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+        body: JSON.stringify({ model: 'cogview-3-plus', prompt: finalPrompt, size: '1024x1024' }),
+      })
+      const data = await resp.json().catch(() => null)
+      if (!resp.ok) {
+        throw new Error(data?.error?.message || `HTTP ${resp.status}`)
+      }
+      const url = data?.data?.[0]?.url as string | undefined
+      if (!url) throw new Error('响应中没有图像 URL')
+      setImageUrl(url)
+    } catch (e) {
+      setImageError(`图像生成失败：${e instanceof Error ? e.message : String(e)}`)
+    } finally {
+      setImageBusy(false)
+    }
+  }, [rawPrompt, result])
+
   const copyToClipboard = useCallback(async (text: string, id: string) => {
     try {
       await navigator.clipboard.writeText(text)
@@ -613,6 +650,51 @@ ${customNegative ? `额外负面词：${customNegative}` : ''}
                   </>
                 )}
               </button>
+
+              {/* 真实图像生成（CogView）：增强完成后可用原始/增强 Prompt 直接出图 */}
+              <button
+                onClick={() => handleGenerateImage()}
+                disabled={imageBusy || !rawPrompt.trim()}
+                style={{
+                  ...btnBase,
+                  width: '100%',
+                  padding: '12px',
+                  background: imageBusy ? tk.primaryDim : !rawPrompt.trim() ? 'rgba(127,127,127,0.08)' : tk.secondary,
+                  color: imageBusy || !rawPrompt.trim() ? tk.foregroundMuted : tk.background,
+                  cursor: imageBusy || !rawPrompt.trim() ? 'not-allowed' : 'pointer',
+                  fontSize: '12px',
+                }}
+              >
+                {imageBusy ? (
+                  <>
+                    <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
+                    CogView 绘图中...
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon size={14} />
+                    生成图像（CogView · 真实 API）
+                  </>
+                )}
+              </button>
+
+              {/* 图像结果 / 错误 */}
+              {imageError && (
+                <div style={{ padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,50,50,0.08)', border: '1px solid rgba(255,50,50,0.2)', color: '#ff3333', fontFamily: tk.fontMono, fontSize: '11px' }}>
+                  {imageError}
+                </div>
+              )}
+              {imageUrl && (
+                <div style={{ borderRadius: '10px', overflow: 'hidden', border: `1px solid ${tk.border}` }}>
+                  <img src={imageUrl} alt="CogView 生成结果" style={{ display: 'block', width: '100%' }} />
+                  <div className="flex items-center justify-between px-3 py-2" style={{ background: tk.backgroundAlt }}>
+                    <span style={{ fontFamily: tk.fontMono, fontSize: '10px', color: tk.foregroundMuted }}>CogView-3-Plus · 1024×1024</span>
+                    <a href={imageUrl} target="_blank" rel="noreferrer" style={{ fontFamily: tk.fontMono, fontSize: '10px', color: tk.secondary }}>
+                      打开原图 ↗
+                    </a>
+                  </div>
+                </div>
+              )}
 
               {/* Error */}
               {error && (

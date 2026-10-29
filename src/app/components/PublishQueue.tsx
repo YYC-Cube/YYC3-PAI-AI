@@ -34,7 +34,17 @@ import type { LayoutPlatform } from '../utils/layout-engine'
 
 // ── Types ──
 
-export type PublishStatus = 'draft' | 'scheduled' | 'publishing' | 'published' | 'failed'
+export type PublishStatus = 'draft' | 'scheduled' | 'exported' | 'publishing' | 'published' | 'failed'
+
+/** 各平台创作后台入口（真实发布须经平台登录与编辑器，浏览器无法也不应代发） */
+const PLATFORM_EDITOR_URL: Partial<Record<LayoutPlatform, string>> = {
+  wechat: 'https://mp.weixin.qq.com/',
+  xiaohongshu: 'https://creator.xiaohongshu.com/publish/publish',
+  zhihu: 'https://zhuanlan.zhihu.com/write',
+  bilibili: 'https://member.bilibili.com/platform/upload/text/',
+  twitter: 'https://x.com/compose/post',
+  web: '',
+}
 
 export interface PublishTask {
   id: string
@@ -183,22 +193,17 @@ export function PublishQueue({ visible, onClose, initialContent, initialTitle }:
   }, [newTitle, newContent, selectedPlatforms, scheduleMode, scheduleDate, scheduleTime, tasks, saveTasks])
 
   // Publish now (simulate)
+  // 真实发布动作：复制成品内容 + 打开对应平台创作后台（浏览器端无法也不应
+  // 直接代发平台内容——状态标为 exported 而非伪造 published）
   const handlePublishNow = useCallback((taskId: string) => {
-    setTasks(prev => prev.map(t =>
-      t.id === taskId
-        ? { ...t, status: 'publishing' as const }
-        : t
-    ))
-    // Simulate publish delay
-    const timeout = setTimeout(() => {
-      setTasks(prev => prev.map(t =>
-        t.id === taskId
-          ? { ...t, status: 'published' as const, publishedAt: Date.now() }
-          : t
-      ))
-      publishTimeoutsRef.current.delete(taskId)
-    }, 2000)
-    publishTimeoutsRef.current.set(taskId, timeout)
+    setTasks(prev => prev.map(t => {
+      if (t.id !== taskId) return t
+      const text = `${t.title}\n\n${t.content}`
+      navigator.clipboard.writeText(text).catch(() => { /* 剪贴板被拒时仍打开后台 */ })
+      const url = PLATFORM_EDITOR_URL[t.platforms[0]]
+      if (url) window.open(url, '_blank', 'noopener')
+      return { ...t, status: 'exported' as const, publishedAt: Date.now(), error: url ? undefined : '未登记该平台创作后台入口，内容已复制到剪贴板' }
+    }))
   }, [])
 
   // Delete task
@@ -226,6 +231,7 @@ export function PublishQueue({ visible, onClose, initialContent, initialTitle }:
     const config: Record<PublishStatus, { label: string; color: string; bg: string }> = {
       draft: { label: '草稿', color: '#6b7280', bg: '#f3f4f6' },
       scheduled: { label: '定时', color: '#2563eb', bg: '#eff6ff' },
+      exported: { label: '已导出·待平台粘贴', color: '#7c3aed', bg: '#f5f3ff' },
       publishing: { label: '发布中', color: '#d97706', bg: '#fffbeb' },
       published: { label: '已发布', color: '#059669', bg: '#ecfdf5' },
       failed: { label: '失败', color: '#dc2626', bg: '#fef2f2' },

@@ -102,10 +102,13 @@ export function TrendingTopics({ visible, onClose }: TrendingTopicsProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [refreshing, setRefreshing] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<TrendingTopic | null>(null)
+  // 真实数据模式：配置 VITE_TRENDING_API 后启用（返回 {topics:[{id,title,category,heat,description}]}）
+  const [liveTopics, setLiveTopics] = useState<TrendingTopic[] | null>(null)
+  const [fetchError, setFetchError] = useState<string | null>(null)
 
   // Filtered topics
   const filteredTopics = useMemo(() => {
-    let list = MOCK_TOPICS
+    let list = liveTopics ?? MOCK_TOPICS
     if (activeCategory !== 'all') {
       list = list.filter(t => t.category === activeCategory)
     }
@@ -120,10 +123,30 @@ export function TrendingTopics({ visible, onClose }: TrendingTopicsProps) {
     return [...list].sort((a, b) => b.heat - a.heat)
   }, [activeCategory, searchQuery])
 
-  // Refresh mock
-  const handleRefresh = useCallback(() => {
+  // 刷新：配置了真实数据源则拉取（失败诚实提示）；未配置则明确告知离线
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true)
-    setTimeout(() => setRefreshing(false), 1500)
+    setFetchError(null)
+    const api = import.meta.env.VITE_TRENDING_API as string | undefined
+    if (!api) {
+      setFetchError('未配置真实热点数据源（VITE_TRENDING_API）——当前展示离线示例，不代表实时热点。')
+      setRefreshing(false)
+      return
+    }
+    try {
+      const resp = await fetch(api)
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+      const data = await resp.json()
+      if (Array.isArray(data?.topics) && data.topics.length) {
+        setLiveTopics(data.topics as TrendingTopic[])
+      } else {
+        throw new Error('响应缺少 topics 数组')
+      }
+    } catch (e) {
+      setFetchError(`拉取失败：${e instanceof Error ? e.message : String(e)}（继续展示离线示例）`)
+    } finally {
+      setRefreshing(false)
+    }
   }, [])
 
   // Send topic to AI writing
@@ -537,12 +560,19 @@ export function TrendingTopics({ visible, onClose }: TrendingTopicsProps) {
             color: tk.foregroundMuted,
           }}
         >
-          <span>共 {MOCK_TOPICS.length} 个热点话题 · 数据来源模拟</span>
+          <span>
+            共 {(liveTopics ?? MOCK_TOPICS).length} 个热点话题 · {liveTopics ? '实时数据' : '离线示例（配置 VITE_TRENDING_API 启用实时）'}
+          </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Clock size={10} />
-            <span>每30分钟更新</span>
+            <span>{liveTopics ? '手动刷新更新' : '离线数据'}</span>
           </span>
         </div>
+        {fetchError && (
+          <div style={{ padding: '8px 16px', fontFamily: tk.fontMono, fontSize: '10px', color: tk.error, borderTop: `1px solid ${tk.borderDim}` }}>
+            {fetchError}
+          </div>
+        )}
       </div>
     </div>
   )

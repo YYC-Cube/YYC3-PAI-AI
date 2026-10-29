@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { CyberTooltip } from "../CyberTooltip";
 import { useI18n } from "../../i18n/context";
+import { gitEngine } from "../../services/git-service";
 import { useThemeStore } from "../../store/theme-store";
 import {
   TERMINAL_HISTORY,
@@ -80,7 +81,61 @@ export function IDETerminal({
     const out = (text: string) => setTerminalLines(prev => [...prev, { type: "output", text }]);
     const parts = raw.split(/\s+/);
     const cmd = parts[0];
-    const arg1 = parts[1] || "";
+    const arg1 = parts[1];
+
+    // ── 真实工作区命令（LightningFS + isomorphic-git，与 Git 面板/编辑器同源） ──
+    if (cmd === "git") {
+      void (async () => {
+        if (!(await gitEngine.isRepo())) {
+          out("git: 工作区未初始化（在 Git 面板点击「初始化仓库」）");
+          return;
+        }
+        try {
+          if (arg1 === "status") {
+            const cur = (await gitEngine.branches()).find(b => b.current)?.name ?? "main";
+            out(`On branch ${cur}`);
+            const st = await gitEngine.status();
+            if (!st.length) { out("nothing to commit, working tree clean"); return; }
+            out("Changes:");
+            for (const s of st) {
+              const flag = s.staged ? "staged:    " : s.untracked ? "untracked: " : "modified:  ";
+              out(`  ${flag}${s.path}`);
+            }
+          } else if (arg1 === "log") {
+            const log = await gitEngine.log(15);
+            if (!log.length) { out("fatal: your current branch does not have any commits yet"); return; }
+            for (const c of log) {
+              out(`commit ${c.oid.slice(0, 7)}`);
+              out(`Author: ${c.author}`);
+              out(`Date:   ${new Date(c.timestamp).toLocaleString("zh-CN", { hour12: false })}`);
+              out(`  ${c.message}`);
+              out("");
+            }
+          } else if (arg1 === "commit" && parts.includes("-m")) {
+            const mi = parts.indexOf("-m");
+            const msg = parts.slice(mi + 1).join(" ").replace(/^["']|["']$/g, "");
+            if (!msg) { out('usage: git commit -m "message"'); return; }
+            const oid = await gitEngine.commit(msg);
+            out(oid ? `[main ${oid.slice(0, 7)}] ${msg}` : "nothing to commit, working tree clean");
+          } else if (arg1 === "branch") {
+            (await gitEngine.branches()).forEach(b => out(b.current ? `* ${b.name}` : `  ${b.name}`));
+          } else if (arg1 === "ls-files") {
+            (await gitEngine.listFiles()).forEach(f => out(f));
+          } else {
+            out(`git: '${arg1 ?? ""}' 在浏览器引擎(isomorphic-git)中未实现`);
+            out("可用：status / log / commit -m / branch / ls-files");
+          }
+        } catch (e) {
+          out(`git: ${(e as Error).message}`);
+        }
+      })();
+      return;
+    }
+    if (cmd === "npm" || cmd === "pnpm" || cmd === "yarn" || cmd === "tsc" || cmd === "node") {
+      out(`${cmd}: 浏览器沙箱内没有 Node.js 运行时——此命令不可用（拒绝伪造输出）。`);
+      out("可在宿主机的真实终端执行本仓库脚本。");
+      return;
+    }
     const arg2 = parts[2] || "";
 
     setTimeout(() => {
@@ -105,6 +160,7 @@ export function IDETerminal({
         out("  echo <text>      Print text");
         out("  clear            Clear terminal");
         out("  date / whoami / uname");
+        out("  git status|log|commit -m|branch|ls-files  真实工作区仓库（isomorphic-git）");
       } else if (cmd === "ls") {
         const target = arg1 ? resolveAbsPath(arg1) : terminalCwd;
         const node = vfsResolve(vfs, target);
@@ -188,12 +244,6 @@ export function IDETerminal({
           vfsTreeLines(node.children, "", []).forEach(l => out(l));
         }
       } else if (raw.startsWith("echo ")) { out(raw.slice(5)); }
-      else if (cmd === "npm" || cmd === "pnpm" || cmd === "yarn") { out(`[mock] ${raw}`); out("✓ Done in 0.42s"); }
-      else if (cmd === "git") {
-        if (arg1 === "status") { out("On branch main"); out("nothing to commit, working tree clean"); }
-        else if (arg1 === "log") { out("commit abc123 (HEAD -> main)"); out("Author: yyc3-admin"); out("Date: " + new Date().toISOString()); out("  Initial commit"); }
-        else { out(`[mock] git ${parts.slice(1).join(" ")}`); }
-      } else if (cmd === "tsc") { out("✓ No errors found"); }
       else { out(`command not found: ${cmd}`); out("Type 'help' for available commands."); }
     }, 150);
   };

@@ -23,6 +23,8 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "../i18n/context";
+import { gitEngine } from "../services/git-service";
+import type { FileNode } from "../types";
 import { activityBus } from "../store/activity-store";
 import { useCollabStore } from "../store/collab-store";
 import { cryptoStoreActions } from "../store/crypto-store";
@@ -65,10 +67,35 @@ import { IDEFileExplorer } from "./ide/IDEFileExplorer";
 import { IDELayoutProvider } from "./ide/IDELayoutContext";
 import { IDEOverlays } from "./ide/IDEOverlays";
 
-// ── Mock data ──
+// ── Mock data（仅当工作区无 Git 仓库时的降级树） ──
 import { MOCK_FILE_TREE as IMPORTED_MOCK_FILE_TREE, SAMPLE_CODE as IMPORTED_SAMPLE_CODE } from "./ide/ide-mock-data";
 const MOCK_FILE_TREE = IMPORTED_MOCK_FILE_TREE;
 const SAMPLE_CODE = IMPORTED_SAMPLE_CODE;
+
+/** 扁平路径 → FileNode 树（真实工作区文件树构建） */
+function buildTreeFromPaths(paths: string[]): FileNode[] {
+  const root: FileNode = { name: "/", type: "folder", children: [] };
+  for (const p of paths) {
+    const segs = p.split("/").filter(Boolean);
+    let cur = root;
+    segs.forEach((seg, i) => {
+      const isFile = i === segs.length - 1;
+      let next = cur.children?.find((c) => c.name === seg && (isFile ? c.type === "file" : c.type === "folder"));
+      if (!next) {
+        next = isFile
+          ? { name: seg, type: "file", ext: seg.includes(".") ? seg.split(".").pop() : undefined }
+          : { name: seg, type: "folder", children: [] };
+        cur.children!.push(next);
+      }
+      cur = next;
+    });
+  }
+  const sortTree = (nodes: FileNode[]): FileNode[] =>
+    nodes
+      .map((n) => (n.children ? { ...n, children: sortTree(n.children) } : n))
+      .sort((a, b) => (a.type === b.type ? a.name.localeCompare(b.name) : a.type === "folder" ? -1 : 1));
+  return sortTree(root.children ?? []);
+}
 
 // ===== Main IDEMode =====
 export function IDEMode({ onSwitchMode, onOpenSettings, onOpenNotifications, onOpenCommandPalette, onOpenGlobalSearch, onOpenAudioPanel }: {
@@ -150,11 +177,34 @@ export function IDEMode({ onSwitchMode, onOpenSettings, onOpenNotifications, onO
     fileContentMap, editorDirty, setEditorDirty, selectedFile, editorCode,
   });
 
+  // ── 真实工作区联动：存在 Git 仓库时用 LightningFS 文件树取代 mock 树，
+  //     文件内容以工作区为准水合（编辑器/终端/Git 三方同源）──
+  const [workspaceTree, setWorkspaceTree] = useState<ReturnType<typeof buildTreeFromPaths> | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!(await gitEngine.isRepo())) return;
+      const files = await gitEngine.listFiles();
+      if (!files.length || cancelled) return;
+      const contents: Record<string, string> = {};
+      for (const f of files) {
+        try { contents[f] = await gitEngine.readFile(f); } catch { /* 跳过不可读 */ }
+      }
+      if (cancelled) return;
+      setWorkspaceTree(buildTreeFromPaths(files));
+      setFileContentMap(contents);
+      if (!files.includes(selectedFile) && files.length) setSelectedFile(files[0]);
+    })().catch(() => { /* 无仓库保持 mock 树 */ });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ── Derived data ─
   const activeFileTree = useMemo(() => {
+    if (workspaceTree) return workspaceTree;
     const proj = projectStore.getActiveProject();
     return proj?.fileTree ?? MOCK_FILE_TREE;
-  }, [projectStore]);
+  }, [projectStore, workspaceTree]);
 
   const filteredFileTree = useMemo(() => filterFileTree(activeFileTree, searchQuery), [activeFileTree, searchQuery]);
   const borderColor = tokens.border;
