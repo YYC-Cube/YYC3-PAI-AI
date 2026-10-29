@@ -115,11 +115,11 @@
 ### 🔌 Extensible Ecosystem · 扩展生态
 
 - **Plugin system** — flexible plugin architecture
-- **MCP protocol** 🚧 — Model Context Protocol support（接入配置 UI 已就绪，协议执行层开发中）
+- **MCP protocol** — Model Context Protocol support（Streamable HTTP 真协议客户端 + stdio 配置导出）
 - **Open API** — complete API surface
 - **Webhook** — event-driven integration
 
-> 📍 功能成熟度速览：AI 对话/写作/模型管理/主题/音乐/数据导出 **可用**；Git 面板/终端/文件系统/MCP/协作服务端为**规划中或部分模拟**（详见 [`docs/YYC3-AI-PAI-深度审核总结与建议-20261029.md`](./docs/YYC3-AI-PAI-深度审核总结与建议-20261029.md) §3.3）。
+> 📍 功能成熟度速览：AI 对话（**真 SSE 流式**）/写作/模型管理/主题/音乐/数据导用 **可用**；Git 面板（isomorphic-git 浏览器内真仓库）与 WebGPU 本地推理（transformers.js）已落地真实现；终端/文件系统/协作服务端为**规划中或部分模拟**（详见 [`docs/YYC3-演进交付记录-20261030.md`](./docs/YYC3-演进交付记录-20261030.md)）。
 
 ---
 
