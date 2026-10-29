@@ -130,28 +130,28 @@ test.describe('Component Visual Regression', () => {
   test('Button component visual', async ({ page }) => {
     const buttons = page.locator('button').first()
     if (await buttons.isVisible().catch(() => false)) {
-      expect(await buttons.screenshot()).toMatchSnapshot('button-component.png')
+      await expect(buttons).toHaveScreenshot('button-component.png')
     }
   })
 
   test('Input component visual', async ({ page }) => {
     const inputs = page.locator('input').first()
     if (await inputs.isVisible().catch(() => false)) {
-      expect(await inputs.screenshot()).toMatchSnapshot('input-component.png')
+      await expect(inputs).toHaveScreenshot('input-component.png')
     }
   })
 
   test('Textarea component visual', async ({ page }) => {
     const textareas = page.locator('textarea').first()
     if (await textareas.isVisible().catch(() => false)) {
-      expect(await textareas.screenshot()).toMatchSnapshot('textarea-component.png')
+      await expect(textareas).toHaveScreenshot('textarea-component.png')
     }
   })
 
   test('Card component visual', async ({ page }) => {
     const cards = page.locator('[data-testid*="card"], .card').first()
     if (await cards.isVisible().catch(() => false)) {
-      expect(await cards.screenshot()).toMatchSnapshot('card-component.png')
+      await expect(cards).toHaveScreenshot('card-component.png')
     }
   })
 })
