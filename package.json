@@ -127,7 +127,7 @@
     "semver": "^7.7.4",
     "tailwindcss": "4.1.12",
     "typescript": "^6.0.2",
-    "vite": "6.3.5",
+    "vite": "8.3.5",
     "vitest": "^4.1.2",
     "rollup-plugin-visualizer": "^5.14.0"
   },
@@ -145,7 +145,7 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": "6.3.5",
+      "vite": "8.3.5",
       "lodash": "4.17.21"
     }
   }
