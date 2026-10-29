@@ -69,7 +69,7 @@ export class MusicAI {
       const cleaned = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
       const parsed = JSON.parse(cleaned)
 
-      return parsed.map((item: any) => ({
+      return parsed.map((item: { original?: string; translated?: string; sourceLang?: string; confidence?: number }) => ({
         original: item.original || '',
         translated: item.translated || '',
         sourceLang: item.sourceLang || 'unknown',

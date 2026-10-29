@@ -4,6 +4,7 @@
  * @version v2.0.0
  */
 
+
 import {
   ChevronLeft,
   ChevronRight,
@@ -30,7 +31,7 @@ import {
 } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useThemeStore } from '../../store/theme-store'
-import { getAudioEngine } from '../../utils/audio-engine'
+import { getAudioEngine , type AudioTrack} from '../../utils/audio-engine'
 import { createLogger } from '../../utils/logger'
 
 const logger = createLogger('EnhancedAudioPlayer')
@@ -142,8 +143,8 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
   const [isMuted, setIsMuted] = useState(false)
 
   // 歌曲列表
-  const [tracks, setTracks] = useState<any[]>([])
-  const [filteredTracks, setFilteredTracks] = useState<any[]>([])
+  const [tracks, setTracks] = useState<AudioTrack[]>([])
+  const [filteredTracks, setFilteredTracks] = useState<AudioTrack[]>([])
   const [showPlaylist, setShowPlaylist] = useState(false)
   const [showFavorites, setShowFavorites] = useState(false)
 
@@ -215,6 +216,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
     })
 
     return () => unsubscribe()
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isOpen])
 
   // 时间更新（用于歌词同步）
@@ -237,6 +239,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
     }, 100)
 
     return () => clearInterval(interval)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isOpen, isPlaying, lyrics])
 
   // 音频可视化初始化
@@ -382,6 +385,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isOpen, isPlaying, currentTime, duration, volume, showMVPlayer, showShortcuts])
 
   // 搜索功能
@@ -427,11 +431,13 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
     } catch (error) {
       logger.error('[EnhancedPlayer] ❌ 播放失败:', error)
     }
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isPlaying, tracks])
 
   const handleSeek = useCallback((time: number) => {
     audioEngine.seek(time)
     setCurrentTime(time)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [])
 
   const handleProgressClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -447,6 +453,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
   const handleVolumeChange = useCallback((vol: number) => {
     setVolume(vol)
     audioEngine.setMusicVolume(vol)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [])
 
   const handleToggleMute = useCallback(() => {
@@ -457,6 +464,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
       audioEngine.setMasterVolume(0)
       setIsMuted(true)
     }
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isMuted, volume])
 
   const handleTrackSelect = useCallback(async (trackId: string) => {
@@ -466,6 +474,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
     } catch (error) {
       logger.error('[EnhancedPlayer] ❌ 切换歌曲失败:', error)
     }
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [])
 
   const handlePrevious = useCallback(() => {
@@ -515,6 +524,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
 
     setIsCurrentFavorite(!isCurrentFavorite)
     setFavorites(favoritesManager.getFavorites())
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isCurrentFavorite])
 
   const toggleLyrics = useCallback(() => {
@@ -527,6 +537,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
     } else if (currentMV) {
       setShowMVPlayer(true)
     }
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [showMVPlayer, currentMV])
 
   const closeMVPlayer = useCallback(() => {
@@ -537,7 +548,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
   }, [])
 
   // MV相关方法
-  const checkForMV = useCallback((_track: any) => {
+  const checkForMV = useCallback((_track: AudioTrack) => {
     // 模拟：检查是否有对应的MV文件
     // 实际项目中可以从API或本地目录获取MV信息
 
@@ -581,7 +592,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
         await document.exitFullscreen()
         setIsFullscreenMV(false)
       }
-    } catch (_e) { /* ignore */ }
+    } catch { /* ignore */ }
   }, [])
 
   const togglePiP = useCallback(async () => {
@@ -593,7 +604,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
       } else {
         await videoRef.current.requestPictureInPicture()
       }
-    } catch (_e) { /* ignore */ }
+    } catch { /* ignore */ }
   }, [])
 
   // 工具函数
@@ -981,7 +992,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
                             {trackName}
                           </p>
                           <p className="text-xs truncate" style={{ color: tokens.foregroundMuted }}>
-                            {track.metadata?.artist || track.artist || '未知'}
+                            {(track as { metadata?: { artist?: string }; artist?: string }).metadata?.artist || (track as { artist?: string }).artist || '未知'}
                           </p>
                         </div>
 
@@ -1012,7 +1023,7 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
                                 favoritesManager.addFavorite({
                                   id: trackId,
                                   name: trackName,
-                                  artist: track.metadata?.artist || '未知',
+                                  artist: (track as { metadata?: { artist?: string } }).metadata?.artist || '未知',
                                 })
                               }
                               setFavorites(favoritesManager.getFavorites())

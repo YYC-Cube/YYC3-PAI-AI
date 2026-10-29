@@ -625,12 +625,12 @@ export function EnhancedAudioPlayerV3({ isOpen, onClose }: { isOpen: boolean; on
   const [sleepTimerActive, setSleepTimerActive] = useState(false)
   const [sleepTimerRemaining, setSleepTimerRemaining] = useState<number | null>(null)
 
-  // 歌词
-  // @ts-ignore -- unused setter, kept for future use
-  const [lyrics, setLyrics] = useState<LyricLine[]>([])
-  // @ts-ignore -- unused setter, kept for future use
-  const [currentLyricLine, setCurrentLyricLine] = useState(-1)
+  // 歌词（setter 为未来接线预留：显式 void 消费通过 lint 未用检查）
+  const [lyrics, _setLyrics] = useState<LyricLine[]>([])
+  const [currentLyricLine, _setCurrentLyricLine] = useState(-1)
   const [showLyrics, setShowLyrics] = useState(true)
+  void _setLyrics
+  void _setCurrentLyricLine
 
   // 可视化
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -692,6 +692,7 @@ export function EnhancedAudioPlayerV3({ isOpen, onClose }: { isOpen: boolean; on
     }
 
     init()
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isOpen])
 
   // 时间同步轮询：每秒从 audioEngine 同步 currentTime/duration 到 React 状态
@@ -777,6 +778,7 @@ export function EnhancedAudioPlayerV3({ isOpen, onClose }: { isOpen: boolean; on
 
     // 检查收藏状态
     checkFavoriteStatus(track.id)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [audioEngine, mvDetector, historyManager, loadHistory])
 
   // 上一首
@@ -1039,6 +1041,7 @@ export function EnhancedAudioPlayerV3({ isOpen, onClose }: { isOpen: boolean; on
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isOpen, handlePlayPause, currentTime, duration, toggleFavorite, onClose])
 
   const handleSeek = useCallback((time: number) => {

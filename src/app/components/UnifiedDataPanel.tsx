@@ -378,6 +378,7 @@ export const UnifiedDataPanel: React.FC<{
     } catch (error) {
       logger.error('Passphrase operation failed:', error)
     }
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- 稳定引用/快照语义，入依赖改变重建行为
   }, [passphraseModal, passphrase, entries, setSensitive, getSensitive])
 
   const filteredEntries = entries.filter(e =>

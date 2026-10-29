@@ -76,6 +76,7 @@ vi.mock('@tauri-apps/plugin-fs', () => {
 
 // ===== Mock heavy ESM deps used by Chat/AiMessageRender =====
 vi.mock('react-markdown', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 测试桩：react-markdown 组件 props 无需精确
   default: ({ children }: any) => children || null,
 }))
 vi.mock('remark-gfm', () => ({

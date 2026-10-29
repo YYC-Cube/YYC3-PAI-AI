@@ -146,6 +146,7 @@ export function SelfMediaStoreProvider({ children }: { children: ReactNode }) {
     writingInsertCallback, setWritingInsertCallback,
     panelActions, setPanelActions,
     platformAdaptations, addPlatformAdaptation, clearAdaptations,
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- 稳定引用/快照语义，入依赖改变重建行为
   }), [currentContent, activeTemplate, templateWritingTopic, templateWritingMode, clearTemplateTopic,
     pendingPreviewContent, pendingPreviewTitle, pendingPreviewPlatform,
     pendingPublishContent, pendingPublishTitle, setPendingPublish,
@@ -157,6 +158,7 @@ export function SelfMediaStoreProvider({ children }: { children: ReactNode }) {
 
 // ── Hook ──
 
+// eslint-disable-next-line react-refresh/only-export-components -- Context hook 导出（非 UI 组件）
 export function useSelfMediaStore(): SelfMediaContextType {
   const ctx = useContext(Ctx)
   if (!ctx) {

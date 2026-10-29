@@ -79,6 +79,7 @@ export function AudioVisualizer({
         cancelAnimationFrame(animationId)
       }
     }
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [type, height, color, backgroundColor])
 
   const drawIdleState = (

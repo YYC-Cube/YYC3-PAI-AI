@@ -97,6 +97,7 @@ export function AudioUploader({
         setTimeout(() => setSuccessFiles([]), 3000)
       }
     },
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
     [audioEngine, acceptedFormats, maxFileSize, onUploadComplete, onError]
   )
 

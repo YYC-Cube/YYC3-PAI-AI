@@ -790,7 +790,7 @@ export function SpatialAudioPanel({ isOpen, onClose, processor }: {
 
   const handleModeChange = useCallback((newMode: string) => {
     setMode(newMode)
-    processor?.setSpatialMode(newMode as any)
+    processor?.setSpatialMode(newMode as Parameters<NonNullable<typeof processor>['setSpatialMode']>[0])
     processor?.enable()
   }, [processor])
 
@@ -960,7 +960,7 @@ export function CrossfadePanel({ isOpen, onClose, processor }: {
   const handleCrossfade = useCallback(async () => {
     if (!processor || isCrossfading) return
     setIsCrossfading(true)
-    await processor.crossfade(duration, curve as any)
+    await processor.crossfade(duration, curve as Parameters<NonNullable<typeof processor>['crossfade']>[1])
     setIsCrossfading(false)
   }, [processor, duration, curve, isCrossfading])
 

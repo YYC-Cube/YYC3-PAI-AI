@@ -3,10 +3,11 @@
  * @description 轻量化音乐播放器弹窗 - 点击顶部/侧边图标弹出
  */
 
+
 import { ListMusic, Music, Pause, Play, SkipBack, SkipForward, Volume2, VolumeX, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useThemeStore } from '../../store/theme-store'
-import { getAudioEngine } from '../../utils/audio-engine'
+import { getAudioEngine , type AudioTrack} from '../../utils/audio-engine'
 import { createLogger } from '../../utils/logger'
 
 const logger = createLogger('AudioPlayerPopup')
@@ -25,7 +26,7 @@ export function AudioPlayerPopup({ isOpen, onClose }: AudioPlayerPopupProps) {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [volume, setVolume] = useState(70)
-  const [tracks, setTracks] = useState<any[]>([])
+  const [tracks, setTracks] = useState<AudioTrack[]>([])
   const [showPlaylist, setShowPlaylist] = useState(false)
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export function AudioPlayerPopup({ isOpen, onClose }: AudioPlayerPopupProps) {
     })
 
     return () => unsubscribe()
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isOpen])
 
   useEffect(() => {
@@ -64,6 +66,7 @@ export function AudioPlayerPopup({ isOpen, onClose }: AudioPlayerPopupProps) {
     }, 1000)
 
     return () => clearInterval(interval)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isOpen, isPlaying])
 
   const handlePlayPause = useCallback(async () => {
@@ -92,6 +95,7 @@ export function AudioPlayerPopup({ isOpen, onClose }: AudioPlayerPopupProps) {
     } catch (error) {
       logger.error('[YYC3 PlayerPopup] ❌ 播放失败:', error)
     }
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [isPlaying, tracks])
 
   const formatTime = (time: number): string => {

@@ -142,9 +142,9 @@ function AppContent() {
       openAIWriting: (_options?: { mode?: string; topic?: string }) => {
         if (_options?.topic) setPendingAIWritingTopic(_options.topic)
         if (_options?.mode) {
-          const validModes = ['title', 'outline', 'seo', 'expand', 'summary', 'rewrite']
-          if (validModes.includes(_options.mode)) {
-            setPendingAIWritingMode(_options.mode as any)
+          const validModes = ['title', 'outline', 'seo', 'expand', 'summary', 'rewrite'] as const
+          if ((validModes as readonly string[]).includes(_options.mode)) {
+            setPendingAIWritingMode(_options.mode as (typeof validModes)[number])
           }
         }
         panelActions.open('aiWriting')

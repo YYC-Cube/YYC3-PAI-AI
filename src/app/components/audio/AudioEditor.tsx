@@ -44,6 +44,7 @@ export function AudioEditor({ track, onSave, onCancel, className = '' }: AudioEd
 
   useEffect(() => {
     generateWaveform()
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [track.url])
 
   useEffect(() => {
@@ -88,7 +89,7 @@ export function AudioEditor({ track, onSave, onCancel, className = '' }: AudioEd
       setWaveformData(filteredData)
       drawWaveform(filteredData)
       audioContext.close()
-    } catch (_error) {
+    } catch {
       logger.warn('[YYC3 Audio] Failed to generate waveform')
     }
   }
@@ -191,6 +192,7 @@ export function AudioEditor({ track, onSave, onCancel, className = '' }: AudioEd
 
   useEffect(() => {
     drawWaveform(waveformData)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [startTime, endTime, waveformData])
 
   const formatTime = (seconds: number): string => {

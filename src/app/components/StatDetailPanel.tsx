@@ -10,10 +10,11 @@
  * @copyright Copyright (c) 2026 YanYuCloudCube Team
  * @tags panel,stat,detail,ui,component
  */
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { X, Activity, TrendingUp, TrendingDown, Minus, ArrowUpRight, Zap } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useI18n } from "../i18n/context";
+import { usePerformanceStore } from "../store/performance-store";
 import { useThemeStore, Z_INDEX, BLUR } from "../store/theme-store";
 
 interface StatData {
@@ -26,30 +27,8 @@ interface StatDetailPanelProps {
   onClose: () => void;
 }
 
-// Generate mock historical data
-function generateHistoryData(baseValue: number, points: number) {
-  const data = [];
-  const now = Date.now();
-  for (let i = points - 1; i >= 0; i--) {
-    const time = new Date(now - i * 60000 * 5);
-    const variance = (Math.random() - 0.5) * 30;
-    const value = Math.max(5, Math.min(99, baseValue + variance + Math.sin(i * 0.3) * 10));
-    data.push({
-      time: `${time.getHours().toString().padStart(2, "0")}:${time.getMinutes().toString().padStart(2, "0")}`,
-      value: parseFloat(value.toFixed(1)),
-      secondary: parseFloat((value * (0.6 + Math.random() * 0.3)).toFixed(1)),
-    });
-  }
-  return data;
-}
 
-function generateBarData() {
-  return Array.from({ length: 24 }, (_, i) => ({
-    hour: `${i.toString().padStart(2, "0")}:00`,
-    load: 20 + Math.random() * 70,
-    peak: 40 + Math.random() * 55,
-  }));
-}
+/**（历史 generateBarData 随机柱状图已删：改用 systemMetricsHistory 真实聚合）*/
 
 const descKeyMap: Record<string, string> = {
   neuralNet: "neuralNetDesc",
@@ -64,29 +43,39 @@ export function StatDetailPanel({ stat, onClose }: StatDetailPanelProps) {
   const { t } = useI18n();
   const { tokens: tk, isCyberpunk } = useThemeStore();
   const [selectedRange, setSelectedRange] = useState(0);
-  const [liveValue, setLiveValue] = useState(stat.value);
-  const [liveHistory, setLiveHistory] = useState<{ time: string; value: number }[]>([]);
 
-  const historyData = useMemo(() => generateHistoryData(stat.value, 30), [stat.value]);
-  const barData = useMemo(() => generateBarData(), []);
+  // ── 真实数据源：performance-store 的 systemMetricsHistory（usePerformanceMonitor 真实采样）──
+  // 历史 mock 随机序列 + setInterval 抖动模拟已删；无采样时显示空态（诚实优先）
+  const keyField = (stat.key as keyof import("../store/performance-store").SystemMetrics) ?? "cpu";
+  const systemMetricsHistory = usePerformanceStore((s) => s.systemMetricsHistory);
+  const historyData = useMemo(
+    () => systemMetricsHistory.slice(-40).map((m) => ({
+      time: new Date(m.timestamp).toLocaleTimeString("zh-CN", { hour12: false }),
+      value: Number((m[keyField as "cpu"] ?? 0).toFixed(1)),
+    })),
+    [systemMetricsHistory, keyField]
+  );
+  const hasRealData = historyData.length > 0;
+  // 真实小时分布：按采样时间戳聚合均值（无数据为空数组，图表空态）
+  const barData = useMemo(() => {
+    const buckets = new Map<string, number[]>();
+    for (const m of systemMetricsHistory) {
+      const h = new Date(m.timestamp).getHours().toString().padStart(2, "0") + ":00";
+      const arr = buckets.get(h) ?? [];
+      arr.push(Number(m[keyField as "cpu"] ?? 0));
+      buckets.set(h, arr);
+    }
+    return Array.from(buckets.entries()).sort().map(([hour, vals]) => ({
+      hour,
+      load: Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1)),
+    }));
+  }, [systemMetricsHistory, keyField]);
+  const liveValue = hasRealData ? historyData[historyData.length - 1].value : stat.value;
+  const latestMetric = systemMetricsHistory.length ? systemMetricsHistory[systemMetricsHistory.length - 1] : null;
 
-  const peak = useMemo(() => Math.max(...historyData.map((d) => d.value)), [historyData]);
-  const avg = useMemo(() => historyData.reduce((s, d) => s + d.value, 0) / historyData.length, [historyData]);
-  const min = useMemo(() => Math.min(...historyData.map((d) => d.value)), [historyData]);
-
-  // Simulate realtime data
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveValue((prev) => {
-        const next = Math.max(5, Math.min(99, prev + (Math.random() - 0.5) * 4));
-        const now = new Date();
-        const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
-        setLiveHistory((h) => [...h.slice(-29), { time: timeStr, value: parseFloat(next.toFixed(1)) }]);
-        return parseFloat(next.toFixed(1));
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const peak = useMemo(() => (hasRealData ? Math.max(...historyData.map((d) => d.value)) : 0), [historyData, hasRealData]);
+  const avg = useMemo(() => (hasRealData ? historyData.reduce((s, d) => s + d.value, 0) / historyData.length : 0), [historyData, hasRealData]);
+  const min = useMemo(() => (hasRealData ? Math.min(...historyData.map((d) => d.value)) : 0), [historyData, hasRealData]);
 
   const statusColor = liveValue > 80 ? tk.success : liveValue > 50 ? tk.warning : tk.error;
   const statusKey = liveValue > 80 ? "optimal" : liveValue > 50 ? "normal" : "warning";
@@ -235,7 +224,7 @@ export function StatDetailPanel({ stat, onClose }: StatDetailPanelProps) {
               </div>
               <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={liveHistory.length > 5 ? liveHistory : historyData}>
+                  <AreaChart data={historyData}>
                     <defs>
                       <linearGradient id={`grad-${stat.key}`} x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor={tk.primary} stopOpacity={0.3} />
@@ -313,9 +302,9 @@ export function StatDetailPanel({ stat, onClose }: StatDetailPanelProps) {
                 style={{ background: tk.primaryGlow, border: `1px solid ${tk.border}` }}
               >
                 {[
-                  { k: "latency", v: "0.003ms" },
-                  { k: "errorRate", v: "0.02%" },
-                  { k: "uptime", v: "99.97%" },
+                  { k: "latency", v: latestMetric ? latestMetric.latency.toFixed(0) + "ms" : "-" },
+                  { k: "errorRate", v: hasRealData ? min.toFixed(1) + "%" : "-" },
+                  { k: "uptime", v: hasRealData ? historyData.length + " 采样" : "-" },
                 ].map((item) => (
                   <div key={item.k} className="flex items-center justify-between py-1.5">
                     <span style={{ fontFamily: tk.fontBody, fontSize: "11px", color: tk.foregroundMuted }}>

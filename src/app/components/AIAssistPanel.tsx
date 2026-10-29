@@ -61,88 +61,7 @@ function getSuggestionMeta(tk: ThemeTokens) {
   } as const
 }
 
-// ===== Mock AI suggestion generator =====
-function generateMockSuggestions(context: AIContext): AISuggestion[] {
-  const fileName = context.selectedFile
-  const suggestions: AISuggestion[] = []
-
-  if (fileName.endsWith('.tsx') || fileName.endsWith('.ts')) {
-    suggestions.push({
-      id: `sug-${Date.now()}-1`,
-      type: 'optimize',
-      title: {
-        zh: `为 ${fileName} 添加 React.memo 优化`,
-        en: `Add React.memo optimization to ${fileName}`,
-      },
-      description: {
-        zh: '检测到该组件可能存在不必要的重渲染。建议使用 React.memo 包裹导出组件，并用 useMemo/useCallback 缓存内部计算。',
-        en: 'Detected potential unnecessary re-renders. Suggest wrapping exported component with React.memo and caching internal computations with useMemo/useCallback.',
-      },
-      codeSnippet: `import { memo, useMemo, useCallback } from 'react'\n\nexport const ${fileName.replace(/\\.(tsx|ts)$/, '')} = memo(function ${fileName.replace(/\\.(tsx|ts)$/, '')}(props) {\n  const memoizedValue = useMemo(() => {\n    // expensive computation\n    return computeValue(props.data)\n  }, [props.data])\n\n  return <div>{memoizedValue}</div>\n})`,
-      confidence: 87,
-      status: 'pending',
-    })
-
-    suggestions.push({
-      id: `sug-${Date.now()}-2`,
-      type: 'doc',
-      title: {
-        zh: `为 ${fileName} 生成 JSDoc 注释`,
-        en: `Generate JSDoc comments for ${fileName}`,
-      },
-      description: {
-        zh: '检测到该文件缺少 JSDoc 文档注释。建议为导出的函数和接口添加完整的 JSDoc 注释。',
-        en: 'Missing JSDoc documentation detected. Suggest adding comprehensive JSDoc comments for exported functions and interfaces.',
-      },
-      codeSnippet: `/**\n * @component ${fileName.replace(/\\.(tsx|ts)$/, '')}\n * @description Component description here\n * @param {Object} props - Component props\n * @returns {JSX.Element} Rendered component\n * @example\n * <${fileName.replace(/\\.(tsx|ts)$/, '')} />\n */`,
-      confidence: 95,
-      status: 'pending',
-    })
-
-    suggestions.push({
-      id: `sug-${Date.now()}-3`,
-      type: 'fix',
-      title: { zh: '添加错误边界处理', en: 'Add error boundary handling' },
-      description: {
-        zh: '建议在组件中添加 ErrorBoundary 包裹，防止子组件渲染错误导致整个应用崩溃。',
-        en: 'Suggest wrapping component with ErrorBoundary to prevent child render errors from crashing the entire application.',
-      },
-      codeSnippet: `class ErrorBoundary extends React.Component<\n  { children: React.ReactNode; fallback?: React.ReactNode },\n  { hasError: boolean }\n> {\n  state = { hasError: false }\n\n  static getDerivedStateFromError() {\n    return { hasError: true }\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return this.props.fallback || <div>Something went wrong</div>\n    }\n    return this.props.children\n  }\n}`,
-      confidence: 72,
-      status: 'pending',
-    })
-  }
-
-  if (fileName.endsWith('.css')) {
-    suggestions.push({
-      id: `sug-${Date.now()}-4`,
-      type: 'refactor',
-      title: { zh: '提取 CSS 自定义属性', en: 'Extract CSS custom properties' },
-      description: {
-        zh: '建议将重复的颜色值和间距值提取为 CSS 自定义属性（变量），提高样式可维护性。',
-        en: 'Suggest extracting repeated color and spacing values into CSS custom properties for better maintainability.',
-      },
-      codeSnippet: `:root {\n  --color-primary: #00f0ff;\n  --color-bg: #0a0a0a;\n  --spacing-sm: 8px;\n  --spacing-md: 16px;\n  --border-radius: 8px;\n}`,
-      confidence: 90,
-      status: 'pending',
-    })
-  }
-
-  suggestions.push({
-    id: `sug-${Date.now()}-5`,
-    type: 'code',
-    title: { zh: '生成单元测试模板', en: 'Generate unit test template' },
-    description: {
-      zh: `基于 ${fileName} 的结构，自动生成对应的单元测试文件模板。`,
-      en: `Auto-generate corresponding unit test template based on ${fileName} structure.`,
-    },
-    codeSnippet: `import { render, screen } from '@testing-library/react'\nimport { describe, it, expect } from 'vitest'\nimport { ${fileName.replace(/\\.(tsx|ts)$/, '')} } from './${fileName}'\n\ndescribe('${fileName.replace(/\\.(tsx|ts)$/, '')}', () => {\n  it('should render without crashing', () => {\n    render(<${fileName.replace(/\\.(tsx|ts)$/, '')} />)\n    expect(screen.getByRole('main')).toBeInTheDocument()\n  })\n})`,
-    confidence: 81,
-    status: 'pending',
-  })
-
-  return suggestions
-}
+/**（历史 mock 建议生成器已删：无模型时诚实指引）*/
 
 // ===== Component Props =====
 interface AIAssistPanelProps {
@@ -166,7 +85,7 @@ export function AIAssistPanel({ visible, onClose, context, onApplyCode }: AIAssi
 
   /**
    * 对齐 Guidelines: Intelligent Assistance — 基于代码上下文的真实 AI 建议生成
-   * 有活跃模型时调用真实 API，否则 fallback 到 mock
+   * 有活跃模型时调用真实 API；无模型时诚实指引（零 mock）
    */
   const handleGenerate = useCallback(async () => {
     setLoading(true)
@@ -174,13 +93,9 @@ export function AIAssistPanel({ visible, onClose, context, onApplyCode }: AIAssi
 
     const activeModel = getActiveModel()
     if (!activeModel) {
-      // Fallback: 无活跃模型，使用 mock
-      setTimeout(() => {
-        const newSuggestions = generateMockSuggestions(context)
-        setSuggestions(newSuggestions)
-        setLoading(false)
-        cyberToast(isZh ? `已生成 ${newSuggestions.length} 条智能建议 (mock)` : `Generated ${newSuggestions.length} suggestions (mock)`)
-      }, 1200)
+      // 无活跃模型：诚实指引（历史 mock 建议生成已随零 mock 决战移除）
+      setLoading(false)
+      cyberToast(isZh ? '未激活模型——请先在 设置 → 模型管理 激活后再生成建议' : 'No active model — activate one in Model Settings first')
       return
     }
 
@@ -223,11 +138,9 @@ Provide 3-5 actionable suggestions for this code.${context.selectedText ? ' Focu
           parsed = JSON.parse(jsonMatch[0])
         }
       } catch {
-        // 解析失败，fallback 到 mock
-        const mockSugs = generateMockSuggestions(context)
-        setSuggestions(mockSugs)
+        // 解析失败：诚实报错（零 mock——不再伪造默认建议）
         setLoading(false)
-        cyberToast(isZh ? 'AI 响应解析失败，使用默认建议' : 'AI response parse failed, using defaults')
+        cyberToast(isZh ? 'AI 响应解析失败——未生成建议' : 'AI response parse failed — no suggestions generated')
         return
       }
 
@@ -250,14 +163,10 @@ Provide 3-5 actionable suggestions for this code.${context.selectedText ? ' Focu
         setSuggestions(aiSuggestions)
         cyberToast(isZh ? `AI 已生成 ${aiSuggestions.length} 条智能建议` : `AI generated ${aiSuggestions.length} suggestions`)
       } else {
-        const mockSugs = generateMockSuggestions(context)
-        setSuggestions(mockSugs)
-        cyberToast(isZh ? 'AI 未返回有效建议，使用默认建议' : 'No valid AI suggestions, using defaults')
+        cyberToast(isZh ? 'AI 未返回有效建议' : 'No valid AI suggestions returned')
       }
     } catch (err: Error | unknown) {
-      // API 调用失败，fallback 到 mock
-      const mockSugs = generateMockSuggestions(context)
-      setSuggestions(mockSugs)
+      // API 失败：诚实报错（零 mock）
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
       cyberToast(isZh ? `AI 调用失败: ${errorMessage.slice(0, 60) || '未知错误'}` : `AI failed: ${errorMessage.slice(0, 60) || 'Unknown'}`)
     }

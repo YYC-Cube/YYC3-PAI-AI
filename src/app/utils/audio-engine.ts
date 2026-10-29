@@ -429,7 +429,7 @@ export class AudioEngine {
 
   private initializeAudioContext(): void {
     try {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+      this.audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext)()
       this.analyserNode = this.audioContext.createAnalyser()
       this.gainNode = this.audioContext.createGain()
 

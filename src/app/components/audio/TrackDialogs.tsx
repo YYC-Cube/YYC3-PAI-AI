@@ -9,6 +9,7 @@
  * @tags [component]
  */
 
+import type { ThemeTokens } from '../../store/theme-store'
 import { useState } from 'react'
 
 interface TrackInfo {
@@ -23,7 +24,7 @@ interface DeleteConfirmDialogProps {
   track: TrackInfo | null
   onConfirm: () => void
   onCancel: () => void
-  tokens: any
+  tokens: ThemeTokens
 }
 
 export function DeleteConfirmDialog({ track, onConfirm, onCancel, tokens }: DeleteConfirmDialogProps) {
@@ -84,7 +85,7 @@ interface EditTrackDialogProps {
   track: TrackInfo
   onSave: (name: string, artist?: string) => void
   onClose: () => void
-  tokens: any
+  tokens: ThemeTokens
 }
 
 export function EditTrackDialog({ track, onSave, onClose, tokens }: EditTrackDialogProps) {

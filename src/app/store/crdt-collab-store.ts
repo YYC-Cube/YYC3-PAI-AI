@@ -23,9 +23,11 @@ const logger = createLogger('crdt')
 
 const COLLAB_CONFIG = {
   get wsUrl() { return import.meta.env.VITE_COLLAB_WS_URL || 'ws://localhost:8080' },
-  get signalingUrls() {
+  get signalingUrls(): string[] {
+    // 信令服务不再内置任何默认域名：历史硬编码的 wss://signaling.yyc3.io 归属
+    // 未经验证（被抢注即全量用户泄露连接元数据）。必须显式配置后启用。
     const envVal = import.meta.env.VITE_COLLAB_SIGNALING_URL
-    return envVal ? [envVal] : ['wss://signaling.yyc3.io']
+    return envVal ? [envVal] : []
   },
   /** 房间令牌：自建协作服务端（见 docs/YYC3-协作服务端-部署指南.md）按房间签发；
    *  令牌经查询参数下发给 y-websocket / signaling，服务端校验后才允许加入房间。

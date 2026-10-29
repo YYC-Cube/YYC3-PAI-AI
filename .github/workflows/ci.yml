@@ -35,7 +35,7 @@ jobs:
         run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
 
       - name: ESLint check
-        run: npx eslint src/ --max-warnings=76
+        run: npx eslint src/ --max-warnings=0
 
       - name: TypeScript type check
         run: npx pnpm@${{ env.PNPM_VERSION }} run type-check
@@ -107,6 +107,33 @@ jobs:
           name: dist-${{ github.sha }}
           path: dist/
           retention-days: 7
+
+  # ===========================================
+  # Job 3.5: E2E (Playwright · Chromium only，控时)
+  # ===========================================
+  e2e:
+    name: 🎭 E2E (chromium)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
+
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run e2e (chromium project)
+        run: npx playwright test --config=e2e/playwright.config.ts --project=chromium
+        env:
+          CI: 'true'
 
   # ===========================================
   # Job 4: Deploy (GitHub Pages)

@@ -108,8 +108,7 @@ export function AudioDiagnostic({ onClose }: { onClose: () => void }) {
       ]
 
       let successCount = 0
-      let failCount = 0
-      const failedFiles: string[] = []
+            const failedFiles: string[] = []
 
       for (const file of testFiles) {
         try {
@@ -117,11 +116,9 @@ export function AudioDiagnostic({ onClose }: { onClose: () => void }) {
           if (response.ok) {
             successCount++
           } else {
-            failCount++
-            failedFiles.push(file.split('/').pop() || file)
+              failedFiles.push(file.split('/').pop() || file)
           }
         } catch {
-          failCount++
           failedFiles.push(file.split('/').pop() || file)
         }
       }
@@ -158,7 +155,7 @@ export function AudioDiagnostic({ onClose }: { onClose: () => void }) {
     // 测试3: Howler.js
     await new Promise(resolve => setTimeout(resolve, 300))
     try {
-      const Howl = (await import('howler')).default || (window as any).Howl
+      const Howl = (await import('howler')).default || (window as unknown as { Howl?: new (opts: Record<string, unknown>) => { play: () => number } }).Howl
 
       if (!Howl) {
         updateResult('howler', {
@@ -186,7 +183,7 @@ export function AudioDiagnostic({ onClose }: { onClose: () => void }) {
     // 测试4: Web Audio API
     await new Promise(resolve => setTimeout(resolve, 200))
     try {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext
+      const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext
 
       if (!AudioContext) {
         updateResult('webaudio', {
@@ -232,7 +229,7 @@ export function AudioDiagnostic({ onClose }: { onClose: () => void }) {
     // 测试5: 自动播放策略
     await new Promise(resolve => setTimeout(resolve, 200))
     try {
-      const doc = document as any
+      const doc = document as unknown as { featurePolicy?: { allowsFeature: (f: string) => boolean } }
       const canAutoplay = !doc.featurePolicy ||
         doc.featurePolicy?.allowsFeature('autoplay') !== false
 
@@ -317,11 +314,11 @@ export function AudioDiagnostic({ onClose }: { onClose: () => void }) {
     // console.log('[YYC3 Diagnostic] 🗑️ 已清除缓存')
 
     // 2. 清空内存中的tracks和playlists
-    const engine = getAudioEngine() as any
+    const engine = getAudioEngine() as unknown as { tracks?: Map<unknown, unknown>; playlists?: Map<unknown, unknown>; howlInstance?: { unload: () => void } | null }
     if (engine.tracks) engine.tracks.clear()
     if (engine.playlists) engine.playlists.clear()
     if (engine.howlInstance) {
-      try { engine.howlInstance.unload() } catch (_err) { /* ignore */ }
+      try { engine.howlInstance.unload() } catch { /* ignore */ }
       engine.howlInstance = null
     }
     // console.log('[YYC3 Diagnostic] 🧹 已清空内存')

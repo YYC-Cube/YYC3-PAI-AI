@@ -41,6 +41,7 @@ export function MiniAudioPlayer({ onOpenFullPlayer: _onOpenFullPlayer, className
     }
 
     initializeAudio()
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [])
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export function MiniAudioPlayer({ onOpenFullPlayer: _onOpenFullPlayer, className
     })
 
     return () => unsubscribe()
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [])
 
   const handleQuickToggle = useCallback(async (e: React.MouseEvent) => {

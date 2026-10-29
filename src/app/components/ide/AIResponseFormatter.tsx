@@ -26,6 +26,15 @@ import remarkGfm from 'remark-gfm'
 import { useThemeStore } from '../../store/theme-store'
 import { createLogger } from '../../utils/logger'
 
+/** react-markdown 组件映射的最小 props 形状 */
+interface MDCompProps {
+  inline?: boolean
+  className?: string
+  href?: string
+  children?: React.ReactNode
+  [key: string]: unknown
+}
+
 const logger = createLogger('AIResponseFormatter')
 
 // ── 类型定义 ──
@@ -150,9 +159,11 @@ class ContextMemoryManager {
   }
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- 单例导出（非 UI 组件，热更新豁免）
 export const contextManager = new ContextMemoryManager()
 
 // ── 文档排版格式化器 ──
+// eslint-disable-next-line react-refresh/only-export-components -- 纯工具函数（非 UI 组件，热更新豁免）
 export function formatAIContent(rawContent: string): FormattedSection[] {
   const sections: FormattedSection[] = []
 
@@ -237,7 +248,9 @@ export function EnhancedMarkdown({
   }, [])
 
   const components = useMemo(() => ({
-    code({ inline, className: cls, children, ...props }: any) {
+    // react-markdown 组件映射的最小 props 形状（历史 any ×18 全部收敛）
+
+    code({ inline, className: cls, children, ...props }: MDCompProps) {
       const lang = (cls || '').replace(/language-/, '')
       const childStr = typeof children === 'string' ? children : ''
       const sectionId = `code-${Math.random().toString(36).slice(2, 9)}`
@@ -332,7 +345,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    h1({ children, ...props }: any) {
+    h1({ children, ...props }: MDCompProps) {
       const sectionId = `h1-${Math.random().toString(36).slice(2, 9)}`
       const isExpanded = expandedSections.has(sectionId)
 
@@ -361,7 +374,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    h2({ children, ...props }: any) {
+    h2({ children, ...props }: MDCompProps) {
       return (
         <h2 className="text-base font-semibold mt-6 mb-2 pb-2 border-b flex items-center gap-2" style={{
           color: tokens.primary,
@@ -374,7 +387,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    h3({ children, ...props }: any) {
+    h3({ children, ...props }: MDCompProps) {
       return (
         <h3 className="text-sm font-semibold mt-4 mb-1 flex items-center gap-2" style={{
           color: tokens.foreground,
@@ -386,7 +399,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    blockquote({ children, ...props }: any) {
+    blockquote({ children, ...props }: MDCompProps) {
       return (
         <blockquote className="my-3 p-3 rounded-lg border-l-4" style={{
           background: `${tokens.warning}10`,
@@ -400,7 +413,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    ul({ children, ...props }: any) {
+    ul({ children, ...props }: MDCompProps) {
       return (
         <ul className="my-2 ml-4 space-y-1 list-disc" style={{
           color: tokens.foreground,
@@ -419,7 +432,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    ol({ children, ...props }: any) {
+    ol({ children, ...props }: MDCompProps) {
       return (
         <ol className="my-2 ml-4 space-y-1" style={{
           color: tokens.foreground,
@@ -441,7 +454,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    table({ children, ...props }: any) {
+    table({ children, ...props }: MDCompProps) {
       return (
         <div className="overflow-x-auto my-3 rounded-lg" style={{
           border: `1px solid ${tokens.borderDim}`,
@@ -455,7 +468,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    th({ children, ...props }: any) {
+    th({ children, ...props }: MDCompProps) {
       return (
         <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider" style={{
           background: tokens.primaryGlow,
@@ -469,7 +482,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    td({ children, ...props }: any) {
+    td({ children, ...props }: MDCompProps) {
       return (
         <td className="px-3 py-2 border-t" style={{
           borderColor: tokens.borderDim,
@@ -480,7 +493,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    a({ href, children, ...props }: any) {
+    a({ href, children, ...props }: MDCompProps) {
       return (
         <a
           href={href}
@@ -501,7 +514,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    strong({ children, ...props }: any) {
+    strong({ children, ...props }: MDCompProps) {
       return (
         <strong className="font-bold" style={{ color: tokens.foreground }} {...props}>
           {children}
@@ -509,7 +522,7 @@ export function EnhancedMarkdown({
       )
     },
 
-    em({ children, ...props }: any) {
+    em({ children, ...props }: MDCompProps) {
       return (
         <em className="italic" style={{ color: tokens.accent }} {...props}>
           {children}
@@ -517,16 +530,16 @@ export function EnhancedMarkdown({
       )
     },
 
-    hr(...props: any[]) {
+    hr() {
       return (
         <hr className="my-6 border-none" style={{
           height: '1px',
           background: `linear-gradient(to right, transparent, ${tokens.primary}, transparent)`,
-        }} {...props[0]} />
+        }} />
       )
     },
 
-    p({ children, ...props }: any) {
+    p({ children, ...props }: MDCompProps) {
       return (
         <p className="my-2 leading-relaxed" style={{
           color: tokens.foreground,
@@ -562,7 +575,8 @@ export function EnhancedMarkdown({
 
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        components={components as any}
+        // react-markdown v10 components 联合签名极宽，映射对象按其类型收窄
+        components={components as unknown as React.ComponentProps<typeof ReactMarkdown>['components']}
       >
         {content}
       </ReactMarkdown>

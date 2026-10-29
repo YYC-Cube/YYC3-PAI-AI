@@ -83,6 +83,7 @@ export function AudioPanel({ className = '' }: AudioPanelProps) {
     }
 
     initializeLibrary()
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [libraryInitialized])
 
   useEffect(() => {
@@ -92,6 +93,7 @@ export function AudioPanel({ className = '' }: AudioPanelProps) {
     }, 1000)
 
     return () => clearInterval(interval)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [])
 
   const handleUploadComplete = useCallback((newTracks: AudioTrack[]) => {

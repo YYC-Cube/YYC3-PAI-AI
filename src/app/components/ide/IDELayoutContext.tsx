@@ -27,7 +27,7 @@ export interface IDELayoutContextValue {
   setEditorDirty: (v: boolean) => void;
   fileContentMap: Record<string, string>;
   setFileContentMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-  cyberEditorRef: RefObject<CyberEditorHandle | null>;
+  cyberEditorRef: RefObject<CyberEditorHandle>;
 
   // ── File explorer state ──
   searchQuery: string;
