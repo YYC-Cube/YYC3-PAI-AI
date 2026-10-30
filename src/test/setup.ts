@@ -9,6 +9,7 @@
  */
 
 import { enableMapSet } from 'immer'
+import React from 'react'
 import { vi } from 'vitest'
 
 enableMapSet()
@@ -153,13 +154,31 @@ Object.defineProperty(globalThis, 'matchMedia', {
   })),
 })
 
+// ResizeObserver 桩必须可 new（tanstack/virtual 以 class 方式实例化）
+// sonner 桩：toast() 记录调用；<Toaster/> 渲染已推送消息（供组件断言）
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sonnerLog: string[] = (globalThis as any).__sonnerLog = []
+vi.mock('sonner', () => ({
+  toast: (msg: string, _opts?: unknown) => { sonnerLog.push(msg) },
+  Toaster: () => React.createElement('div', { 'data-testid': 'sonner-toaster' },
+    ...sonnerLog.slice(-5).map((m, i) => React.createElement('div', { key: i }, m))),
+}))
+
+class ResizeObserverStub {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(private cb: (entries: Array<{ target: Element; contentRect: DOMRectReadOnly }>) => void) { }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  observe(target: Element) {
+    const rect = { width: (target as any).clientWidth || 400, height: (target as any).clientHeight || 400, top: 0, left: 0, right: 400, bottom: 400, x: 0, y: 0, toJSON: () => ({}) } as DOMRectReadOnly
+    // 异步回报一次，模拟真实量测时序
+    setTimeout(() => this.cb([{ target, contentRect: rect }]), 0)
+  }
+  unobserve() { }
+  disconnect() { }
+}
 Object.defineProperty(globalThis, 'ResizeObserver', {
   writable: true,
-  value: vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  })),
+  value: ResizeObserverStub,
 })
 
 Object.defineProperty(globalThis, 'IntersectionObserver', {
