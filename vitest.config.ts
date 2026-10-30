@@ -34,8 +34,24 @@ export default defineConfig({
         // ── 覆盖率收敛（文件级 onboarding）：以下为「尚无对应测试」的文件清单。
         // 每补一个组件/hook 测试，就从对应清单删除该文件（自动进入分母受阈值约束）。
         // 子目录整体未测的用通配；新增文件默认计入分母（防新增盲区）。
-        // 已 onboard（不再排除）：components/{GitPanel,IDEMode,ModelSettings,PanelManager,settings-model},
-        // hooks/{useAgent,useCRDTCollab,useWebGPUInference,useChatSession}, Chat/CodeBlockWrap, webgpu-inference-store
+        // 已 onboard（不再排除）：components/{GitPanel,IDEMode,settings-model,TraceViewer,PluginManager,
+        // SmallPanels 件套(EditorTabBar/FloatingWidget/VersionHistory/PerformanceAlert/SecurityAudit/Collab)},
+        // hooks/{useAgent,useCRDTCollab,useWebGPUInference,useChatSession},
+        // Chat/CodeBlockWrap, services/file-system-watcher, webgpu-inference-store
+        // 已浅测待专项深化（有测试但覆盖 <35%，300+ 行需专项；达标后移出）：
+        // ModelSettings(0%) / PanelManager(0%) / ChatPage(1.4%) / DetachedWindow(3.2%)
+        // trace-store(9.7%) / CyberpunkBackground(14.9%) / PreviewEngine(17.5%)
+        // code-indexer(25.8%) / auth-client(27.8%) / MultiInstancePanel(28.5%)
+        'src/app/components/ModelSettings.tsx',
+        'src/app/components/PanelManager.tsx',
+        'src/app/components/DetachedWindow.tsx',
+        'src/app/components/MultiInstancePanel.tsx',
+        'src/app/components/PreviewEngine.tsx',
+        'src/app/components/CyberpunkBackground.tsx',
+        'src/components/Chat/ChatPage.tsx',
+        'src/app/services/trace-store.ts',
+        'src/app/services/code-indexer.ts',
+        'src/app/services/auth-client.ts',
         'src/app/components/audio/**',
         'src/app/components/figma/**',
         'src/app/components/ide/**',
@@ -49,7 +65,6 @@ export default defineConfig({
                         'src/app/components/CodeGenPanel.tsx',
                         'src/app/components/ContentPreview.tsx',
                 'src/app/components/CyberEditor.tsx',
-                                        'src/app/components/DetachedWindow.tsx',
                         'src/app/components/EnhancedBackupRestorePanel.tsx',
         'src/app/components/FileContextMenu.tsx',
                 'src/app/components/FullscreenMode.tsx',
@@ -68,20 +83,12 @@ export default defineConfig({
                                                         'src/app/components/UnifiedDataPanel.tsx',
                         'src/app/components/settings/AIServiceTabs.tsx',
                 'src/app/components/settings/WorkspaceTabs.tsx',
-                        'src/components/Chat/ChatPage.tsx',
         'src/app/services/monaco-setup.ts',
         'src/app/services/sync-backend-adapter.ts',
-        'src/app/services/trace-store.ts',
         'src/app/services/git-service.ts',
         'src/app/services/indexeddb-service.ts',
         'src/app/services/sync-engine.ts',
-        'src/app/services/file-system-watcher.ts',
         'src/app/services/native-database-dumper.ts',
-        'src/app/components/ModelSettings.tsx',
-        'src/app/components/PanelManager.tsx',
-        'src/app/components/settings-model.ts',
-        'src/app/services/code-indexer.ts',
-        'src/app/services/auth-client.ts',
         'src/app/components/PublishQueue.tsx',
         'src/app/components/AIWritingPanel.tsx',
         'src/app/components/IntelligentWorkflowPanel.tsx',
@@ -96,15 +103,6 @@ export default defineConfig({
         'src/app/components/CRDTCollabPanel.tsx',
         'src/app/components/ContentTemplatePanel.tsx',
         'src/app/components/AgentWorkflowPanel.tsx',
-        'src/app/components/CyberpunkBackground.tsx',
-        'src/app/components/EditorTabBar.tsx',
-        'src/app/components/FloatingWidget.tsx',
-        'src/app/components/VersionHistoryPanel.tsx',
-        'src/app/components/PerformanceAlertPanel.tsx',
-        'src/app/components/SecurityAuditPanel.tsx',
-        'src/app/components/MultiInstancePanel.tsx',
-        'src/app/components/CollabPanel.tsx',
-        'src/app/components/PreviewEngine.tsx',
         // hooks 未测（10）
         'src/app/hooks/ai-types.ts',
         'src/app/hooks/index.ts',

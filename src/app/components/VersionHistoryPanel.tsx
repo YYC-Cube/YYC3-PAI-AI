@@ -41,10 +41,8 @@ export function VersionHistoryPanel({ currentContent = '', onRollback }: Version
 
   const [showDiff, setShowDiff] = useState(false)
 
-  const versions = useMemo(() => {
-    if (!versionPanelFile) return []
-    return getVersions(versionPanelFile).slice().reverse()
-  }, [versionPanelFile, getVersions])
+  // 直接计算而非 useMemo：版本数据不在依赖里，memo 会导致面板打开期间保存/删除/清空后列表不刷新
+  const versions = versionPanelFile ? getVersions(versionPanelFile).slice().reverse() : []
 
   /** 计算 diff */
   const diffLines: DiffLine[] = useMemo(() => {
