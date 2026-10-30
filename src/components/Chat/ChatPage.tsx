@@ -17,6 +17,8 @@ import { useSystemTheme } from '../../app/hooks/useSystemTheme'
 import { useModelStore } from '../../app/store/model-store'
 import { buildRagContext } from '../../app/services/code-indexer'
 import { newTraceId, sanitizePrompt, saveTrace } from '../../app/services/trace-store'
+import { sendWithCacheFallback } from '../../app/services/cache-fallback'
+import { recordEvaluation } from '../../app/services/evaluation-store'
 import { useThemeStore } from '../../app/store/theme-store'
 import type { ChatMessage } from '../../types/chat'
 import ChatInputBox from './ChatInputBox'
@@ -170,15 +172,30 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
         const ragContext = await buildRagContext(text, 3).catch(() => '')
         const systemPrompt = ragContext || undefined
 
-        // 真 SSE 流式：onChunk 实时写入消息（fallback 到非流式端点时为一次性全量）
-        const raw = await sendToActiveModelStream(text, { systemPrompt }, (_delta, full) => {
+        // E1-3: 缓存降级包装（网络故障→缓存命中→明确标注；恢复后走正常路径）
+        const cacheResult = await sendWithCacheFallback(
+          text,
+          'active-model',
+          () => sendToActiveModelStream(text, { systemPrompt }, (_delta, full) => {
+            setMessages(prev =>
+              prev.map(item => (item.id === tempAiId ? { ...item, content: full } : item)),
+            )
+          }),
+        )
+        const raw = cacheResult.content
+
+        // 缓存命中时标注
+        if (cacheResult.isCached) {
+          const cachedNote = `\n\n---\n> ⚠️ **缓存回复**（来自 ${cacheResult.source === 'memory' ? '内存缓存' : '本地持久缓存'}，${new Date(cacheResult.cachedAt).toLocaleTimeString()} 缓存）`
           setMessages(prev =>
-            prev.map(item => (item.id === tempAiId ? { ...item, content: full } : item)),
+            prev.map(item => (item.id === tempAiId ? { ...item, content: raw + cachedNote } : item)),
           )
-        })
+        }
 
         // Phase 1.3: 保存 trace
         const traceEnd = performance.now()
+        const totalMs = Math.round(traceEnd - traceStart)
+        const firstTokenMs = Math.round(totalMs * 0.2)
         void saveTrace({
           id: traceId,
           timestamp: Date.now(),
@@ -186,8 +203,8 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
           model: 'current',
           promptPreview: sanitizePrompt(text),
           completion: raw.slice(0, 500),
-          firstTokenMs: Math.round((traceEnd - traceStart) * 0.2),
-          totalMs: Math.round(traceEnd - traceStart),
+          firstTokenMs,
+          totalMs,
           inputTokens: Math.ceil(text.length / 4),
           outputTokens: Math.ceil(raw.length / 4),
           costUsd: 0.0001,
@@ -195,6 +212,17 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
           toolCalls: [],
           iterations: 1,
         }).catch(() => { /* trace 失败不阻塞 */ })
+
+        // E1-2: 评估基线记录（自动指标 + 用户可后续反馈）
+        recordEvaluation({
+          traceId,
+          prompt: text,
+          completion: raw,
+          latencyMs: totalMs,
+          firstTokenMs,
+          model: 'current',
+          provider: 'active',
+        })
 
         // 流式完成，落定最终状态
         setMessages(prev =>
