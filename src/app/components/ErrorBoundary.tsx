@@ -43,11 +43,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromProps(props: Props, state: State): State {
-    // resetKeys 语义：任一 key 与"出错时快照"不同 → 重置边界（历史实现误与
-    // componentStack 逐位比较，导致重置永不生效）
+    // resetKeys 语义：出错时记录快照；此后任一 key 变化 → 复位边界。
+    // （历史 bug：①与 componentStack 逐位比较永不复位 ②快照未记录导致基线漂移）
     if (props.resetKeys && state.hasError) {
-      const snapshot = state.resetKeysSnapshot ?? props.resetKeys
-      const changed = props.resetKeys.some((key, i) => key !== snapshot[i])
+      if (!state.resetKeysSnapshot) {
+        return { ...state, resetKeysSnapshot: props.resetKeys }
+      }
+      const changed = props.resetKeys.some((key, i) => key !== state.resetKeysSnapshot![i])
       if (changed) {
         return { hasError: false, error: null, errorInfo: null, copied: false, resetKeysSnapshot: null }
       }

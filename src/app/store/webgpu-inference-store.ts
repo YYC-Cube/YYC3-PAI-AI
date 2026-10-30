@@ -385,7 +385,7 @@ interface WebGPUInferenceStoreActions {
 /**
  * 预定义模型列表
  */
-const PREDEFINED_MODELS: AIModel[] = [
+export const PREDEFINED_MODELS: AIModel[] = [
   {
     id: 'tinyllama-1.1b',
     name: 'TinyLlama 1.1B',

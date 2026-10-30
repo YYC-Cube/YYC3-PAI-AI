@@ -76,8 +76,8 @@ export class MCPClient {
     const info = (res ?? {}) as MCPServerInfo
     if (info.protocolVersion) this.protocolVersion = info.protocolVersion
     this.serverInfo = info
-    // 会话 id（Streamable HTTP：Mcp-Session-Id 头）
-    this.sessionHeader = null
+    // 会话 id 已在 post() 内从 initialize 响应头捕获（此处不可重置——
+    // 历史残留的 sessionHeader = null 会抹掉会话，被契约测试逮出）
     await this.notify('notifications/initialized')
     logger.info('MCP connected', { endpoint: this.endpoint, server: info.name, protocol: this.protocolVersion })
     return info
