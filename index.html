@@ -12,8 +12,7 @@
 
     <!-- Content Security Policy
          script-src 'unsafe-eval':  Monaco/部分运行时库的动态代码路径需要
-         script-src unpkg/jsdelivr:  LivePreview React 预览与 Monaco 加载器使用的
-                                     CDN（本地化打包在未达项台账排期中）
+         script-src unpkg:          LivePreview React 预览注入（Monaco 已本地化打包，不再依赖 jsdelivr）
          style-src 'unsafe-inline': @emotion/react CSS-in-JS 运行时注入需要
          worker-src blob:          Web Worker (transformers.js) 需要
          connect-src:              允许已知 AI API、本地/局域网 Ollama 节点、Yjs wss
@@ -22,7 +21,7 @@
       http-equiv="Content-Security-Policy"
       content="
       default-src 'self';
-      script-src 'self' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net;
+      script-src 'self' 'unsafe-eval' https://unpkg.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com data:;
       img-src 'self' data: blob: https:;

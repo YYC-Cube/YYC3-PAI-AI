@@ -128,14 +128,14 @@ class MonacoPreloader {
     try {
       // 高优先级：立即加载
       if (priority === 'high') {
-        await import('@monaco-editor/react')
+        await import('./monaco-setup').then(() => import('@monaco-editor/react'))
         return true
       }
 
       // 中优先级：延迟加载（给首屏渲染让路）
       if (priority === 'medium') {
         await new Promise(resolve => setTimeout(resolve, 100))
-        await import('@monaco-editor/react')
+        await import('./monaco-setup').then(() => import('@monaco-editor/react'))
         return true
       }
 
@@ -143,7 +143,7 @@ class MonacoPreloader {
       if (priority === 'low') {
         return new Promise((resolve) => {
           const load = () => {
-            import('@monaco-editor/react')
+            import('./monaco-setup').then(() => import('@monaco-editor/react'))
               .then(() => resolve(true))
               .catch(() => resolve(false))
           }

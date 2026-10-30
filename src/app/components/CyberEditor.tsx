@@ -274,7 +274,9 @@ export const CyberEditor = forwardRef<CyberEditorHandle, CyberEditorProps>(funct
   // Dynamically import Monaco to prevent top-level import failures
   useEffect(() => {
     let cancelled = false
-    import('@monaco-editor/react')
+    // 先装本地 monaco（loader.config + workers，终结 CDN 依赖），再取 React 包装
+    import('../services/monaco-setup')
+      .then(() => import('@monaco-editor/react'))
       .then((mod) => {
         if (!cancelled) setMonacoEditor(() => mod.default)
       })
