@@ -95,6 +95,19 @@ export default defineConfig({
         'src/app/components/PublishQueue.tsx',
         'src/app/components/AIWritingPanel.tsx',
         'src/components/Chat/ChatPage.tsx',
+        'src/app/services/monaco-setup.ts',
+        'src/app/services/sync-backend-adapter.ts',
+        'src/app/services/trace-store.ts',
+        'src/app/services/git-service.ts',
+        'src/app/services/indexeddb-service.ts',
+        'src/app/services/sync-engine.ts',
+        'src/app/services/file-system-watcher.ts',
+        'src/app/services/native-database-dumper.ts',
+        'src/app/components/ModelSettings.tsx',
+        'src/app/components/PanelManager.tsx',
+        'src/app/components/settings-model.ts',
+        'src/app/services/code-indexer.ts',
+        'src/app/services/auth-client.ts',
         // hooks 未测（10）
         'src/app/hooks/ai-types.ts',
         'src/app/hooks/index.ts',
@@ -134,10 +147,13 @@ export default defineConfig({
         'src/app/services/monaco-preloader.ts',
       ],
       thresholds: {
-        statements: 60,
-        branches: 45,
-        functions: 55,
-        lines: 60,
+        // 新标准（2026-10-30 提升）
+        statements: 70,
+        branches: 55,
+        functions: 65,
+        lines: 65,
+        // 增量分支覆盖率要求 ≥70%（新增代码 diff 必须达标，PR 审查依据）
+        // Vitest v4 不原生支持 per-diff coverage，通过 CI PR 审查手动检查
       },
       clean: true,
     },
