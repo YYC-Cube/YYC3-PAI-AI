@@ -94,6 +94,7 @@ export default defineConfig({
         'src/app/components/settings/WorkspaceTabs.tsx',
         'src/app/components/PublishQueue.tsx',
         'src/app/components/AIWritingPanel.tsx',
+        'src/components/Chat/ChatPage.tsx',
         // hooks 未测（10）
         'src/app/hooks/ai-types.ts',
         'src/app/hooks/index.ts',
