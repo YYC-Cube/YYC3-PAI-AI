@@ -3,8 +3,8 @@
  * @description 深化 PublishQueue 流程测试 + 补充高频小面板（IDEStatusBar/EditorTabBar/SystemPanel）
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, fireEvent, waitFor, act } from '@testing-library/react'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { render, waitFor } from '@testing-library/react'
 import { PublishQueue } from '../PublishQueue'
 import { IDEStatusBar } from '../IDEStatusBar'
 
@@ -46,7 +46,7 @@ describe('PublishQueue 深化（创建→平台选择→列表状态流）', () 
 
 describe('IDEStatusBar（IDE 状态栏）', () => {
   it('渲染状态栏结构', () => {
-    const { container } = render(<IDEStatusBar />)
+    const { container } = render(<IDEStatusBar selectedFile="test.ts" viewMode="edit" fullscreenPreview={false} lastAutoSave={null} onApplyPreset={() => {}} />)
     expect(container.textContent!.length).toBeGreaterThan(0)
   })
 })

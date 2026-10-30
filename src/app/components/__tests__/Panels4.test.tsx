@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, fireEvent, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { PublishQueue } from '../PublishQueue'
 import { AIWritingPanel } from '../AIWritingPanel'
 

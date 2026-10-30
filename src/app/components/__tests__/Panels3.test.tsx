@@ -25,7 +25,7 @@ describe('ThemeSwitcher / ThemePreview（主题系统真源）', () => {
     const before = themeStore.getState().themeId
     const btn = container.querySelector('button')
     expect(btn).toBeTruthy()
-    fireEvent.click(btn)
+    fireEvent.click(btn!)
     expect(themeStore.getState().themeId).not.toBe(before)
     // 恢复默认，避免污染其他用例
     themeStore.setTheme(before as never)
