@@ -75,6 +75,34 @@ export interface AgentLoopResult {
  *   1. 纯 JSON：{"tool": "name", "arguments": {...}}
  *   2. Markdown 代码块内嵌：```json\n{"tool": ...}\n```
  */
+/**
+ * 从文本中提取第一个平衡的 JSON 对象（括号计数器，支持任意嵌套）
+ */
+function extractBalancedJson(text: string): string | null {
+  const start = text.indexOf('{')
+  if (start === -1) return null
+  let depth = 0
+  let inString = false
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i]
+    if (ch === '"' && text[i - 1] !== '\\') inString = !inString
+    if (inString) continue
+    if (ch === '{') depth++
+    else if (ch === '}') depth--
+    if (depth === 0) {
+      const candidate = text.slice(start, i + 1)
+      // 验证提取的是 JSON 且含 "tool" 字段
+      try {
+        const obj = JSON.parse(candidate)
+        if ('tool' in obj) return candidate
+      } catch { /* not JSON, try next */ }
+      // 递归搜索剩余文本
+      return extractBalancedJson(text.slice(i + 1))
+    }
+  }
+  return null
+}
+
 export function parseToolCall(text: string): ToolCallRequest | null {
   // 格式 0：全文是合法 JSON（最严格也最可靠）
   try {
@@ -87,16 +115,15 @@ export function parseToolCall(text: string): ToolCallRequest | null {
     }
   } catch { /* not whole-JSON */ }
 
-  // 格式 1：嵌入在文本中的 JSON 对象（含 "tool" 字段）
-  // 非贪婪匹配最外层 {} 且内含 "tool"
-  const jsonMatch = text.match(/\{[^{}]*"tool"\s*:\s*"[^"]+"[\s\S]*?\}/)
-  if (jsonMatch) {
+  // 格式 1：嵌入在文本中的 JSON（用括号计数器提取完整对象，支持任意嵌套深度）
+  const extracted = extractBalancedJson(text)
+  if (extracted) {
     try {
-      const parsed = JSON.parse(jsonMatch[0])
+      const parsed = JSON.parse(extracted)
       if (typeof parsed.tool === 'string' && parsed.tool) {
         return { tool: parsed.tool, arguments: parsed.arguments || {} }
       }
-    } catch { /* fallthrough */ }
+    } catch { /* not valid JSON */ }
   }
 
   // 格式 2：Markdown 代码块
