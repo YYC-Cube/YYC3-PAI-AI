@@ -217,8 +217,8 @@ export function uninstallPlugin(id: string): boolean {
 
 /** 保存注入的宿主 API（由应用启动时注入） */
 let hostAPI: Partial<PluginAPI> = {}
-let registeredPanels: Map<string, { title: string; render: () => HTMLElement }> = new Map()
-let registeredCommands: Map<string, { label: string; handler: () => void }> = new Map()
+const registeredPanels = new Map<string, { title: string; render: () => HTMLElement }>()
+const registeredCommands = new Map<string, { label: string; handler: () => void }>()
 
 /**
  * 注入宿主 API（应用启动时调用）
