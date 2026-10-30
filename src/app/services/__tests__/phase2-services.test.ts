@@ -41,8 +41,7 @@ ${req.code}`)
 
   terminate() { /* noop */ }
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(globalThis as any).Worker = MockWorker
+;(globalThis as unknown as { Worker: unknown }).Worker = MockWorker
 
 // ===== P2.1 EventStream =====
 
