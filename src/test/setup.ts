@@ -163,6 +163,9 @@ vi.mock('sonner', () => ({
     ...sonnerLog.slice(-5).map((m, i) => React.createElement('div', { key: i }, m))),
 }))
 
+// jsdom 缺 scrollIntoView（命令面板高亮滚动用）
+Element.prototype.scrollIntoView = Element.prototype.scrollIntoView || function () { }
+
 class ResizeObserverStub {
   constructor(private cb: (entries: Array<{ target: Element; contentRect: DOMRectReadOnly }>) => void) { }
   observe(target: Element) {
