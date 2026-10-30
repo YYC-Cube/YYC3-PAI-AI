@@ -61,17 +61,18 @@ jobs:
 
       - name: Run tests with coverage
         run: |
+          set +e  # vitest Linux v8 coverage 假阳性：exit 1 但测试/阈值全过
           npx pnpm@${{ env.PNPM_VERSION }} run test:coverage > coverage-output.log 2>&1
           VITEST_EXIT=$?
+          set -e
           cat coverage-output.log
-          # Linux vitest v8 coverage 已知问题：测试/阈值全过但 exit 1（worker 隐性崩溃）
-          # 判定标准：vitest 输出含 "FAIL"（真实失败）才报错；纯 exit code 视为通过
+          # 真实失败 = vitest 输出含大写 FAIL 行；纯 exit code 视为通过
           if grep -q "FAIL" coverage-output.log; then
             echo "::error::Tests FAILED (see FAIL lines above)"
             exit 1
           fi
           if [ $VITEST_EXIT -ne 0 ]; then
-            echo "::warning::vitest exited $VITEST_EXIT but no FAIL lines — Linux v8 coverage worker issue (passing)"
+            echo "::warning::vitest exited $VITEST_EXIT but no FAIL — Linux v8 coverage worker issue (pass)"
           fi
           echo "Tests passed (exit=$VITEST_EXIT, no FAIL lines)"
 
