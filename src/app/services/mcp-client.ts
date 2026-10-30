@@ -33,6 +33,8 @@ export interface MCPServerInfo {
   version?: string
   protocolVersion?: string
   capabilities?: Record<string, unknown>
+  /** 规范形态：initialize result 内嵌 serverInfo {name,version}（连接时拍平到顶层） */
+  serverInfo?: { name?: string; version?: string }
 }
 
 interface RPCRequest {
@@ -68,12 +70,17 @@ export class MCPClient {
 
   /** initialize 握手（含协议版本协商与能力交换） */
   async connect(clientName = 'yyc3-ai-pai'): Promise<MCPServerInfo> {
-    const res = await this.rpc('initialize', {
+    const raw = (await this.rpc('initialize', {
       protocolVersion: this.protocolVersion,
       capabilities: { tools: {} },
       clientInfo: { name: clientName, version: '1.0.0' },
-    })
-    const info = (res ?? {}) as MCPServerInfo
+    }) ?? {}) as MCPServerInfo & { serverInfo?: { name?: string; version?: string } }
+    // MCP 规范：serverInfo 嵌套于 result —— 拍平到顶层供消费者统一读取
+    const info: MCPServerInfo = {
+      ...raw,
+      name: raw.serverInfo?.name ?? raw.name,
+      version: raw.serverInfo?.version ?? raw.version,
+    }
     if (info.protocolVersion) this.protocolVersion = info.protocolVersion
     this.serverInfo = info
     // 会话 id 已在 post() 内从 initialize 响应头捕获（此处不可重置——
