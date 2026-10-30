@@ -6,7 +6,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { codeBlockPlugin } from '../CodeBlockWrap'
 
-/* eslint-disable @typescript-eslint/no-explicit-any -- hast 测试夹具按插件真实输入形态构造 */
+// 测试文件 no-explicit-any 已在 eslint.config 对 *.test.* 豁免（hast 夹具宽类型）
 
 function makeTree(code: string, lang = 'typescript'): any {
   return {
