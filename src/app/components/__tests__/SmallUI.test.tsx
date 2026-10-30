@@ -28,8 +28,7 @@ describe('CyberToast（全局提示）', () => {
   it('cyberToast 布线到 sonner toast（桩日志验证）', () => {
     render(<CyberToaster />)
     act(() => { cyberToast('操作成功提示') })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const log = (globalThis as any).__sonnerLog as string[]
+    const log = (globalThis as unknown as { __sonnerLog?: string[] }).__sonnerLog as string[]
     expect(log).toContain('操作成功提示')
   })
 })
