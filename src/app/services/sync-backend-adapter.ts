@@ -325,7 +325,7 @@ class WebDAVBackend implements SyncBackend {
         },
       })
 
-      if (!response.ok) return []
+      if (!response.ok) throw new Error(`list failed: HTTP ${response.status}`)
 
       const text = await response.text()
       return this.parseWebDAVXml(text)
@@ -489,7 +489,7 @@ class S3Backend implements SyncBackend {
         headers: this.authHeaders('GET', '/'),
       })
 
-      if (!response.ok) return []
+      if (!response.ok) throw new Error(`list failed: HTTP ${response.status}`)
 
       const text = await response.text()
       return this.parseS3ListXml(text)
@@ -661,7 +661,7 @@ class CustomHTTPBackend implements SyncBackend {
         method: 'GET',
         headers: this.customHeaders,
       })
-      if (!response.ok) return []
+      if (!response.ok) throw new Error(`list failed: HTTP ${response.status}`)
       return await response.json() as RemoteFileInfo[]
     } catch (error) {
       logger.error('[HTTP] List failed:', error)
