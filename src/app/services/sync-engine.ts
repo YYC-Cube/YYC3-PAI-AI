@@ -165,6 +165,12 @@ class SyncEngine {
         existing.localVersion = item.localVersion
         existing.timestamp = item.timestamp
         existing.size = item.size
+        // 历史缺陷：终态项（completed/failed）更新字段后不复位 pending——
+        // startSync 只取 pending，首次同步后同路径的新变更被静默丢弃
+        if (existing.status === 'completed' || existing.status === 'failed') {
+          existing.status = 'pending'
+          existing.error = undefined
+        }
       }
     } else {
       this.state.queue.push(item)
