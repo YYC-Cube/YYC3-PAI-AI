@@ -43,11 +43,10 @@ export default defineConfig({
         // components/{FileContextMenu,PerformanceMonitor,MonacoPerformanceMonitor},
         // services/{trace-store,code-indexer,auth-client}(第七轮专项), webgpu-inference-store
         // 已浅测待专项深化（有测试但覆盖 <35%，300+ 行需专项；达标后移出）：
-        // ModelSettings(0%) / PanelManager(0%) / ChatPage(1.4%) / DetachedWindow(3.2%)
+        // ModelSettings(0%) / ChatPage(1.4%) / DetachedWindow(3.2%)
         // CyberpunkBackground(14.9%) / PreviewEngine(17.5%) / MultiInstancePanel(28.5%)
-        // （第七轮已达标 onboard：trace-store/code-indexer/auth-client 专项深化）
+        // （第七轮 onboard：trace-store/code-indexer/auth-client；第八轮：PanelManager 真渲染/self-media-store）
         'src/app/components/ModelSettings.tsx',
-        'src/app/components/PanelManager.tsx',
         'src/app/components/DetachedWindow.tsx',
         'src/app/components/MultiInstancePanel.tsx',
         'src/app/components/PreviewEngine.tsx',
@@ -125,7 +124,6 @@ export default defineConfig({
         'src/app/utils/local-model-infra.ts',
         'src/app/types/**',
         '**/types/**',
-        'src/app/store/self-media-store.tsx',
         'src/app/services/data-sync-orchestrator.ts',
         'src/app/services/data-portability-manager.ts',
         'src/app/services/monaco-performance-benchmark.ts',

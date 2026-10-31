@@ -97,10 +97,19 @@ export function SelfMediaStoreProvider({ children }: { children: ReactNode }) {
   const [pendingPreviewPlatform, setPendingPreviewPlatform] = useState<string | null>(null)
   const [pendingPublishContent, setPendingPublishContent] = useState<string | null>(null)
   const [pendingPublishTitle, setPendingPublishTitle] = useState<string | null>(null)
-  const [insertCallback, setInsertCallback] = useState<((content: string) => void) | null>(null)
-  const [writingInsertCallback, setWritingInsertCallback] = useState<((content: string) => void) | null>(null)
+  const [insertCallback, _setInsertCallback] = useState<((content: string) => void) | null>(null)
+  const [writingInsertCallback, _setWritingInsertCallback] = useState<((content: string) => void) | null>(null)
   const [panelActions, setPanelActions] = useState<PanelActions | null>(null)
   const [platformAdaptations, setPlatformAdaptations] = useState<Record<string, string>>({})
+
+  // 回调本身是函数：useState 直传函数参数会被 React 当作 lazy updater 调用并存其返回值
+  // （生产踩雷：AIWritingPanel 传 (text)=>{...} → 实际存了 undefined）→ 包一层存"值"
+  const setInsertCallback = useCallback((cb: ((content: string) => void) | null) => {
+    _setInsertCallback(() => cb)
+  }, [])
+  const setWritingInsertCallback = useCallback((cb: ((content: string) => void) | null) => {
+    _setWritingInsertCallback(() => cb)
+  }, [])
 
   const applyTemplate = useCallback((template: ContentTemplate) => {
     setActiveTemplate(template)
@@ -152,7 +161,6 @@ export function SelfMediaStoreProvider({ children }: { children: ReactNode }) {
     pendingPublishContent, pendingPublishTitle, setPendingPublish,
     insertCallback, writingInsertCallback, panelActions,
     platformAdaptations, addPlatformAdaptation, clearAdaptations])
-
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 
