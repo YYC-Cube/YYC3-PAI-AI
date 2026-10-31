@@ -36,8 +36,10 @@ export default defineConfig({
         // 子目录整体未测的用通配；新增文件默认计入分母（防新增盲区）。
         // 已 onboard（不再排除）：components/{GitPanel,IDEMode,settings-model,TraceViewer,PluginManager,
         // SmallPanels 件套(EditorTabBar/FloatingWidget/VersionHistory/PerformanceAlert/SecurityAudit/Collab)},
-        // hooks/{useAgent,useCRDTCollab,useWebGPUInference,useChatSession},
-        // Chat/CodeBlockWrap, services/file-system-watcher, webgpu-inference-store
+        // hooks/{useAgent,useCRDTCollab,useWebGPUInference,useChatSession,useAI,useDebounce,
+        // useKeyboardShortcuts,useStreamText,useSystemTheme},
+        // Chat/{CodeBlockWrap,ChatInputBox,ChatMessageList}, services/file-system-watcher,
+        // webgpu-inference-store
         // 已浅测待专项深化（有测试但覆盖 <35%，300+ 行需专项；达标后移出）：
         // ModelSettings(0%) / PanelManager(0%) / ChatPage(1.4%) / DetachedWindow(3.2%)
         // trace-store(9.7%) / CyberpunkBackground(14.9%) / PreviewEngine(17.5%)
@@ -103,21 +105,18 @@ export default defineConfig({
         'src/app/components/CRDTCollabPanel.tsx',
         'src/app/components/ContentTemplatePanel.tsx',
         'src/app/components/AgentWorkflowPanel.tsx',
-        // hooks 未测（10）
+        // hooks 未测（10）→ 第四轮 onboard 5（useAI 94%/useDebounce 96%/useKeyboardShortcuts 100%/
+        // useStreamText 100%/useSystemTheme 96%）；留专项：useMonacoPerformanceMonitor(288行)/
+        // usePerformanceMonitor(336行)/useIntelligentWorkflow(404行)；ai-types(纯类型无运行时)与
+        // index.ts(桶 re-export 覆盖归因 0%)不参与分母
         'src/app/hooks/ai-types.ts',
         'src/app/hooks/index.ts',
-        'src/app/hooks/useAI.ts',
-        'src/app/hooks/useDebounce.ts',
         'src/app/hooks/useIntelligentWorkflow.ts',
-        'src/app/hooks/useKeyboardShortcuts.ts',
         'src/app/hooks/useMonacoPerformanceMonitor.ts',
         'src/app/hooks/usePerformanceMonitor.tsx',
-        'src/app/hooks/useStreamText.ts',
-        'src/app/hooks/useSystemTheme.ts',
-        // Chat 未测（4）
+        // Chat 未测（4）→ 第四轮 onboard 2（ChatInputBox 93%/ChatMessageList ~90%）；
+        // 留专项：AiMessageRender(346行)；index.ts 桶(引 ChatPage 重依赖)不参与分母
         'src/components/Chat/AiMessageRender.tsx',
-        'src/components/Chat/ChatInputBox.tsx',
-        'src/components/Chat/ChatMessageList.tsx',
         'src/components/Chat/index.ts',
         'src/app/pages/**',
         'src/app/App.tsx',

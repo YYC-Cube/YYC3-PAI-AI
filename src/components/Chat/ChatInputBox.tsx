@@ -6,7 +6,7 @@
  */
 
 import { Image as ImageExt } from '@tiptap/extension-image'
-import { Table, TableCell, TableRow } from '@tiptap/extension-table'
+import { Table, TableCell, TableRow, TableHeader } from '@tiptap/extension-table'
 import { EditorContent, useEditor } from '@tiptap/react'
 import { StarterKit } from '@tiptap/starter-kit'
 import { useCallback, useEffect, useState } from 'react'
@@ -40,7 +40,7 @@ export default function ChatInputBox({
 
   // ── Tiptap 编辑器 ──
   const editor = useEditor({
-    extensions: [StarterKit, Table, TableRow, TableCell, ImageExt],
+    extensions: [StarterKit, Table, TableRow, TableCell, TableHeader, ImageExt],
     content: '',
     editorProps: {
       attributes: {
