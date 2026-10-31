@@ -331,7 +331,8 @@ class WebDAVBackend implements SyncBackend {
       return this.parseWebDAVXml(text)
     } catch (error) {
       logger.error('[WebDAV] List failed:', error)
-      return []
+      // 18号语义：故障须上抛（探活/拉取依赖 catch 记账），不再吞为空数组
+      throw error
     }
   }
 
@@ -340,16 +341,26 @@ class WebDAVBackend implements SyncBackend {
     const files: RemoteFileInfo[] = []
     const responseMatch = xml.match(/<d:response>[\s\S]*?<\/d:response>/g) || []
 
+    // 根/集合过滤：href 是服务器路径，须与 baseUrl 的 path 部分比较（历史缺陷：与完整 URL 比较永不生效）
+    const basePath = (() => {
+      try { return this.config?.baseUrl ? decodeURIComponent(new URL(this.config.baseUrl).pathname).replace(/\/+$/, '') : '' } catch { return '' }
+    })()
+
     for (const resp of responseMatch) {
-      const href = resp.match(/<d:href>([^<]+)<\/d:href>/)?.[1]
-      if (!href || href === this.config?.baseUrl) continue
+      const hrefRaw = resp.match(/<d:href>([^<]+)<\/d:href>/)?.[1]
+      if (!hrefRaw) continue
+      const href = decodeURIComponent(hrefRaw)
+      // 剥离基础路径得逻辑路径；空 = 根/集合条目（目录本身）→ 跳过
+      let logical = basePath && href.startsWith(basePath + '/') ? href.slice(basePath.length + 1) : href.replace(/^\/+/, '')
+      logical = logical.replace(/\/+$/, '')
+      if (!logical) continue
 
       const sizeStr = resp.match(/<d:getcontentlength>(\d+)<\/d:getcontentlength>/i)?.[1]
       const modifiedStr = resp.match(/<d:getlastmodified>([^<]+)<\/d:getlastmodified>/i)?.[1]
       const etag = resp.match(/<d:getetag>([^<]+)<\/d:getetag>/i)?.[1]
 
       files.push({
-        path: href,
+        path: logical,
         size: sizeStr ? parseInt(sizeStr, 10) : 0,
         lastModified: modifiedStr ? new Date(modifiedStr).getTime() : 0,
         etag: etag || undefined,
@@ -480,9 +491,13 @@ class S3Backend implements SyncBackend {
       const params = new URLSearchParams({ list: 'type=2' })
       if (prefix) params.set('prefix', prefix)
 
+      // forcePathStyle 未配 endpoint 时回落 AWS 默认端点（历史缺陷：拼出 undefined/...）
+      const endpoint = cfg.forcePathStyle
+        ? (cfg.endpoint || `https://s3.${cfg.region}.amazonaws.com`)
+        : `https://${cfg.bucket}.s3.${cfg.region}.amazonaws.com`
       const url = cfg.forcePathStyle
-        ? `${cfg.endpoint}/${cfg.bucket}/?${params}`
-        : `https://${cfg.bucket}.s3.${cfg.region}.amazonaws.com/?${params}`
+        ? `${endpoint}/${cfg.bucket}/?${params}`
+        : `${endpoint}/?${params}`
 
       const response = await fetch(url, {
         method: 'GET',

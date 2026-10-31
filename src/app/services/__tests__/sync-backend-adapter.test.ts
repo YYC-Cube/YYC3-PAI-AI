@@ -239,16 +239,17 @@ describe('WebDAVBackend', () => {
     expect(ls.method).toBe('PROPFIND')
     expect(ls.headers.Depth).toBe('1')
 
-    // 现状行为：根条目 href('/dav/') 与完整 baseUrl 字符串比较永不相等 → 未被过滤（疑似 bug，见专项报告）
-    expect(files).toHaveLength(2)
-    expect(files[0]).toEqual({ path: '/dav/', size: 0, lastModified: 0 })
-    const entry = files.find(f => f.path === '/dav/docs/a.md')
+    // 修复后（bug 19号）：根/集合条目（href 剥离基础路径为空）被过滤；
+    // 条目 path 为逻辑路径（剥离 /dav 前缀）——getInfo 的逻辑路径查找随之可用
+    expect(files).toHaveLength(1)
+    const entry = files.find(f => f.path === 'docs/a.md')
     expect(entry?.size).toBe(128)
     expect(entry?.lastModified).toBe(new Date('Wed, 21 Oct 2026 07:28:00 GMT').getTime())
     expect(entry?.etag).toBe('"etag-a1"')
 
+    // 修复后（bug 18号）：非 2xx 抛错而非吞为空数组
     fetchMock.mockResolvedValueOnce(res({ status: 500 }))
-    expect(await b.list('docs')).toEqual([])
+    await expect(b.list('docs')).rejects.toThrow('list failed: HTTP 500')
   })
 })
 
