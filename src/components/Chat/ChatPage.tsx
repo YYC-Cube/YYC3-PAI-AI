@@ -184,13 +184,10 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
         )
         const raw = cacheResult.content
 
-        // 缓存命中时标注
-        if (cacheResult.isCached) {
-          const cachedNote = `\n\n---\n> ⚠️ **缓存回复**（来自 ${cacheResult.source === 'memory' ? '内存缓存' : '本地持久缓存'}，${new Date(cacheResult.cachedAt).toLocaleTimeString()} 缓存）`
-          setMessages(prev =>
-            prev.map(item => (item.id === tempAiId ? { ...item, content: raw + cachedNote } : item)),
-          )
-        }
+        // 缓存命中时追加来源标注（合入最终内容——先设再被落定覆盖的旧写法会让标注永远显示不出来）
+        const finalContent = cacheResult.isCached
+          ? raw + `\n\n---\n> ⚠️ **缓存回复**（来自 ${cacheResult.source === 'memory' ? '内存缓存' : '本地持久缓存'}，${new Date(cacheResult.cachedAt).toLocaleTimeString()} 缓存）`
+          : raw
 
         // Phase 1.3: 保存 trace
         const traceEnd = performance.now()
@@ -224,11 +221,11 @@ export default function ChatPage({ className = '' }: ChatPageProps) {
           provider: 'active',
         })
 
-        // 流式完成，落定最终状态
+        // 流式完成，落定最终状态（含缓存标注）
         setMessages(prev =>
           prev.map(item =>
             item.id === tempAiId
-              ? { ...item, content: raw, folded: raw.length > 500, status: 'complete' as const }
+              ? { ...item, content: finalContent, folded: finalContent.length > 500, status: 'complete' as const }
               : item,
           ),
         )
