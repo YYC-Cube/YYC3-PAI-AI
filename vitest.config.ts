@@ -38,8 +38,8 @@ export default defineConfig({
         // SmallPanels 件套(EditorTabBar/FloatingWidget/VersionHistory/PerformanceAlert/SecurityAudit/Collab)},
         // hooks/{useAgent,useCRDTCollab,useWebGPUInference,useChatSession,useAI,useDebounce,
         // useKeyboardShortcuts,useStreamText,useSystemTheme},
-        // Chat/{CodeBlockWrap,ChatInputBox,ChatMessageList}, services/file-system-watcher,
-        // webgpu-inference-store
+        // Chat/{CodeBlockWrap,ChatInputBox,ChatMessageList}, services/{file-system-watcher,monaco-setup,
+        // git-service}, utils/{model-router,version-manager,version-examples}, webgpu-inference-store
         // 已浅测待专项深化（有测试但覆盖 <35%，300+ 行需专项；达标后移出）：
         // ModelSettings(0%) / PanelManager(0%) / ChatPage(1.4%) / DetachedWindow(3.2%)
         // trace-store(9.7%) / CyberpunkBackground(14.9%) / PreviewEngine(17.5%)
@@ -85,9 +85,7 @@ export default defineConfig({
                                                         'src/app/components/UnifiedDataPanel.tsx',
                         'src/app/components/settings/AIServiceTabs.tsx',
                 'src/app/components/settings/WorkspaceTabs.tsx',
-        'src/app/services/monaco-setup.ts',
         'src/app/services/sync-backend-adapter.ts',
-        'src/app/services/git-service.ts',
         'src/app/services/indexeddb-service.ts',
         'src/app/services/sync-engine.ts',
         'src/app/services/native-database-dumper.ts',
@@ -125,13 +123,10 @@ export default defineConfig({
         'src/__mocks__/**',
         'src/app/workers/**',
         '**/*.worker.ts',
-        'src/app/utils/model-router.ts',
         'src/app/utils/layout-engine.ts',
         'src/app/utils/audio-engine.ts',
         'src/app/utils/local-model-client.ts',
         'src/app/utils/local-model-infra.ts',
-        'src/utils/version-examples.ts',
-        'src/utils/version-manager.ts',
         'src/app/types/**',
         '**/types/**',
         'src/app/store/self-media-store.tsx',
