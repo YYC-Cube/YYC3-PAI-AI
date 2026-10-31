@@ -147,11 +147,12 @@ class NativeDatabaseDumper {
 
     result.durationMs = Math.round(performance.now() - startTime)
 
+    // 历史 bug：不看 success 即发 100% completed——失败备份在 UI 显示"已完成"
     onProgress?.({
-      stage: 'completed',
-      percentComplete: 100,
+      stage: result.success ? 'completed' : 'error',
+      percentComplete: result.success ? 100 : 0,
       bytesWritten: result.sizeBytes,
-      message: `Backup completed: ${result.outputPath}`,
+      message: result.success ? `Backup completed: ${result.outputPath}` : 'Backup failed',
       timestamp: Date.now(),
     })
 
@@ -249,11 +250,18 @@ class NativeDatabaseDumper {
     }
   }
 
-  private async executeTauriCommand(command: string, _envVars: string[]): Promise<CommandResult> {
+  private async executeTauriCommand(command: string, envVars: string[]): Promise<CommandResult> {
     try {
       const { Command } = await import('@tauri-apps/plugin-shell')
 
-      const cmdInstance = new Command('run-shell', [command])
+      // 历史 bug：_envVars 从未下发——PGPASSWORD/MYSQL_PWD 构建后被丢弃，
+      // 真实桌面端带密码认证的 dump/restore 必然失败
+      const cmdInstance = new Command('run-shell', [command], { env: Object.fromEntries(
+        envVars.map(v => {
+          const i = v.indexOf('=')
+          return [v.slice(0, i), v.slice(i + 1)]
+        }),
+      ) })
       const output = await cmdInstance.execute()
 
       return {
@@ -374,7 +382,8 @@ class NativeDatabaseDumper {
 
       const result = await this.executeCommand(fullCommand, envVars)
 
-      if (result.code !== 0 && !options.password) {
+      // 历史 bug：`&& !options.password` 使带密码的 mysqldump 失败被误报成功
+      if (result.code !== 0) {
         throw new Error(`mysqldump failed: ${result.stderr}`)
       }
 
@@ -598,6 +607,8 @@ class NativeDatabaseDumper {
     args.push('--routines', '--triggers', '--events')
 
     if (options.tables && options.tables.length > 0) {
+      // 历史 bug：只推表名会丢库名（mysqldump 把首表当库）→ 先库后表
+      args.push(shellQuote(options.database))
       args.push(...options.tables.map(shellQuote))
     } else {
       args.push(shellQuote(options.database))

@@ -16,8 +16,14 @@ declare module '@tauri-apps/plugin-shell' {
     stderr: string
   }
 
+  interface CommandOptions {
+    /** 子进程环境变量（plugin-shell v2 第三参：下发 PGPASSWORD/MYSQL_PWD 等） */
+    env?: Record<string, string>
+    cwd?: string
+  }
+
   class Command {
-    constructor(program: string, args?: string[])
+    constructor(program: string, args?: string[], options?: CommandOptions)
     execute(): Promise<CommandResult>
   }
 }

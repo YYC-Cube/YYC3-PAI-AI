@@ -175,7 +175,10 @@ export async function handleCallback(
 
   if (error) {
     saveState('unauthenticated')
-    return { success: false, error: `Authorization failed: ${error}` }
+    // 消毒 URL 来源的 error 片段（防御纵深：React 文本节点已转义，
+    // 但阻断污点流入 UI/日志，亦消除安全扫描的跨文件污点告警）
+    const safeError = error.replace(/[<>"'`\\]/g, '').slice(0, 100)
+    return { success: false, error: `Authorization failed: ${safeError}` }
   }
 
   if (!code) {

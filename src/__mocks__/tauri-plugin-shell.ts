@@ -9,8 +9,18 @@
  * @tags [config]
  */
 
+export interface CommandOptions {
+  /** 子进程环境变量（plugin-shell v2 第三参，真实端下发 PGPASSWORD/MYSQL_PWD 等） */
+  env?: Record<string, string>
+  cwd?: string
+}
+
 export class Command {
-  constructor(_program: string, _args?: string[]) {}
+  env: Record<string, string> | undefined
+
+  constructor(_program: string, _args?: string[], options?: CommandOptions) {
+    this.env = options?.env
+  }
 
   async execute(): Promise<{ code: number; stdout: string; stderr: string }> {
     return { code: 0, stdout: '', stderr: '' }

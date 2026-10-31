@@ -81,8 +81,6 @@ export default defineConfig({
                                                         'src/app/components/UnifiedDataPanel.tsx',
                         'src/app/components/settings/AIServiceTabs.tsx',
                 'src/app/components/settings/WorkspaceTabs.tsx',
-        'src/app/services/sync-backend-adapter.ts',
-        'src/app/services/native-database-dumper.ts',
         'src/app/components/PublishQueue.tsx',
         'src/app/components/AIWritingPanel.tsx',
         'src/app/components/IntelligentWorkflowPanel.tsx',

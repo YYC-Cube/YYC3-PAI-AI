@@ -299,7 +299,8 @@ export const aiMetricsStore = {
   }) {
     const { providerId, providerName, modelId, modelName, latencyMs, errorMessage, httpStatus } = params
     const errorType = classifyError(errorMessage, httpStatus)
-    const locale = 'zh' // TODO: get from i18n context
+    // store 层无 React 上下文：读 I18nProvider 持久化的 locale（缺省 zh）
+    const locale = localStorage.getItem('yyc3-locale') === 'en' ? 'en' : 'zh'
 
     // Performance record
     const perfRecord: PerformanceRecord = {

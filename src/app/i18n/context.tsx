@@ -32,11 +32,33 @@ const fallbackI18n: I18nContextType = {
 
 const I18nContext = createContext<I18nContextType | null>(null);
 
+const LOCALE_KEY = "yyc3-locale";
+
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>("zh");
+  // 历史缺陷：locale 从不持久化——刷新即重置为中文。现从 localStorage 恢复并在切换时落盘
+  const [locale, setLocaleState] = useState<Locale>(() =>
+    localStorage.getItem(LOCALE_KEY) === "en" ? "en" : "zh",
+  );
+
+  const setLocale = useCallback((l: Locale) => {
+    setLocaleState(l);
+    try {
+      localStorage.setItem(LOCALE_KEY, l);
+    } catch {
+      /* 配额异常时仅本会话生效 */
+    }
+  }, []);
 
   const toggleLocale = useCallback(() => {
-    setLocale((prev) => (prev === "zh" ? "en" : "zh"));
+    setLocaleState((prev) => {
+      const next = prev === "zh" ? "en" : "zh";
+      try {
+        localStorage.setItem(LOCALE_KEY, next);
+      } catch {
+        /* 配额异常时仅本会话生效 */
+      }
+      return next;
+    });
   }, []);
 
   const t = useCallback(
