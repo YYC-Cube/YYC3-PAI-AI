@@ -170,6 +170,9 @@ export class DataSyncOrchestrator {
     this.jobs.set(jobId, job)
     this.emit({ type: 'start', jobId, timestamp: Date.now() })
 
+    // 运行闸门：批处理循环以 isRunning 判取消——历史缺陷：从未置 true，
+    // 导致任何有条目的 syncAll 首批即 cancelled（同步功能实际从未执行）
+    this.isRunning = true
     try {
       job.status = 'running'
       job.startTime = Date.now()
@@ -226,6 +229,8 @@ export class DataSyncOrchestrator {
       })
 
       this.emit({ type: 'error', jobId, data: { error }, timestamp: Date.now() })
+    } finally {
+      this.isRunning = false
     }
 
     return job
@@ -256,6 +261,8 @@ export class DataSyncOrchestrator {
     try {
       job.status = 'running'
       job.startTime = Date.now()
+      // 运行闸门（同 syncAll：循环取消判定依赖 isRunning）
+      this.isRunning = true
 
       const sourceAdapter = this.adapters.get(source)
       const targetAdapter = this.adapters.get(target)
@@ -309,6 +316,8 @@ export class DataSyncOrchestrator {
       })
 
       this.emit({ type: 'error', jobId, data: { error }, timestamp: Date.now() })
+    } finally {
+      this.isRunning = false
     }
 
     return job

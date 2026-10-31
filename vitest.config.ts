@@ -58,6 +58,8 @@ export default defineConfig({
         'src/app/components/TaskBoard.tsx',
         'src/app/components/SettingsPanel.tsx',
         'src/app/components/EnhancedBackupRestorePanel.tsx',
+        // 第十二轮回档：data-portability-manager 23.1%（导出/预览 5 用例留作回归，导入/加密二轮）
+        'src/app/services/data-portability-manager.ts',
         'src/app/components/audio/**',
         'src/app/components/figma/**',
         'src/app/components/ide/**',
@@ -80,7 +82,6 @@ export default defineConfig({
                         'src/app/components/settings/AIServiceTabs.tsx',
                 'src/app/components/settings/WorkspaceTabs.tsx',
         'src/app/services/sync-backend-adapter.ts',
-        'src/app/services/indexeddb-service.ts',
         'src/app/services/sync-engine.ts',
         'src/app/services/native-database-dumper.ts',
         'src/app/components/PublishQueue.tsx',
@@ -116,10 +117,7 @@ export default defineConfig({
         'src/app/utils/local-model-infra.ts',
         'src/app/types/**',
         '**/types/**',
-        'src/app/services/data-sync-orchestrator.ts',
-        'src/app/services/data-portability-manager.ts',
         'src/app/services/monaco-performance-benchmark.ts',
-        'src/app/services/monaco-preloader.ts',
       ],
       thresholds: {
         // 新标准（2026-10-30 提升）
