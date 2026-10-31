@@ -766,7 +766,12 @@ const DEFAULT_MANAGER_CONFIG: BackendManagerConfig = {
 
 export class BackendManager {
   private static instance: BackendManager
-  private config: BackendManagerConfig = { ...DEFAULT_MANAGER_CONFIG }
+  // 深拷贝默认配置：浅拷贝使 backends 数组与模块常量共享引用，
+  // 运行时写入会污染 DEFAULT_MANAGER_CONFIG（跨实例串配置）
+  private config: BackendManagerConfig = {
+    ...DEFAULT_MANAGER_CONFIG,
+    backends: { ...DEFAULT_MANAGER_CONFIG.backends },
+  }
   private backendInstances: Map<BackendType, SyncBackend> = new Map()
   private activeInstance: SyncBackend = new NoOpBackend()
 
@@ -812,8 +817,9 @@ export class BackendManager {
       this.saveConfig()
       logger.info(`[BackendManager] Switched to backend: ${type}`)
     } else {
-      // 回退到空后端
+      // 回退到空后端（历史缺陷：activeType 未同步——getActiveType() 谎报旧后端）
       this.activeInstance = this.getOrCreateBackend('none')
+      this.config.activeBackend = 'none'
       logger.error(`[BackendManager] Failed to connect to backend: ${type}`)
     }
 
