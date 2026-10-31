@@ -43,15 +43,12 @@ export default defineConfig({
         // components/{FileContextMenu,PerformanceMonitor,MonacoPerformanceMonitor},
         // services/{trace-store,code-indexer,auth-client}(第七轮专项), webgpu-inference-store
         // 已浅测待专项深化（有测试但覆盖 <35%，300+ 行需专项；达标后移出）：
-        // ModelSettings(0%) / DetachedWindow(3.2%) / CyberpunkBackground(14.9%) / PreviewEngine(17.5%)
-        // MultiInstancePanel(28.5%)
+        // ModelSettings 28.6%（第十轮 9 用例：六页签/ESC/遮罩/初始页跳转/API Key 门面——
+        // 1261 行需更多交互场景，二轮专项达标后移出）
         // （第七轮 onboard：trace-store/code-indexer/auth-client；第八轮：PanelManager/self-media-store；
-        //   第九轮：ChatPage 专项 13 用例 + 缓存标注 bug 修复）
+        //   第九轮：ChatPage；第十轮：DetachedWindow 80%/CyberpunkBackground 97%/PreviewEngine 100%/
+        //   MultiInstancePanel 47% 四件达标）
         'src/app/components/ModelSettings.tsx',
-        'src/app/components/DetachedWindow.tsx',
-        'src/app/components/MultiInstancePanel.tsx',
-        'src/app/components/PreviewEngine.tsx',
-        'src/app/components/CyberpunkBackground.tsx',
         'src/app/components/audio/**',
         'src/app/components/figma/**',
         'src/app/components/ide/**',
