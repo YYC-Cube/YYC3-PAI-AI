@@ -49,6 +49,15 @@ export default defineConfig({
         //   第九轮：ChatPage；第十轮：DetachedWindow 80%/CyberpunkBackground 97%/PreviewEngine 100%/
         //   MultiInstancePanel 47% 四件达标）
         'src/app/components/ModelSettings.tsx',
+        // 第十一轮回档（有测试但 <35%，二轮深化达标后移出）：
+        // SelfMediaEditor 22.7% / IDEHeader 26.8% / SettingsPanel 27.8% / EnhancedBackupRestorePanel 23.8% /
+        // TaskBoard 33.2% / IDELeftPanel 6.0%
+        'src/app/components/SelfMediaEditor.tsx',
+        'src/app/components/IDEHeader.tsx',
+        'src/app/components/IDELeftPanel.tsx',
+        'src/app/components/TaskBoard.tsx',
+        'src/app/components/SettingsPanel.tsx',
+        'src/app/components/EnhancedBackupRestorePanel.tsx',
         'src/app/components/audio/**',
         'src/app/components/figma/**',
         'src/app/components/ide/**',
@@ -58,22 +67,15 @@ export default defineConfig({
         'src/app/components/AIAssistPanel.tsx',
         'src/app/components/AIAssistantPanel.tsx',
         'src/app/components/AICompletionProvider.tsx',
-                'src/app/components/ActivityLog.tsx',
-                        'src/app/components/CodeGenPanel.tsx',
+                                'src/app/components/CodeGenPanel.tsx',
                         'src/app/components/ContentPreview.tsx',
                 'src/app/components/CyberEditor.tsx',
-                        'src/app/components/EnhancedBackupRestorePanel.tsx',
-                'src/app/components/FullscreenMode.tsx',
-                                'src/app/components/IDEHeader.tsx',
-        'src/app/components/IDELeftPanel.tsx',
-                                                'src/app/components/LivePreview.tsx',
-                'src/app/components/LocalModelDashboard.tsx',
-                        'src/app/components/PanelDropZone.tsx',
-                'src/app/components/PerformanceDashboard.tsx',
-                        'src/app/components/ProjectCreateModal.tsx',
+                                'src/app/components/FullscreenMode.tsx',
+                                                                        'src/app/components/LivePreview.tsx',
+                                'src/app/components/PanelDropZone.tsx',
+                                'src/app/components/ProjectCreateModal.tsx',
                                 'src/app/components/RichTextEditor.tsx',
-                'src/app/components/SelfMediaEditor.tsx',
-                                        'src/app/components/StorageManager.tsx',
+                                                'src/app/components/StorageManager.tsx',
                                                         'src/app/components/UnifiedDataPanel.tsx',
                         'src/app/components/settings/AIServiceTabs.tsx',
                 'src/app/components/settings/WorkspaceTabs.tsx',
@@ -88,12 +90,8 @@ export default defineConfig({
         'src/app/components/DatabasePanel.tsx',
         'src/app/components/MaterialManager.tsx',
         'src/app/components/ImageGenPanel.tsx',
-        'src/app/components/SettingsPanel.tsx',
         'src/app/components/SystemPanel.tsx',
-        'src/app/components/TaskBoard.tsx',
-        'src/app/components/SnippetManager.tsx',
         'src/app/components/CRDTCollabPanel.tsx',
-        'src/app/components/ContentTemplatePanel.tsx',
         'src/app/components/AgentWorkflowPanel.tsx',
         // hooks 未测（10）→ 第四轮 onboard 5（useAI 94%/useDebounce 96%/useKeyboardShortcuts 100%/
         // useStreamText 100%/useSystemTheme 96%）；留专项：useMonacoPerformanceMonitor(288行)/
@@ -101,9 +99,6 @@ export default defineConfig({
         // index.ts(桶 re-export 覆盖归因 0%)不参与分母
         'src/app/hooks/ai-types.ts',
         'src/app/hooks/index.ts',
-        'src/app/hooks/useIntelligentWorkflow.ts',
-        'src/app/hooks/useMonacoPerformanceMonitor.ts',
-        'src/app/hooks/usePerformanceMonitor.tsx',
         // Chat 未测（4）→ 第四轮 onboard 2（ChatInputBox 93%/ChatMessageList ~90%）；
         // 留专项：AiMessageRender(346行)；index.ts 桶(引 ChatPage 重依赖)不参与分母
         'src/components/Chat/AiMessageRender.tsx',

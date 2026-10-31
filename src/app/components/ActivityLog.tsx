@@ -61,7 +61,7 @@ function toLocalDatetimeString(ts: number): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-export function ActivityLog({ visible: _visible, onClose }: ActivityLogProps) {
+export function ActivityLog({ visible, onClose }: ActivityLogProps) {
   const { t, locale } = useI18n()
   const { tokens: tk, isCyberpunk } = useThemeStore()
   const isZh = locale === 'zh'
@@ -257,6 +257,9 @@ export function ActivityLog({ visible: _visible, onClose }: ActivityLogProps) {
     // Reset input so the same file can be imported again
     e.target.value = ''
   }, [importEntries, t, flashStatus])
+
+  // 面板门控：IDEOverlays 按 visible 契约控制挂载（历史缺陷：曾忽略该 prop 致全屏覆盖层常驻）
+  if (!visible) return null
 
   return (
     <div style={{
