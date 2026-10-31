@@ -39,7 +39,8 @@ export default defineConfig({
         // hooks/{useAgent,useCRDTCollab,useWebGPUInference,useChatSession,useAI,useDebounce,
         // useKeyboardShortcuts,useStreamText,useSystemTheme},
         // Chat/{CodeBlockWrap,ChatInputBox,ChatMessageList}, services/{file-system-watcher,monaco-setup,
-        // git-service}, utils/{model-router,version-manager,version-examples}, webgpu-inference-store
+        // git-service}, utils/{model-router,version-manager,version-examples},
+        // components/{FileContextMenu,PerformanceMonitor,MonacoPerformanceMonitor}, webgpu-inference-store
         // 已浅测待专项深化（有测试但覆盖 <35%，300+ 行需专项；达标后移出）：
         // ModelSettings(0%) / PanelManager(0%) / ChatPage(1.4%) / DetachedWindow(3.2%)
         // trace-store(9.7%) / CyberpunkBackground(14.9%) / PreviewEngine(17.5%)
@@ -68,16 +69,13 @@ export default defineConfig({
                         'src/app/components/ContentPreview.tsx',
                 'src/app/components/CyberEditor.tsx',
                         'src/app/components/EnhancedBackupRestorePanel.tsx',
-        'src/app/components/FileContextMenu.tsx',
                 'src/app/components/FullscreenMode.tsx',
                                 'src/app/components/IDEHeader.tsx',
         'src/app/components/IDELeftPanel.tsx',
                                                 'src/app/components/LivePreview.tsx',
                 'src/app/components/LocalModelDashboard.tsx',
-                        'src/app/components/MonacoPerformanceMonitor.tsx',
                         'src/app/components/PanelDropZone.tsx',
                 'src/app/components/PerformanceDashboard.tsx',
-        'src/app/components/PerformanceMonitor.tsx',
                         'src/app/components/ProjectCreateModal.tsx',
                                 'src/app/components/RichTextEditor.tsx',
                 'src/app/components/SelfMediaEditor.tsx',
