@@ -40,11 +40,12 @@ export default defineConfig({
         // useKeyboardShortcuts,useStreamText,useSystemTheme},
         // Chat/{CodeBlockWrap,ChatInputBox,ChatMessageList}, services/{file-system-watcher,monaco-setup,
         // git-service}, utils/{model-router,version-manager,version-examples},
-        // components/{FileContextMenu,PerformanceMonitor,MonacoPerformanceMonitor}, webgpu-inference-store
+        // components/{FileContextMenu,PerformanceMonitor,MonacoPerformanceMonitor},
+        // services/{trace-store,code-indexer,auth-client}(第七轮专项), webgpu-inference-store
         // 已浅测待专项深化（有测试但覆盖 <35%，300+ 行需专项；达标后移出）：
         // ModelSettings(0%) / PanelManager(0%) / ChatPage(1.4%) / DetachedWindow(3.2%)
-        // trace-store(9.7%) / CyberpunkBackground(14.9%) / PreviewEngine(17.5%)
-        // code-indexer(25.8%) / auth-client(27.8%) / MultiInstancePanel(28.5%)
+        // CyberpunkBackground(14.9%) / PreviewEngine(17.5%) / MultiInstancePanel(28.5%)
+        // （第七轮已达标 onboard：trace-store/code-indexer/auth-client 专项深化）
         'src/app/components/ModelSettings.tsx',
         'src/app/components/PanelManager.tsx',
         'src/app/components/DetachedWindow.tsx',
@@ -52,9 +53,6 @@ export default defineConfig({
         'src/app/components/PreviewEngine.tsx',
         'src/app/components/CyberpunkBackground.tsx',
         'src/components/Chat/ChatPage.tsx',
-        'src/app/services/trace-store.ts',
-        'src/app/services/code-indexer.ts',
-        'src/app/services/auth-client.ts',
         'src/app/components/audio/**',
         'src/app/components/figma/**',
         'src/app/components/ide/**',

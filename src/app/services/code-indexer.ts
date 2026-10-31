@@ -106,7 +106,9 @@ function chunkFile(filePath: string, content: string): Omit<CodeChunk, 'embeddin
     const end = Math.min(start + CHUNK_SIZE, lines.length)
     const block = lines.slice(start, end).join('\n')
     if (block.trim().length < 10) { // 跳过空/极短块
-      start = end - CHUNK_OVERLAP
+      // 尾部短块直接结束；否则推进（防回退：短块时 end-CHUNK_OVERLAP 可为负，slice 负索引回到原位 → 死循环）
+      if (end >= lines.length) break
+      start = Math.max(start + 1, end - CHUNK_OVERLAP)
       continue
     }
 
