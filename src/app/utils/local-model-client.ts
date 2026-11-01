@@ -215,7 +215,7 @@ export async function embed(text: string): Promise<EmbeddingResult> {
     const fbContent = fbData?.choices?.[0]?.message?.content ?? ''
     // 22号修复：旧实现回退"成功"却返回恒空向量——调用方拿到成功结果但无数据。
     // chat 回退无法产生真实向量：解析逗号分隔数字，失败则如实抛错
-    const parsed = fbContent.split(/[\[\],\s]+/).filter(x => x !== '').map(Number).filter(n => Number.isFinite(n))
+    const parsed = fbContent.split(/[[\],\s]+/).filter(x => x !== '').map(Number).filter(n => Number.isFinite(n))
     if (parsed.length === 0) {
       throw new Error('嵌入回退响应不含可解析的向量数据')
     }
