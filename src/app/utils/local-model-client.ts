@@ -124,26 +124,35 @@ export async function chatStream(
 
   async function* generate(): AsyncIterable<string> {
     try {
+      // 21号修复：SSE 行可能跨网络分包——旧写法按 chunk 硬 split，跨行前半段被
+      // startsWith 过滤、后半段 parse 失败被吞，增量文本静默丢失。改为跨 chunk 行缓冲 + 尾部 flush
+      const linesFrom = function* (rawLine: string): Generator<string> {
+        if (!rawLine.startsWith('data: ')) return
+        const jsonStr = rawLine.slice(6).trim()
+        if (!jsonStr || jsonStr === '[DONE]') return
+        try {
+          const parsed = JSON.parse(jsonStr) as Record<string, unknown>
+          const choice = (parsed.choices as Array<Record<string, unknown>> | undefined)?.[0]
+          const delta = choice?.delta as Record<string, unknown> | undefined
+          const content = delta?.content as string ?? ''
+          if (content) yield content
+        } catch {
+          // skip parse errors
+        }
+      }
+
+      let buffer = ''
       while (true) {
         const { done, value } = await reader.read()
-        if (done) break
-
-        const chunk = decoder.decode(value, { stream: true })
-        const lines = chunk.split('\n').filter(l => l.startsWith('data: '))
-
-        for (const line of lines) {
-          const jsonStr = line.slice(6).trim()
-          if (!jsonStr || jsonStr === '[DONE]') continue
-          try {
-            const parsed = JSON.parse(jsonStr) as Record<string, unknown>
-            const choice = (parsed.choices as Array<Record<string, unknown>> | undefined)?.[0]
-            const delta = choice?.delta as Record<string, unknown> | undefined
-            const content = delta?.content as string ?? ''
-            if (content) yield content
-          } catch {
-            // skip parse errors
-          }
+        if (done) {
+          buffer += decoder.decode()
+          for (const line of buffer.split('\n')) yield* linesFrom(line)
+          break
         }
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() ?? ''
+        for (const line of lines) yield* linesFrom(line)
       }
     } finally {
       reader.releaseLock()
@@ -197,11 +206,22 @@ export async function embed(text: string): Promise<EmbeddingResult> {
       signal: AbortSignal.timeout(30000),
     })
     if (!fallbackResp.ok) {
-      throw new Error(`嵌入请求失败: ${errText.slice(0, 200)}`)
+      // 22号附带修复：双失败时报回退端点的真实原因（旧文案只复述首端点 errText，排障误导）
+      const fbErrText = await fallbackResp.text().catch(() => 'unknown')
+      throw new Error(`嵌入请求失败: ${errText.slice(0, 200)}；回退亦失败: ${fbErrText.slice(0, 200)}`)
+    }
+    const fbData = await fallbackResp.json().catch(() => null) as
+      { choices?: Array<{ message?: { content?: string } }> } | null
+    const fbContent = fbData?.choices?.[0]?.message?.content ?? ''
+    // 22号修复：旧实现回退"成功"却返回恒空向量——调用方拿到成功结果但无数据。
+    // chat 回退无法产生真实向量：解析逗号分隔数字，失败则如实抛错
+    const parsed = fbContent.split(/[\[\],\s]+/).filter(x => x !== '').map(Number).filter(n => Number.isFinite(n))
+    if (parsed.length === 0) {
+      throw new Error('嵌入回退响应不含可解析的向量数据')
     }
     const latencyMs = Math.round(performance.now() - start)
     return {
-      embedding: [],
+      embedding: parsed,
       modelName: route.modelName,
       nodeId: route.nodeId,
       latencyMs,
