@@ -1081,7 +1081,7 @@ export class AudioEngine {
     this.howlInstance = new Howl({
       src: [edited.url],
       html5: true,
-      volume: ((edited.volume * this.config.musicVolume * this.config.masterVolume) / 10000),
+      volume: ((edited.volume * this.config.musicVolume * this.config.masterVolume) / 1000000),
     })
 
     this.howlInstance.once('load', () => {
@@ -1091,7 +1091,7 @@ export class AudioEngine {
       setTimeout(() => {
         if (edited.fadeOut > 0 && this.howlInstance) {
           this.howlInstance.fade(
-            (edited.volume * this.config.musicVolume * this.config.masterVolume) / 10000,
+            (edited.volume * this.config.musicVolume * this.config.masterVolume) / 1000000,
             0,
             edited.fadeOut / 1000
           )

@@ -186,7 +186,9 @@ export function PublishQueue({ visible, onClose, initialContent, initialTitle }:
   // 真实发布动作：复制成品内容 + 打开对应平台创作后台（浏览器端无法也不应
   // 直接代发平台内容——状态标为 exported 而非伪造 published）
   const handlePublishNow = useCallback((taskId: string) => {
-    setTasks(prev => prev.map(t => {
+    // 27号修复：原用 setTasks（仅内存）——导出状态不落 localStorage，
+    // 刷新后"已导出"回退为"草稿"存在重复导出风险。改走 saveTasks（含持久化）
+    saveTasks(tasks.map(t => {
       if (t.id !== taskId) return t
       const text = `${t.title}\n\n${t.content}`
       navigator.clipboard.writeText(text).catch(() => { /* 剪贴板被拒时仍打开后台 */ })
@@ -194,7 +196,7 @@ export function PublishQueue({ visible, onClose, initialContent, initialTitle }:
       if (url) window.open(url, '_blank', 'noopener')
       return { ...t, status: 'exported' as const, publishedAt: Date.now(), error: url ? undefined : '未登记该平台创作后台入口，内容已复制到剪贴板' }
     }))
-  }, [])
+  }, [tasks, saveTasks])
 
   // Delete task
   const handleDelete = useCallback((taskId: string) => {

@@ -448,14 +448,18 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
     // ===== 工作流执行 =====
 
     executeWorkflow: async (workflowId) => {
-      const workflow = get().workflows.get(workflowId)
+      let workflow = get().workflows.get(workflowId)
       if (!workflow) {
         throw new Error(`Workflow ${workflowId} not found`)
       }
 
       set((state) => {
         state.executingWorkflowId = workflowId
-        workflow.status = 'running'
+        // 25号修复：workflow 为 producer 外冻结对象——从 state 取可写草稿
+        const wf = state.workflows.get(workflowId)
+        if (!wf) return
+        wf.status = 'running'
+        workflow = wf
         workflow.startedAt = Date.now()
         workflow.stats = {
           ...workflow.stats,
@@ -483,7 +487,8 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
         })
       } catch (error) {
         set((state) => {
-          workflow.status = 'failed'
+          const wfFail = state.workflows.get(workflowId)
+          if (wfFail) wfFail.status = 'failed'
           state.stats.totalExecutions++
         })
 
@@ -495,8 +500,10 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
       const workflow = get().workflows.get(workflowId)
       if (!workflow || workflow.status !== 'running') return
 
-      set(() => {
-        workflow.status = 'paused'
+      set((state) => {
+        // 25号修复：producer 外取得的 workflow 已被 immer 冻结——须从 state 重新取草稿
+        const w = state.workflows.get(workflowId)
+        if (w) w.status = 'paused'
       })
 
       get().addExecutionEvent({
@@ -512,8 +519,9 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
       const workflow = get().workflows.get(workflowId)
       if (!workflow || workflow.status !== 'paused') return
 
-      set(() => {
-        workflow.status = 'running'
+      set((state) => {
+        const w = state.workflows.get(workflowId)
+        if (w) w.status = 'running'
       })
 
       get().addExecutionEvent({
@@ -551,10 +559,15 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
       if (!node) return
 
       // 重置节点状态
-      set(() => {
-        node.status = 'pending'
-        node.retryCount++
-        node.error = undefined
+      set((state) => {
+        // 25号修复：node 同样经 producer 外取得（冻结）——从 state 草稿重新定位
+        const w = state.workflows.get(workflowId)
+        const n = w?.nodes.get(nodeId)
+        if (n) {
+          n.status = 'pending'
+          n.retryCount++
+          n.error = undefined
+        }
       })
 
       // 重新执行节点
@@ -603,7 +616,8 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
             aiGenerated: true,
             naturalLanguageDescription: result.workflow.naturalLanguageDescription || input,
           })
-          result.workflow.id = workflow.id
+          // 26号修复：result.workflow 为外部对象（历史条目已冻结入 store）——不回写，直接置引用
+          result.workflow = { ...result.workflow, id: workflow.id }
         }
 
         return result
@@ -636,9 +650,12 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
       // 模拟AI优化（实际应调用AI服务）
       await simulateAIOptimization(workflow)
 
-      set(() => {
-        workflow.updatedAt = Date.now()
-        workflow.stats.learningCount++
+      set((state) => {
+        const w = state.workflows.get(workflowId)
+        if (w) {
+          w.updatedAt = Date.now()
+          w.stats.learningCount++
+        }
       })
 
       logger.info(`Workflow ${workflowId} optimized`)

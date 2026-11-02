@@ -219,8 +219,7 @@ for (const asset of MODEL_ASSETS) {
 function normalizeModelName(name: string): string {
   return name
     .toLowerCase()
-    .replace(/[:\-_\s]+/g, '-')
-    .replace(/[-]+/g, '-')
+    .replace(/[:\-_\s]+/g, '-')  // 已收敛连字符；原第二段 replace(/[-]+/g,'-') 为死代码（甄别队列 9 号，已清）
     .replace(/^-|-$/g, '')
 }
 

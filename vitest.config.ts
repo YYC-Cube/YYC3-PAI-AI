@@ -48,41 +48,28 @@ export default defineConfig({
         // （第七轮 onboard：trace-store/code-indexer/auth-client；第八轮：PanelManager/self-media-store；
         //   第九轮：ChatPage；第十轮：DetachedWindow 80%/CyberpunkBackground 97%/PreviewEngine 100%/
         //   MultiInstancePanel 47% 四件达标）
-        'src/app/components/ModelSettings.tsx',
+        // （第十三轮 onboard：五大面板 deep 专项——ContentPreview/SyncPanel/CodeGenPanel/PublishQueue/
+        //   IntelligentWorkflowPanel，各自 __tests__/<组件名>.deep.test.tsx）
         // 第十一轮回档（有测试但 <35%，二轮深化达标后移出）：
         // SelfMediaEditor 22.7% / IDEHeader 26.8% / SettingsPanel 27.8% / EnhancedBackupRestorePanel 23.8% /
         // TaskBoard 33.2% / IDELeftPanel 6.0%
-        'src/app/components/SettingsPanel.tsx',
-        'src/app/components/EnhancedBackupRestorePanel.tsx',
         // 第十二轮回档：data-portability-manager 23.1%（导出/预览 5 用例留作回归，导入/加密二轮）
-        'src/app/services/data-portability-manager.ts',
         'src/app/components/audio/**',
         'src/app/components/figma/**',
         'src/app/components/ide/**',
         'src/app/components/performance/**',
         'src/app/components/ui/**',
         // components 根目录未测面板（71）
-        'src/app/components/AIAssistPanel.tsx',
         'src/app/components/AIAssistantPanel.tsx',
         'src/app/components/AICompletionProvider.tsx',
-                                'src/app/components/CodeGenPanel.tsx',
-                        'src/app/components/ContentPreview.tsx',
-                'src/app/components/CyberEditor.tsx',
-                                'src/app/components/FullscreenMode.tsx',
+                                                'src/app/components/FullscreenMode.tsx',
                                                                         'src/app/components/LivePreview.tsx',
                                 'src/app/components/PanelDropZone.tsx',
                                 'src/app/components/ProjectCreateModal.tsx',
-                                'src/app/components/RichTextEditor.tsx',
-                                                'src/app/components/StorageManager.tsx',
-                                                                        'src/app/components/settings/AIServiceTabs.tsx',
+                                                                                                                                        'src/app/components/settings/AIServiceTabs.tsx',
                 'src/app/components/settings/WorkspaceTabs.tsx',
-        'src/app/components/PublishQueue.tsx',
         'src/app/components/AIWritingPanel.tsx',
-        'src/app/components/IntelligentWorkflowPanel.tsx',
-        'src/app/components/SyncPanel.tsx',
         'src/app/components/DatabasePanel.tsx',
-        'src/app/components/SystemPanel.tsx',
-        'src/app/components/CRDTCollabPanel.tsx',
         'src/app/components/AgentWorkflowPanel.tsx',
         // hooks 未测（10）→ 第四轮 onboard 5（useAI 94%/useDebounce 96%/useKeyboardShortcuts 100%/
         // useStreamText 100%/useSystemTheme 96%）；留专项：useMonacoPerformanceMonitor(288行)/
@@ -101,7 +88,6 @@ export default defineConfig({
         'src/__mocks__/**',
         'src/app/workers/**',
         '**/*.worker.ts',
-        'src/app/utils/audio-engine.ts',
         'src/app/types/**',
         '**/types/**',
         'src/app/services/monaco-performance-benchmark.ts',
