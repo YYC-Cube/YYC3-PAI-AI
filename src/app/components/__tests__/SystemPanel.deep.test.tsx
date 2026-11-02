@@ -56,6 +56,7 @@ beforeEach(async () => {
   // crypto：锁定 + 清审计 + 默认强度/超时
   cryptoStoreActions.lockVault()
   cryptoStoreActions.clearAuditLog()
+  // CI 覆盖 worker 上真 PBKDF2 极慢：降至 standard(100k) 档免超时（强度档交互另有用例覆盖）
   cryptoStoreActions.setEncryptionStrength('standard')
   cryptoStoreActions.setAutoLockTimeout(30)
   cryptoStoreActions.closePanel()
