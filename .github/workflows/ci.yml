@@ -106,6 +106,8 @@ jobs:
       - name: Build production bundle
         run: npx pnpm@${{ env.PNPM_VERSION }} run build
         env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        env:
           NODE_ENV: production
 
       - name: Bundle size check
@@ -181,6 +183,8 @@ jobs:
       - name: Build
         run: npx pnpm@${{ env.PNPM_VERSION }} run build
         env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        env:
           NODE_ENV: production
 
       - name: Copy CNAME for custom domain
@@ -224,6 +228,8 @@ jobs:
 
       - name: Build release
         run: npx pnpm@${{ env.PNPM_VERSION }} run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         env:
           NODE_ENV: production
 
