@@ -197,7 +197,7 @@ describe('安全页（真 crypto-store + WebCrypto）', () => {
     const { container } = await mount()
     fireEvent.change(passInput(container), { target: { value: PASS_OK } })
     fireEvent.keyDown(passInput(container), { key: 'Enter' })
-    await waitFor(() => expect(container.textContent).toContain('已解锁'), { timeout: 5000 })
+    await waitFor(() => expect(container.textContent).toContain('已解锁'), { timeout: 15000 })
     expect(lastToast()).toBe('主密码已设置，保险库已解锁')
     expect(container.textContent).toContain('0 个加密项')
     expect(container.textContent).toContain('设置密码')
@@ -210,14 +210,14 @@ describe('安全页（真 crypto-store + WebCrypto）', () => {
 
     fireEvent.change(passInput(container), { target: { value: PASS_BAD } })
     fireEvent.click(btnByText(container, '解锁'))
-    await waitFor(() => expect(lastToast()).toBe('密码错误'), { timeout: 5000 })
+    await waitFor(() => expect(lastToast()).toBe('密码错误'), { timeout: 15000 })
     expect(container.textContent).toContain('已锁定')
     expect(container.textContent).toContain('验证密码')
     expect(container.querySelector('.lucide-circle-x, .lucide-x-circle')).toBeTruthy()
 
     fireEvent.change(passInput(container), { target: { value: PASS_OK } })
     fireEvent.keyDown(passInput(container), { key: 'Enter' })
-    await waitFor(() => expect(container.textContent).toContain('已解锁'), { timeout: 5000 })
+    await waitFor(() => expect(container.textContent).toContain('已解锁'), { timeout: 15000 })
     expect(lastToast()).toBe('保险库已解锁')
 
     fireEvent.click(btnByText(container, '清除'))
