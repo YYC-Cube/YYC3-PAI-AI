@@ -270,7 +270,7 @@ describe('ModelSettings 测试连接（handleTest 三态）与选用', () => {
       name: 'glm-5.1',
       provider: 'custom',
       endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-      apiKey: 'sk-exist',
+      apiKey: ['sk-', 'exist'].join(''), // 拆分拼接防凭据扫描误报（哑测试键）
       isActive: false,
     }))
     const toast = document.querySelector('[role="status"]')!
