@@ -52,10 +52,6 @@ export default defineConfig({
         // 第十一轮回档（有测试但 <35%，二轮深化达标后移出）：
         // SelfMediaEditor 22.7% / IDEHeader 26.8% / SettingsPanel 27.8% / EnhancedBackupRestorePanel 23.8% /
         // TaskBoard 33.2% / IDELeftPanel 6.0%
-        'src/app/components/SelfMediaEditor.tsx',
-        'src/app/components/IDEHeader.tsx',
-        'src/app/components/IDELeftPanel.tsx',
-        'src/app/components/TaskBoard.tsx',
         'src/app/components/SettingsPanel.tsx',
         'src/app/components/EnhancedBackupRestorePanel.tsx',
         // 第十二轮回档：data-portability-manager 23.1%（导出/预览 5 用例留作回归，导入/加密二轮）
@@ -78,16 +74,13 @@ export default defineConfig({
                                 'src/app/components/ProjectCreateModal.tsx',
                                 'src/app/components/RichTextEditor.tsx',
                                                 'src/app/components/StorageManager.tsx',
-                                                        'src/app/components/UnifiedDataPanel.tsx',
-                        'src/app/components/settings/AIServiceTabs.tsx',
+                                                                        'src/app/components/settings/AIServiceTabs.tsx',
                 'src/app/components/settings/WorkspaceTabs.tsx',
         'src/app/components/PublishQueue.tsx',
         'src/app/components/AIWritingPanel.tsx',
         'src/app/components/IntelligentWorkflowPanel.tsx',
         'src/app/components/SyncPanel.tsx',
         'src/app/components/DatabasePanel.tsx',
-        'src/app/components/MaterialManager.tsx',
-        'src/app/components/ImageGenPanel.tsx',
         'src/app/components/SystemPanel.tsx',
         'src/app/components/CRDTCollabPanel.tsx',
         'src/app/components/AgentWorkflowPanel.tsx',
