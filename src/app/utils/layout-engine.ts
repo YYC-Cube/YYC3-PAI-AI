@@ -289,7 +289,7 @@ export function generatePlatformCSS(platform: LayoutPlatform): string {
   const t = config.typography
   const extra = config.extraStyles
 
-  const css = `
+  let css = `
 /* ── ${config.name} 排版规则 ── */
 .preview-content {
   font-size: ${t.bodySize};
@@ -371,12 +371,21 @@ export function generatePlatformCSS(platform: LayoutPlatform): string {
 }
 `
 
+  // 23号修复：extraStyles 中未被上方固定规则消费的选择器（th/td/strong 等）原先静默丢失——
+  // 统一追加为 .preview-content 下的规则
+  const consumed = new Set(['img', 'a', 'table', 'hr'])
+  for (const [selector, style] of Object.entries(extra)) {
+    if (consumed.has(selector) || !style) continue
+    css += `\n.preview-content ${selector} {\n  ${style}\n}`
+  }
   return css.trim()
 }
 
 // ── HTML 内容转换器 ──
 
 export interface TransformOptions {
+  /** 是否追加阅读原文区（缺省用平台配置） */
+  addReadMore?: boolean
   /** 是否添加标签 */
   addTags?: boolean
   /** 自定义标签列表 */
@@ -425,6 +434,14 @@ export function transformContent(
       `<span class="platform-tag">${tag}</span>`
     ).join(' ')
     result += `<div class="tags-section" style="padding: 12px 0; display: flex; gap: 8px; flex-wrap: wrap;">${tags}</div>`
+  }
+
+  // 24号修复：addReadMore 原为死开关（配置存在但从不读取）——现独立生效
+  const addReadMore = options?.addReadMore ?? t.addReadMore ?? false
+  if (addReadMore && opts.readMoreText && !(opts.addCTA && opts.ctaText)) {
+    result += `<div class="readmore-section" style="text-align: center; padding: 16px 0; border-top: 1px solid #eee; margin-top: 12px;">
+      <p style="margin: 0; font-size: 13px; color: #999;">${opts.readMoreText}</p>
+    </div>`
   }
 
   // 添加CTA

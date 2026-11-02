@@ -65,7 +65,9 @@ describe('layout-engine CSS 生成', () => {
   it('generatePlatformCSS：extraStyles 注入 img/a/table 规则（wechat 阴影、zhihu 链接色）', () => {
     const wechat = generatePlatformCSS('wechat')
     expect(wechat).toContain('box-shadow: 0 2px 8px rgba(0,0,0,0.06);')
-    // 注意：th/td 的 extraStyles 从未被渲染（疑似 bug），此处校验的是 table 整体规则
+    // 23号已修：th/td 等未消费键现输出为独立规则（回归锁定）
+    expect(wechat).toContain('.preview-content th {')
+    expect(wechat).toContain('.preview-content td {')
     expect(wechat).toContain('border-collapse: collapse;')
     const zhihu = generatePlatformCSS('zhihu')
     expect(zhihu).toContain('color: #056de8;') // zhihu a 链接色
@@ -85,6 +87,16 @@ describe('layout-engine CSS 生成', () => {
     expect(generatePlatformCSS('xiaohongshu')).toContain('list-style-type: circle;')
     expect(generatePlatformCSS('zhihu')).toContain('list-style-type: decimal;')
     expect(generatePlatformCSS('wechat')).toContain('list-style-type: disc;')
+  })
+})
+
+describe('layout-engine 阅读原文区（24号回归）', () => {
+  it('平台配置 addReadMore=true（wechat）→ 输出 readmore-section；显式 false 关闭', () => {
+    const out = transformContent('wechat', '<p>正文</p>', { addCTA: false })
+    expect(out).toContain('readmore-section')
+    expect(out).toContain('在看')
+    const off = transformContent('wechat', '<p>正文</p>', { addCTA: false, addReadMore: false })
+    expect(off).not.toContain('readmore-section')
   })
 })
 
