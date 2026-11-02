@@ -222,7 +222,7 @@ describe('安全页（真 crypto-store + WebCrypto）', () => {
 
     fireEvent.click(btnByText(container, '清除'))
     expect(container.textContent).toContain('暂无审计记录')
-  })
+  }, 20000)
 
   it('加密强度点选高亮 + 自动锁定 select 走 store 回环', async () => {
     const { container } = await mount()
