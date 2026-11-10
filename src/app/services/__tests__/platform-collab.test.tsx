@@ -20,6 +20,7 @@ vi.mock('../auth-client', () => ({
   isAuthenticated: vi.fn(() => false),
   logout: vi.fn(),
   getUser: vi.fn(() => null),
+  sanitizeText: vi.fn((s: string) => s),
 }))
 
 import { AuthCallback } from '../../components/AuthCallback'

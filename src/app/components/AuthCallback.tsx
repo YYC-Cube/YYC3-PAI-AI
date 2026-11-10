@@ -14,7 +14,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { CheckCircle2, XCircle, Loader2, LogIn } from 'lucide-react'
-import { handleCallback, getDefaultAuthConfig, isAuthenticated, logout } from '../services/auth-client'
+import { handleCallback, getDefaultAuthConfig, isAuthenticated, logout, sanitizeText } from '../services/auth-client'
 import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
 
 type CallbackStatus = 'processing' | 'success' | 'error'
@@ -41,7 +41,7 @@ export function AuthCallback() {
           setMessage('登录成功！正在跳转...')
         } else {
           setStatus('error')
-          setMessage(result.error || '授权失败')
+          setMessage(result.error ? sanitizeText(result.error) : '授权失败')
         }
       } catch (e) {
         if (cancelled) return

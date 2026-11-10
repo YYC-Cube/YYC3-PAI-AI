@@ -83,6 +83,15 @@ const TOKENS_KEY = 'yyc3_auth_tokens'
 const VERIFIER_KEY = 'yyc3_auth_verifier'
 const USER_KEY = 'yyc3_auth_user'
 
+/**
+ * 消毒 URL / 网络响应来源的文本片段（防御纵深）：
+ * React 文本节点已转义，此处再剥离危险字符并截断，
+ * 阻断污点流入 UI / 日志，消除跨文件污点告警。
+ */
+export function sanitizeText(input: string, max = 200): string {
+  return input.replace(/[<>"'`\\]/g, '').slice(0, max)
+}
+
 function saveState(state: AuthState): void {
   localStorage.setItem(STATE_KEY, state)
 }
@@ -175,10 +184,7 @@ export async function handleCallback(
 
   if (error) {
     saveState('unauthenticated')
-    // 消毒 URL 来源的 error 片段（防御纵深：React 文本节点已转义，
-    // 但阻断污点流入 UI/日志，亦消除安全扫描的跨文件污点告警）
-    const safeError = error.replace(/[<>"'`\\]/g, '').slice(0, 100)
-    return { success: false, error: `Authorization failed: ${safeError}` }
+    return { success: false, error: `Authorization failed: ${sanitizeText(error, 100)}` }
   }
 
   if (!code) {
@@ -216,7 +222,7 @@ export async function handleCallback(
     if (!tokenResponse.ok) {
       const errText = await tokenResponse.text().catch(() => '')
       saveState('unauthenticated')
-      return { success: false, error: `Token exchange failed: ${tokenResponse.status} ${errText.slice(0, 100)}` }
+      return { success: false, error: `Token exchange failed: ${tokenResponse.status} ${sanitizeText(errText, 100)}` }
     }
 
     const tokenData = await tokenResponse.json()
@@ -244,7 +250,7 @@ export async function handleCallback(
     return { success: true }
   } catch (e) {
     saveState('unauthenticated')
-    return { success: false, error: `Token exchange error: ${e}` }
+    return { success: false, error: `Token exchange error: ${sanitizeText(e instanceof Error ? e.message : String(e))}` }
   }
 }
 
