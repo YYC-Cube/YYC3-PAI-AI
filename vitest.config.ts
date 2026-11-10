@@ -4,10 +4,22 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   resolve: {
-    alias: {
-      '@tauri-apps/plugin-fs': path.resolve(__dirname, 'src/__mocks__/tauri-plugin-fs.ts'),
-      '@tauri-apps/plugin-shell': path.resolve(__dirname, 'src/__mocks__/tauri-plugin-shell.ts'),
-    },
+    alias: [
+      {
+        find: '@tauri-apps/plugin-fs',
+        replacement: path.resolve(__dirname, 'src/__mocks__/tauri-plugin-fs.ts'),
+      },
+      {
+        find: '@tauri-apps/plugin-shell',
+        replacement: path.resolve(__dirname, 'src/__mocks__/tauri-plugin-shell.ts'),
+      },
+      // monaco-editor 0.57 封闭 exports 后 `?worker` 深导入解析失败（与 vite.config.ts 同步修复）：
+      // 正则 alias 改写为包内绝对路径，保留 ?worker 后缀；运行时仍由测试内 vi.mock 接管。
+      {
+        find: /^monaco-editor\/(esm\/vs\/(?:editor|language\/(?:json|css|html|typescript))\/[a-z]+\.worker)(\?worker)$/,
+        replacement: path.resolve(__dirname, 'node_modules/monaco-editor') + '/$1.js$2',
+      },
+    ],
   },
   test: {
     globals: true,

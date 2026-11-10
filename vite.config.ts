@@ -21,10 +21,19 @@ export default defineConfig({
     }),
   ].filter(Boolean),
   resolve: {
-    alias: {
-      // Alias @ to the src directory
-      '@': path.resolve(__dirname, './src'),
-    },
+    alias: [
+      {
+        find: '@',
+        replacement: path.resolve(__dirname, './src'),
+      },
+      // monaco-editor 0.57 引入封闭 exports 映射（./* → ./esm/vs/*），
+      // `?worker` 查询串不参与 exports 模式匹配 → 深导入解析失败。
+      // 正则 alias 直接改写为包内绝对路径（绕过 exports），保留 ?worker 后缀给 worker 插件。
+      {
+        find: /^monaco-editor\/(esm\/vs\/(?:editor|language\/(?:json|css|html|typescript))\/[a-z]+\.worker)(\?worker)$/,
+        replacement: path.resolve(__dirname, 'node_modules/monaco-editor') + '/$1.js$2',
+      },
+    ],
   },
 
   // 开发服务器配置
