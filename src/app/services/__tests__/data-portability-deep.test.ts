@@ -224,7 +224,8 @@ describe('DataPortabilityManager 加密路径（真 WebCrypto 口令回环）', 
       entry('plain1', { data: 'ok' }),
     ], { passphrase })
     const result = await dataPortabilityManager.importData(file, importOpts({ passphrase }))
-    expect(result.success).toBe(true)
+    // 诊断信息随断言走：CI Linux 上若失败可直接读 errors（本地 macOS 通过，平台差异需实证）
+    expect(result.success, JSON.stringify({ errors: result.errors, warnings: result.warnings })).toBe(true)
     expect(result.entries).toBe(2)
     // 解密后的明文与未加密条目均正确落库
     expect(ls('yyc3_settings_sec1')).toBe('{"k":1}')
