@@ -327,7 +327,7 @@ export function CRDTCollabPanel({ visible, onClose }: CRDTCollabPanelProps) {
                       setNewDocName('')
                     }
                   }}
-                  disabled={!newDocName.trim() || !connected}
+                  disabled={!newDocName.trim()} // P1-c：本地建档不需已连接（历史死锁：无文档→永不 connected→永远无法建档）
                   className="flex items-center gap-1 px-2 py-1 rounded text-xs transition-all hover:opacity-70 disabled:opacity-50"
                   style={{
                     fontFamily: tk.fontMono,
@@ -348,7 +348,6 @@ export function CRDTCollabPanel({ visible, onClose }: CRDTCollabPanelProps) {
                   value={newDocName}
                   onChange={(e) => setNewDocName(e.target.value)}
                   placeholder="Enter document name..."
-                  disabled={!connected}
                   className="w-full px-3 py-2 rounded-lg text-xs font-mono"
                   style={{
                     fontFamily: tk.fontMono,

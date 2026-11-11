@@ -162,14 +162,19 @@ describe('Users 页', () => {
 })
 
 describe('Documents 页', () => {
-  it('未连接：输入与 New Document 禁用 + 空态；连接后输入名称解禁 → createDocument(name,name) 并清空；空白名保持禁用', () => {
+  it('死锁已修（31号）：未连接也可建档（输入/按钮不因 connected 禁用）→ createDocument(name,name) 并清空；空白名保持禁用', () => {
     const { container } = mount()
     fireEvent.click(tab(container, 'DOCUMENTS'))
     expect(container.textContent).toContain('SHARED DOCUMENTS (0)')
     expect(container.textContent).toContain('No shared documents yet')
     const input = container.querySelector('input[placeholder="Enter document name..."]') as HTMLInputElement
-    expect(input.disabled).toBe(true)
+    expect(input.disabled).toBe(false)
     expect(btnByText(container, 'New Document').disabled).toBe(true)
+    fireEvent.change(input, { target: { value: 'first' } })
+    expect(btnByText(container, 'New Document').disabled).toBe(false)
+    fireEvent.click(btnByText(container, 'New Document'))
+    expect(h.createDocument).toHaveBeenCalledWith('first', 'first')
+    expect(input.value).toBe('')
 
     const { container: c2 } = mount({ connected: true, connectionType: 'websocket', connectionStatus: 'connected' })
     fireEvent.click(tab(c2, 'DOCUMENTS'))

@@ -492,7 +492,8 @@ export class AudioEngine {
 
       audio.addEventListener('loadedmetadata', () => {
         resolve(audio.duration)
-        URL.revokeObjectURL(audio.src)
+        // P1-d 修复：此处不可 revoke——audio.src 即 track.url（上传曲目的常驻播放地址），
+        // 历史缺陷在探测完时长后自毁 URL，上传曲目随即不可播放（ERR_FILE_NOT_FOUND）
       })
 
       audio.addEventListener('error', () => {

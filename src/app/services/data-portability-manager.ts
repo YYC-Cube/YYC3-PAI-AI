@@ -13,7 +13,6 @@
 import type { DataEntry, DataLocation, DataType } from '../store/unified-data-store'
 import { createLogger } from '../utils/logger'
 import { indexedDBService, type StoreRecord } from './indexeddb-service'
-import { securityVault } from './security-vault'
 
 const logger = createLogger('data-portability')
 
@@ -438,7 +437,13 @@ export class DataPortabilityManager {
         try {
           const rec = record as StoreRecord
           if (rec.id) {
-            await indexedDBService.set(storeName, rec.id, rec)
+            // P1-b 修复：采集侧导出的是 StoreRecord 信封——恢复须写 payload 本体并透传元数据，
+            // 否则二次信封化导致往返后 record.data 变旧信封（数据损坏）
+            const payload = rec.data !== undefined ? rec.data : record
+            await indexedDBService.set(storeName, rec.id, payload, {
+              encrypted: rec.encrypted,
+              type: rec.type,
+            })
             restored++
           }
         } catch (error) {
@@ -532,28 +537,58 @@ export class DataPortabilityManager {
   // 私有方法
   // ==========================================================================
 
-  private async encryptEntries(entries: DataEntry[], _passphrase: string): Promise<ExportableDataEntry[]> {
+  // ── 口令自含加密（P1-a 修复）：盐/iv 随文件走，跨会话跨设备可解 ──
+  // 历史缺陷：只存 ciphertext，iv/salt 丢弃且解密伪造全零——加密备份导入必然失败
+  private async deriveFileKey(passphrase: string, salt: Uint8Array): Promise<CryptoKey> {
+    const baseKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(passphrase) as BufferSource,
+      'PBKDF2',
+      false,
+      ['deriveKey'],
+    )
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: salt as BufferSource, iterations: 210_000, hash: 'SHA-256' },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt'],
+    )
+  }
+
+  private async encryptEntries(entries: DataEntry[], passphrase: string): Promise<ExportableDataEntry[]> {
     const encrypted: ExportableDataEntry[] = []
     for (const entry of entries) {
       if (entry.encrypted) {
+        // 已加密条目直通（二次导出不重复加密）
         encrypted.push(entry)
         continue
       }
 
-      const data = JSON.stringify(entry)
-      const encoded = new TextEncoder().encode(data)
-      const encryptedData = await securityVault.encrypt(encoded.buffer as ArrayBuffer)
+      const salt = crypto.getRandomValues(new Uint8Array(16))
+      const iv = crypto.getRandomValues(new Uint8Array(12))
+      const key = await this.deriveFileKey(passphrase, salt)
+      const plaintext = new TextEncoder().encode(JSON.stringify(entry))
+      const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plaintext as BufferSource)
 
+      const envelope = {
+        v: 1,
+        algorithm: 'AES-GCM',
+        kdf: 'PBKDF2-SHA256-210000',
+        salt: this.arrayBufferToBase64(salt.buffer as ArrayBuffer),
+        iv: this.arrayBufferToBase64(iv.buffer as ArrayBuffer),
+        ct: this.arrayBufferToBase64(ciphertext),
+      }
       encrypted.push({
         ...entry,
         encrypted: true,
-        data: this.arrayBufferToBase64(encryptedData.ciphertext),
+        data: JSON.stringify(envelope),
       })
     }
     return encrypted
   }
 
-  private async decryptEntries(entries: ExportableDataEntry[], _passphrase: string): Promise<DataEntry[]> {
+  private async decryptEntries(entries: ExportableDataEntry[], passphrase: string): Promise<DataEntry[]> {
     const decrypted: DataEntry[] = []
     for (const entry of entries) {
       if (!entry.encrypted || !entry.data) {
@@ -562,16 +597,21 @@ export class DataPortabilityManager {
       }
 
       try {
-        const ciphertext = this.base64ToArrayBuffer(entry.data)
-        const decryptedData = await securityVault.decrypt({
-          ciphertext,
-          iv: new Uint8Array(12),
-          salt: new Uint8Array(16),
-          version: 1,
-          algorithm: 'AES-GCM',
-        })
+        // P1-a 修复：解析自含信封（盐/iv 在文件内），以导入口令派生同钥解密
+        const envelope = JSON.parse(entry.data) as { v: number; salt: string; iv: string; ct: string }
+        if (!envelope?.salt || !envelope?.iv || !envelope?.ct) {
+          throw new Error('missing encryption envelope fields')
+        }
+        const salt = new Uint8Array(this.base64ToArrayBuffer(envelope.salt))
+        const iv = new Uint8Array(this.base64ToArrayBuffer(envelope.iv))
+        const key = await this.deriveFileKey(passphrase, salt)
+        const plaintext = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv },
+          key,
+          this.base64ToArrayBuffer(envelope.ct),
+        )
 
-        const json = new TextDecoder().decode(decryptedData)
+        const json = new TextDecoder().decode(plaintext)
         const originalEntry = JSON.parse(json) as DataEntry
         decrypted.push({ ...originalEntry, encrypted: false })
       } catch (error) {

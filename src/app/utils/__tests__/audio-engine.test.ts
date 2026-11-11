@@ -924,14 +924,16 @@ describe('AudioEngine 播放列表与编辑版本', () => {
 })
 
 describe('AudioEngine 上传删除与持久化清理', () => {
-  it('uploadAudio：读文件→blob URL→探测时长→入库并持久化（blob: 被剔除）；deleteTrack 释放 URL；未知 id false', async () => {
+  it('uploadAudio：读文件→blob URL→探测时长（URL 保留，39号已修）→入库并持久化（blob: 被剔除）；deleteTrack 释放 URL；未知 id false', async () => {
     AudioStub.nextDuration = 33
     const e = mk()
     const file = new File([new Uint8Array([1, 2, 3, 4])], 'demo.mp3', { type: 'audio/mpeg' })
     const track = await e.uploadAudio(file, { tags: ['上传'] })
     expect(track).toMatchObject({ name: 'demo', url: 'blob:http://localhost/u1', size: 4, type: 'music', tags: ['上传'], duration: 33 })
     expect(urlApi.createObjectURL).toHaveBeenCalledTimes(1)
-    expect(urlApi.revokeObjectURL).toHaveBeenCalledWith('blob:http://localhost/u1') // 探测后即释放（疑似 bug：track.url 随之失效，见报告）
+    // 39号已修：探测时长后不可 revoke——audio.src 即 track.url（常驻播放地址），
+    // 历史缺陷在探测后自毁 URL 致上传曲目不可播放。删除后不调用，deleteTrack 才释放
+    expect(urlApi.revokeObjectURL).not.toHaveBeenCalled()
     expect(e.getTrackById(track.id)).toBe(track)
     const saved = JSON.parse(must(localStorage.getItem(STORAGE_KEY), '持久化数据'))
     expect(JSON.stringify(saved)).not.toContain('blob:')

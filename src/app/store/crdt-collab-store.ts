@@ -290,6 +290,32 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
         state.documents.set(docId, collabDoc)
       })
 
+      // P1-c 配套：已连接时新建的文档须立即挂 wsProvider（否则新文档不参与同步）
+      const st = get()
+      if (st.connectionType === 'websocket' && st.connected) {
+        const wsProvider = new WebsocketProvider(
+          withRoomToken(COLLAB_CONFIG.wsUrl),
+          docId,
+          doc,
+          { connect: true },
+        )
+        wsProvider.awareness.setLocalStateField('user', {
+          id: st.userId,
+          name: st.userName,
+          color: st.userColor,
+        })
+        wsProvider.on('status', (event: { status: string }) => {
+          set((s) => {
+            const d = s.documents.get(docId)
+            if (d) d.synced = event.status === 'connected'
+          })
+        })
+        set((s) => {
+          const d = s.documents.get(docId)
+          if (d) d.wsProvider = wsProvider
+        })
+      }
+
       logger.info(`Document created: ${name}`)
       return collabDoc
     },

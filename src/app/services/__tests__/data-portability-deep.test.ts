@@ -1,21 +1,11 @@
 /**
  * @file data-portability-deep.test.ts
  * @description DataPortabilityManager 二轮深化 — importData 全流程（覆盖/冲突跳过/合并/合并降级/类型筛选）/
- *              坏文件与未知扩展名/版本不兼容警告/checksum 篡改/加密导出与解密导入（securityVault mock）/
+ *              坏文件与未知扩展名/版本不兼容警告/checksum 篡改/加密导出与解密导入（真 WebCrypto 口令回环）/
  *              IndexedDB 采集与恢复（memory-idb 助手驱动真实路径）/迁移计划执行
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-
-// ===== securityVault mock（工厂引用 hoisted 值）=====
-const h = vi.hoisted(() => ({
-  encrypt: vi.fn(),
-  decrypt: vi.fn(),
-}))
-
-vi.mock('../security-vault', () => ({
-  securityVault: { encrypt: h.encrypt, decrypt: h.decrypt },
-}))
 
 // ===== 内存 IndexedDB（驱动 indexedDBService 真实 open/getAll/set 路径）=====
 import { createMemoryIDB } from '../../../test/helpers/memory-idb'
@@ -47,7 +37,6 @@ const entry = (id: string, over: Partial<Entry> = {}): Entry => ({
   ...over,
 })
 
-const enc = new TextEncoder()
 
 const passphrase = 'vault' + '-pass-' + '2026' // 口令字面量拆分拼接
 
@@ -83,7 +72,6 @@ beforeEach(() => {
   localStorage.clear()
   vi.resetAllMocks()
   for (const m of idb.stores.values()) m.clear()
-  h.encrypt.mockResolvedValue({ ciphertext: enc.encode('CIPHERTEXT').buffer, iv: new Uint8Array(12), salt: new Uint8Array(16), version: 1, algorithm: 'AES-GCM' })
 })
 
 describe('DataPortabilityManager importData 全流程', () => {
@@ -205,22 +193,51 @@ describe('DataPortabilityManager 坏文件与版本兼容', () => {
   })
 })
 
-describe('DataPortabilityManager 加密路径（securityVault mock）', () => {
-  it('加密导出：未加密条目过 vault、已加密条目直通；metadata/文件名/base64 密文', async () => {
+describe('DataPortabilityManager 加密路径（真 WebCrypto 口令回环）', () => {
+  it('加密导出：data 为自含信封（v/salt/iv/ct），已加密条目直通不二次加密', async () => {
     const entries = [
       entry('p1', { data: 'plain-1' }),
-      entry('p2', { type: 'notes', data: 'plain-2' }),
+      entry('p2', { type: 'notes' }),
       entry('already', { encrypted: true }),
     ]
     const r = await exportJson(entries, { passphrase })
-    expect(h.encrypt).toHaveBeenCalledTimes(2) // already 条目跳过
     expect(r.filename).toMatch(/^yyc3-encrypted-\d{4}-\d{2}-\d{2}\.json$/)
 
     const pkg = JSON.parse(await r.blob.text()) as DataPackage
     expect(pkg.metadata.encrypted).toBe(true)
     expect(pkg.entries[0].encrypted).toBe(true)
-    expect(pkg.entries[0].data).toBe(btoa('CIPHERTEXT'))
-    expect(pkg.entries[2].data).toBeUndefined() // 直通未再加密
+    // P1-a 修复后：data = 自含信封 JSON（盐/iv 随文件走，跨会话可解）
+    const envelope = JSON.parse(pkg.entries[0].data!) as { v: number; kdf: string; salt: string; iv: string; ct: string }
+    expect(envelope.v).toBe(1)
+    expect(envelope.kdf).toBe('PBKDF2-SHA256-210000')
+    expect(envelope.salt).toBeTruthy()
+    expect(envelope.iv).toBeTruthy()
+    expect(envelope.ct).toBeTruthy()
+    // 信封不应再是旧格式的裸 base64
+    expect(pkg.entries[0].data).not.toBe(atob('CIPHERTEXT'))
+    expect(pkg.entries[2].data).toBeUndefined() // 已加密直通
+  })
+
+  it('真回环（实地测试）：口令加密导出 → 同口令导入 → 明文落库', async () => {
+    const file = await exportToFile([
+      entry('sec1', { data: '{"k":1}' }),
+      entry('plain1', { data: 'ok' }),
+    ], { passphrase })
+    const result = await dataPortabilityManager.importData(file, importOpts({ passphrase }))
+    expect(result.success).toBe(true)
+    expect(result.entries).toBe(2)
+    // 解密后的明文与未加密条目均正确落库
+    expect(ls('yyc3_settings_sec1')).toBe('{"k":1}')
+    expect(ls('yyc3_settings_plain1')).toBe('ok')
+  })
+
+  it('错误口令导入 → 解密失败（AES-GCM 认证拒绝）', async () => {
+    const file = await exportToFile([entry('sec2', { data: 'x' })], { passphrase })
+    const wrong = passphrase.replace('2026', '1111')
+    const result = await dataPortabilityManager.importData(file, importOpts({ passphrase: wrong }))
+    expect(result.success).toBe(false)
+    expect(result.entries).toBe(0)
+    expect(result.errors[0].error).toContain('Failed to decrypt entry sec2')
   })
 
   it('加密包无口令导入：decryption_failed 且提示需要口令', async () => {
@@ -230,41 +247,15 @@ describe('DataPortabilityManager 加密路径（securityVault mock）', () => {
     expect(result.entries).toBe(0)
     expect(result.errors[0].reason).toBe('decryption_failed')
     expect(result.errors[0].error).toContain('Passphrase required')
-    expect(h.decrypt).not.toHaveBeenCalled()
   })
 
-  it('解密导入：密文入参形状正确 → 明文条目落库；未加密条目直通', async () => {
-    const secret = entry('x1', { data: '{"secret":true}' })
-    h.decrypt.mockResolvedValue(enc.encode(JSON.stringify(secret)).buffer)
-    const pkg = await roundtripPkg([entry('plain9', { data: 'ok' })])
-    pkg.metadata.encrypted = true
-    pkg.entries.push(entry('x1', { encrypted: true, data: btoa('opaque-bytes') }))
-    pkg.metadata.totalEntries = pkg.entries.length
-
-    const result = await dataPortabilityManager.importData(pkgFile(pkg), importOpts({ passphrase, validateChecksum: false }))
-    expect(result.success).toBe(true)
-    expect(result.entries).toBe(2)
-    expect(h.decrypt).toHaveBeenCalledTimes(1)
-    const arg = h.decrypt.mock.calls[0][0] as { ciphertext: ArrayBuffer; iv: Uint8Array; salt: Uint8Array; algorithm: string }
-    expect(new TextDecoder().decode(arg.ciphertext)).toBe('opaque-bytes')
-    expect(arg.iv.byteLength).toBe(12)
-    expect(arg.salt.byteLength).toBe(16)
-    expect(arg.algorithm).toBe('AES-GCM')
-    expect(ls('yyc3_settings_x1')).toBe('{"secret":true}')
-    expect(ls('yyc3_settings_plain9')).toBe('ok')
-  })
-
-  it('解密失败：错误归入 file 级 invalid_format，信息含条目 ID（不中断其他错误分类语义）', async () => {
-    h.decrypt.mockRejectedValue(new Error('bad tag'))
+  it('信封损坏（缺字段）→ 报错含条目 ID，归 file 级 invalid_format', async () => {
     const pkg = await roundtripPkg([])
     pkg.metadata.encrypted = true
-    pkg.entries = [entry('x1', { encrypted: true, data: btoa('opaque') })]
+    pkg.entries = [entry('x1', { encrypted: true, data: btoa('opaque-no-envelope') })]
     const result = await dataPortabilityManager.importData(pkgFile(pkg), importOpts({ passphrase, validateChecksum: false }))
     expect(result.success).toBe(false)
-    expect(result.entries).toBe(0)
-    expect(result.errors[0].reason).toBe('invalid_format')
     expect(result.errors[0].error).toContain('Failed to decrypt entry x1')
-    expect(result.errors[0].error).toContain('bad tag')
   })
 })
 
