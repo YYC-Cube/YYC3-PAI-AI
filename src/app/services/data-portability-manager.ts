@@ -540,15 +540,17 @@ export class DataPortabilityManager {
   // ── 口令自含加密（P1-a 修复）：盐/iv 随文件走，跨会话跨设备可解 ──
   // 历史缺陷：只存 ciphertext，iv/salt 丢弃且解密伪造全零——加密备份导入必然失败
   private async deriveFileKey(passphrase: string, salt: Uint8Array): Promise<CryptoKey> {
+    const passBytes = new TextEncoder().encode(passphrase)
     const baseKey = await crypto.subtle.importKey(
       'raw',
-      new TextEncoder().encode(passphrase) as BufferSource,
+      passBytes,
       'PBKDF2',
       false,
       ['deriveKey'],
     )
     return crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt: salt as BufferSource, iterations: 210_000, hash: 'SHA-256' },
+      // TS 泛型摩擦（Uint8Array<ArrayBufferLike> vs BufferSource）：运行时 Uint8Array 即合法 BufferSource
+      { name: 'PBKDF2', salt: salt as unknown as BufferSource, iterations: 210_000, hash: 'SHA-256' },
       baseKey,
       { name: 'AES-GCM', length: 256 },
       false,
@@ -569,7 +571,7 @@ export class DataPortabilityManager {
       const iv = crypto.getRandomValues(new Uint8Array(12))
       const key = await this.deriveFileKey(passphrase, salt)
       const plaintext = new TextEncoder().encode(JSON.stringify(entry))
-      const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plaintext as BufferSource)
+      const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plaintext)
 
       const envelope = {
         v: 1,
@@ -604,11 +606,13 @@ export class DataPortabilityManager {
         }
         const salt = new Uint8Array(this.base64ToArrayBuffer(envelope.salt))
         const iv = new Uint8Array(this.base64ToArrayBuffer(envelope.iv))
+        // Node 20 webcrypto 对参数品牌校验更严：显式重建 Uint8Array 拷贝作为 BufferSource
+        const ctBytes = new Uint8Array(this.base64ToArrayBuffer(envelope.ct))
         const key = await this.deriveFileKey(passphrase, salt)
         const plaintext = await crypto.subtle.decrypt(
           { name: 'AES-GCM', iv },
           key,
-          this.base64ToArrayBuffer(envelope.ct),
+          ctBytes,
         )
 
         const json = new TextDecoder().decode(plaintext)
