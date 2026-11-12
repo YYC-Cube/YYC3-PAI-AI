@@ -66,24 +66,13 @@ export default defineConfig({
         // SelfMediaEditor 22.7% / IDEHeader 26.8% / SettingsPanel 27.8% / EnhancedBackupRestorePanel 23.8% /
         // TaskBoard 33.2% / IDELeftPanel 6.0%
         // 第十二轮回档：data-portability-manager 23.1%（导出/预览 5 用例留作回归，导入/加密二轮）
-        'src/app/components/audio/**',
-        'src/app/components/figma/**',
-        'src/app/components/ide/**',
-        'src/app/components/performance/**',
+        // audio/ide/performance/figma 四目录已 onboard（20轮：14+15+2+1 实体全测，见各 __tests__/）；
+        // AudioPlaylist.tsx（无测试）与 index.ts（桶 re-export）仍排除
+        'src/app/components/audio/AudioPlaylist.tsx',
+        'src/app/components/audio/index.ts',
         'src/app/components/ui/**',
         // components 根目录未测面板（71）
-        'src/app/components/AIAssistantPanel.tsx',
-        'src/app/components/AICompletionProvider.tsx',
-                                                'src/app/components/FullscreenMode.tsx',
-                                                                        'src/app/components/LivePreview.tsx',
-                                'src/app/components/PanelDropZone.tsx',
-                                'src/app/components/ProjectCreateModal.tsx',
-                                                                                                                                        'src/app/components/settings/AIServiceTabs.tsx',
-                'src/app/components/settings/WorkspaceTabs.tsx',
-        'src/app/components/AIWritingPanel.tsx',
-        'src/app/components/DatabasePanel.tsx',
-        'src/app/components/AgentWorkflowPanel.tsx',
-        // hooks 未测（10）→ 第四轮 onboard 5（useAI 94%/useDebounce 96%/useKeyboardShortcuts 100%/
+                                                                                                                                                                                                                                                                                                        // hooks 未测（10）→ 第四轮 onboard 5（useAI 94%/useDebounce 96%/useKeyboardShortcuts 100%/
         // useStreamText 100%/useSystemTheme 96%）；留专项：useMonacoPerformanceMonitor(288行)/
         // usePerformanceMonitor(336行)/useIntelligentWorkflow(404行)；ai-types(纯类型无运行时)与
         // index.ts(桶 re-export 覆盖归因 0%)不参与分母
@@ -91,7 +80,6 @@ export default defineConfig({
         'src/app/hooks/index.ts',
         // Chat 未测（4）→ 第四轮 onboard 2（ChatInputBox 93%/ChatMessageList ~90%）；
         // 留专项：AiMessageRender(346行)；index.ts 桶(引 ChatPage 重依赖)不参与分母
-        'src/components/Chat/AiMessageRender.tsx',
         'src/components/Chat/index.ts',
         'src/app/pages/**',
         'src/app/App.tsx',
@@ -102,7 +90,6 @@ export default defineConfig({
         '**/*.worker.ts',
         'src/app/types/**',
         '**/types/**',
-        'src/app/services/monaco-performance-benchmark.ts',
       ],
       thresholds: {
         // 新标准（2026-10-30 提升）
