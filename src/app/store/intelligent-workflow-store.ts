@@ -924,7 +924,7 @@ async function executeWorkflowNodes(
   store.updateWorkflow(workflow.id, {
     nodes: new Map(workflow.nodes),
     stats: {
-      ...store.workflows.get(workflow.id)?.stats,
+      ...(store.workflows.get(workflow.id)?.stats ?? workflow.stats),
       completedNodes: workflow.stats.completedNodes,
       failedNodes: workflow.stats.failedNodes,
       skippedNodes: workflow.stats.skippedNodes,
