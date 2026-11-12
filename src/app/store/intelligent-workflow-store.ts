@@ -448,27 +448,31 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
     // ===== 工作流执行 =====
 
     executeWorkflow: async (workflowId) => {
-      let workflow = get().workflows.get(workflowId)
-      if (!workflow) {
+      const stored = get().workflows.get(workflowId)
+      if (!stored) {
         throw new Error(`Workflow ${workflowId} not found`)
       }
 
+      // 34号修复（25号回归）：执行链直改 node.status 与 stats，而 store 内对象经 immer 定稿已冻结——
+      // 冻结感知可变化：冻结走拷贝，未冻结（注入/live）原样直传保契约
+      const workflow = mutableWorkflow(stored)
+
       set((state) => {
         state.executingWorkflowId = workflowId
-        // 25号修复：workflow 为 producer 外冻结对象——从 state 取可写草稿
         const wf = state.workflows.get(workflowId)
-        if (!wf) return
-        wf.status = 'running'
-        workflow = wf
-        workflow.startedAt = Date.now()
-        workflow.stats = {
-          ...workflow.stats,
-          completedNodes: 0,
-          failedNodes: 0,
-          skippedNodes: 0,
-          totalDuration: 0,
+        if (wf) {
+          wf.status = 'running'
+          wf.startedAt = Date.now()
+          wf.stats = {
+            ...wf.stats,
+            completedNodes: 0,
+            failedNodes: 0,
+            skippedNodes: 0,
+            totalDuration: 0,
+          }
         }
       })
+      workflow.startedAt = Date.now()
 
       // 记录执行事件
       get().addExecutionEvent({
@@ -570,19 +574,57 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
         }
       })
 
-      // 重新执行节点
+      // 34号：冻结感知——reset 后重取（retryCount 新值）；冻结走拷贝回写，未冻结直传保 live 契约
+      const fresh = get().workflows.get(workflowId)
+      const freshNode = fresh?.nodes.get(nodeId)
+      if (!fresh || !freshNode) return
+      const frozen = Object.isFrozen(freshNode) || Object.isFrozen(fresh.stats)
+      // immer reset 定稿会把 getter 属性（如 logs）物化为冻结快照数组——克隆重挂可变 logs，
+      // 执行后随写回落库（AI 决策日志断言走 store 终态）
+      const retryNodeCopy = frozen ? { ...freshNode, logs: [] as WorkflowNodeLog[] } : freshNode
+      const workflowCopy = mutableWorkflow(fresh)
+
       try {
-        await executeNode(node, workflow, get())
-        set(() => {
-          node.status = 'completed'
-          workflow.stats.completedNodes++
-        })
+        await executeNode(retryNodeCopy, workflowCopy, get())
+        if (frozen) {
+          set((state) => {
+            const wf = state.workflows.get(workflowId)
+            const n = wf?.nodes.get(nodeId)
+            if (wf && n) {
+              n.status = 'completed'
+              n.endTime = retryNodeCopy.endTime
+              n.duration = retryNodeCopy.duration
+              n.error = undefined
+              n.logs = retryNodeCopy.logs
+              // 完成计数在执行链副本上自增——从此处透传落库（aiDecisions 等已由链上 updateWorkflow 落库，勿覆盖）
+              if (wf.stats) {
+                wf.stats.completedNodes = workflowCopy.stats.completedNodes
+                wf.stats.failedNodes = workflowCopy.stats.failedNodes
+                wf.stats.skippedNodes = workflowCopy.stats.skippedNodes
+              }
+            }
+          })
+        } else {
+          // 未冻结直传：执行链已直写 live 对象；store 内重试计数保持 reset 值
+          retryNodeCopy.status = 'completed'
+        }
       } catch (error) {
-        set(() => {
-          node.status = 'failed'
-          node.error = error instanceof Error ? error.message : String(error)
-          workflow.stats.failedNodes++
-        })
+        if (frozen) {
+          set((state) => {
+            const wf = state.workflows.get(workflowId)
+            const n = wf?.nodes.get(nodeId)
+            if (wf && n) {
+              n.status = 'failed'
+              n.error = retryNodeCopy.error
+              if (wf.stats) {
+                wf.stats.failedNodes = workflowCopy.stats.failedNodes
+                wf.stats.skippedNodes = workflowCopy.stats.skippedNodes
+              }
+            }
+          })
+        } else {
+          retryNodeCopy.status = 'failed'
+        }
         throw error
       }
     },
@@ -616,8 +658,9 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
             aiGenerated: true,
             naturalLanguageDescription: result.workflow.naturalLanguageDescription || input,
           })
-          // 26号修复：result.workflow 为外部对象（历史条目已冻结入 store）——不回写，直接置引用
-          result.workflow = { ...result.workflow, id: workflow.id }
+          // 34号修复（26号回归）：result 已随历史入 store 被 immer 冻结——属性赋值抛 TypeError
+          // 且被外层 catch 吞掉（转换成功却报失败）。以新对象返回修正后的引用
+          return { ...result, workflow: { ...result.workflow, id: workflow.id } }
         }
 
         return result
@@ -858,6 +901,14 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
 /**
  * 执行工作流节点（递归执行）
  */
+/** 34号：冻结感知可变化——未冻结对象原样返回（保留注入/live 引用契约），冻结对象拷贝解冻 */
+function mutableWorkflow(w: Workflow): Workflow {
+  if (!Object.isFrozen(w) && !Object.isFrozen(w.stats)) return w
+  const nodes = new Map<string, WorkflowNode>()
+  w.nodes.forEach((n, k) => nodes.set(k, Object.isFrozen(n) ? { ...n } : n))
+  return { ...w, nodes, stats: Object.isFrozen(w.stats) ? { ...w.stats } : w.stats }
+}
+
 async function executeWorkflowNodes(
   workflow: Workflow,
   store: ReturnType<typeof useIntelligentWorkflowStore.getState>
@@ -868,6 +919,17 @@ async function executeWorkflowNodes(
   for (const node of executingNodes) {
     await executeNode(node, workflow, store)
   }
+
+  // 34号：可变副本上的节点终态与执行计数回写 store（此前链上改动从不落库）
+  store.updateWorkflow(workflow.id, {
+    nodes: new Map(workflow.nodes),
+    stats: {
+      ...store.workflows.get(workflow.id)?.stats,
+      completedNodes: workflow.stats.completedNodes,
+      failedNodes: workflow.stats.failedNodes,
+      skippedNodes: workflow.stats.skippedNodes,
+    },
+  })
 
   // 检查是否所有节点都已完成
   const allCompleted = nodes.every((n) => n.status === 'completed' || n.status === 'skipped')

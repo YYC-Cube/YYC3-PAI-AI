@@ -92,11 +92,11 @@ export default defineConfig({
         '**/types/**',
       ],
       thresholds: {
-        // 新标准（2026-10-30 提升）
-        statements: 70,
-        branches: 55,
-        functions: 65,
-        lines: 65,
+        // 2026-11-12 新标准（20轮清零战役后 statements/lines/functions 破 80）
+        statements: 80,
+        branches: 70,
+        functions: 80,
+        lines: 80,
         // 增量分支覆盖率要求 ≥70%（新增代码 diff 必须达标，PR 审查依据）
         // Vitest v4 不原生支持 per-diff coverage，通过 CI PR 审查手动检查
       },
