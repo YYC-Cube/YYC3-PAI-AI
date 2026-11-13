@@ -270,6 +270,8 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
         });
     } else {
       // 无活跃模型 — 诚实指引（拒绝伪造 AI 回复）
+      // 38号修复：setAiLoading(true) 在模型判断之前执行，此分支原先不复位——「思考中」永久卡死
+      setAiLoading(false);
       setMessages((prev) => [...prev, { role: "ai", content: "未激活模型——请打开 设置 → 模型管理 激活后重试。" }]);
     }
   }, [input, locale, messages, getActiveModel, sendToActiveModelStream, t]);

@@ -515,7 +515,8 @@ const actions = {
   },
 
   setProjectName: (name: string) => {
-    state = { ...state, projectName: name }
+    // 51号：项目名入库去首尾空白
+    state = { ...state, projectName: name.trim() }
     emitChange()
   },
 

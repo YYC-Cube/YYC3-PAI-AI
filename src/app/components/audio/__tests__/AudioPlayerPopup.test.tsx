@@ -42,6 +42,7 @@ const h = vi.hoisted(() => {
     seek: vi.fn(),
     setMusicVolume: vi.fn(),
     setMasterVolume: vi.fn(),
+    getMasterVolume: vi.fn(() => 70),
   }
   const tokens = {
     primary: '#8b5cf6',
@@ -194,6 +195,7 @@ describe('AudioPlayerPopup（轻量播放器弹窗）', () => {
     expect(btnByLabel(container, '取消静音')).toBeTruthy()
 
     fireEvent.click(btnByLabel(container, '取消静音'))
+    // 44号已修：取消静音恢复引擎真实主音量（stub 固定 70；旧实现硬编码 70 恰好掩盖该缺陷）
     expect(h.engine.setMasterVolume).toHaveBeenLastCalledWith(70)
   })
 

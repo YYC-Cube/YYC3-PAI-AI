@@ -456,11 +456,15 @@ export function EnhancedAudioPlayer({ isOpen, onClose }: EnhancedAudioPlayerProp
       // eslint-disable-next-line react-hooks/exhaustive-deps -- audioEngine 为模块级单例（非响应式），函数为稳定引用——入依赖仅致无谓重建
   }, [])
 
+  // 44号：静音前捕获引擎真实主音量，恢复用真值（历史缺陷：恢复用音乐音量 state 混淆两个独立量）
+  const prevMasterRef = useRef<number | null>(null)
   const handleToggleMute = useCallback(() => {
     if (isMuted) {
-      audioEngine.setMasterVolume(volume)
+      audioEngine.setMasterVolume(prevMasterRef.current ?? (audioEngine.getMasterVolume() || 80))
+      prevMasterRef.current = null
       setIsMuted(false)
     } else {
+      prevMasterRef.current = audioEngine.getMasterVolume()
       audioEngine.setMasterVolume(0)
       setIsMuted(true)
     }

@@ -112,18 +112,24 @@ export function EnhancedBackupRestorePanel({ tk, isZh }: EnhancedBackupRestorePa
     }
   }, [activeConnId, backups, isZh])
 
-  const handleRestore = useCallback(async (backupId: string) => {
-    if (!activeConnId || !previewData) return
+  // 45号：直接恢复不再依赖预览态——按需构建预览参数后立即执行（历史缺陷：按钮 onClick 与预览相同，
+  // tooltip 承诺的「跳过确认直接恢复」永远不发生）
+  const handleQuickRestore = useCallback(async (backupId: string) => {
+    if (!activeConnId) return
 
     setRestoring(backupId)
     setRestoreProgress(null)
 
     try {
       const service = getDatabaseBackupService()
+      const backup = backups.find(b => b.id === backupId)
+      if (!backup) return
+      const preview = await service.getRestorePreview(activeConnId, backupId, backup.filename, backup.sizeBytes)
+
       const result = await service.executeRestore(
         activeConnId,
         backupId,
-        previewData,
+        preview,
         (progress) => {
           setRestoreProgress(progress as RestoreProgress)
         }
@@ -149,7 +155,7 @@ export function EnhancedBackupRestorePanel({ tk, isZh }: EnhancedBackupRestorePa
       setPreviewData(null)
       setTimeout(() => setRestoreProgress(null), 3000)
     }
-  }, [activeConnId, previewData, isZh])
+  }, [activeConnId, backups, isZh])
 
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes}B`
@@ -317,7 +323,7 @@ export function EnhancedBackupRestorePanel({ tk, isZh }: EnhancedBackupRestorePa
               <button
                 className="flex items-center gap-1 px-3 py-1.5 rounded transition-all hover:opacity-80"
                 style={{ fontFamily: tk.fontMono, fontSize: '9px', color: '#fff', background: tk.error, border: `1px solid ${tk.error}`, boxShadow: `0 0 10px ${tk.error}44` }}
-                onClick={() => handleRestore(showPreview)}
+                onClick={() => handleQuickRestore(showPreview)}
                 disabled={!!restoring}
               >
                 {restoring ? <Loader2 size={9} className="animate-spin" /> : <Play size={9} />}
@@ -383,7 +389,7 @@ export function EnhancedBackupRestorePanel({ tk, isZh }: EnhancedBackupRestorePa
                   <CyberTooltip label={isZh ? '直接恢复' : 'Quick Restore'} position="left">
                     <button
                       className="p-1 rounded hover:bg-white/10 transition-all"
-                      onClick={() => handleRestorePreview(backup.id)}
+                      onClick={() => handleQuickRestore(backup.id)}
                       disabled={restoring === backup.id || !activeConnId}
                     >
                       {restoring === backup.id ? <Loader2 size={10} color={tk.warning} className="animate-spin" /> : <RotateCcw size={10} color={tk.warning} />}

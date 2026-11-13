@@ -150,7 +150,7 @@ describe('AudioUploader（音频上传）', () => {
     expect(container.textContent).toContain('最大限制: 50MB')
   })
 
-  it('上传异常（现状）：异常仅移除上传中状态，错误不渲染、onError 不回调（uploadAudio 异常被吞，疑似 bug 见报告）', async () => {
+  it('上传异常：错误条目渲染 + onError 回调（41号已修）', async () => {
     const onError = vi.fn()
     h.engine.uploadAudio.mockRejectedValueOnce(new Error('磁盘已满'))
     const { container } = render(<AudioUploader onError={onError} />)
@@ -160,10 +160,11 @@ describe('AudioUploader（音频上传）', () => {
     fireEvent.change(input)
     await act(async () => {})
 
-    // 现状：catch 分支只把错误 push 进局部 newErrors，未 setErrors/onError → UI 无任何提示
-    expect(container.textContent).not.toContain('磁盘已满')
+    // 41号已修：上传异常入 setErrors + onError 回调——UI 渲染错误条目
+    expect(container.textContent).toContain('磁盘已满')
     expect(container.textContent).not.toContain('上传中...')
-    expect(onError).not.toHaveBeenCalled()
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(onError.mock.calls[0][0]).toContain('broken.ogg: 磁盘已满')
   })
 
   it('错误条目可逐条移除（X 按钮）', async () => {

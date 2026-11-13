@@ -237,7 +237,7 @@ function buildPreviewDocument(opts: BuildOptions): string {
         <div id="root"></div>
         ${consoleCapture}
         <script type="text/babel" data-presets="react,typescript">
-          ${code.replace(/import\s+.*?from\s+['"].*?['"]\s*;?/g, '// [import removed for preview]')
+          ${code.replace(/import[ \t]+.*?from[ \t]+['"].*?['"][ \t]*;?/g, '// [import removed for preview]')
             .replace(/export\s+default\s+/g, 'const __Default = ')
             .replace(/export\s+/g, '')}
 
@@ -351,10 +351,13 @@ export const LivePreview = memo(function LivePreview({
   const language = languageOverride || detectLanguage(fileName)
 
   // Build preview HTML
-  const previewHTML = useMemo(() => {
-    if (!code.trim()) return ''
+  // 39号：渲染态与源码态分离——iframe 只渲染 renderedHTML（由模式 effect/手动刷新写入），
+  // 历史缺陷：srcDoc 直绑实时 previewHTML，手动/延迟/智能模式的门控形同虚设。
+  // 初值惰性构建首帧文档：手动模式进区保留已有预览（iframe 不卸载）
+  const buildDoc = useCallback((c: string) => {
+    if (!c.trim()) return ''
     return buildPreviewDocument({
-      code,
+      code: c,
       language,
       isCyberpunk,
       fontDisplay: tk.fontDisplay,
@@ -365,7 +368,11 @@ export const LivePreview = memo(function LivePreview({
       primary: tk.primary,
       primaryDim: tk.primaryDim,
     })
-  }, [code, language, isCyberpunk, tk])
+  }, [language, isCyberpunk, tk])
+
+  const [renderedHTML, setRenderedHTML] = useState(() => buildDoc(code))
+
+  const previewHTML = useMemo(() => buildDoc(code), [buildDoc, code])
 
   // Handle preview updates based on mode
   useEffect(() => {
@@ -379,6 +386,7 @@ export const LivePreview = memo(function LivePreview({
         setIframeKey(k => k + 1)
         setIsUpdating(false)
         setPreviewError(null)
+        setRenderedHTML(previewHTML)
       }, 150)
     } else if (previewMode === 'delayed') {
       setIsUpdating(true)
@@ -388,6 +396,7 @@ export const LivePreview = memo(function LivePreview({
         setIframeKey(k => k + 1)
         setIsUpdating(false)
         setPreviewError(null)
+        setRenderedHTML(previewHTML)
       }, previewDelay)
     } else if (previewMode === 'smart') {
       const delay = code.length < 500 ? 100 : code.length < 2000 ? 300 : 600
@@ -398,6 +407,7 @@ export const LivePreview = memo(function LivePreview({
         setIframeKey(k => k + 1)
         setIsUpdating(false)
         setPreviewError(null)
+        setRenderedHTML(previewHTML)
       }, delay)
     }
 
@@ -433,9 +443,10 @@ export const LivePreview = memo(function LivePreview({
   const handleManualRefresh = useCallback(() => {
     setIsUpdating(true)
     setPreviewError(null)
+    setRenderedHTML(previewHTML)
     setIframeKey(k => k + 1)
     setTimeout(() => setIsUpdating(false), 100)
-  }, [setIsUpdating, setPreviewError])
+  }, [setIsUpdating, setPreviewError, previewHTML])
 
   // Save snapshot
   const handleSaveSnapshot = useCallback(() => {
@@ -812,7 +823,7 @@ export const LivePreview = memo(function LivePreview({
             )}
 
             {/* Iframe */}
-            {previewHTML ? (
+            {renderedHTML ? (
               <iframe
                 ref={iframeRef}
                 key={iframeKey}
@@ -826,7 +837,7 @@ export const LivePreview = memo(function LivePreview({
                   display: 'block',
                   transition: 'height 0.3s',
                 }}
-                srcDoc={previewHTML}
+                srcDoc={renderedHTML}
                 onLoad={handleIframeLoad}
               />
             ) : (

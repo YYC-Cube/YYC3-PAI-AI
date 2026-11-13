@@ -171,6 +171,8 @@ describe('LivePreview（实时预览）', () => {
     expect(frame.getAttribute('title')).toBe('Live Preview')
     expect(frame.getAttribute('sandbox')).toBe('allow-scripts allow-modals')
 
+    // 39号后：srcDoc 绑定 renderedHTML——等实时防抖 150ms 写入渲染态
+    await advance(200)
     const doc = srcdoc(container)
     expect(doc.startsWith('<!DOCTYPE html><html><head><style>')).toBe(true)
     expect(doc).toContain(`<body>${SNIPPET}`)
@@ -183,6 +185,7 @@ describe('LivePreview（实时预览）', () => {
 
     const full = '<!DOCTYPE html><html><head><title>完整文档</title></head><body><main>主体</main></body></html>'
     rerender(<LivePreview code={full} fileName="index.html" />)
+    await advance(200)
     const fullDoc = srcdoc(container)
     expect(fullDoc.startsWith('<!DOCTYPE html><html><head><title>完整文档</title></head><body><main>主体</main>')).toBe(true)
     expect(fullDoc.endsWith('</body></html>')).toBe(true)
@@ -195,6 +198,7 @@ describe('LivePreview（实时预览）', () => {
   it('各语言文档构建：CSS 示例页 / JS 输出面板 / TS 类型擦除 / React UMD+Babel / JSON 解析脚本 / SVG 居中 / 未知类型转义', async () => {
     const { LivePreview } = await boot()
     const { container, rerender } = render(<LivePreview code=".btn { color: red; }" fileName="style.css" />)
+    await advance(200)
     // CSS：代码进入 <style>，并附带示例元素
     let doc = srcdoc(container)
     expect(doc).toContain('.btn { color: red; }</style>')
@@ -203,6 +207,7 @@ describe('LivePreview（实时预览）', () => {
 
     // JavaScript：输出面板 + try/catch 包裹用户代码
     rerender(<LivePreview code={"console.log('hi')"} fileName="main.js" />)
+    await advance(200)
     doc = srcdoc(container)
     expect(doc).toContain('<div id="output"></div>')
     expect(doc).toContain("console.log('hi')")
@@ -211,6 +216,7 @@ describe('LivePreview（实时预览）', () => {
     // TypeScript：变量类型标注、interface、type 别名被擦除
     const tsCode = 'const n: number = 1;\ninterface User { id: string }\ntype ID = string;\nconsole.log(n)'
     rerender(<LivePreview code={tsCode} fileName="main.ts" />)
+    await advance(200)
     doc = srcdoc(container)
     expect(doc).toContain('const n = 1;')
     expect(doc).not.toContain('interface User')
@@ -224,6 +230,7 @@ describe('LivePreview（实时预览）', () => {
       'export default function App() { return <div>{title}</div> }',
     ].join('\n')
     rerender(<LivePreview code={reactCode} fileName="App.tsx" />)
+    await advance(200)
     doc = srcdoc(container)
     for (const url of [
       'https://unpkg.com/react@18/umd/react.development.js',
@@ -241,6 +248,7 @@ describe('LivePreview（实时预览）', () => {
     // JSON：源码以字符串字面量嵌入解析脚本
     const jsonCode = '{"name":"yyc3","count":2}'
     rerender(<LivePreview code={jsonCode} fileName="data.json" />)
+    await advance(200)
     doc = srcdoc(container)
     expect(doc).toContain('<pre id="json-output"></pre>')
     expect(doc).toContain(`JSON.parse(${JSON.stringify(jsonCode)})`)
@@ -248,12 +256,14 @@ describe('LivePreview（实时预览）', () => {
     // SVG：原样内嵌 + 居中样式
     const svgCode = '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4"/></svg>'
     rerender(<LivePreview code={svgCode} fileName="logo.svg" />)
+    await advance(200)
     doc = srcdoc(container)
     expect(doc).toContain(`<body>${svgCode}`)
     expect(doc).toContain('max-height: 90vh')
 
     // 未知类型（vue）：转义后放入 <pre>
     rerender(<LivePreview code="<template><p>{{ msg }}</p></template>" fileName="App.vue" />)
+    await advance(200)
     doc = srcdoc(container)
     expect(doc).toContain('<pre style="padding:16px;">&lt;template&gt;&lt;p&gt;{{ msg }}&lt;/p&gt;&lt;/template&gt;</pre>')
   })
@@ -322,21 +332,22 @@ describe('LivePreview（实时预览）', () => {
       expect(Boolean(tipWrap(container, '刷新预览'))).toBe(mode === 'manual')
     }
 
-    // 手动模式 + 有代码：不进入「更新中」，代码变更后也不做防抖重挂载
+    // 手动模式（39号语义）：渲染态不自动更新——代码变更后 iframe 保持不出现/不重挂载
     cycle()
     rerender(<LivePreview code={SNIPPET} fileName="index.html" />)
-    const mounted = iframeOf(container)
-    expect(mounted).toBeTruthy()
+    await advance(5000)
     expect(statusLabel(container)).toBe('手动')
+    expect(iframeOf(container)).toBeNull() // 无已渲染内容 → iframe 不出现
     rerender(<LivePreview code={`${SNIPPET}<p>追加</p>`} fileName="index.html" />)
     await advance(5000)
     expect(statusLabel(container)).toBe('手动')
-    expect(iframeOf(container)).toBe(mounted)
+    expect(iframeOf(container)).toBeNull() // 仍不自动渲染
 
-    // 点击刷新：进入「更新中」并重挂载，100ms 后回落
+    // 点击刷新：渲染态写入 → iframe 出现并含追加内容，进入「更新中」100ms 后回落
     fireEvent.click(tipBtn(container, '刷新预览'))
     expect(statusLabel(container)).toBe('更新中')
-    expect(iframeOf(container)).not.toBe(mounted)
+    const rendered = iframeOf(container)
+    expect(rendered).toBeTruthy()
     expect(srcdoc(container)).toContain('<p>追加</p>')
     await advance(100)
     expect(statusLabel(container)).toBe('手动')

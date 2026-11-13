@@ -85,10 +85,9 @@ describe('WorkspaceTabs · ShortcutsTab（快捷键）', () => {
     expect(container.textContent).toContain('recording')
     fireEvent.keyDown(window, { key: 'Escape' })
     expect(container.textContent).not.toContain('recording')
-    // 疑似 bug：录制态按 Esc 会被 keydown 捕获 handler 记录为 Esc 绑定（第 2 次调用），
-    // 随后 cancelHandler 才取消录制 —— 按实际双触发行为断言
-    expect(setShortcut).toHaveBeenCalledTimes(2)
-    expect(setShortcut.mock.calls[1][1]).toEqual({ internal: 'escape', display: 'Esc' })
+    // 49号已修：录制态按 Esc 直接取消录制，不再把 Esc 记为绑定（setShortcut 仅第 1 次的 mod+k）
+    expect(setShortcut).toHaveBeenCalledTimes(1)
+    expect(setShortcut.mock.calls.every((c: unknown[]) => (c[1] as { internal: string }).internal !== 'escape')).toBe(true)
   })
 
   it('冲突检测：传入共享 internal 绑定的 shortcuts → 冲突横幅（count=1）+ conflictWith 徽标；resetAll 清空 overrides', () => {

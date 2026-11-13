@@ -562,6 +562,8 @@ export const panelDnDActions = {
     layouts.push(snapshot)
     persistLayouts(layouts)
     persistLastLayoutId(id)
+    // 47号修复：布局存 localStorage 而非 store state——不 emit 则 useSyncExternalStore UI 不刷新
+    emitChange()
     return snapshot
   },
 
@@ -609,6 +611,7 @@ export const panelDnDActions = {
   deleteLayout: (layoutId: string) => {
     const layouts = loadLayouts().filter(l => l.id !== layoutId)
     persistLayouts(layouts)
+    emitChange()
   },
 
   /** 重命名已保存布局 */
@@ -619,6 +622,7 @@ export const panelDnDActions = {
       layout.name = newName
       layout.updatedAt = Date.now()
       persistLayouts(layouts)
+      emitChange()
     }
   },
 

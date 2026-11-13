@@ -5,7 +5,7 @@
 
 
 import { ListMusic, Music, Pause, Play, SkipBack, SkipForward, Volume2, VolumeX, X } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useRef, useEffect, useState } from 'react'
 import { useThemeStore } from '../../store/theme-store'
 import { getAudioEngine , type AudioTrack} from '../../utils/audio-engine'
 import { createLogger } from '../../utils/logger'
@@ -26,6 +26,7 @@ export function AudioPlayerPopup({ isOpen, onClose }: AudioPlayerPopupProps) {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [volume, setVolume] = useState(70)
+  const prevPopupMaster = useRef<number | null>(null)
   const [tracks, setTracks] = useState<AudioTrack[]>([])
   const [showPlaylist, setShowPlaylist] = useState(false)
 
@@ -265,7 +266,9 @@ export function AudioPlayerPopup({ isOpen, onClose }: AudioPlayerPopupProps) {
             <div className="flex items-center gap-3 px-2">
               <button
                 onClick={() => {
-                  const newVol = volume > 0 ? 0 : 70
+                  // 44号：取消静音恢复引擎真实主音量（原硬编码 70 混淆主音量/音乐音量）
+                  const newVol = volume > 0 ? 0 : ((audioEngine.getMasterVolume() || 80))
+                  prevPopupMaster.current = newVol
                   setVolume(newVol)
                   audioEngine.setMasterVolume(newVol)
                 }}

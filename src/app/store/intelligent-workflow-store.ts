@@ -488,6 +488,10 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
         set((state) => {
           state.stats.totalExecutions++
           state.stats.successfulExecutions++
+          // 46号修复：执行完成清理指针（历史缺陷：executingWorkflowId 残留，阻断后续执行的 UI 门控）
+          if (state.executingWorkflowId === workflowId) {
+            state.executingWorkflowId = null
+          }
         })
       } catch (error) {
         set((state) => {

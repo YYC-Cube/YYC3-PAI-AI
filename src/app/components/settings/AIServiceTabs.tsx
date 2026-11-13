@@ -484,7 +484,7 @@ export function RulesSkillsTab({ tk }: SettingsTabProps) {
 
       <div className="flex gap-2">
         {(['rules', 'skills'] as const).map(section => (
-          <button key={section} onClick={() => { setActiveSection(section); setAddMode(false) }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all" style={{ background: activeSection === section ? tk.primaryGlow : 'transparent', border: `1px solid ${activeSection === section ? tk.primary : tk.border}`, color: activeSection === section ? tk.primary : tk.foregroundMuted, fontFamily: tk.fontMono, fontSize: '11px' }}>
+          <button key={section} onClick={() => { setActiveSection(section); setAddMode(false); setNewScope('personal') /* 50号：切换分区重置作用域 */ }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all" style={{ background: activeSection === section ? tk.primaryGlow : 'transparent', border: `1px solid ${activeSection === section ? tk.primary : tk.border}`, color: activeSection === section ? tk.primary : tk.foregroundMuted, fontFamily: tk.fontMono, fontSize: '11px' }}>
             {section === 'rules' ? <Shield size={12} /> : <Zap size={12} />}
             {t('settings', section === 'rules' ? 'rsRules' : 'rsSkills')}
             <span className="px-1 py-0.5 rounded" style={{ fontFamily: tk.fontMono, fontSize: '7px', background: tk.primaryGlow }}>{section === 'rules' ? settings.rules.length : settings.skills.length}</span>

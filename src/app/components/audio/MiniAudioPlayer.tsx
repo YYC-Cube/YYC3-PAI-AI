@@ -71,10 +71,11 @@ export function MiniAudioPlayer({ onOpenFullPlayer: _onOpenFullPlayer, className
 
         if (tracks.length > 0) {
           const currentId = audioEngine.getState().currentTrack?.id
+          // 42号修复：play 返回 Promise 且未 await——reject 时外层 catch 为死分支（unhandled rejection）
           if (currentId) {
-            audioEngine.play(currentId)
+            await audioEngine.play(currentId)
           } else {
-            audioEngine.play(tracks[0].id)
+            await audioEngine.play(tracks[0].id)
           }
         }
       }

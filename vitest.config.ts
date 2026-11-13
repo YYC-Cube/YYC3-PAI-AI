@@ -68,7 +68,6 @@ export default defineConfig({
         // 第十二轮回档：data-portability-manager 23.1%（导出/预览 5 用例留作回归，导入/加密二轮）
         // audio/ide/performance/figma 四目录已 onboard（20轮：14+15+2+1 实体全测，见各 __tests__/）；
         // AudioPlaylist.tsx（无测试）与 index.ts（桶 re-export）仍排除
-        'src/app/components/audio/AudioPlaylist.tsx',
         'src/app/components/audio/index.ts',
         'src/app/components/ui/**',
         // components 根目录未测面板（71）

@@ -141,9 +141,11 @@ export function AIWritingPanel({ visible, onClose, currentContent, onInsertConte
     setLocalModelName(null)
     setLocalNodeName(null)
 
-    try {
-      let prompt = WRITING_PROMPTS[mode]
+    // 37号修复：prompt 声明上移到 try 外——原块内 let 使 catch 回退分支引用到全局 window.prompt，
+    // 本地失败回退远端时发出 "function prompt() { [native code] }+主题"（写作指令全损）
+    let prompt = WRITING_PROMPTS[mode]
 
+    try {
       // Mode-specific adjustments
       if (mode === 'title') {
         prompt += `\n\n当前时间：${new Date().toLocaleDateString('zh-CN')}\n目标平台：自媒体`

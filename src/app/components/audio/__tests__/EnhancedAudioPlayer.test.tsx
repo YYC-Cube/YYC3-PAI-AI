@@ -44,6 +44,7 @@ const h = vi.hoisted(() => {
     pause: vi.fn(),
     seek: vi.fn(),
     setMusicVolume: vi.fn(),
+    getMasterVolume: vi.fn(() => 35),
     setMasterVolume: vi.fn(),
   }
   const tokens = {
@@ -252,7 +253,8 @@ describe('EnhancedAudioPlayer（增强版音乐播放器）', () => {
     fireEvent.click(btnByLabel(container, '静音'))
     expect(h.engine.setMasterVolume).toHaveBeenCalledWith(0)
     fireEvent.click(btnByLabel(container, '取消静音'))
-    expect(h.engine.setMasterVolume).toHaveBeenLastCalledWith(35) // 恢复到最近音量
+    // 44号已修：恢复引擎真实主音量（stub getMasterVolume 固定 35；旧实现恢复音乐音量 state 恰好同值掩盖缺陷）
+    expect(h.engine.setMasterVolume).toHaveBeenLastCalledWith(35)
   })
 
   it('播放模式按钮循环四态：顺序→随机→列表循环→单曲循环；随机下一首按 Math.random 取曲', async () => {

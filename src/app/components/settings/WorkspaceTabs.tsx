@@ -81,6 +81,11 @@ export function ShortcutsTab({ tk, shortcuts, setShortcut }: SettingsTabProps & 
     const handler = (e: KeyboardEvent) => {
       e.preventDefault()
       e.stopPropagation()
+      // 49号修复：录制态按 Escape 语义是「取消录制」，原实现把 Esc 记为新绑定后才轮到 cancel
+      if (e.key === 'Escape') {
+        setRecordingKey(null)
+        return
+      }
       const def = eventToShortcut(e)
       if (!def) return
       setShortcut(recordingKey, def)

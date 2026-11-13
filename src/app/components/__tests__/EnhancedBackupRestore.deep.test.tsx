@@ -247,13 +247,15 @@ describe('EnhancedBackupRestorePanel 预览与恢复流', () => {
     expect(h.svc.executeRestore).not.toHaveBeenCalled()
   })
 
-  it('willDropExisting=false 且无 warnings：不渲染警告块；快速恢复按钮同样走预览', async () => {
+  it('willDropExisting=false 且无 warnings：不渲染警告块；45号已修——快速恢复直接执行不再弹预览确认', async () => {
     renderZh()
     h.svc.getRestorePreview.mockResolvedValue(mkPreview({ willDropExisting: false, warnings: [] }))
+    h.svc.executeRestore.mockResolvedValue({ success: true, restoredTables: ['users'], restoredRecords: 10, durationMs: 5, warnings: [] })
     fireEvent.click(btnsWithIcon('lucide-rotate-ccw')[0])
-    await waitFor(() => expect(body()).toContain('恢复确认'))
-    expect(body()).not.toContain('警告!')
-    expect(body()).not.toContain('版本差异')
+    // 45号：Quick Restore 按需构建预览后立即执行（不再弹确认框）
+    await waitFor(() => expect(h.svc.executeRestore).toHaveBeenCalledTimes(1))
+    expect(body()).not.toContain('恢复确认')
+    await waitFor(() => expect(lastToast()).toContain('恢复完成'))
   })
 
   it('预览失败（reject）→ 失败 toast 且不弹窗', async () => {

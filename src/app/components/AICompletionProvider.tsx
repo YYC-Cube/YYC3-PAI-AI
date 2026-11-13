@@ -13,6 +13,10 @@
 
 import * as Monaco from 'monaco-editor'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+/** 48号：默认触发字符集——组件默认参数每次渲染重建数组，致注册 effect 依赖抖动（反复 dispose/register） */
+const DEFAULT_TRIGGER_CHARS: string[] = ['.', '(', '[', '{', '=', ' ', '\n']
+
 import { useWebGPUInference } from '../hooks/useWebGPUInference'
 import { createLogger } from '../utils/logger'
 
@@ -108,7 +112,7 @@ export function useAICompletionProvider(
 ) {
   const {
     enabled = true,
-    triggerChars = ['.', '(', '[', '{', '=', ' ', '\n'],
+    triggerChars = DEFAULT_TRIGGER_CHARS,
     debounceDelay = 300,
     maxSuggestions = 5,
     showSource = true,

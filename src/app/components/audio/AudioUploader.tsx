@@ -91,6 +91,12 @@ export function AudioUploader({
         }
       }
 
+      // 41号修复：上传阶段异常原先只入局部数组从不 setErrors/onError——UI 无任何提示
+      if (newErrors.length > 0) {
+        setErrors((prev) => [...prev, ...newErrors])
+        onError?.(newErrors.map((e) => `${e.file}: ${e.error}`).join('; '))
+      }
+
       if (uploadedTracks.length > 0) {
         onUploadComplete?.(uploadedTracks)
         setSuccessFiles(uploadedTracks.map(t => t.name))

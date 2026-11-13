@@ -864,8 +864,9 @@ export class AudioEngine {
   // 音效系统
   // ============================================================================
 
-  registerSoundEffect(effect: Omit<SoundEffect, 'id'>): string {
-    const id = uuidv4()
+  // 43号修复：支持命名注册——playUIClick 等固定键查询此前永远 miss（池键为 uuid，五分支死代码）
+  registerSoundEffect(effect: Omit<SoundEffect, 'id'> & { id?: string }): string {
+    const id = effect.id ?? uuidv4()
 
     const howl = new Howl({
       src: [effect.url],
@@ -1144,6 +1145,11 @@ export class AudioEngine {
 
   getState(): AudioEngineState {
     return { ...this.state }
+  }
+
+  /** 44号：暴露当前主音量（静音恢复需要真值，此前组件只能猜 70/音乐音量） */
+  getMasterVolume(): number {
+    return this.config.masterVolume
   }
 
   private emitStateChange(): void {

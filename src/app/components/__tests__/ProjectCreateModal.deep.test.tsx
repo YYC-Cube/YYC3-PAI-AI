@@ -129,7 +129,7 @@ describe('ProjectCreateModal（项目创建模态框）', () => {
     // 名称原样入库（真 store projects；store 不做 trim）
     const st = projectStore
     expect(st.getActiveProject()).not.toBeNull()
-    expect(st.getActiveProject()!.name).toBe(' ticking 项目 ')
+    expect(st.getActiveProject()!.name).toBe('ticking 项目') // 51号已修：入库 trim
     // DESIGN JSON 预览
     expect(container.textContent).toContain('DESIGN JSON 已初始化')
     expect(container.textContent).toContain('"version"')
