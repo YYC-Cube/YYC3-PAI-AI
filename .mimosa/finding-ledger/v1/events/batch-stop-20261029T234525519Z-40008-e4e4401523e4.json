@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261029T234525519Z-40008-e4e4401523e4",
+  "runId": "20261029T234525519Z-40008-e4e4401523e4",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "candidate_limit_exceeded",
+        "stage": "candidate-select",
+        "target": "src/app/components/audio/AudioDiagnostic.tsx",
+        "detail": "12 changed reviewable file(s) were not scanned because the limit is 20",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/app/components/audio/AudioDiagnostic.tsx",
+        "detail": "candidate_limit_exceeded: 12 changed reviewable file(s) were not scanned because the limit is 20",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "90e6f16b4030caeb7485b1fd26802be04fb2f856",
+  "diffHash": "e5c4e70c6800901f3788bfb8ae34d8e8d634b4aff2e1f47f3479adb6eec52bb4",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6abbbe39829e1f52b542dae57d2166e3af4dabd6bade9097382904d78915ce36",
+  "reportRef": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261029T234525519Z-40008-e4e4401523e4.json",
+  "events": [
+    {
+      "eventId": "hook-dd052ed96ff64af0a0580e7e4f7bbadd",
+      "findingId": "mimosa-508837c37c14fc871fc043d2",
+      "type": "finding_observed",
+      "at": "2026-10-29T23:45:25.519Z",
+      "identity": {
+        "projectRelativeFile": "package.json",
+        "ruleId": "mimosa.supply.version-range",
+        "codeEvidenceHash": "0910b9236241b3496cf79b74fb74c2272bd3fc89ae70845b483c058d96784e77",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 114,
+      "endLine": 114,
+      "reasonCode": "observe",
+      "reportedToAgent": false,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "0910b9236241b3496cf79b74fb74c2272bd3fc89ae70845b483c058d96784e77"
+      },
+      "sequence": 0
+    },
+    {
+      "eventId": "hook-d6e8d6ec118cc82e397399f13421e351",
+      "findingId": "mimosa-3fe6b03bc0f376223914b13f",
+      "type": "finding_observed",
+      "at": "2026-10-29T23:45:25.519Z",
+      "identity": {
+        "projectRelativeFile": "package.json",
+        "ruleId": "mimosa.supply.version-range",
+        "codeEvidenceHash": "7c8682ed04942975c646447120fecbcaed8f71b5d346fe339b65ff773a321b33",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 115,
+      "endLine": 115,
+      "reasonCode": "observe",
+      "reportedToAgent": false,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "7c8682ed04942975c646447120fecbcaed8f71b5d346fe339b65ff773a321b33"
+      },
+      "sequence": 1
+    }
+  ],
+  "observedFindingIds": [
+    "mimosa-ce4894a82b1d60cc073f1f22",
+    "mimosa-3fb09d1a74b7b3ffdb157552",
+    "mimosa-1c9ed1c03269c0f07c35439d",
+    "mimosa-f5c1b5facd02a852b8a1b9a7"
+  ],
+  "verifiedFiles": [
+    {
+      "file": "src/app/components/ide/IDELayoutContext.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/store/crdt-collab-store.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/PerformancePanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/ModelSettings.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/StatDetailPanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/AIAssistPanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "e2e/playwright.config.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "e2e/tests/visual-regression.spec.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/test/setup.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/App.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/utils/audio-engine.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/store/self-media-store.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/lib/ui-utils.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/hooks/useDebounce.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/UnifiedDataPanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/ide/AIResponseFormatter.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-10-29T23:45:25.731Z"
+}

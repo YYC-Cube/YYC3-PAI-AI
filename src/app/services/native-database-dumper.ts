@@ -318,7 +318,8 @@ class NativeDatabaseDumper {
         throw new Error(`pg_dump failed: ${result.stderr}`)
       }
 
-      const statResult = await this.executeCommand(`stat -f%z ${shellQuote(outputPath)}`, [])
+      // 58号：wc -c 为 POSIX（stat -f%z 为 BSD 专有，Linux 桌面端失败）
+      const statResult = await this.executeCommand(`wc -c < ${shellQuote(outputPath)}`, [])
       const sizeBytes = parseInt(statResult.stdout.trim(), 10) || 0
 
       const checksumResult = await this.executeCommand(`shasum -a 256 ${shellQuote(outputPath)}`, [])
@@ -387,7 +388,8 @@ class NativeDatabaseDumper {
         throw new Error(`mysqldump failed: ${result.stderr}`)
       }
 
-      const statResult = await this.executeCommand(`stat -f%z ${shellQuote(outputPath)}`, [])
+      // 58号：wc -c 为 POSIX（stat -f%z 为 BSD 专有，Linux 桌面端失败）
+      const statResult = await this.executeCommand(`wc -c < ${shellQuote(outputPath)}`, [])
       const sizeBytes = parseInt(statResult.stdout.trim(), 10) || 0
 
       const checksumResult = await this.executeCommand(`shasum -a 256 ${shellQuote(outputPath)}`, [])
@@ -526,7 +528,8 @@ class NativeDatabaseDumper {
       timestamp: Date.now(),
     })
 
-    const command = `cp "${options.backupPath}" "${options.database}"`
+    // 59号：与其余参数转义纪律一致（路径含单引号/特殊字符时防注入）
+    const command = `cp ${shellQuote(options.backupPath)} ${shellQuote(options.database)}`
     const result = await this.executeCommand(command, [])
 
     return {
@@ -564,7 +567,8 @@ class NativeDatabaseDumper {
       args.push('-Ft')
     }
 
-    if (options.compress && options.format !== 'sql') {
+    // 60号：format 未指定即纯文本 SQL——pg_dump 对纯文本拒绝压缩组合（历史缺陷：缺省时仍拼 -Z9）
+    if (options.compress && options.format !== undefined && options.format !== 'sql') {
       args.push('-Z9')
     }
 

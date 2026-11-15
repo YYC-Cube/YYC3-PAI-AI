@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261031T030307609Z-78488-3df17e570405",
+  "runId": "20261031T030307609Z-78488-3df17e570405",
+  "runStatus": "completed",
+  "coverage": {
+    "status": "complete",
+    "reasons": []
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "6f19c657edfee6f8222e459e7a1082d9189d2085",
+  "diffHash": "b579f4d3123c2e7b92eb3f9cbabe831882e87e2877d3f9ed8ae7e1aaed0dc274",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6abbbe39829e1f52b542dae57d2166e3af4dabd6bade9097382904d78915ce36",
+  "reportRef": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261031T030307609Z-78488-3df17e570405.json",
+  "events": [],
+  "observedFindingIds": [],
+  "verifiedFiles": [
+    {
+      "file": "src/test/helpers/memory-idb.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/services/__tests__/trace-store.test.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/services/__tests__/code-indexer.test.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/services/code-indexer.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/services/__tests__/auth-client.test.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "vitest.config.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-10-31T03:03:07.844Z"
+}

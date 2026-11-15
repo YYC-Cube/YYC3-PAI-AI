@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-11-15T21:48:46.352Z",
+  "sessionId": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "event": "PostToolUse",
+  "toolName": "Write",
+  "file": "src/app/components/__tests__/IDEStatusBar.test.tsx",
+  "outcome": "clear",
+  "coverage": "complete",
+  "findingCount": 0,
+  "durationMs": 6,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}

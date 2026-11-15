@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261031T001036690Z-40570-afe282bbeaac",
+  "runId": "20261031T001036690Z-40570-afe282bbeaac",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "src/components/Chat/__tests__/zz-debug.test.tsx",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/components/Chat/__tests__/zz-debug.test.tsx",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "94429af25020e2a05f16bc0ff09438dc6f86c09b",
+  "diffHash": "25791e27c744ab120f126300d913c5a684b82d40eb24963f2de951b5a4e0614e",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6abbbe39829e1f52b542dae57d2166e3af4dabd6bade9097382904d78915ce36",
+  "reportRef": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261031T001036690Z-40570-afe282bbeaac.json",
+  "events": [],
+  "observedFindingIds": [],
+  "verifiedFiles": [
+    {
+      "file": "src/app/hooks/__tests__/hooks-small.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/hooks/__tests__/useKeyboardShortcuts.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/hooks/__tests__/useAI.test.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/components/Chat/__tests__/ChatMessageList.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/components/Chat/__tests__/ChatInputBox.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/components/Chat/ChatInputBox.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "vitest.config.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-10-31T00:10:36.933Z"
+}

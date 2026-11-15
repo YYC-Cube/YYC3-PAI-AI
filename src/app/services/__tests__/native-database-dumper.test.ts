@@ -86,10 +86,10 @@ const PG_RESTORE_OPTS: NativeRestoreOptions = {
 
 // 常用命令匹配器（时间戳段动态，用正则）
 const PG_DUMP_CMD_RE = /^pg_dump -U 'postgres' 'testdb' -f '\/tmp\/yycai-backups\/testdb_[^']+\.sql'$/
-const PG_STAT_CMD_RE = /^stat -f%z '\/tmp\/yycai-backups\/testdb_[^']+\.sql'$/
+const PG_STAT_CMD_RE = /^wc -c < '\/tmp\/yycai-backups\/testdb_[^']+\.sql'$/
 const PG_SHASUM_CMD_RE = /^shasum -a 256 '\/tmp\/yycai-backups\/testdb_[^']+\.sql'$/
 const MYSQL_DUMP_CMD_RE = /^mysqldump -u'root' --routines --triggers --events 'shop' > '\/tmp\/yycai-backups\/shop_[^']+\.sql' 2>&1$/
-const MYSQL_STAT_CMD_RE = /^stat -f%z '\/tmp\/yycai-backups\/shop_[^']+\.sql'$/
+const MYSQL_STAT_CMD_RE = /^wc -c < '\/tmp\/yycai-backups\/shop_[^']+\.sql'$/
 const MYSQL_SHASUM_CMD_RE = /^shasum -a 256 '\/tmp\/yycai-backups\/shop_[^']+\.sql'$/
 
 beforeEach(() => {
@@ -388,14 +388,15 @@ describe('NativeDatabaseDumper - restoreDatabase', () => {
       dbType: 'sqlite', host: '', port: 0, database: '/data/app.db', username: '', backupPath: '/tmp/bk.db',
     }
 
-    shellRules.push([/^cp "/, { code: 0, stdout: '', stderr: '' }])
+    shellRules.push([/^cp '/, { code: 0, stdout: '', stderr: '' }])
     const ok = await dumper.restoreDatabase(opts)
     expect(ok.success).toBe(true)
     expect(ok.tablesRestored).toBe(-1)
     expect(ok.errors).toEqual([])
-    expect(shellCalls).toEqual([`cp "/tmp/bk.db" "/data/app.db"`]) // 注意：cp 路径未走 shellQuote
+    // 59号已修：cp 路径走 shellQuote（旧实现双引号直拼，含特殊字符路径会截断）
+    expect(shellCalls).toEqual([`cp '/tmp/bk.db' '/data/app.db'`])
 
-    shellRules.push([/^cp "/, { code: 1, stdout: '', stderr: 'No such file or directory' }])
+    shellRules.push([/^cp '/, { code: 1, stdout: '', stderr: 'No such file or directory' }])
     const fail = await dumper.restoreDatabase(opts)
     expect(fail.success).toBe(false)
     expect(fail.tablesRestored).toBe(0)
@@ -407,9 +408,10 @@ describe('NativeDatabaseDumper - generateDumpCommand 细节', () => {
   it('compress 组合/格式映射/单引号转义；MySQL 指定表先库后表（bug 已修）', () => {
     const dumper = makeBrowserDumper() // 纯命令生成不依赖原生环境
 
-    // 仅显式 format: 'sql' 时 compress 被排除；format 缺省时 -Z9 仍会拼接（固化现行为，见报告）
+    // 仅显式 format: 'sql' 时 compress 被排除；60号已修——format 缺省（纯文本 SQL）同样不再拼 -Z9
     expect(dumper.generateDumpCommand({ ...PG_OPTS, compress: true, format: 'sql' })).not.toContain('-Z9')
-    expect(dumper.generateDumpCommand({ ...PG_OPTS, compress: true })).toContain('-Z9')
+    expect(dumper.generateDumpCommand({ ...PG_OPTS, compress: true })).not.toContain('-Z9') // 缺省纯文本
+    expect(dumper.generateDumpCommand({ ...PG_OPTS, compress: true, format: 'custom' })).toContain('-Z9')
     expect(dumper.generateDumpCommand({ ...PG_OPTS, format: 'directory' })).toContain('-Fd')
     expect(dumper.generateDumpCommand({ ...PG_OPTS, format: 'tar' })).toContain('-Ft')
 

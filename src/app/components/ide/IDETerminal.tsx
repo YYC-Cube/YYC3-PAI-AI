@@ -86,11 +86,12 @@ export function IDETerminal({
     // ── 真实工作区命令（LightningFS + isomorphic-git，与 Git 面板/编辑器同源） ──
     if (cmd === "git") {
       void (async () => {
-        if (!(await gitEngine.isRepo())) {
-          out("git: 工作区未初始化（在 Git 面板点击「初始化仓库」）");
-          return;
-        }
         try {
+          // 55号修复：isRepo 在 try 外——FS 故障时 async IIFE 整体 reject 无兜底（unhandled rejection）
+          if (!(await gitEngine.isRepo())) {
+            out("git: 工作区未初始化（在 Git 面板点击「初始化仓库」）");
+            return;
+          }
           if (arg1 === "status") {
             const cur = (await gitEngine.branches()).find(b => b.current)?.name ?? "main";
             out(`On branch ${cur}`);

@@ -813,7 +813,8 @@ export class BackendManager {
 
   /** 获取完整配置 */
   getConfig(): BackendManagerConfig {
-    return { ...this.config }
+    // 57号修复：浅拷贝泄漏 backends 引用——外部改 getConfig().backends 直改内部状态
+    return { ...this.config, backends: { ...this.config.backends } }
   }
 
   /** 更新后端配置 */
@@ -930,6 +931,8 @@ export class BackendManager {
               if (connected) {
                 this.activeInstance = backend
               }
+            }).catch(err => {
+              logger.error('[BackendManager] Async reconnect failed:', err)
             })
           }
         }

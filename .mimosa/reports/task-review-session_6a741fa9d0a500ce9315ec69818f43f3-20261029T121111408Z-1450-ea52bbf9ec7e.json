@@ -1,0 +1,890 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261029T121111408Z-1450-ea52bbf9ec7e",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "supply-chain-check",
+      "target": ".",
+      "reason": "spawnSync /opt/homebrew/Cellar/node@22/22.22.3/bin/node ETIMEDOUT"
+    },
+    {
+      "stage": "agent-check",
+      "target": ".",
+      "reason": "stop_budget_exhausted: focused agent configuration check was not run before the gate budget"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 374,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 13
+    },
+    "change_tracking": {
+      "touched_observed": 7,
+      "touched_retained": 7,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 12,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 13,
+      "selected_files": 13,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 10,
+      "scanned_files": 10,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 2,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "stop_budget_exhausted": 1,
+      "project_check_failed": 2
+    },
+    "reasons": [
+      {
+        "code": "stop_budget_exhausted",
+        "stage": "agent-check",
+        "target": ".",
+        "detail": "focused agent configuration check was not run before the gate budget",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "supply-chain-check",
+        "target": ".",
+        "detail": "spawnSync /opt/homebrew/Cellar/node@22/22.22.3/bin/node ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "agent-check",
+        "target": ".",
+        "detail": "stop_budget_exhausted: focused agent configuration check was not run before the gate budget",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-10-29T12:11:11.408Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "7dd9e7d582392cbba0227c407c03763a5206f6b7",
+  "rules_version": "unavailable",
+  "diff_hash": "a9ea9d838008f72956e24fc3c93f67ff40a4e4fb35f0b03d4c4895861b4efcc8",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 12,
+    "changed_files": [
+      {
+        "file": ".github/workflows/ci.yml",
+        "ranges": [
+          {
+            "start": 118,
+            "end": 121
+          }
+        ],
+        "before_hash": "a1bcaf370faf2988da4c0321981ff0a8dda7489f7b85010b4caa2a023b5e04df",
+        "after_hash": "8150c137b03f9cc893913ba4d7eceddabf769c1eb6f413fcce924a20bc97e133"
+      },
+      {
+        "file": "docs/YYC3-团队通用-标规文档/YYC3-团队文档-引擎模版.py",
+        "ranges": [
+          {
+            "start": 130,
+            "end": 138
+          },
+          {
+            "start": 140,
+            "end": 140
+          },
+          {
+            "start": 351,
+            "end": 353
+          },
+          {
+            "start": 403,
+            "end": 403
+          },
+          {
+            "start": 415,
+            "end": 415
+          }
+        ],
+        "before_hash": "07680b61ed10c356e8d35d2b46d806cf6766195327185169803a30cd3f838198",
+        "after_hash": "a3673dd1e1f2af423bdab8c459498a999a305155389c2599c1125e4147d541ec"
+      },
+      {
+        "file": "pnpm-lock.yaml",
+        "ranges": [
+          {
+            "start": 152,
+            "end": 152
+          },
+          {
+            "start": 155,
+            "end": 155
+          },
+          {
+            "start": 158,
+            "end": 158
+          },
+          {
+            "start": 161,
+            "end": 161
+          },
+          {
+            "start": 173,
+            "end": 173
+          },
+          {
+            "start": 209,
+            "end": 209
+          },
+          {
+            "start": 233,
+            "end": 233
+          },
+          {
+            "start": 236,
+            "end": 236
+          },
+          {
+            "start": 251,
+            "end": 251
+          },
+          {
+            "start": 269,
+            "end": 269
+          },
+          {
+            "start": 312,
+            "end": 312
+          },
+          {
+            "start": 315,
+            "end": 315
+          },
+          {
+            "start": 336,
+            "end": 336
+          },
+          {
+            "start": 3116,
+            "end": 3116
+          },
+          {
+            "start": 4812,
+            "end": 4812
+          },
+          {
+            "start": 4817,
+            "end": 4817
+          },
+          {
+            "start": 4821,
+            "end": 4821
+          },
+          {
+            "start": 4825,
+            "end": 4825
+          },
+          {
+            "start": 4850,
+            "end": 4850
+          },
+          {
+            "start": 4852,
+            "end": 4852
+          },
+          {
+            "start": 4857,
+            "end": 4857
+          },
+          {
+            "start": 4859,
+            "end": 4860
+          },
+          {
+            "start": 4862,
+            "end": 4862
+          },
+          {
+            "start": 4883,
+            "end": 4883
+          },
+          {
+            "start": 4885,
+            "end": 4885
+          },
+          {
+            "start": 4888,
+            "end": 4888
+          },
+          {
+            "start": 4890,
+            "end": 4890
+          },
+          {
+            "start": 4901,
+            "end": 4901
+          },
+          {
+            "start": 4909,
+            "end": 4909
+          },
+          {
+            "start": 5043,
+            "end": 5043
+          },
+          {
+            "start": 5045,
+            "end": 5045
+          },
+          {
+            "start": 5050,
+            "end": 5050
+          },
+          {
+            "start": 5053,
+            "end": 5053
+          },
+          {
+            "start": 5066,
+            "end": 5066
+          },
+          {
+            "start": 5069,
+            "end": 5069
+          },
+          {
+            "start": 6594,
+            "end": 6594
+          },
+          {
+            "start": 6597,
+            "end": 6597
+          },
+          {
+            "start": 6599,
+            "end": 6600
+          },
+          {
+            "start": 6602,
+            "end": 6602
+          },
+          {
+            "start": 6610,
+            "end": 6610
+          },
+          {
+            "start": 6614,
+            "end": 6614
+          },
+          {
+            "start": 6616,
+            "end": 6617
+          },
+          {
+            "start": 6622,
+            "end": 6622
+          },
+          {
+            "start": 6626,
+            "end": 6626
+          },
+          {
+            "start": 6640,
+            "end": 6640
+          },
+          {
+            "start": 6643,
+            "end": 6646
+          },
+          {
+            "start": 6654,
+            "end": 6654
+          },
+          {
+            "start": 6656,
+            "end": 6656
+          },
+          {
+            "start": 6660,
+            "end": 6660
+          },
+          {
+            "start": 6669,
+            "end": 6669
+          },
+          {
+            "start": 6671,
+            "end": 6671
+          },
+          {
+            "start": 6674,
+            "end": 6675
+          },
+          {
+            "start": 6692,
+            "end": 6692
+          },
+          {
+            "start": 6694,
+            "end": 6696
+          },
+          {
+            "start": 6704,
+            "end": 6704
+          },
+          {
+            "start": 6716,
+            "end": 6716
+          },
+          {
+            "start": 7167,
+            "end": 7167
+          },
+          {
+            "start": 7170,
+            "end": 7171
+          },
+          {
+            "start": 7173,
+            "end": 7173
+          },
+          {
+            "start": 7176,
+            "end": 7177
+          },
+          {
+            "start": 7179,
+            "end": 7179
+          },
+          {
+            "start": 7182,
+            "end": 7183
+          },
+          {
+            "start": 7324,
+            "end": 7324
+          },
+          {
+            "start": 7326,
+            "end": 7326
+          },
+          {
+            "start": 7328,
+            "end": 7328
+          },
+          {
+            "start": 7330,
+            "end": 7330
+          },
+          {
+            "start": 7332,
+            "end": 7332
+          },
+          {
+            "start": 7334,
+            "end": 7334
+          },
+          {
+            "start": 7347,
+            "end": 7347
+          },
+          {
+            "start": 7349,
+            "end": 7349
+          },
+          {
+            "start": 7351,
+            "end": 7351
+          },
+          {
+            "start": 7354,
+            "end": 7354
+          },
+          {
+            "start": 7364,
+            "end": 7364
+          },
+          {
+            "start": 7418,
+            "end": 7418
+          },
+          {
+            "start": 7421,
+            "end": 7421
+          },
+          {
+            "start": 7593,
+            "end": 7593
+          },
+          {
+            "start": 7602,
+            "end": 7604
+          },
+          {
+            "start": 7650,
+            "end": 7650
+          },
+          {
+            "start": 7653,
+            "end": 7653
+          },
+          {
+            "start": 7657,
+            "end": 7657
+          },
+          {
+            "start": 7660,
+            "end": 7660
+          },
+          {
+            "start": 7664,
+            "end": 7664
+          },
+          {
+            "start": 7667,
+            "end": 7667
+          },
+          {
+            "start": 7768,
+            "end": 7768
+          },
+          {
+            "start": 7778,
+            "end": 7779
+          },
+          {
+            "start": 7952,
+            "end": 7952
+          },
+          {
+            "start": 7959,
+            "end": 7959
+          },
+          {
+            "start": 7977,
+            "end": 7977
+          },
+          {
+            "start": 7981,
+            "end": 7981
+          },
+          {
+            "start": 7987,
+            "end": 7987
+          },
+          {
+            "start": 7990,
+            "end": 7990
+          },
+          {
+            "start": 7995,
+            "end": 7995
+          },
+          {
+            "start": 8000,
+            "end": 8000
+          },
+          {
+            "start": 8005,
+            "end": 8005
+          },
+          {
+            "start": 8009,
+            "end": 8009
+          },
+          {
+            "start": 8014,
+            "end": 8014
+          },
+          {
+            "start": 8016,
+            "end": 8016
+          },
+          {
+            "start": 8018,
+            "end": 8021
+          },
+          {
+            "start": 8026,
+            "end": 8026
+          },
+          {
+            "start": 8032,
+            "end": 8032
+          },
+          {
+            "start": 8037,
+            "end": 8037
+          },
+          {
+            "start": 8045,
+            "end": 8045
+          },
+          {
+            "start": 8054,
+            "end": 8054
+          },
+          {
+            "start": 8060,
+            "end": 8060
+          },
+          {
+            "start": 8100,
+            "end": 8100
+          },
+          {
+            "start": 8104,
+            "end": 8104
+          },
+          {
+            "start": 8303,
+            "end": 8303
+          },
+          {
+            "start": 8306,
+            "end": 8306
+          },
+          {
+            "start": 8635,
+            "end": 8635
+          },
+          {
+            "start": 8637,
+            "end": 8639
+          },
+          {
+            "start": 8695,
+            "end": 8695
+          },
+          {
+            "start": 8701,
+            "end": 8701
+          },
+          {
+            "start": 8705,
+            "end": 8705
+          },
+          {
+            "start": 8852,
+            "end": 8852
+          },
+          {
+            "start": 8855,
+            "end": 8855
+          },
+          {
+            "start": 8857,
+            "end": 8857
+          },
+          {
+            "start": 8863,
+            "end": 8863
+          },
+          {
+            "start": 8866,
+            "end": 8866
+          },
+          {
+            "start": 8870,
+            "end": 8870
+          },
+          {
+            "start": 8873,
+            "end": 8873
+          },
+          {
+            "start": 9043,
+            "end": 9043
+          },
+          {
+            "start": 9046,
+            "end": 9046
+          },
+          {
+            "start": 9184,
+            "end": 9184
+          },
+          {
+            "start": 9186,
+            "end": 9190
+          },
+          {
+            "start": 9344,
+            "end": 9344
+          },
+          {
+            "start": 9368,
+            "end": 9368
+          },
+          {
+            "start": 9442,
+            "end": 9442
+          },
+          {
+            "start": 9445,
+            "end": 9445
+          }
+        ],
+        "before_hash": "84a157d0abea84ef6675d568893e8af6ba6ae3fdbea310a472310bb9ebbd726f",
+        "after_hash": "3569b5187e39885355cadb4752a45dcc94fc0f900642d718cded762bbdb14b17"
+      },
+      {
+        "file": "scripts/fix_md_headers.py",
+        "ranges": [
+          {
+            "start": 64,
+            "end": 71
+          },
+          {
+            "start": 75,
+            "end": 75
+          },
+          {
+            "start": 80,
+            "end": 80
+          },
+          {
+            "start": 83,
+            "end": 83
+          },
+          {
+            "start": 90,
+            "end": 90
+          },
+          {
+            "start": 92,
+            "end": 92
+          },
+          {
+            "start": 102,
+            "end": 103
+          },
+          {
+            "start": 162,
+            "end": 167
+          }
+        ],
+        "before_hash": "a401bebcaab92dab3d0202bdf25d7c04d8ea8acfd312465b7e3924ff7a5953c9",
+        "after_hash": "0d1d71a28f291ddd989aef37d77532811e743fbaf8e9de41d1fd8ba0d66afb3c"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "ranges": [
+          {
+            "start": 109,
+            "end": 117
+          }
+        ],
+        "before_hash": "ebdd95ec66ae29ca94ddfce6e279cc41802fa96fc7f69dee7431039b5a617f03",
+        "after_hash": "05a6926bfede9a663e7870edeba0cd12a2e829fc50a6f7a7d325df749cc0a2f2"
+      },
+      {
+        "file": "src/app/components/audio/EnhancedAudioPlayerV3.tsx",
+        "ranges": [
+          {
+            "start": 82,
+            "end": 82
+          },
+          {
+            "start": 604,
+            "end": 604
+          },
+          {
+            "start": 1141,
+            "end": 1145
+          },
+          {
+            "start": 1794,
+            "end": 1805
+          }
+        ],
+        "before_hash": "619a1f7303c49933ffbc85ce6bbe40b89285a6fff03fe8b2f8642c51f9db819d",
+        "after_hash": "b6f1604caab465c1ca064f5d02f780fda8b9bfda37716787a529cf07b076c22f"
+      },
+      {
+        "file": "src/app/components/audio/MusicFeaturePanels.tsx",
+        "ranges": [
+          {
+            "start": 1032,
+            "end": 1095
+          }
+        ],
+        "before_hash": "cbf8271820249de05e0eab8b3c7041eca9b6d7d6c84429ee03a68202d6ce2d02",
+        "after_hash": "cda24acf811e1ff895cff0c037569f18c91cce7255602ad7e156fb2199d78031"
+      },
+      {
+        "file": "src/app/hooks/usePerformanceMonitor.tsx",
+        "ranges": [
+          {
+            "start": 260,
+            "end": 261
+          }
+        ],
+        "before_hash": "29396fee2e642f1c089e14e6b0bd5fbeb2fb6d98ef71f566eaae89ab03c26cb0",
+        "after_hash": "bfef2ca909c8c24c10e2246c2f70f2881b8c26a3b803b95a2723e0632fe37441"
+      },
+      {
+        "file": "src/app/store/__tests__/model-store.test.tsx",
+        "ranges": [
+          {
+            "start": 47,
+            "end": 47
+          }
+        ],
+        "before_hash": "a1ce3befcd73f760508efb46ac19a18afece8590a60c6e18a05a4cdfc396bfd2",
+        "after_hash": "e256a37749638466c40b737fbda622532767dd0892065b3b7553acdf844b0412"
+      },
+      {
+        "file": "src/app/utils/__tests__/sanitize.test.ts",
+        "ranges": [
+          {
+            "start": 18,
+            "end": 23
+          },
+          {
+            "start": 83,
+            "end": 84
+          },
+          {
+            "start": 97,
+            "end": 97
+          },
+          {
+            "start": 108,
+            "end": 108
+          },
+          {
+            "start": 112,
+            "end": 112
+          },
+          {
+            "start": 118,
+            "end": 119
+          },
+          {
+            "start": 124,
+            "end": 124
+          },
+          {
+            "start": 253,
+            "end": 253
+          }
+        ],
+        "before_hash": "57289488a914fcdd74330f4cf35157c56efde094ea99db5f8c9c9c21f7a6207f",
+        "after_hash": "8d76ede938fcfc4920587f9a04a7b5334dbef016af2bdcd58aa93458f1eb1a18"
+      },
+      {
+        "file": "src/app/utils/audio-engine.ts",
+        "ranges": [
+          {
+            "start": 95,
+            "end": 96
+          },
+          {
+            "start": 99,
+            "end": 131
+          },
+          {
+            "start": 229,
+            "end": 265
+          },
+          {
+            "start": 287,
+            "end": 287
+          }
+        ],
+        "before_hash": "7b77cf5d9511e11fab8854209cdde3f255e6a8f73084b679cecb8e3830de64ce",
+        "after_hash": "22f9e0f78914058426ef351874d3dbd42ed8043fbc97c71be5b0aa43298b114a"
+      },
+      {
+        "file": "src/main.tsx",
+        "ranges": [
+          {
+            "start": 19,
+            "end": 21
+          },
+          {
+            "start": 34,
+            "end": 62
+          }
+        ],
+        "before_hash": "94fe92f6a6147203b8d72b6b680a85292335e2a503b0f98050c2e8104bbbf4ac",
+        "after_hash": "0c907cf3b9f64431837b1f826d3b1177d575c51ef546dc583188fda5cc490161"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-10-29T12:11:09.195Z",
+    "completed_at": "2026-10-29T12:11:11.408Z",
+    "duration_ms": 2213,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 2213,
+    "peakMemoryBytes": 213811200,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 10,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261029T121111408Z-1450-ea52bbf9ec7e.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261029T121111408Z-1450-ea52bbf9ec7e.json"
+  }
+}

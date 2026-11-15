@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261029T190755833Z-2167-a47ec244e911",
+  "runId": "20261029T190755833Z-2167-a47ec244e911",
+  "runStatus": "completed",
+  "coverage": {
+    "status": "complete",
+    "reasons": []
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "a863109e9a26030aa52fa3a0afc2ad8cb0ebe4a7",
+  "diffHash": "ba9b899a8006680645969da255a72549779c544075b0660528ef53269a2b7eb9",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6abbbe39829e1f52b542dae57d2166e3af4dabd6bade9097382904d78915ce36",
+  "reportRef": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261029T190755833Z-2167-a47ec244e911.json",
+  "events": [
+    {
+      "eventId": "hook-8f8c446b0fbbfb212910c13d4ad5ee57",
+      "findingId": "mimosa-8801b778ce166956d3acebdb",
+      "type": "finding_observed",
+      "at": "2026-10-29T19:07:55.833Z",
+      "identity": {
+        "projectRelativeFile": "package.json",
+        "ruleId": "mimosa.supply.version-range",
+        "codeEvidenceHash": "a24c1d0fde24d004803a9a3c8c26e6cfcf9febfd5323ab73194f64ac784928c1",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 110,
+      "endLine": 110,
+      "reasonCode": "observe",
+      "reportedToAgent": false,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "a24c1d0fde24d004803a9a3c8c26e6cfcf9febfd5323ab73194f64ac784928c1"
+      },
+      "sequence": 0
+    }
+  ],
+  "observedFindingIds": [],
+  "verifiedFiles": [
+    {
+      "file": "src/app/components/ModelSettings.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/ContentPreview.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/services/native-database-dumper.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/services/__tests__/native-database-dumper.integration.test.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-10-29T19:07:56.087Z"
+}

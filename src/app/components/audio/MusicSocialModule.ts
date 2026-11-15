@@ -212,7 +212,11 @@ class GiftTipManager {
 
   getBalance(): number {
     try {
-      return Number(localStorage.getItem(this.balanceKey)) || 1000
+      // 56号修复：`Number(x) || 1000` 使 0 余额不可表示（读回 1000）——仅缺值时回退默认
+      const raw = localStorage.getItem(this.balanceKey)
+      if (raw === null) return 1000
+      const n = Number(raw)
+      return Number.isFinite(n) ? n : 1000
     } catch {
       return 1000
     }

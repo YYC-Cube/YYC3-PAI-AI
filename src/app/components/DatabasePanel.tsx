@@ -352,6 +352,17 @@ function TableExplorerPanel({ tk, isZh }: { tk: ThemeTokens; isZh: boolean }) {
     }
   }, [activeConnId, schemaList.length])
 
+  // 63号修复：public 默认在 expandedSchemas 中，但表清单只在「折叠→展开」动作里拉取——
+  // 首屏需先折叠再展开才能看到表。挂载时对默认展开的 schema 预取
+  useEffect(() => {
+    if (!activeConnId) return
+    for (const schema of expandedSchemas) {
+      void dbStoreActions.loadTables(activeConnId, schema)
+    }
+    // 仅首挂载预取一次（后续由 toggleSchema 按需拉取）
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- expandedSchemas 变化由 toggleSchema 自管
+  }, [activeConnId])
+
   const toggleSchema = useCallback(async (schema: string) => {
     const next = new Set(expandedSchemas)
     if (next.has(schema)) { next.delete(schema) } else {

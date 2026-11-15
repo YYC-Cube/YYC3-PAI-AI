@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261113T094655672Z-92761-971e6102e00f",
+  "runId": "20261113T094655672Z-92761-971e6102e00f",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "candidate_limit_exceeded",
+        "stage": "candidate-select",
+        "target": "src/app/components/audio/__tests__/EnhancedAudioPlayer.test.tsx",
+        "detail": "4 changed reviewable file(s) were not scanned because the limit is 20",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/app/components/audio/__tests__/EnhancedAudioPlayer.test.tsx",
+        "detail": "candidate_limit_exceeded: 4 changed reviewable file(s) were not scanned because the limit is 20",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "006e29bf95eebd94064231057369bae8750c9c20",
+  "diffHash": "a28b7a3b066fadc7ae47cda9b1083255266fd8aa9c1ddc1de8c1d2a6d43e94ac",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6abbbe39829e1f52b542dae57d2166e3af4dabd6bade9097382904d78915ce36",
+  "reportRef": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261113T094655672Z-92761-971e6102e00f.json",
+  "events": [],
+  "observedFindingIds": [
+    "mimosa-1c9ed1c03269c0f07c35439d",
+    "mimosa-d725963c1405a9c9b8caa408",
+    "mimosa-d2733a052e4e6de558cc990b",
+    "mimosa-3d86f536b6bf927e1c80df76",
+    "mimosa-d00d87ca3ace882ff7d70b0c",
+    "mimosa-49c60b96765873ff98c66e94",
+    "mimosa-5a82d855ab32184ecae2eac4",
+    "mimosa-9f12364caf9b2ddfcf81115e",
+    "mimosa-2594ff1fca547bd46a5f622b",
+    "mimosa-e6d89becfeae282ef812ca60",
+    "mimosa-bc11ffee204375366521dc39",
+    "mimosa-b5c02f738f1cfd40857f33f3",
+    "mimosa-013b22c05572566574b61778"
+  ],
+  "verifiedFiles": [
+    {
+      "file": "src/app/components/audio/__tests__/AudioPlaylist.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/utils/audio-engine.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/store/intelligent-workflow-store.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/store/panel-dnd-store.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/store/project-store.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/AICompletionProvider.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/AIWritingPanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/EnhancedBackupRestorePanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/FullscreenMode.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/LivePreview.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/settings/AIServiceTabs.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/settings/WorkspaceTabs.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/audio/AudioPlayerPopup.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/audio/AudioUploader.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/audio/EnhancedAudioPlayer.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/audio/MiniAudioPlayer.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/audio/__tests__/AudioPlayerPopup.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/audio/__tests__/AudioUploader.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-11-13T09:46:55.915Z"
+}

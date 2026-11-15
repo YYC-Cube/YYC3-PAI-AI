@@ -1,0 +1,6 @@
+# pnpm 配置 — 跳过已知问题的原生依赖 postinstall 脚本
+# onnxruntime-node 在 Linux CI runner 下载原生二进制失败（网络/平台问题）
+# 本地开发按需手动安装：pnpm rebuild onnxruntime-node
+never-built-dependencies[]=onnxruntime-node
+never-built-dependencies[]=sharp
+never-built-dependencies[]=puppeteer

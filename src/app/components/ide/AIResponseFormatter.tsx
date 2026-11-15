@@ -247,13 +247,18 @@ export function EnhancedMarkdown({
     })
   }, [])
 
+  let h1Counter = 0
   const components = useMemo(() => ({
     // react-markdown 组件映射的最小 props 形状（历史 any ×18 全部收敛）
 
     code({ inline, className: cls, children, ...props }: MDCompProps) {
       const lang = (cls || '').replace(/language-/, '')
       const childStr = typeof children === 'string' ? children : ''
-      const sectionId = `code-${Math.random().toString(36).slice(2, 9)}`
+      // 54号修复：随机 id 每次渲染重生成——copiedSections/expandedSections 写入的 id 与下次渲染
+      // 的新 id 永不相等（COPIED 态/章节展开不可达）。改用内容哈希稳定 id
+      let hash = 0
+      for (let i = 0; i < childStr.length; i++) hash = (hash * 31 + childStr.charCodeAt(i)) >>> 0
+      const sectionId = `code-${hash.toString(36)}`
 
       if (!inline && (lang || childStr.includes('\n'))) {
         return (
@@ -346,7 +351,9 @@ export function EnhancedMarkdown({
     },
 
     h1({ children, ...props }: MDCompProps) {
-      const sectionId = `h1-${Math.random().toString(36).slice(2, 9)}`
+      // 54号：渲染序号稳定 id（同文档内同序）
+      h1Counter = (h1Counter + 1) % 10000
+      const sectionId = `h1-${h1Counter}`
       const isExpanded = expandedSections.has(sectionId)
 
       return (

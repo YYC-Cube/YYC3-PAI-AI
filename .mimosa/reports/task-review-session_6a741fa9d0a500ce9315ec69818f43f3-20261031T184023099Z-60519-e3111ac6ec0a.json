@@ -1,0 +1,285 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261031T184023099Z-60519-e3111ac6ec0a",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "baseline-read",
+      "target": "src/app/services/__tests__/native-database-dumper.test.ts",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/services/__tests__/sync-backend-adapter.test.ts",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 445,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 7
+    },
+    "change_tracking": {
+      "touched_observed": 6,
+      "touched_retained": 6,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 9,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 9,
+      "selected_files": 9,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 8,
+      "scanned_files": 8,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "baseline_snapshot_unreadable": 2,
+      "project_check_failed": 2
+    },
+    "reasons": [
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/native-database-dumper.test.ts",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/sync-backend-adapter.test.ts",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/native-database-dumper.test.ts",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/sync-backend-adapter.test.ts",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-10-31T18:40:23.099Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "442705f156d9cd2c9fa6c4391304ac1fdb9eabaf",
+  "rules_version": "unavailable",
+  "diff_hash": "b33e6b14016c8ea8f002ccbbfe1f90b88be942666d54f1fd21afdf5e5ec05567",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 8,
+    "changed_files": [
+      {
+        "file": "src/__mocks__/tauri-plugin-shell.ts",
+        "ranges": [
+          {
+            "start": 12,
+            "end": 17
+          },
+          {
+            "start": 19,
+            "end": 23
+          }
+        ],
+        "before_hash": "0086c841f08fa8123294c6f56ebadf17c88c89c8e79c16db50757a7e4efafdd1",
+        "after_hash": "6210e728218e5535ab01064b430ef1dfade8109cf9febe57ff47bf79fb42f982"
+      },
+      {
+        "file": "src/app/i18n/context.tsx",
+        "ranges": [
+          {
+            "start": 35,
+            "end": 36
+          },
+          {
+            "start": 38,
+            "end": 50
+          },
+          {
+            "start": 53,
+            "end": 61
+          }
+        ],
+        "before_hash": "7fceed91ec11352cf4e0b78995e73f6ecefc403ef7d524d7506a5b9f00fe2cb6",
+        "after_hash": "c82ef172e1d7b023fb38894cf596b25256fd0fc86ed39f39b71c04e3f35e3b9f"
+      },
+      {
+        "file": "src/app/services/__tests__/native-database-dumper.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 424
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "3a872bcb835ab2a06a263c15ea723bd6bee67cab9ba447fd3bc89d6aa9eb83a8"
+      },
+      {
+        "file": "src/app/services/__tests__/sync-backend-adapter.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 512
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "21ca60401fa45028af55d3c0c4073e787c7ea7257db52bad19964b1b032d3e78"
+      },
+      {
+        "file": "src/app/services/auth-client.ts",
+        "ranges": [
+          {
+            "start": 178,
+            "end": 181
+          }
+        ],
+        "before_hash": "0d0995b9f80f7a70825461e4932b77bb75f4cb5f182270d51b88b361049af5fa",
+        "after_hash": "20c8f7779c29f6496e2a1151d8245931a651569be9009dfd744afc164e9abd5d"
+      },
+      {
+        "file": "src/app/services/native-database-dumper.ts",
+        "ranges": [
+          {
+            "start": 150,
+            "end": 150
+          },
+          {
+            "start": 152,
+            "end": 153
+          },
+          {
+            "start": 155,
+            "end": 155
+          },
+          {
+            "start": 253,
+            "end": 253
+          },
+          {
+            "start": 257,
+            "end": 264
+          },
+          {
+            "start": 385,
+            "end": 386
+          },
+          {
+            "start": 610,
+            "end": 611
+          }
+        ],
+        "before_hash": "870972a12caf33214dc3fa0f5a54c531c26e3a7d6a4dc1ac1ff928754c5bf6b8",
+        "after_hash": "27d8c51853a8cd28f510ac9df3d4bc30cd94933113b46b3e305356f487b46eec"
+      },
+      {
+        "file": "src/app/store/ai-metrics-store.ts",
+        "ranges": [
+          {
+            "start": 302,
+            "end": 303
+          }
+        ],
+        "before_hash": "d1f0746b0f2bbe64ac3a4fd69718b5aca43e5f214a3238052fd6afb2c4f8664d",
+        "after_hash": "d2e77e8e4d9143774d2ae68f97bd23ca337fe20f0c5e73fbbf797442d2abb9ba"
+      },
+      {
+        "file": "src/types/tauri-plugin-shell.d.ts",
+        "ranges": [
+          {
+            "start": 19,
+            "end": 24
+          },
+          {
+            "start": 26,
+            "end": 26
+          }
+        ],
+        "before_hash": "cf55a995db0788c8ec6fc76e793c57f7b11c206ac54489f1c77580c9df2f0b47",
+        "after_hash": "0e31282d302f727d21bf24ba1bf7bbde3824dac1e7edc90f8c3e05cb6572a47f"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-10-31T18:40:22.443Z",
+    "completed_at": "2026-10-31T18:40:23.099Z",
+    "duration_ms": 656,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 656,
+    "peakMemoryBytes": 195248128,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 8,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261031T184023099Z-60519-e3111ac6ec0a.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261031T184023099Z-60519-e3111ac6ec0a.json"
+  }
+}

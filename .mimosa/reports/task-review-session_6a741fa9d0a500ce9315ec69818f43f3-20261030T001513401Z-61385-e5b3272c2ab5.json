@@ -1,0 +1,210 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261030T001513401Z-61385-e5b3272c2ab5",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "candidate-select",
+      "target": "src/app/__tests__/gitmock-probe.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "baseline",
+      "target": ".",
+      "reason": "baseline_partial: baseline capture had enumeration or snapshot errors"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": false,
+      "captured_files": 371,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 3,
+      "compensated_target_count": 4
+    },
+    "change_tracking": {
+      "touched_observed": 4,
+      "touched_retained": 4,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 4,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 4,
+      "selected_files": 4,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 4,
+      "scanned_files": 4,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "changed_file_unreadable": 1,
+      "baseline_partial": 1,
+      "project_check_failed": 2
+    },
+    "reasons": [
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "src/app/__tests__/gitmock-probe.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline capture had enumeration or snapshot errors",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/app/__tests__/gitmock-probe.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline_partial: baseline capture had enumeration or snapshot errors",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-10-30T00:15:13.401Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "637285754e3d5a27f431e64ccb9cd6af35355b4d",
+  "rules_version": "unavailable",
+  "diff_hash": "21c0475e9e68e54d90f26379e4d77afd2a5b7055bd9af95930f640b4923ed551",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 4,
+    "changed_files": [
+      {
+        "file": "src/app/components/__tests__/GitPanel.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 101
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "4c9c216b805d909e0a2aba8463f178050e4beaeda235c9acf90cd55449f82d03"
+      },
+      {
+        "file": "src/app/components/CyberEditor.tsx",
+        "ranges": [
+          {
+            "start": 277,
+            "end": 279
+          }
+        ],
+        "before_hash": "fcbb80b91257f01fac7a13573b37e8b4900afc21236d5310d1c3be3c24caebca",
+        "after_hash": "fa84d6a35fe730a6eea3340666745f62e225b44fad630cac900d55e143df8cba"
+      },
+      {
+        "file": "src/app/services/monaco-preloader.ts",
+        "ranges": [
+          {
+            "start": 131,
+            "end": 131
+          },
+          {
+            "start": 138,
+            "end": 138
+          },
+          {
+            "start": 146,
+            "end": 146
+          }
+        ],
+        "before_hash": "7ff6232ef2f327360f932927e92c761e773f7a6fc9f2415d433bb2191a2ff438",
+        "after_hash": "c0c7d8c5bcd57c6544e690c480c2331d00849b387ea06a983e3b797f7e4cd577"
+      },
+      {
+        "file": "src/app/services/monaco-setup.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 36
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "12a2a9eed53b3f77b724067960c3059cb89ed23944063e97e146e8fa73a133eb"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-10-30T00:15:12.875Z",
+    "completed_at": "2026-10-30T00:15:13.401Z",
+    "duration_ms": 526,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 526,
+    "peakMemoryBytes": 187744256,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 4,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261030T001513401Z-61385-e5b3272c2ab5.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261030T001513401Z-61385-e5b3272c2ab5.json"
+  }
+}

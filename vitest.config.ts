@@ -81,7 +81,6 @@ export default defineConfig({
         // 留专项：AiMessageRender(346行)；index.ts 桶(引 ChatPage 重依赖)不参与分母
         'src/components/Chat/index.ts',
         'src/app/pages/**',
-        'src/app/App.tsx',
         'src/app/router.tsx',
         'src/test/**',
         'src/__mocks__/**',

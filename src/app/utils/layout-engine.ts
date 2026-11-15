@@ -428,6 +428,11 @@ export function transformContent(
   // 包装内容
   let result = `<div class="preview-content">${html}</div>`
 
+  // 61号：title 参数接线——原声明但从未消费（死参数）。有标题时渲染文档标题区
+  if (opts.title) {
+    result = `<div class="doc-title" style="padding: 12px 0 4px; font-weight: 700;">${opts.title}</div>` + result
+  }
+
   // 添加标签
   if (opts.addTags && opts.tags.length > 0) {
     const tags = opts.tags.map(tag =>

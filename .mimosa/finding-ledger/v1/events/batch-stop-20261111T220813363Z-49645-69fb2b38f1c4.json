@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261111T220813363Z-49645-69fb2b38f1c4",
+  "runId": "20261111T220813363Z-49645-69fb2b38f1c4",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "src/app/services/__tests__/zz-probe.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/app/services/__tests__/zz-probe.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "99180f4ee2ae4c581771b7f487975fa062f9b535",
+  "diffHash": "4f30cbc0acded3604f6ec6e74bc4fcba196288f900aafe4a902c3dd7401faed6",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6abbbe39829e1f52b542dae57d2166e3af4dabd6bade9097382904d78915ce36",
+  "reportRef": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261111T220813363Z-49645-69fb2b38f1c4.json",
+  "events": [],
+  "observedFindingIds": [
+    "mimosa-1c9ed1c03269c0f07c35439d",
+    "mimosa-ce4894a82b1d60cc073f1f22",
+    "mimosa-3fb09d1a74b7b3ffdb157552"
+  ],
+  "verifiedFiles": [
+    {
+      "file": "src/app/utils/audio-engine.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/utils/__tests__/audio-engine.test.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/store/crdt-collab-store.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/services/data-portability-manager.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/services/__tests__/data-portability-deep.test.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/CRDTCollabPanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/__tests__/CRDTCollabPanel.deep.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-11-11T22:08:13.605Z"
+}

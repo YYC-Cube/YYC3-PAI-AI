@@ -1,0 +1,772 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261112T061117816Z-43618-6ca2e2282471",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "candidate-select",
+      "target": "src/app/components/ide/__tests__/IDEOverlays.test.tsx",
+      "reason": "candidate_limit_exceeded: 36 changed reviewable file(s) were not scanned because the limit is 20"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/components/Chat/__tests__/AiMessageRender.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/store/__tests__/intelligent-workflow-store.deep.test.ts",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/store/__tests__/webgpu-inference-store.deep.test.ts",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/services/__tests__/file-system-watcher.deep.test.ts",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/services/__tests__/monaco-performance-benchmark.test.ts",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/services/__tests__/otel-adapter.deep.test.ts",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/settings/__tests__/AIServiceTabs.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/performance/__tests__/MonacoPerformanceMonitor.deep.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/ide/__tests__/AIMessageActions.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/ide/__tests__/AIMessageRenderer.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/ide/__tests__/AIResponseFormatter.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/ide/__tests__/FileTreeNode.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/ide/__tests__/IDEChatPanel.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/ide/__tests__/IDECodeEditorPanel.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/ide/__tests__/IDEFileExplorer.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    },
+    {
+      "stage": "baseline-read",
+      "target": "src/app/components/ide/__tests__/IDELayoutContext.test.tsx",
+      "reason": "baseline_snapshot_unreadable: file is missing from task baseline"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 474,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 3
+    },
+    "change_tracking": {
+      "touched_observed": 1,
+      "touched_retained": 1,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 56,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 56,
+      "selected_files": 20,
+      "limit": 20,
+      "truncated": true
+    },
+    "scanning": {
+      "required_files": 20,
+      "scanned_files": 20,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 1,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": true
+    },
+    "reason_counts": {
+      "candidate_limit_exceeded": 1,
+      "baseline_snapshot_unreadable": 17,
+      "project_check_failed": 18
+    },
+    "reasons": [
+      {
+        "code": "candidate_limit_exceeded",
+        "stage": "candidate-select",
+        "target": "src/app/components/ide/__tests__/IDEOverlays.test.tsx",
+        "detail": "36 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/components/Chat/__tests__/AiMessageRender.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/store/__tests__/intelligent-workflow-store.deep.test.ts",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/store/__tests__/webgpu-inference-store.deep.test.ts",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/file-system-watcher.deep.test.ts",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/monaco-performance-benchmark.test.ts",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/otel-adapter.deep.test.ts",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/settings/__tests__/AIServiceTabs.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/performance/__tests__/MonacoPerformanceMonitor.deep.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/AIMessageActions.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/AIMessageRenderer.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/AIResponseFormatter.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/FileTreeNode.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/IDEChatPanel.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/IDECodeEditorPanel.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/IDEFileExplorer.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_snapshot_unreadable",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/IDELayoutContext.test.tsx",
+        "detail": "file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/app/components/ide/__tests__/IDEOverlays.test.tsx",
+        "detail": "candidate_limit_exceeded: 36 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/components/Chat/__tests__/AiMessageRender.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/store/__tests__/intelligent-workflow-store.deep.test.ts",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/store/__tests__/webgpu-inference-store.deep.test.ts",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/file-system-watcher.deep.test.ts",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/monaco-performance-benchmark.test.ts",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/services/__tests__/otel-adapter.deep.test.ts",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/settings/__tests__/AIServiceTabs.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/performance/__tests__/MonacoPerformanceMonitor.deep.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/AIMessageActions.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/AIMessageRenderer.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/AIResponseFormatter.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/FileTreeNode.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/IDEChatPanel.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/IDECodeEditorPanel.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/IDEFileExplorer.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline-read",
+        "target": "src/app/components/ide/__tests__/IDELayoutContext.test.tsx",
+        "detail": "baseline_snapshot_unreadable: file is missing from task baseline",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-11-12T06:11:17.816Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "9cc503ccf95933a8c654855caa63195c8b04eba4",
+  "rules_version": "unavailable",
+  "diff_hash": "019512779d9fe9bf2f16a03a8f55d1208615dbb9189c4a4fc1663e331fd84c49",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 20,
+    "changed_files": [
+      {
+        "file": "src/app/__tests__/App.integration.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 163
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "5792055fa8e274dc25d1c7b339e9d353e22372bcfa9a3bb0db914b94e64c12f8"
+      },
+      {
+        "file": "src/app/components/ide/__tests__/AIMessageActions.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 106
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "12166645e4514956714ce9ab1294f0094eb16d09f85701b5021a0a0a45977f79"
+      },
+      {
+        "file": "src/app/components/ide/__tests__/AIMessageRenderer.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 143
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "4c1e6c587ea3c95ff2981176acba45d9e7cc886732126bf5b9786b3e55d9d820"
+      },
+      {
+        "file": "src/app/components/ide/__tests__/AIResponseFormatter.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 282
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "717a8e7f81c5b281462e36514933a589a6183359dfe3ee74e8b82c55f6e20084"
+      },
+      {
+        "file": "src/app/components/ide/__tests__/FileTreeNode.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 135
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "e2352e318e0db35adad32f3e635fabd7a1adabbf9eba6ab32ef4f006dbbd90e3"
+      },
+      {
+        "file": "src/app/components/ide/__tests__/IDEChatPanel.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 177
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "0f23068aa6058e8784d63f61a374cf5839816f5f1dd512e9825be5d259520dcb"
+      },
+      {
+        "file": "src/app/components/ide/__tests__/IDECodeEditorPanel.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 196
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "fd3276779df466d1c8fd5b848876fdf7c0acb1c3463e73c2cb2945920d92ca9c"
+      },
+      {
+        "file": "src/app/components/ide/__tests__/IDEFileExplorer.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 134
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "2d14c41aa46b22493b15a59257f85594c93a70aa36e6ccf7c44ff19b2c678547"
+      },
+      {
+        "file": "src/app/components/ide/__tests__/IDELayoutContext.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 75
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "821bd58a840f64bfe2b8aac28edd3e7a05ab373ff5f25e152ed253ff6964293c"
+      },
+      {
+        "file": "src/app/components/performance/__tests__/MonacoPerformanceMonitor.deep.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 182
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "f07c343d1e0bef149c2f7c189365f4b3881621de32e64f040b4e43725e5aaccd"
+      },
+      {
+        "file": "src/app/components/settings/__tests__/AIServiceTabs.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 321
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "93d389ff0c3a0ac242f7736b6e47e96ad95f2768524be7fe4c362174d25ee002"
+      },
+      {
+        "file": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 340
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "94239f255448e6e4da0a056d1b5fd5c23f1fd6fa1e016bc77a74957f2f15a5a1"
+      },
+      {
+        "file": "src/app/services/__tests__/file-system-watcher.deep.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 312
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "43e5633aad696ab791a989abdb57480c67bea678b697cc9b82605aed750f7357"
+      },
+      {
+        "file": "src/app/services/__tests__/monaco-performance-benchmark.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 276
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "2ac329e4d522ed6c008e15ae85280863b0d9f9db72c058d1cddcf617daec8db4"
+      },
+      {
+        "file": "src/app/services/__tests__/otel-adapter.deep.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 237
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "4cd23bbec77e3006cba118ab7b5abd19c4e69dcbabe1ef6558449de8d06383fe"
+      },
+      {
+        "file": "src/app/store/__tests__/intelligent-workflow-store.deep.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 565
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "e8485bd890593ce17461f05e387b5ffc2d5edf887ef22121814d1c97f7b53ddd"
+      },
+      {
+        "file": "src/app/store/__tests__/webgpu-inference-store.deep.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 408
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "9784ea31e853a8816c78e660670ad9dc611cac5a948e07996e20c00b2c4dd9d0"
+      },
+      {
+        "file": "src/app/store/intelligent-workflow-store.ts",
+        "ranges": [
+          {
+            "start": 451,
+            "end": 452
+          },
+          {
+            "start": 456,
+            "end": 459
+          },
+          {
+            "start": 463,
+            "end": 472
+          },
+          {
+            "start": 475,
+            "end": 475
+          },
+          {
+            "start": 577,
+            "end": 586
+          },
+          {
+            "start": 588,
+            "end": 610
+          },
+          {
+            "start": 612,
+            "end": 627
+          },
+          {
+            "start": 661,
+            "end": 663
+          },
+          {
+            "start": 904,
+            "end": 911
+          },
+          {
+            "start": 923,
+            "end": 933
+          }
+        ],
+        "before_hash": "8a74857aee7c59ad60b541983ce902a3ac69f96f06a2ea401bffc2854d25d042",
+        "after_hash": "ae3c8faff0e93f79ad3473b81ad892d013c3e307efe0cc272b748ca978e25847"
+      },
+      {
+        "file": "src/components/Chat/__tests__/AiMessageRender.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 224
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "023a9e9b1eae4652cb04d64188ac08d3c1329422ddd1d9fa4866b8f51364db24"
+      },
+      {
+        "file": "vitest.config.ts",
+        "ranges": [
+          {
+            "start": 69,
+            "end": 72
+          },
+          {
+            "start": 75,
+            "end": 75
+          },
+          {
+            "start": 95,
+            "end": 99
+          }
+        ],
+        "before_hash": "c3e6dc794ff7c91f0d6437e7310bc7d3c7da27c162389d6bf2b591ed36de4949",
+        "after_hash": "90f8c2763d4f0f8cc65f7f2e56fdfca7119b76f48f0d6610b99fb6b4521ecc3e"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-11-12T06:11:17.086Z",
+    "completed_at": "2026-11-12T06:11:17.816Z",
+    "duration_ms": 730,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 730,
+    "peakMemoryBytes": 204980224,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 20,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 1,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [
+    {
+      "finding_id": "mimosa-bc11ffee204375366521dc39",
+      "file": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+      "line": 27,
+      "severity": "high",
+      "category": "弱随机数",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-11-12T06:11:17.816Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "3f13f87746f0fd0283d8528abe4d87b44a4305772f4b5d97e31c9e6a342af260",
+        "runtime_oracle": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "mimosa-bc11ffee204375366521dc39",
+      "file": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+      "line": 27,
+      "end_line": 27,
+      "severity": "high",
+      "category": "弱随机数",
+      "kind": "semgrep",
+      "advisory": true,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+          "line": 27,
+          "evidence_hash": "3f13f87746f0fd0283d8528abe4d87b44a4305772f4b5d97e31c9e6a342af260",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    }
+  ],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261112T061117816Z-43618-6ca2e2282471.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261112T061117816Z-43618-6ca2e2282471.json"
+  }
+}

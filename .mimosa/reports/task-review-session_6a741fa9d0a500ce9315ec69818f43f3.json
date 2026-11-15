@@ -1,0 +1,463 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261113T094655672Z-92761-971e6102e00f",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "candidate-select",
+      "target": "src/app/components/audio/__tests__/EnhancedAudioPlayer.test.tsx",
+      "reason": "candidate_limit_exceeded: 4 changed reviewable file(s) were not scanned because the limit is 20"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 528,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 24
+    },
+    "change_tracking": {
+      "touched_observed": 1,
+      "touched_retained": 1,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 24,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 24,
+      "selected_files": 20,
+      "limit": 20,
+      "truncated": true
+    },
+    "scanning": {
+      "required_files": 19,
+      "scanned_files": 19,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "candidate_limit_exceeded": 1,
+      "project_check_failed": 1
+    },
+    "reasons": [
+      {
+        "code": "candidate_limit_exceeded",
+        "stage": "candidate-select",
+        "target": "src/app/components/audio/__tests__/EnhancedAudioPlayer.test.tsx",
+        "detail": "4 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/app/components/audio/__tests__/EnhancedAudioPlayer.test.tsx",
+        "detail": "candidate_limit_exceeded: 4 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-11-13T09:46:55.672Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "006e29bf95eebd94064231057369bae8750c9c20",
+  "rules_version": "unavailable",
+  "diff_hash": "a28b7a3b066fadc7ae47cda9b1083255266fd8aa9c1ddc1de8c1d2a6d43e94ac",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 19,
+    "changed_files": [
+      {
+        "file": "src/app/components/AICompletionProvider.tsx",
+        "ranges": [
+          {
+            "start": 16,
+            "end": 19
+          },
+          {
+            "start": 115,
+            "end": 115
+          }
+        ],
+        "before_hash": "1d7574fd00b32b8de3f020b9e439fde7a3b95dcc8463a0c85eb333605ae2fb6d",
+        "after_hash": "13e77751261467f26584eeb53eae863feb90d3e8a082c8bbd98ac2544ad7bf32"
+      },
+      {
+        "file": "src/app/components/AIWritingPanel.tsx",
+        "ranges": [
+          {
+            "start": 144,
+            "end": 146
+          },
+          {
+            "start": 148,
+            "end": 148
+          }
+        ],
+        "before_hash": "609ba2c32b4020cc9dcd38da9fa6de14ae83289f07336d029b58be599491d9ce",
+        "after_hash": "0b94635e907587e8c8df4287cca3f9f2bc203ff2f74878f53eb091031ed81166"
+      },
+      {
+        "file": "src/app/components/audio/__tests__/AudioPlayerPopup.test.tsx",
+        "ranges": [
+          {
+            "start": 45,
+            "end": 45
+          },
+          {
+            "start": 198,
+            "end": 198
+          }
+        ],
+        "before_hash": "ad277f5a88c9ed92ff41df294dfaf4caeba9b330733c4f49037ff4715efc1701",
+        "after_hash": "1d77a10383a70656c0ea48af4db20ed95cc2ea156789b85ee1ac99d54bbda5c2"
+      },
+      {
+        "file": "src/app/components/audio/__tests__/AudioPlaylist.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 122
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "22fd8c591ca6c2b73e7ad2ec8b45e1e961ec0d0b50f4bbaa80b1f645b9b3f6ef"
+      },
+      {
+        "file": "src/app/components/audio/__tests__/AudioUploader.test.tsx",
+        "ranges": [
+          {
+            "start": 153,
+            "end": 153
+          },
+          {
+            "start": 163,
+            "end": 164
+          },
+          {
+            "start": 166,
+            "end": 167
+          }
+        ],
+        "before_hash": "c5c3db2f571cec3abd50b644d84ba675dce42755456ae4f173697519c8db0166",
+        "after_hash": "592b95b5fee593a5fc7e06b5a9d1bca707aa661ccae57b6414c432400261b6b0"
+      },
+      {
+        "file": "src/app/components/audio/AudioPlayerPopup.tsx",
+        "ranges": [
+          {
+            "start": 8,
+            "end": 8
+          },
+          {
+            "start": 29,
+            "end": 29
+          },
+          {
+            "start": 269,
+            "end": 271
+          }
+        ],
+        "before_hash": "31e6570aef7ba0e83e7745e819c6c6a8f15bf043d00e7011b4ca6b7b90469b23",
+        "after_hash": "0abdadf07748da41cf1e54c79069e50128c60496b992b3275d0e4f24e31d81ae"
+      },
+      {
+        "file": "src/app/components/audio/AudioUploader.tsx",
+        "ranges": [
+          {
+            "start": 94,
+            "end": 99
+          }
+        ],
+        "before_hash": "10e81b3943b01945be19f5bafa3f4e9e381b0a8fb3c229f8160c2cf7ff1e5adb",
+        "after_hash": "c6d2aedeb3dd5089c56082492514c0024ea42acf95102337ca3b5ad3c79dc28c"
+      },
+      {
+        "file": "src/app/components/audio/EnhancedAudioPlayer.tsx",
+        "ranges": [
+          {
+            "start": 459,
+            "end": 460
+          },
+          {
+            "start": 463,
+            "end": 464
+          },
+          {
+            "start": 467,
+            "end": 467
+          }
+        ],
+        "before_hash": "677294892ee5282a5164a92b545907dbff0bd1c5eee4b22bcacb4848a600f2f9",
+        "after_hash": "e9330337db2dcc3214cba1376a136c3ae90aa6da86ea327b56d736aa37adae74"
+      },
+      {
+        "file": "src/app/components/audio/MiniAudioPlayer.tsx",
+        "ranges": [
+          {
+            "start": 74,
+            "end": 74
+          },
+          {
+            "start": 76,
+            "end": 76
+          },
+          {
+            "start": 78,
+            "end": 78
+          }
+        ],
+        "before_hash": "f2061711d430bf1bbfbf664ac9e41113dcae95d23f7e9de56fd341b594183096",
+        "after_hash": "7b7aea6cd76d0453f46de13fab69f59286aa8abc863a74e78a8c3f5b5ed6b244"
+      },
+      {
+        "file": "src/app/components/EnhancedBackupRestorePanel.tsx",
+        "ranges": [
+          {
+            "start": 115,
+            "end": 118
+          },
+          {
+            "start": 125,
+            "end": 128
+          },
+          {
+            "start": 132,
+            "end": 132
+          },
+          {
+            "start": 158,
+            "end": 158
+          },
+          {
+            "start": 326,
+            "end": 326
+          },
+          {
+            "start": 392,
+            "end": 392
+          }
+        ],
+        "before_hash": "5d49953e29b2591e6dd7046666d3c07041713520ba56a9a8007b339ea7179b38",
+        "after_hash": "0a83725568cd11df87d32bb9a2e04b23299a3ff3e3e093684d6862d62fed80a7"
+      },
+      {
+        "file": "src/app/components/FullscreenMode.tsx",
+        "ranges": [
+          {
+            "start": 273,
+            "end": 274
+          }
+        ],
+        "before_hash": "88818cb758aac5c7f4ec222268130e46ae8893885acea5e5fa0b2bfb04ba9cc3",
+        "after_hash": "0886128aa75b26edd87324e1cdeab22f14b52370df8da995b4ef88393401b32a"
+      },
+      {
+        "file": "src/app/components/LivePreview.tsx",
+        "ranges": [
+          {
+            "start": 240,
+            "end": 240
+          },
+          {
+            "start": 354,
+            "end": 358
+          },
+          {
+            "start": 360,
+            "end": 360
+          },
+          {
+            "start": 371,
+            "end": 375
+          },
+          {
+            "start": 389,
+            "end": 389
+          },
+          {
+            "start": 399,
+            "end": 399
+          },
+          {
+            "start": 410,
+            "end": 410
+          },
+          {
+            "start": 446,
+            "end": 446
+          },
+          {
+            "start": 449,
+            "end": 449
+          },
+          {
+            "start": 826,
+            "end": 826
+          },
+          {
+            "start": 840,
+            "end": 840
+          }
+        ],
+        "before_hash": "07b5c4c1f95d5ae8a51c26eb48a8cd872749c66c63bc4505732edced5afb1644",
+        "after_hash": "a2e1092b11d11175030e3c24d36aa759cf8db0d352d91b9ae6d25636874be769"
+      },
+      {
+        "file": "src/app/components/settings/__tests__/WorkspaceTabs.test.tsx",
+        "ranges": [
+          {
+            "start": 88,
+            "end": 90
+          }
+        ],
+        "before_hash": "94239f255448e6e4da0a056d1b5fd5c23f1fd6fa1e016bc77a74957f2f15a5a1",
+        "after_hash": "be6012fcd47796ec13bb2d60db822a3d7db3273e6d687e79025d72b1c45d93a0"
+      },
+      {
+        "file": "src/app/components/settings/AIServiceTabs.tsx",
+        "ranges": [
+          {
+            "start": 487,
+            "end": 487
+          }
+        ],
+        "before_hash": "07f4b691b10ef98d87a7bd3150ed5b7e0a3b9e813af181834e34d6c731ba6768",
+        "after_hash": "0e540cd00274328f48fb41d68a5396d19c34923907136ca889f3dd9b34d3dac3"
+      },
+      {
+        "file": "src/app/components/settings/WorkspaceTabs.tsx",
+        "ranges": [
+          {
+            "start": 84,
+            "end": 88
+          }
+        ],
+        "before_hash": "39329596508ef504b097ba26ac8e8d9819b0508eaf0d2a988b51be4ad63ba81e",
+        "after_hash": "130b32ad4a8231ac6500576802c1e5a9a2a1aed2cb5ef3493bd98ba5b6f8d7da"
+      },
+      {
+        "file": "src/app/store/intelligent-workflow-store.ts",
+        "ranges": [
+          {
+            "start": 491,
+            "end": 494
+          }
+        ],
+        "before_hash": "ae3c8faff0e93f79ad3473b81ad892d013c3e307efe0cc272b748ca978e25847",
+        "after_hash": "23e97fc88d94a5972b1911ae358d2651462ee26c6b1fcbae85162a1e50465521"
+      },
+      {
+        "file": "src/app/store/panel-dnd-store.ts",
+        "ranges": [
+          {
+            "start": 565,
+            "end": 566
+          },
+          {
+            "start": 614,
+            "end": 614
+          },
+          {
+            "start": 625,
+            "end": 625
+          }
+        ],
+        "before_hash": "0d56b35a6ebea3020af6ac53b5c39eb124c76b2a2ee1186d35596074cc2f7b9b",
+        "after_hash": "f93cd856b12ec4872db4ba84f066fbef574eedf9acc4e0686d32597806c8f451"
+      },
+      {
+        "file": "src/app/store/project-store.ts",
+        "ranges": [
+          {
+            "start": 518,
+            "end": 519
+          }
+        ],
+        "before_hash": "32b7b048f7bd0db501a10d6726539b6412c31865dda61a045c28a338598ba9f2",
+        "after_hash": "1805731911d65d38c5aa85b2943109648f24126f44f9ee6ea97c4ca906dad135"
+      },
+      {
+        "file": "src/app/utils/audio-engine.ts",
+        "ranges": [
+          {
+            "start": 867,
+            "end": 869
+          },
+          {
+            "start": 1150,
+            "end": 1154
+          }
+        ],
+        "before_hash": "5800a81adab49b7e50f890c1fae480627f42916ae6e2b41cc0a3edfb76c67716",
+        "after_hash": "9310834d4c8e6ac089277d64bda20ac4a7000d5716e209334ac0203d87602200"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-11-13T09:46:54.773Z",
+    "completed_at": "2026-11-13T09:46:55.672Z",
+    "duration_ms": 899,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 899,
+    "peakMemoryBytes": 211910656,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 19,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261113T094655672Z-92761-971e6102e00f.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261113T094655672Z-92761-971e6102e00f.json"
+  }
+}

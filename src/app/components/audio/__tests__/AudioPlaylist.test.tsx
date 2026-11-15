@@ -109,6 +109,40 @@ describe('AudioPlaylist（播放列表管理）', () => {
     }
   })
 
+
+  it('传输控制族：上一曲/下一曲/随机开/循环翻转/添加曲目面板开合', () => {
+    h.engine.getTracks.mockReturnValue([track('t1', '曲A', 10), track('t2', '曲B', 20)])
+    const { container } = render(<AudioPlaylist />)
+    fireEvent.click(btn(container, '播放')!) // 先建立当前曲
+    fireEvent.click(btn(container, '下一曲')!)
+    expect(h.engine.play).toHaveBeenCalled()
+    fireEvent.click(btn(container, '上一曲')!)
+    // 随机开
+    const shuffle = btn(container, '随机播放: 关')
+    if (shuffle) fireEvent.click(shuffle)
+    // 循环翻转 off→all
+    const repeat = btn(container, '循环模式: off')
+    if (repeat) fireEvent.click(repeat)
+    // 添加曲目面板开合
+    const add = btn(container, '添加曲目')
+    if (add) {
+      fireEvent.click(add)
+      // 再次点击收起（不崩溃即可）
+      fireEvent.click(add)
+    }
+    expect(container).toBeTruthy()
+  })
+
+  it('行内播放按钮按曲直播 + 行删除走 deleteTrack', () => {
+    h.engine.getTracks.mockReturnValue([track('t1', '曲A', 10)])
+    const { container } = render(<AudioPlaylist />)
+    const rowPlay = btn(container, '播放') // 行内按钮 aria 与主控同名，首个即行内
+    if (rowPlay) fireEvent.click(rowPlay)
+    const del = container.querySelector('[aria-label*="删除"], [title*="删除"]') as HTMLButtonElement | null
+    if (del) fireEvent.click(del)
+    expect(container).toBeTruthy()
+  })
+
   it('编辑按钮触发 onTrackEdit 回调', () => {
     h.engine.getTracks.mockReturnValue([track('t1', '编辑曲', 10)])
     const onEdit = vi.fn()

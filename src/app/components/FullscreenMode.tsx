@@ -154,7 +154,6 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
   const chatRef = useRef<HTMLDivElement>(null);
   const [aiLoading, setAiLoading] = useState(false);
   /** 对齐 Guidelines: Streaming Chat — 流式打字效果定时器 */
-  const streamingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Sidebar hover state
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -220,12 +219,6 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
     setInput("");
     setAiLoading(true);
 
-    // 清理上一次流式输出
-    if (streamingRef.current) {
-      clearInterval(streamingRef.current);
-      streamingRef.current = null;
-    }
-
     const activeModel = getActiveModel();
 
     // （历史假打字机 streamResponse 已随真 SSE 改造移除）
@@ -279,7 +272,6 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
   // 清理流式输出定时器
   useEffect(() => {
     return () => {
-      if (streamingRef.current) clearInterval(streamingRef.current);
     };
   }, []);
 

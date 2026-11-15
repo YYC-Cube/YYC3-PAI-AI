@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "mimosa-finding-history/v1",
+  "runId": "20261112T061117816Z-43618-6ca2e2282471",
+  "runStatus": "inconclusive",
+  "errors": [
+    "candidate-select:src/app/components/ide/__tests__/IDEOverlays.test.tsx: candidate_limit_exceeded: 36 changed reviewable file(s) were not scanned because the limit is 20",
+    "baseline-read:src/components/Chat/__tests__/AiMessageRender.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/store/__tests__/intelligent-workflow-store.deep.test.ts: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/store/__tests__/webgpu-inference-store.deep.test.ts: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/services/__tests__/file-system-watcher.deep.test.ts: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/services/__tests__/monaco-performance-benchmark.test.ts: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/services/__tests__/otel-adapter.deep.test.ts: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/settings/__tests__/AIServiceTabs.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/settings/__tests__/WorkspaceTabs.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/performance/__tests__/MonacoPerformanceMonitor.deep.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/ide/__tests__/AIMessageActions.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/ide/__tests__/AIMessageRenderer.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/ide/__tests__/AIResponseFormatter.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/ide/__tests__/FileTreeNode.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/ide/__tests__/IDEChatPanel.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/ide/__tests__/IDECodeEditorPanel.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/ide/__tests__/IDEFileExplorer.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline",
+    "baseline-read:src/app/components/ide/__tests__/IDELayoutContext.test.tsx: baseline_snapshot_unreadable: file is missing from task baseline"
+  ],
+  "target": ".",
+  "revision": "9cc503ccf95933a8c654855caa63195c8b04eba4",
+  "diffHash": "019512779d9fe9bf2f16a03a8f55d1208615dbb9189c4a4fc1663e331fd84c49",
+  "rulesVersion": "unavailable",
+  "recordedAt": "2026-11-12T06:11:17.816Z",
+  "timing": {
+    "startedAt": "2026-11-12T06:11:17.086Z",
+    "completedAt": "2026-11-12T06:11:17.816Z",
+    "durationMs": 730
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "modelCalls": 0,
+    "measurement": "known-zero"
+  },
+  "findings": {
+    "total": 1,
+    "bySeverity": {
+      "high": 1
+    },
+    "byStatus": {
+      "candidate": 1
+    }
+  },
+  "coverage": {
+    "status": "partial",
+    "reasonCounts": {
+      "candidate_limit_exceeded": 1,
+      "baseline_snapshot_unreadable": 17,
+      "project_check_failed": 18
+    }
+  },
+  "evidenceBoundary": "static_only",
+  "immutableReport": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261112T061117816Z-43618-6ca2e2282471.json"
+}

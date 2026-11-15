@@ -1,0 +1,358 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261029T213843842Z-80064-4a3fb59e098f",
+  "run_status": "completed",
+  "errors": [],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "complete",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 384,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 12
+    },
+    "change_tracking": {
+      "touched_observed": 10,
+      "touched_retained": 10,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 12,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 12,
+      "selected_files": 12,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 11,
+      "scanned_files": 11,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 2,
+      "project_checks_completed": 2
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {},
+    "reasons": [],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-10-29T21:38:43.842Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "a75ea74c18c7ac4d975053367d943ba4334dfaea",
+  "rules_version": "unavailable",
+  "diff_hash": "a7faa45c0b7b124fcd146bb4fc8a2c431e792a65345077cfdbf47a89324d6ab9",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 12,
+    "changed_files": [
+      {
+        "file": ".github/workflows/ci.yml",
+        "ranges": [
+          {
+            "start": 243,
+            "end": 250
+          }
+        ],
+        "before_hash": "871da6da3141a1552e3298953824737fbb09cf9fe325ff7273799db7b3804438",
+        "after_hash": "5ae7e98f08e451c64c8f94a17c9bef4ec4bdbe16e72f7ac175d19820f2ed13eb"
+      },
+      {
+        "file": "src/app/components/DiagnosticsPanel.tsx",
+        "ranges": [
+          {
+            "start": 21,
+            "end": 21
+          },
+          {
+            "start": 50,
+            "end": 68
+          },
+          {
+            "start": 82,
+            "end": 82
+          },
+          {
+            "start": 89,
+            "end": 89
+          }
+        ],
+        "before_hash": "2c4eb0954d9d06f83504c4b12877a3e2c2538000a806d63e0b4253378bf89281",
+        "after_hash": "09775c80dbc707e3981b68711229e1f133ecd937d664765c0e5a69bce5730716"
+      },
+      {
+        "file": "src/app/components/ErrorBoundary.tsx",
+        "ranges": [
+          {
+            "start": 75,
+            "end": 76
+          }
+        ],
+        "before_hash": "edc9bbc2eae1dd17572a628c5956f6e4d8369069bf2cb4c5f7516fe652a0e5a3",
+        "after_hash": "b89f107b0b279deb005972c4445265da5f534b1ea918f68c1fa83a216a9da40f"
+      },
+      {
+        "file": "src/app/components/FloatingWidget.tsx",
+        "ranges": [
+          {
+            "start": 33,
+            "end": 33
+          },
+          {
+            "start": 87,
+            "end": 90
+          },
+          {
+            "start": 94,
+            "end": 114
+          },
+          {
+            "start": 116,
+            "end": 116
+          }
+        ],
+        "before_hash": "4d103c7f433fb9c9d1675904038d70d5720748edece96159382e2d5d7ad9c62d",
+        "after_hash": "0f34bfb422ac45a31812d89eb5e4f525b4574f67bedc4912b5aab6af840a508d"
+      },
+      {
+        "file": "src/app/components/FullscreenMode.tsx",
+        "ranges": [
+          {
+            "start": 130,
+            "end": 130
+          },
+          {
+            "start": 218,
+            "end": 218
+          },
+          {
+            "start": 231,
+            "end": 231
+          },
+          {
+            "start": 246,
+            "end": 246
+          },
+          {
+            "start": 248,
+            "end": 257
+          },
+          {
+            "start": 259,
+            "end": 269
+          },
+          {
+            "start": 272,
+            "end": 273
+          },
+          {
+            "start": 275,
+            "end": 275
+          }
+        ],
+        "before_hash": "153dc873567d5e077be76d1fe48922f9d1991086343ab95412234958b271295b",
+        "after_hash": "88818cb758aac5c7f4ec222268130e46ae8893885acea5e5fa0b2bfb04ba9cc3"
+      },
+      {
+        "file": "src/app/components/ide/IDEChatPanel.tsx",
+        "ranges": [
+          {
+            "start": 44,
+            "end": 44
+          },
+          {
+            "start": 119,
+            "end": 120
+          },
+          {
+            "start": 125,
+            "end": 128
+          },
+          {
+            "start": 153,
+            "end": 175
+          },
+          {
+            "start": 178,
+            "end": 183
+          },
+          {
+            "start": 185,
+            "end": 185
+          }
+        ],
+        "before_hash": "8d2ecf6b2cba29046ac698b4917a755376a5f59a2358583b6d0a2c74604e0cf3",
+        "after_hash": "3f6802de7939cfaba6b59f9acab71bce518dfb9ea7a20557560767ec34adc498"
+      },
+      {
+        "file": "src/app/components/LivePreview.tsx",
+        "ranges": [
+          {
+            "start": 448,
+            "end": 450
+          }
+        ],
+        "before_hash": "6cf54bbd2e931858bcab596af3a2605cc1926d8d74bc71a79fa9854929ba12c7",
+        "after_hash": "07b5c4c1f95d5ae8a51c26eb48a8cd872749c66c63bc4505732edced5afb1644"
+      },
+      {
+        "file": "src/app/components/NotificationCenter.tsx",
+        "ranges": [
+          {
+            "start": 20,
+            "end": 20
+          },
+          {
+            "start": 37,
+            "end": 63
+          },
+          {
+            "start": 76,
+            "end": 77
+          }
+        ],
+        "before_hash": "fdad7ebc5c0c110cd98d5471ba3d745f2e00d0de64f0656b50db0ad2e7f05495",
+        "after_hash": "d864cded88010b6d4ce843be0a52417bb69083dcc81611c725708b515a10c5aa"
+      },
+      {
+        "file": "src/app/hooks/useAI.ts",
+        "ranges": [
+          {
+            "start": 149,
+            "end": 149
+          }
+        ],
+        "before_hash": "e65f40c91a98d2877e05c25166004f61c151e6c5f28afb47baacaae6aeefee1d",
+        "after_hash": "98a2080dbd394171720d687c0c4019ca90218b3da337238a009488aa2f8c9bf5"
+      },
+      {
+        "file": "src/app/i18n/translations.ts",
+        "ranges": [
+          {
+            "start": 89,
+            "end": 90
+          }
+        ],
+        "before_hash": "8c76bb679c63d2693763d92067b7e6c9d615fbf2d19646399424891252bfa055",
+        "after_hash": "6040aa6a32578452332fb10fd03f18d1e12ac3ca5ce96d2851b0b8fb1f27476f"
+      },
+      {
+        "file": "src/app/services/syntax-highlighter.ts",
+        "ranges": [
+          {
+            "start": 102,
+            "end": 103
+          },
+          {
+            "start": 120,
+            "end": 121
+          },
+          {
+            "start": 128,
+            "end": 166
+          },
+          {
+            "start": 170,
+            "end": 170
+          }
+        ],
+        "before_hash": "20e1ec1f3fb8144c2177a5af55cd0430c7d6fbb69c3cfbfd6498d6687ead5362",
+        "after_hash": "5a1a6bea06f91c98afe2f298e32371af2011e9da3fc5120f7f4038739a82e62b"
+      },
+      {
+        "file": "src/app/utils/key-manager.ts",
+        "ranges": [
+          {
+            "start": 77,
+            "end": 78
+          },
+          {
+            "start": 82,
+            "end": 86
+          },
+          {
+            "start": 88,
+            "end": 89
+          },
+          {
+            "start": 107,
+            "end": 107
+          },
+          {
+            "start": 129,
+            "end": 129
+          },
+          {
+            "start": 293,
+            "end": 328
+          }
+        ],
+        "before_hash": "ee77130b85a9f17d4ad5146036400ded6fcca93cac1f3c512752374ed7773ee9",
+        "after_hash": "08f1c35c0c7d28d3b960e5b07ae73d5585c2cce6030aadacbba75ffea684782d"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-10-29T21:38:42.665Z",
+    "completed_at": "2026-10-29T21:38:43.842Z",
+    "duration_ms": 1177,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "complete",
+    "latencyMs": 1177,
+    "peakMemoryBytes": 208273408,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 11,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261029T213843842Z-80064-4a3fb59e098f.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261029T213843842Z-80064-4a3fb59e098f.json"
+  }
+}

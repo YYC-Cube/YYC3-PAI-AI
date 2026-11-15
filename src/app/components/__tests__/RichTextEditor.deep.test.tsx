@@ -66,8 +66,8 @@ describe('RichTextEditor 骨架', () => {
     expect(btnByText(container, 'AI 写作')).toBeTruthy()
     expect(pmOf(container).textContent).toContain('hello world')
     expect(container.textContent).toContain('选中文本后使用AI工具')
-    // 未装 CharacterCount 扩展 → 字数恒为 0
-    expect(container.textContent).toContain('0 字')
+    // 53号已修：字数走 getText 实时统计（'hello world' = 11 字符）
+    expect(container.textContent).toContain('11 字')
     // 初始无历史：撤销/重做禁用
     expect(btnByTitle(container, '撤销').disabled).toBe(true)
     expect(btnByTitle(container, '重做').disabled).toBe(true)

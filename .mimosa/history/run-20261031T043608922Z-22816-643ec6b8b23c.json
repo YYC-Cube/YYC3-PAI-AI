@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "mimosa-finding-history/v1",
+  "runId": "20261031T043608922Z-22816-643ec6b8b23c",
+  "runStatus": "inconclusive",
+  "errors": [
+    "candidate-select:src/components/Chat/__tests__/zz-minimal.test.tsx: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "candidate-select:src/components/Chat/__tests__/zz-debug.test.tsx: changed_file_unreadable: observed changed file no longer exists or cannot be read"
+  ],
+  "target": ".",
+  "revision": "10c6f2705f9756d2272203a7a0d06b4df3e906a6",
+  "diffHash": "47d590f6636ab1f5dc6d61f6f6ec735dcc7873f7e6e282b06585931b2567a8f4",
+  "rulesVersion": "unavailable",
+  "recordedAt": "2026-10-31T04:36:08.922Z",
+  "timing": {
+    "startedAt": "2026-10-31T04:36:08.373Z",
+    "completedAt": "2026-10-31T04:36:08.922Z",
+    "durationMs": 549
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "modelCalls": 0,
+    "measurement": "known-zero"
+  },
+  "findings": {
+    "total": 0,
+    "bySeverity": {},
+    "byStatus": {}
+  },
+  "coverage": {
+    "status": "partial",
+    "reasonCounts": {
+      "changed_file_unreadable": 2,
+      "project_check_failed": 2
+    }
+  },
+  "evidenceBoundary": "static_only",
+  "immutableReport": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261031T043608922Z-22816-643ec6b8b23c.json"
+}

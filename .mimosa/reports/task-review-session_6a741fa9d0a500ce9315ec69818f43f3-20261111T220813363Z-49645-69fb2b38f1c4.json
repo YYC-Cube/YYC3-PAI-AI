@@ -1,0 +1,948 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261111T220813363Z-49645-69fb2b38f1c4",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "candidate-select",
+      "target": "src/app/services/__tests__/zz-probe.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 474,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 10
+    },
+    "change_tracking": {
+      "touched_observed": 1,
+      "touched_retained": 1,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 10,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 10,
+      "selected_files": 10,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 7,
+      "scanned_files": 7,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 2,
+      "project_checks_completed": 2
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "changed_file_unreadable": 1,
+      "project_check_failed": 1
+    },
+    "reasons": [
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "src/app/services/__tests__/zz-probe.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/app/services/__tests__/zz-probe.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-11-11T22:08:13.363Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "99180f4ee2ae4c581771b7f487975fa062f9b535",
+  "rules_version": "unavailable",
+  "diff_hash": "4f30cbc0acded3604f6ec6e74bc4fcba196288f900aafe4a902c3dd7401faed6",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 10,
+    "changed_files": [
+      {
+        "file": ".github/workflows/ci.yml",
+        "ranges": [
+          {
+            "start": 81,
+            "end": 81
+          },
+          {
+            "start": 120,
+            "end": 120
+          },
+          {
+            "start": 192,
+            "end": 192
+          },
+          {
+            "start": 298,
+            "end": 298
+          }
+        ],
+        "before_hash": "4b5dcf76a69e4588e6117fe861370978d606416314f06b9da1401493a153bcbd",
+        "after_hash": "a2a4962b3a880131c4a82a45b68f29f31a0e67f7d19c466a3042189fe19c230f"
+      },
+      {
+        "file": "package.json",
+        "ranges": [
+          {
+            "start": 39,
+            "end": 39
+          },
+          {
+            "start": 41,
+            "end": 41
+          },
+          {
+            "start": 48,
+            "end": 48
+          },
+          {
+            "start": 51,
+            "end": 51
+          }
+        ],
+        "before_hash": "36766df3363380765ec966226c5da0dc305a930ce9a9a085bd0e347d6d8ee68a",
+        "after_hash": "595020a595ae372e856bafe85ccc34a78eb64ffeb015815a9290c144cad771c6"
+      },
+      {
+        "file": "pnpm-lock.yaml",
+        "ranges": [
+          {
+            "start": 64,
+            "end": 65
+          },
+          {
+            "start": 70,
+            "end": 71
+          },
+          {
+            "start": 91,
+            "end": 92
+          },
+          {
+            "start": 100,
+            "end": 101
+          },
+          {
+            "start": 155,
+            "end": 155
+          },
+          {
+            "start": 158,
+            "end": 158
+          },
+          {
+            "start": 161,
+            "end": 161
+          },
+          {
+            "start": 164,
+            "end": 164
+          },
+          {
+            "start": 179,
+            "end": 179
+          },
+          {
+            "start": 206,
+            "end": 206
+          },
+          {
+            "start": 218,
+            "end": 218
+          },
+          {
+            "start": 233,
+            "end": 233
+          },
+          {
+            "start": 251,
+            "end": 251
+          },
+          {
+            "start": 294,
+            "end": 294
+          },
+          {
+            "start": 318,
+            "end": 318
+          },
+          {
+            "start": 958,
+            "end": 960
+          },
+          {
+            "start": 1065,
+            "end": 1077
+          },
+          {
+            "start": 1118,
+            "end": 1126
+          },
+          {
+            "start": 1149,
+            "end": 1157
+          },
+          {
+            "start": 1171,
+            "end": 1183
+          },
+          {
+            "start": 1289,
+            "end": 1290
+          },
+          {
+            "start": 1341,
+            "end": 1353
+          },
+          {
+            "start": 1393,
+            "end": 1394
+          },
+          {
+            "start": 1432,
+            "end": 1444
+          },
+          {
+            "start": 1515,
+            "end": 1516
+          },
+          {
+            "start": 1541,
+            "end": 1542
+          },
+          {
+            "start": 1567,
+            "end": 1579
+          },
+          {
+            "start": 1602,
+            "end": 1610
+          },
+          {
+            "start": 1620,
+            "end": 1637
+          },
+          {
+            "start": 1647,
+            "end": 1655
+          },
+          {
+            "start": 1683,
+            "end": 1691
+          },
+          {
+            "start": 1710,
+            "end": 1718
+          },
+          {
+            "start": 1732,
+            "end": 1744
+          },
+          {
+            "start": 4513,
+            "end": 4513
+          },
+          {
+            "start": 4518,
+            "end": 4518
+          },
+          {
+            "start": 4522,
+            "end": 4522
+          },
+          {
+            "start": 4526,
+            "end": 4526
+          },
+          {
+            "start": 4551,
+            "end": 4551
+          },
+          {
+            "start": 4553,
+            "end": 4553
+          },
+          {
+            "start": 4558,
+            "end": 4558
+          },
+          {
+            "start": 4560,
+            "end": 4561
+          },
+          {
+            "start": 4563,
+            "end": 4563
+          },
+          {
+            "start": 4584,
+            "end": 4584
+          },
+          {
+            "start": 4586,
+            "end": 4586
+          },
+          {
+            "start": 4589,
+            "end": 4589
+          },
+          {
+            "start": 4591,
+            "end": 4591
+          },
+          {
+            "start": 4604,
+            "end": 4604
+          },
+          {
+            "start": 4612,
+            "end": 4612
+          },
+          {
+            "start": 4742,
+            "end": 4742
+          },
+          {
+            "start": 4744,
+            "end": 4744
+          },
+          {
+            "start": 4749,
+            "end": 4749
+          },
+          {
+            "start": 4752,
+            "end": 4752
+          },
+          {
+            "start": 4765,
+            "end": 4765
+          },
+          {
+            "start": 4768,
+            "end": 4768
+          },
+          {
+            "start": 5017,
+            "end": 5018
+          },
+          {
+            "start": 5124,
+            "end": 5136
+          },
+          {
+            "start": 5169,
+            "end": 5174
+          },
+          {
+            "start": 5203,
+            "end": 5208
+          },
+          {
+            "start": 5222,
+            "end": 5234
+          },
+          {
+            "start": 5351,
+            "end": 5351
+          },
+          {
+            "start": 5353,
+            "end": 5367
+          },
+          {
+            "start": 5425,
+            "end": 5433
+          },
+          {
+            "start": 5462,
+            "end": 5462
+          },
+          {
+            "start": 5464,
+            "end": 5465
+          },
+          {
+            "start": 5507,
+            "end": 5525
+          },
+          {
+            "start": 5614,
+            "end": 5614
+          },
+          {
+            "start": 5616,
+            "end": 5621
+          },
+          {
+            "start": 5644,
+            "end": 5644
+          },
+          {
+            "start": 5646,
+            "end": 5652
+          },
+          {
+            "start": 5670,
+            "end": 5680
+          },
+          {
+            "start": 5707,
+            "end": 5713
+          },
+          {
+            "start": 5721,
+            "end": 5736
+          },
+          {
+            "start": 5744,
+            "end": 5749
+          },
+          {
+            "start": 5768,
+            "end": 5773
+          },
+          {
+            "start": 5788,
+            "end": 5794
+          },
+          {
+            "start": 5804,
+            "end": 5812
+          },
+          {
+            "start": 6339,
+            "end": 6339
+          },
+          {
+            "start": 6342,
+            "end": 6342
+          },
+          {
+            "start": 6344,
+            "end": 6345
+          },
+          {
+            "start": 6347,
+            "end": 6347
+          },
+          {
+            "start": 6355,
+            "end": 6355
+          },
+          {
+            "start": 6359,
+            "end": 6359
+          },
+          {
+            "start": 6361,
+            "end": 6362
+          },
+          {
+            "start": 6367,
+            "end": 6367
+          },
+          {
+            "start": 6371,
+            "end": 6371
+          },
+          {
+            "start": 6385,
+            "end": 6385
+          },
+          {
+            "start": 6388,
+            "end": 6391
+          },
+          {
+            "start": 6399,
+            "end": 6399
+          },
+          {
+            "start": 6401,
+            "end": 6401
+          },
+          {
+            "start": 6405,
+            "end": 6405
+          },
+          {
+            "start": 6414,
+            "end": 6414
+          },
+          {
+            "start": 6416,
+            "end": 6416
+          },
+          {
+            "start": 6419,
+            "end": 6420
+          },
+          {
+            "start": 6432,
+            "end": 6432
+          },
+          {
+            "start": 6434,
+            "end": 6436
+          },
+          {
+            "start": 6456,
+            "end": 6456
+          },
+          {
+            "start": 6739,
+            "end": 6739
+          },
+          {
+            "start": 6742,
+            "end": 6743
+          },
+          {
+            "start": 6874,
+            "end": 6874
+          },
+          {
+            "start": 6876,
+            "end": 6876
+          },
+          {
+            "start": 6878,
+            "end": 6878
+          },
+          {
+            "start": 6880,
+            "end": 6880
+          },
+          {
+            "start": 6882,
+            "end": 6882
+          },
+          {
+            "start": 6884,
+            "end": 6884
+          },
+          {
+            "start": 6897,
+            "end": 6897
+          },
+          {
+            "start": 6899,
+            "end": 6899
+          },
+          {
+            "start": 6901,
+            "end": 6901
+          },
+          {
+            "start": 6904,
+            "end": 6904
+          },
+          {
+            "start": 6914,
+            "end": 6914
+          },
+          {
+            "start": 7140,
+            "end": 7140
+          },
+          {
+            "start": 7149,
+            "end": 7151
+          },
+          {
+            "start": 7190,
+            "end": 7190
+          },
+          {
+            "start": 7193,
+            "end": 7193
+          },
+          {
+            "start": 7197,
+            "end": 7197
+          },
+          {
+            "start": 7200,
+            "end": 7200
+          },
+          {
+            "start": 7312,
+            "end": 7312
+          },
+          {
+            "start": 7322,
+            "end": 7323
+          },
+          {
+            "start": 7476,
+            "end": 7476
+          },
+          {
+            "start": 7483,
+            "end": 7483
+          },
+          {
+            "start": 7501,
+            "end": 7501
+          },
+          {
+            "start": 7505,
+            "end": 7505
+          },
+          {
+            "start": 7511,
+            "end": 7511
+          },
+          {
+            "start": 7514,
+            "end": 7514
+          },
+          {
+            "start": 7519,
+            "end": 7519
+          },
+          {
+            "start": 7524,
+            "end": 7524
+          },
+          {
+            "start": 7529,
+            "end": 7529
+          },
+          {
+            "start": 7533,
+            "end": 7533
+          },
+          {
+            "start": 7538,
+            "end": 7538
+          },
+          {
+            "start": 7540,
+            "end": 7540
+          },
+          {
+            "start": 7542,
+            "end": 7545
+          },
+          {
+            "start": 7550,
+            "end": 7550
+          },
+          {
+            "start": 7556,
+            "end": 7556
+          },
+          {
+            "start": 7561,
+            "end": 7561
+          },
+          {
+            "start": 7569,
+            "end": 7569
+          },
+          {
+            "start": 7578,
+            "end": 7578
+          },
+          {
+            "start": 7584,
+            "end": 7584
+          },
+          {
+            "start": 7800,
+            "end": 7800
+          },
+          {
+            "start": 7803,
+            "end": 7803
+          },
+          {
+            "start": 8132,
+            "end": 8132
+          },
+          {
+            "start": 8138,
+            "end": 8138
+          },
+          {
+            "start": 8142,
+            "end": 8142
+          },
+          {
+            "start": 8256,
+            "end": 8256
+          },
+          {
+            "start": 8259,
+            "end": 8259
+          },
+          {
+            "start": 8261,
+            "end": 8261
+          },
+          {
+            "start": 8267,
+            "end": 8267
+          },
+          {
+            "start": 8270,
+            "end": 8270
+          },
+          {
+            "start": 8432,
+            "end": 8432
+          },
+          {
+            "start": 8435,
+            "end": 8435
+          },
+          {
+            "start": 8567,
+            "end": 8567
+          },
+          {
+            "start": 8569,
+            "end": 8573
+          },
+          {
+            "start": 8710,
+            "end": 8710
+          },
+          {
+            "start": 8735,
+            "end": 8735
+          },
+          {
+            "start": 8807,
+            "end": 8807
+          },
+          {
+            "start": 8810,
+            "end": 8810
+          }
+        ],
+        "before_hash": "5e2dae627a756913695ff14e2ad5855ab14702ac8dab937af57d17da2fea9697",
+        "after_hash": "0ab80bf485b9889600238901f6a81d97f38741ce32eee2acdf8f7dd4f9b43e71"
+      },
+      {
+        "file": "src/app/components/__tests__/CRDTCollabPanel.deep.test.tsx",
+        "ranges": [
+          {
+            "start": 165,
+            "end": 165
+          },
+          {
+            "start": 171,
+            "end": 171
+          },
+          {
+            "start": 173,
+            "end": 177
+          }
+        ],
+        "before_hash": "3df427641adab4c9c2a41ab843c0dd21d11936b71684515ff4de0d4071f11cf9",
+        "after_hash": "399f2397387887480b144cd582837e9eec537261e6959e6f7d21ac177d411271"
+      },
+      {
+        "file": "src/app/components/CRDTCollabPanel.tsx",
+        "ranges": [
+          {
+            "start": 330,
+            "end": 330
+          }
+        ],
+        "before_hash": "efdf32387564aa9646b4efdeedb8a8f482999735bc511f7f442a1d95abc7b589",
+        "after_hash": "47df002b20bda6b7109310812a04044db5039898e957dd05d432e98fb55d44fe"
+      },
+      {
+        "file": "src/app/services/__tests__/data-portability-deep.test.ts",
+        "ranges": [
+          {
+            "start": 4,
+            "end": 4
+          },
+          {
+            "start": 196,
+            "end": 197
+          },
+          {
+            "start": 200,
+            "end": 200
+          },
+          {
+            "start": 209,
+            "end": 241
+          },
+          {
+            "start": 253,
+            "end": 253
+          },
+          {
+            "start": 256,
+            "end": 256
+          }
+        ],
+        "before_hash": "f6a75113d671e26d593e6382dc179f5db5bad026bf22703c126d6644fbf7a49e",
+        "after_hash": "0e331d9d990b0580c989f552c12c512d7428654a1037f8526b8a52d955fcd736"
+      },
+      {
+        "file": "src/app/services/data-portability-manager.ts",
+        "ranges": [
+          {
+            "start": 440,
+            "end": 446
+          },
+          {
+            "start": 540,
+            "end": 561
+          },
+          {
+            "start": 565,
+            "end": 565
+          },
+          {
+            "start": 570,
+            "end": 574
+          },
+          {
+            "start": 576,
+            "end": 583
+          },
+          {
+            "start": 587,
+            "end": 587
+          },
+          {
+            "start": 593,
+            "end": 593
+          },
+          {
+            "start": 602,
+            "end": 616
+          },
+          {
+            "start": 618,
+            "end": 618
+          }
+        ],
+        "before_hash": "2af68a48ad02279054b860b0cee9a175d6763183e20fafdb0d15c480e1a40137",
+        "after_hash": "02c70ca92b83fb06e4d607ed8ac8639576486d7f6947ebb45d6f6c7ffc835801"
+      },
+      {
+        "file": "src/app/store/crdt-collab-store.ts",
+        "ranges": [
+          {
+            "start": 293,
+            "end": 318
+          }
+        ],
+        "before_hash": "50928179dc903f06c481414e8a78ff1882263bdffc5b1e5660c572226fb0b256",
+        "after_hash": "0eaa48e710eef88e713202b411573cf4460cbc4afc9b3bb9b92f78f04aa27090"
+      },
+      {
+        "file": "src/app/utils/__tests__/audio-engine.test.ts",
+        "ranges": [
+          {
+            "start": 927,
+            "end": 927
+          },
+          {
+            "start": 934,
+            "end": 936
+          }
+        ],
+        "before_hash": "ad477fbdfbdcd10f94b92d35a5b398c3495338da91bb555da8f79c8d63e55cac",
+        "after_hash": "ef9cc20a847640e44765f2c906052d8bf79757ac3bfed9c167135bfd6ebe543d"
+      },
+      {
+        "file": "src/app/utils/audio-engine.ts",
+        "ranges": [
+          {
+            "start": 495,
+            "end": 496
+          }
+        ],
+        "before_hash": "0785661168d49a022b6965ee8328e524e3f89fb25bf6f8bab3d080885474a213",
+        "after_hash": "5800a81adab49b7e50f890c1fae480627f42916ae6e2b41cc0a3edfb76c67716"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-11-11T22:08:12.151Z",
+    "completed_at": "2026-11-11T22:08:13.363Z",
+    "duration_ms": 1212,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 1212,
+    "peakMemoryBytes": 208011264,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 7,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261111T220813363Z-49645-69fb2b38f1c4.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261111T220813363Z-49645-69fb2b38f1c4.json"
+  }
+}

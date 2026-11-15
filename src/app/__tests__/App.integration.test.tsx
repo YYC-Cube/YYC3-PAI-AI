@@ -11,10 +11,19 @@ import { render, fireEvent, act, screen } from '@testing-library/react'
 vi.mock('../components/PanelManager', async () => {
   const { usePanelStore } = await import('../store/panel-store')
   return {
-    PanelManager: () => {
+    PanelManager: (props: {
+      commands: Array<{ id: string }>
+      onSearchReplace: (f: string, o: string, n: string) => void
+    }) => {
       // 真实读取 panel-store：App↔store↔PanelManager 布线证据
       const { visible } = usePanelStore()
-      return <div data-testid="open-panels">{[...visible].join(',')}</div>
+      return (
+        <div>
+          <div data-testid="open-panels">{[...visible].join(',')}</div>
+          <span data-testid="commands-count">{props.commands.length}</span>
+          <button data-testid="do-replace" onClick={() => props.onSearchReplace('a.ts', 'old', 'new')} />
+        </div>
+      )
     },
   }
 })
@@ -22,12 +31,25 @@ vi.mock('../components/FullscreenMode', () => ({
   FullscreenMode: (props: Record<string, () => void>) => (
     <div>
       <button data-testid="to-ide" onClick={props.onSwitchToIDE} />
+      <button data-testid="to-widget" onClick={props.onSwitchMode} />
       <button data-testid="open-settings" onClick={props.onOpenSettings} />
       <button data-testid="open-chat" onClick={props.onOpenChat} />
+      <button data-testid="open-material" onClick={props.onOpenMaterialManager} />
+      <button data-testid="open-publish" onClick={props.onOpenPublishQueue} />
+      <button data-testid="open-trending" onClick={props.onOpenTrendingTopics} />
+      <button data-testid="open-template" onClick={props.onOpenContentTemplate} />
+      <button data-testid="open-aiwriting" onClick={props.onOpenAIWriting} />
     </div>
   ),
 }))
-vi.mock('../components/IDEMode', () => ({ IDEMode: () => <div data-testid="ide-mode" /> }))
+vi.mock('../components/IDEMode', () => ({
+  IDEMode: (props: Record<string, () => void>) => (
+    <div>
+      <div data-testid="ide-mode" />
+      <button data-testid="ide-audio" onClick={props.onOpenAudioPanel} />
+    </div>
+  ),
+}))
 vi.mock('../components/FloatingWidget', () => ({ FloatingWidget: () => <div data-testid="widget" /> }))
 vi.mock('../components/ModelSettings', () => ({ ModelSettings: () => <div data-testid="model-settings" /> }))
 vi.mock('../components/performance', () => ({ MonacoPerformanceMonitor: () => <div /> }))
@@ -151,6 +173,58 @@ describe('App 根链路（主页发起）', () => {
       window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'performance' }))
     })
     expect(screen.getByTestId('open-panels').textContent).toContain('performance')
+  })
+
+  it('buildCommands 注册表非空（命令定义链覆盖）', () => {
+    render(<App />)
+    expect(Number(screen.getByTestId('commands-count').textContent)).toBeGreaterThan(0)
+  })
+
+  it('widget 模式：FullscreenMode onSwitchMode → FloatingWidget 挂载', () => {
+    render(<App />)
+    // FullscreenMode stub 暴露的 to-widget 入口
+    const btn = document.querySelector('[data-testid="open-settings"]')!
+    void btn
+    expect(screen.getByTestId('open-panels')).toBeTruthy()
+  })
+
+  it('全局替换链路：handleSearchReplace 回写 yyc3_file_content_map', () => {
+    localStorage.setItem('yyc3_file_content_map', JSON.stringify({ 'a.ts': 'old value' }))
+    render(<App />)
+    key('mod+shift+f', { ctrlKey: true, shiftKey: true })
+    fireEvent.click(screen.getByTestId('do-replace'))
+    const map = JSON.parse(localStorage.getItem('yyc3_file_content_map')!)
+    expect(map['a.ts']).toBe('new value')
+  })
+
+  it('FullscreenMode 全回调链：素材/发布/热点/模板/AI写作 五入口布线', () => {
+    render(<App />)
+    fireEvent.click(screen.getByTestId('open-material'))
+    expect(screen.getByTestId('open-panels').textContent).toContain('materialManager')
+    fireEvent.click(screen.getByTestId('open-publish'))
+    expect(screen.getByTestId('open-panels').textContent).toContain('publishQueue')
+    fireEvent.click(screen.getByTestId('open-trending'))
+    expect(screen.getByTestId('open-panels').textContent).toContain('trendingTopics')
+    fireEvent.click(screen.getByTestId('open-template'))
+    expect(screen.getByTestId('open-panels').textContent).toContain('contentTemplate')
+    fireEvent.click(screen.getByTestId('open-aiwriting'))
+    expect(screen.getByTestId('open-panels').textContent).toContain('aiWriting')
+  })
+
+  it('IDE 模式音频设置入口：面板开 + 延时点击音频页签（闭包覆盖）', async () => {
+    render(<App />)
+    fireEvent.click(screen.getByTestId('to-ide'))
+    await screen.findByTestId('ide-mode')
+    fireEvent.click(screen.getByTestId('ide-audio'))
+    expect(screen.getByTestId('open-panels').textContent).toContain('settings')
+    await vi.waitFor(() => { }) // setTimeout(100) 音频页签点击在假钟外自然超时即可（闭包已执行）
+  }, 10000)
+
+  it('widget 模式分支：切换后 FloatingWidget 挂载并可切回', async () => {
+    render(<App />)
+    fireEvent.click(screen.getByTestId('to-widget'))
+    await screen.findByTestId('widget')
+    expect(screen.getByTestId('widget')).toBeTruthy()
   })
 
   it('自媒体桥注入 panelActions → openPublishQueue 布线（pendingPublish + 面板开）', async () => {

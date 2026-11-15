@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261029T213843842Z-80064-4a3fb59e098f",
+  "runId": "20261029T213843842Z-80064-4a3fb59e098f",
+  "runStatus": "completed",
+  "coverage": {
+    "status": "complete",
+    "reasons": []
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "a75ea74c18c7ac4d975053367d943ba4334dfaea",
+  "diffHash": "a7faa45c0b7b124fcd146bb4fc8a2c431e792a65345077cfdbf47a89324d6ab9",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6abbbe39829e1f52b542dae57d2166e3af4dabd6bade9097382904d78915ce36",
+  "reportRef": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261029T213843842Z-80064-4a3fb59e098f.json",
+  "events": [],
+  "observedFindingIds": [
+    "mimosa-2594ff1fca547bd46a5f622b",
+    "mimosa-e6d89becfeae282ef812ca60",
+    "mimosa-9841dbae1949ac653ab7cc0f"
+  ],
+  "verifiedFiles": [
+    {
+      "file": "src/app/services/syntax-highlighter.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/ide/IDEChatPanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/ErrorBoundary.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/utils/key-manager.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/hooks/useAI.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/LivePreview.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/i18n/translations.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/FullscreenMode.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/FloatingWidget.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/DiagnosticsPanel.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/NotificationCenter.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-10-29T21:38:44.068Z"
+}

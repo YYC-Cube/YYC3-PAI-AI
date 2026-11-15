@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "mimosa-finding-history/v1",
+  "runId": "20261113T094655672Z-92761-971e6102e00f",
+  "runStatus": "inconclusive",
+  "errors": [
+    "candidate-select:src/app/components/audio/__tests__/EnhancedAudioPlayer.test.tsx: candidate_limit_exceeded: 4 changed reviewable file(s) were not scanned because the limit is 20"
+  ],
+  "target": ".",
+  "revision": "006e29bf95eebd94064231057369bae8750c9c20",
+  "diffHash": "a28b7a3b066fadc7ae47cda9b1083255266fd8aa9c1ddc1de8c1d2a6d43e94ac",
+  "rulesVersion": "unavailable",
+  "recordedAt": "2026-11-13T09:46:55.672Z",
+  "timing": {
+    "startedAt": "2026-11-13T09:46:54.773Z",
+    "completedAt": "2026-11-13T09:46:55.672Z",
+    "durationMs": 899
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "modelCalls": 0,
+    "measurement": "known-zero"
+  },
+  "findings": {
+    "total": 0,
+    "bySeverity": {},
+    "byStatus": {}
+  },
+  "coverage": {
+    "status": "partial",
+    "reasonCounts": {
+      "candidate_limit_exceeded": 1,
+      "project_check_failed": 1
+    }
+  },
+  "evidenceBoundary": "static_only",
+  "immutableReport": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261113T094655672Z-92761-971e6102e00f.json"
+}

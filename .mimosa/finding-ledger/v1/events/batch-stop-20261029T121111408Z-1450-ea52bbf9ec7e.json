@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261029T121111408Z-1450-ea52bbf9ec7e",
+  "runId": "20261029T121111408Z-1450-ea52bbf9ec7e",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "stop_budget_exhausted",
+        "stage": "agent-check",
+        "target": ".",
+        "detail": "focused agent configuration check was not run before the gate budget",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "supply-chain-check",
+        "target": ".",
+        "detail": "spawnSync /opt/homebrew/Cellar/node@22/22.22.3/bin/node ETIMEDOUT",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "agent-check",
+        "target": ".",
+        "detail": "stop_budget_exhausted: focused agent configuration check was not run before the gate budget",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "7dd9e7d582392cbba0227c407c03763a5206f6b7",
+  "diffHash": "a9ea9d838008f72956e24fc3c93f67ff40a4e4fb35f0b03d4c4895861b4efcc8",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6abbbe39829e1f52b542dae57d2166e3af4dabd6bade9097382904d78915ce36",
+  "reportRef": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261029T121111408Z-1450-ea52bbf9ec7e.json",
+  "events": [],
+  "observedFindingIds": [
+    "mimosa-72cf3643321c55fbed20e4c6",
+    "mimosa-7084f149ba010859c5a59010",
+    "mimosa-f346b375f30da7e3f6f4a52e",
+    "mimosa-fa48617b9a45fa24868e27c8",
+    "mimosa-6b94d104b185be7423d09e2f",
+    "mimosa-1c9ed1c03269c0f07c35439d"
+  ],
+  "verifiedFiles": [
+    {
+      "file": "docs/YYC3-团队通用-标规文档/YYC3-团队文档-引擎模版.py",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "scripts/fix_md_headers.py",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/utils/__tests__/sanitize.test.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/store/__tests__/model-store.test.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/hooks/usePerformanceMonitor.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/main.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/App.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/utils/audio-engine.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/audio/EnhancedAudioPlayerV3.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/app/components/audio/MusicFeaturePanels.tsx",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-10-29T12:11:11.613Z"
+}

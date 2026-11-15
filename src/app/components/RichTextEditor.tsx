@@ -128,6 +128,9 @@ export function RichTextEditor({
 
   // ── Editor ──
   const editor = useEditor({
+    // 已知限制：true 会与「事务→onChange→父级回灌」架构形成无限循环（Maximum update depth），
+    // 需将工具栏/状态栏拆为事务订阅子组件后方可开启——当前保持 false（52/53 号修复不依赖此开关）
+    shouldRerenderOnTransaction: false,
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
@@ -163,7 +166,7 @@ export function RichTextEditor({
   ) ?? ''
 
   // ── Handle AI Action ──
-  const handleAIAction = useCallback(async (action: AIAction) => {
+  const handleAIAction = useCallback(async (action: AIAction, langOverride?: 'en' | 'zh') => {
     if (!editor || !selectedText.trim()) return
 
     const activeModel = getActiveModel()
@@ -184,7 +187,9 @@ export function RichTextEditor({
     try {
       let promptText = config.prompt
       if (action === 'translate') {
-        const langName = translateLang === 'en' ? 'English' : '中文'
+        // 52号：优先用调用方传入的目标语言（修复 setTimeout 旧闭包导致的切换失效）
+        const effective = langOverride ?? translateLang
+        const langName = effective === 'en' ? 'English' : '中文'
         promptText = config.prompt.replace('{lang}', langName)
       }
 
@@ -389,7 +394,9 @@ export function RichTextEditor({
                             onClick={() => {
                               setTranslateLang(lang)
                               setShowLangPicker(false)
-                              setTimeout(() => handleAIAction('translate'), 100)
+                              // 52号修复：延时调用捕获的是旧渲染闭包（translateLang 恒为切换前值）——
+                              // 改为带参直调，目标语言以本次点击为准
+                              handleAIAction('translate', lang)
                             }}
                             style={{
                               ...btnBase,
@@ -546,8 +553,9 @@ export function RichTextEditor({
                 </button>
                 <button
                   onClick={() => {
-                    setTranslateLang(prev => prev === 'en' ? 'zh' : 'en')
-                    setTimeout(() => handleAIAction('translate'), 100)
+                    const next = translateLang === 'en' ? 'zh' : 'en'
+                    setTranslateLang(next)
+                    handleAIAction('translate', next)
                   }}
                   disabled={processingAction !== null}
                   style={{
@@ -583,7 +591,8 @@ export function RichTextEditor({
         }}
       >
         <span>
-          {editor?.storage.characterCount?.characters?.() ?? 0} 字
+          {/* 53号：CharacterCount 扩展未安装（storage 恒 undefined 致字数恒 0）——改用 getText 实时统计 */}
+          {(editor?.getText().length ?? 0)} 字
         </span>
         <span>
           {hasSelection ? `已选 ${selectedText.length} 字` : '选中文本后使用AI工具'}

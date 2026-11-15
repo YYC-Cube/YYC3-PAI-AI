@@ -1,0 +1,298 @@
+name: YYC³ CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+    tags: ["v*"]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ===========================================
+  # Job 1: Lint & Type Check
+  # ===========================================
+  lint:
+    name: 🔍 Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
+
+      - name: ESLint check
+        run: npx eslint src/ --max-warnings=0
+
+      - name: TypeScript type check
+        run: npx pnpm@${{ env.PNPM_VERSION }} run type-check
+
+  # ===========================================
+  # Job 2: Unit Tests
+  # ===========================================
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
+
+      - name: Run tests with coverage
+        run: |
+          set +e  # vitest Linux v8 coverage 假阳性：exit 1 但测试/阈值全过
+          npx pnpm@${{ env.PNPM_VERSION }} run test:coverage > coverage-output.log 2>&1
+          VITEST_EXIT=$?
+          set -e
+          cat coverage-output.log
+          # 真实失败 = vitest 输出含大写 FAIL 行；纯 exit code 视为通过
+          if grep -q "FAIL" coverage-output.log; then
+            echo "::error::Tests FAILED (see FAIL lines above)"
+            exit 1
+          fi
+          if [ $VITEST_EXIT -ne 0 ]; then
+            echo "::warning::vitest exited $VITEST_EXIT but no FAIL — Linux v8 coverage worker issue (pass)"
+          fi
+          echo "Tests passed (exit=$VITEST_EXIT, no FAIL lines)"
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+  # ===========================================
+  # Job 3: Build
+  # ===========================================
+  build:
+    name: 🏗️ Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
+
+      - name: Build production bundle
+        run: npx pnpm@${{ env.PNPM_VERSION }} run build
+        env:
+          NODE_ENV: production
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Bundle size check
+        run: |
+          echo "=== Bundle Analysis ==="
+          find dist/assets -name "*.js" -exec du -h {} \; | sort -rh | head -10
+          TOTAL=$(du -sh dist/assets/ | cut -f1)
+          echo "Total assets size: $TOTAL"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+          retention-days: 7
+
+  # ===========================================
+  # Job 3.5: E2E (Playwright · Chromium only，控时)
+  # ===========================================
+  e2e:
+    name: 🎭 E2E (chromium)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
+
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run e2e (chromium project)
+        run: npx playwright test --config=e2e/playwright.config.ts --project=chromium
+        env:
+          CI: 'true'
+
+  # ===========================================
+  # Job 4: Deploy (GitHub Pages)
+  # ===========================================
+  deploy-pages:
+    name: 🚀 Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+    # 由仓库变量 PAGES_ENABLED=true 启用（Settings → Secrets and variables → Actions）。
+    # 前置条件：pai.yyc3.vip 自定义域名从 YYC3-Pai-Platform 转移至本仓库后再开启，
+    # 避免与旧仓库的 Pages 绑定冲突（方案A第5步，见 docs/YYC3-AI-PAI-深度审核总结与建议-20261029.md 第4章）。
+    if: vars.PAGES_ENABLED == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
+
+      - name: Build
+        run: npx pnpm@${{ env.PNPM_VERSION }} run build
+        env:
+          NODE_ENV: production
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Copy CNAME for custom domain
+        run: cp public/CNAME dist/CNAME
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+  # ===========================================
+  # Job 5: Release (Tag trigger only)
+  # ===========================================
+  release:
+    name: 📦 GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
+
+      - name: Build release
+        run: npx pnpm@${{ env.PNPM_VERSION }} run build
+        env:
+          NODE_ENV: production
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          cat > RELEASE_NOTES.md << 'EOF'
+          ## 🎉 YYC³ AI-PAI Release v${VERSION}
+
+          ### ✨ Features
+          - See git log for details
+
+          ### 🐛 Fixes
+          - Critical bug fixes and stability improvements
+
+          ### 🔧 Improvements
+          - Performance optimizations and code quality enhancements
+
+          ---
+          *Deployed via CI/CD pipeline*
+          EOF
+          sed -i "s/\${VERSION}/$VERSION/g" RELEASE_NOTES.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "YYC³ AI-PAI ${{ github.ref_name }}"
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') || contains(github.ref_name, '-alpha') }}
+          files: dist/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ===========================================
+  # Job 6: Security Audit (main only)
+  # ===========================================
+  security:
+    name: 🔒 Security Audit
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npx pnpm@${{ env.PNPM_VERSION }} install --frozen-lockfile
+
+      - name: Run npm audit (block on high/critical)
+        run: |
+          npx pnpm@${{ env.PNPM_VERSION }} audit --audit-level=high --json > audit.json || true
+          CRITICAL=$(python3 -c "import json;d=json.load(open('audit.json'));print(d['metadata']['vulnerabilities']['critical'])" 2>/dev/null || echo 0)
+          HIGH=$(python3 -c "import json;d=json.load(open('audit.json'));print(d['metadata']['vulnerabilities']['high'])" 2>/dev/null || echo 0)
+          echo "critical=$CRITICAL high=$HIGH"
+          if [ "$CRITICAL" != "0" ]; then echo "::error::发现 $CRITICAL 个 critical 漏洞，阻断"; exit 1; fi
+          if [ "$HIGH" != "0" ]; then echo "::error::发现 $HIGH 个 high 漏洞，阻断"; exit 1; fi
+
+      - name: Dependency review
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4

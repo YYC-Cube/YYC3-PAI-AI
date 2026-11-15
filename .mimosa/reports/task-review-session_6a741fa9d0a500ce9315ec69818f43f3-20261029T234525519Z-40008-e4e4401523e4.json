@@ -1,0 +1,1561 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261029T234525519Z-40008-e4e4401523e4",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "candidate-select",
+      "target": "src/app/components/audio/AudioDiagnostic.tsx",
+      "reason": "candidate_limit_exceeded: 12 changed reviewable file(s) were not scanned because the limit is 20"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 368,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 32
+    },
+    "change_tracking": {
+      "touched_observed": 10,
+      "touched_retained": 10,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 31,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 32,
+      "selected_files": 20,
+      "limit": 20,
+      "truncated": true
+    },
+    "scanning": {
+      "required_files": 16,
+      "scanned_files": 16,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 2,
+      "project_checks_completed": 2
+    },
+    "notification": {
+      "eligible_findings": 2,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": true
+    },
+    "reason_counts": {
+      "candidate_limit_exceeded": 1,
+      "project_check_failed": 1
+    },
+    "reasons": [
+      {
+        "code": "candidate_limit_exceeded",
+        "stage": "candidate-select",
+        "target": "src/app/components/audio/AudioDiagnostic.tsx",
+        "detail": "12 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "src/app/components/audio/AudioDiagnostic.tsx",
+        "detail": "candidate_limit_exceeded: 12 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-10-29T23:45:25.519Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "90e6f16b4030caeb7485b1fd26802be04fb2f856",
+  "rules_version": "unavailable",
+  "diff_hash": "e5c4e70c6800901f3788bfb8ae34d8e8d634b4aff2e1f47f3479adb6eec52bb4",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 19,
+    "changed_files": [
+      {
+        "file": ".github/workflows/ci.yml",
+        "ranges": [
+          {
+            "start": 38,
+            "end": 38
+          },
+          {
+            "start": 111,
+            "end": 137
+          }
+        ],
+        "before_hash": "5ae7e98f08e451c64c8f94a17c9bef4ec4bdbe16e72f7ac175d19820f2ed13eb",
+        "after_hash": "1931ff535873a76f67199ace597658c764014b453e20326fb9cf242acecfeabd"
+      },
+      {
+        "file": "e2e/playwright.config.ts",
+        "ranges": [
+          {
+            "start": 26,
+            "end": 26
+          },
+          {
+            "start": 28,
+            "end": 29
+          },
+          {
+            "start": 33,
+            "end": 35
+          },
+          {
+            "start": 64,
+            "end": 65
+          },
+          {
+            "start": 68,
+            "end": 68
+          }
+        ],
+        "before_hash": "9165b1c8bfd2598b70efc1fa77ffe55087bf4828f9dfdeb8bbd7dab11ff2dbac",
+        "after_hash": "de4a106dfc073f8fb0b2a6f53af0104f05221180599a7f6a5147e6ea60a7cc8d"
+      },
+      {
+        "file": "e2e/tests/visual-regression.spec.ts",
+        "ranges": [
+          {
+            "start": 13,
+            "end": 23
+          },
+          {
+            "start": 26,
+            "end": 26
+          },
+          {
+            "start": 30,
+            "end": 30
+          },
+          {
+            "start": 41,
+            "end": 41
+          },
+          {
+            "start": 52,
+            "end": 52
+          },
+          {
+            "start": 63,
+            "end": 63
+          },
+          {
+            "start": 74,
+            "end": 74
+          },
+          {
+            "start": 85,
+            "end": 85
+          },
+          {
+            "start": 97,
+            "end": 97
+          },
+          {
+            "start": 106,
+            "end": 106
+          },
+          {
+            "start": 117,
+            "end": 117
+          },
+          {
+            "start": 133,
+            "end": 133
+          },
+          {
+            "start": 140,
+            "end": 140
+          },
+          {
+            "start": 147,
+            "end": 147
+          },
+          {
+            "start": 154,
+            "end": 154
+          },
+          {
+            "start": 165,
+            "end": 165
+          },
+          {
+            "start": 173,
+            "end": 173
+          },
+          {
+            "start": 181,
+            "end": 181
+          },
+          {
+            "start": 197,
+            "end": 197
+          },
+          {
+            "start": 207,
+            "end": 207
+          }
+        ],
+        "before_hash": "144f2bb3558143ecf1eceff68f25060973943aa30fddfa23401e938460eaa09e",
+        "after_hash": "e078bd5380f78ee607a904e6d3a67311b11647db22e3cf8ff838cea29cdc83cb"
+      },
+      {
+        "file": "package.json",
+        "ranges": [
+          {
+            "start": 114,
+            "end": 115
+          }
+        ],
+        "before_hash": "ad5875d2b91bdc6488410331f3040c1a58c956d8c0fe885ccc77e6a4bbb2d877",
+        "after_hash": "174c7eea81d10c5c452e0fe8a1edbce5ed2455c522715cbab5120127be482906"
+      },
+      {
+        "file": "pnpm-lock.yaml",
+        "ranges": [
+          {
+            "start": 29,
+            "end": 29
+          },
+          {
+            "start": 32,
+            "end": 32
+          },
+          {
+            "start": 35,
+            "end": 35
+          },
+          {
+            "start": 38,
+            "end": 38
+          },
+          {
+            "start": 41,
+            "end": 41
+          },
+          {
+            "start": 44,
+            "end": 44
+          },
+          {
+            "start": 47,
+            "end": 47
+          },
+          {
+            "start": 50,
+            "end": 50
+          },
+          {
+            "start": 53,
+            "end": 53
+          },
+          {
+            "start": 56,
+            "end": 56
+          },
+          {
+            "start": 59,
+            "end": 59
+          },
+          {
+            "start": 62,
+            "end": 62
+          },
+          {
+            "start": 65,
+            "end": 65
+          },
+          {
+            "start": 68,
+            "end": 68
+          },
+          {
+            "start": 71,
+            "end": 71
+          },
+          {
+            "start": 74,
+            "end": 74
+          },
+          {
+            "start": 77,
+            "end": 77
+          },
+          {
+            "start": 80,
+            "end": 80
+          },
+          {
+            "start": 83,
+            "end": 83
+          },
+          {
+            "start": 86,
+            "end": 86
+          },
+          {
+            "start": 89,
+            "end": 89
+          },
+          {
+            "start": 92,
+            "end": 92
+          },
+          {
+            "start": 95,
+            "end": 95
+          },
+          {
+            "start": 98,
+            "end": 98
+          },
+          {
+            "start": 101,
+            "end": 101
+          },
+          {
+            "start": 104,
+            "end": 104
+          },
+          {
+            "start": 131,
+            "end": 131
+          },
+          {
+            "start": 143,
+            "end": 143
+          },
+          {
+            "start": 206,
+            "end": 206
+          },
+          {
+            "start": 242,
+            "end": 242
+          },
+          {
+            "start": 260,
+            "end": 260
+          },
+          {
+            "start": 273,
+            "end": 273
+          },
+          {
+            "start": 284,
+            "end": 285
+          },
+          {
+            "start": 287,
+            "end": 288
+          },
+          {
+            "start": 2132,
+            "end": 2133
+          },
+          {
+            "start": 2135,
+            "end": 2141
+          },
+          {
+            "start": 4858,
+            "end": 4858
+          },
+          {
+            "start": 4861,
+            "end": 4868
+          },
+          {
+            "start": 4872,
+            "end": 4873
+          },
+          {
+            "start": 4875,
+            "end": 4875
+          },
+          {
+            "start": 4878,
+            "end": 4882
+          },
+          {
+            "start": 4886,
+            "end": 4887
+          },
+          {
+            "start": 4889,
+            "end": 4889
+          },
+          {
+            "start": 4891,
+            "end": 4891
+          },
+          {
+            "start": 4895,
+            "end": 4896
+          },
+          {
+            "start": 4898,
+            "end": 4898
+          },
+          {
+            "start": 4900,
+            "end": 4900
+          },
+          {
+            "start": 4904,
+            "end": 4905
+          },
+          {
+            "start": 4907,
+            "end": 4907
+          },
+          {
+            "start": 4909,
+            "end": 4912
+          },
+          {
+            "start": 4916,
+            "end": 4917
+          },
+          {
+            "start": 4919,
+            "end": 4919
+          },
+          {
+            "start": 4922,
+            "end": 4928
+          },
+          {
+            "start": 4932,
+            "end": 4933
+          },
+          {
+            "start": 4935,
+            "end": 4935
+          },
+          {
+            "start": 4938,
+            "end": 4944
+          },
+          {
+            "start": 4948,
+            "end": 4949
+          },
+          {
+            "start": 4951,
+            "end": 4951
+          },
+          {
+            "start": 4953,
+            "end": 4956
+          },
+          {
+            "start": 4960,
+            "end": 4961
+          },
+          {
+            "start": 4963,
+            "end": 4963
+          },
+          {
+            "start": 4967,
+            "end": 4967
+          },
+          {
+            "start": 4969,
+            "end": 4969
+          },
+          {
+            "start": 4973,
+            "end": 4973
+          },
+          {
+            "start": 4975,
+            "end": 4975
+          },
+          {
+            "start": 4978,
+            "end": 4982
+          },
+          {
+            "start": 4986,
+            "end": 4987
+          },
+          {
+            "start": 4989,
+            "end": 4989
+          },
+          {
+            "start": 4993,
+            "end": 4993
+          },
+          {
+            "start": 4995,
+            "end": 4995
+          },
+          {
+            "start": 4998,
+            "end": 5008
+          },
+          {
+            "start": 5012,
+            "end": 5012
+          },
+          {
+            "start": 5014,
+            "end": 5015
+          },
+          {
+            "start": 5017,
+            "end": 5017
+          },
+          {
+            "start": 5021,
+            "end": 5021
+          },
+          {
+            "start": 5023,
+            "end": 5023
+          },
+          {
+            "start": 5026,
+            "end": 5029
+          },
+          {
+            "start": 5033,
+            "end": 5034
+          },
+          {
+            "start": 5036,
+            "end": 5036
+          },
+          {
+            "start": 5039,
+            "end": 5044
+          },
+          {
+            "start": 5048,
+            "end": 5049
+          },
+          {
+            "start": 5051,
+            "end": 5051
+          },
+          {
+            "start": 5055,
+            "end": 5055
+          },
+          {
+            "start": 5057,
+            "end": 5057
+          },
+          {
+            "start": 5059,
+            "end": 5061
+          },
+          {
+            "start": 5065,
+            "end": 5066
+          },
+          {
+            "start": 5068,
+            "end": 5068
+          },
+          {
+            "start": 5071,
+            "end": 5078
+          },
+          {
+            "start": 5082,
+            "end": 5083
+          },
+          {
+            "start": 5085,
+            "end": 5085
+          },
+          {
+            "start": 5087,
+            "end": 5087
+          },
+          {
+            "start": 5090,
+            "end": 5090
+          },
+          {
+            "start": 5092,
+            "end": 5092
+          },
+          {
+            "start": 5094,
+            "end": 5094
+          },
+          {
+            "start": 5097,
+            "end": 5097
+          },
+          {
+            "start": 5099,
+            "end": 5099
+          },
+          {
+            "start": 5101,
+            "end": 5101
+          },
+          {
+            "start": 5105,
+            "end": 5106
+          },
+          {
+            "start": 5108,
+            "end": 5108
+          },
+          {
+            "start": 5111,
+            "end": 5125
+          },
+          {
+            "start": 5129,
+            "end": 5129
+          },
+          {
+            "start": 5131,
+            "end": 5132
+          },
+          {
+            "start": 5134,
+            "end": 5134
+          },
+          {
+            "start": 5137,
+            "end": 5145
+          },
+          {
+            "start": 5149,
+            "end": 5150
+          },
+          {
+            "start": 5152,
+            "end": 5152
+          },
+          {
+            "start": 5155,
+            "end": 5167
+          },
+          {
+            "start": 5171,
+            "end": 5172
+          },
+          {
+            "start": 5174,
+            "end": 5174
+          },
+          {
+            "start": 5177,
+            "end": 5188
+          },
+          {
+            "start": 5192,
+            "end": 5192
+          },
+          {
+            "start": 5194,
+            "end": 5195
+          },
+          {
+            "start": 5197,
+            "end": 5197
+          },
+          {
+            "start": 5200,
+            "end": 5207
+          },
+          {
+            "start": 5212,
+            "end": 5213
+          },
+          {
+            "start": 5215,
+            "end": 5215
+          },
+          {
+            "start": 5217,
+            "end": 5218
+          },
+          {
+            "start": 5222,
+            "end": 5223
+          },
+          {
+            "start": 5225,
+            "end": 5225
+          },
+          {
+            "start": 5227,
+            "end": 5228
+          },
+          {
+            "start": 5232,
+            "end": 5233
+          },
+          {
+            "start": 5235,
+            "end": 5235
+          },
+          {
+            "start": 5237,
+            "end": 5237
+          },
+          {
+            "start": 5241,
+            "end": 5242
+          },
+          {
+            "start": 5244,
+            "end": 5244
+          },
+          {
+            "start": 5246,
+            "end": 5246
+          },
+          {
+            "start": 5250,
+            "end": 5251
+          },
+          {
+            "start": 5253,
+            "end": 5253
+          },
+          {
+            "start": 5255,
+            "end": 5256
+          },
+          {
+            "start": 5260,
+            "end": 5261
+          },
+          {
+            "start": 5263,
+            "end": 5263
+          },
+          {
+            "start": 5266,
+            "end": 5274
+          },
+          {
+            "start": 5278,
+            "end": 5279
+          },
+          {
+            "start": 5281,
+            "end": 5281
+          },
+          {
+            "start": 5284,
+            "end": 5291
+          },
+          {
+            "start": 5295,
+            "end": 5296
+          },
+          {
+            "start": 5298,
+            "end": 5298
+          },
+          {
+            "start": 5302,
+            "end": 5308
+          },
+          {
+            "start": 5312,
+            "end": 5313
+          },
+          {
+            "start": 5315,
+            "end": 5315
+          },
+          {
+            "start": 5319,
+            "end": 5335
+          },
+          {
+            "start": 5339,
+            "end": 5339
+          },
+          {
+            "start": 5341,
+            "end": 5342
+          },
+          {
+            "start": 5344,
+            "end": 5344
+          },
+          {
+            "start": 5346,
+            "end": 5346
+          },
+          {
+            "start": 5350,
+            "end": 5351
+          },
+          {
+            "start": 5353,
+            "end": 5353
+          },
+          {
+            "start": 5357,
+            "end": 5365
+          },
+          {
+            "start": 5369,
+            "end": 5370
+          },
+          {
+            "start": 5372,
+            "end": 5372
+          },
+          {
+            "start": 5374,
+            "end": 5374
+          },
+          {
+            "start": 5377,
+            "end": 5377
+          },
+          {
+            "start": 5379,
+            "end": 5379
+          },
+          {
+            "start": 5381,
+            "end": 5381
+          },
+          {
+            "start": 5384,
+            "end": 5384
+          },
+          {
+            "start": 5386,
+            "end": 5386
+          },
+          {
+            "start": 5389,
+            "end": 5394
+          },
+          {
+            "start": 5398,
+            "end": 5399
+          },
+          {
+            "start": 5401,
+            "end": 5401
+          },
+          {
+            "start": 5404,
+            "end": 5410
+          },
+          {
+            "start": 5414,
+            "end": 5415
+          },
+          {
+            "start": 5417,
+            "end": 5417
+          },
+          {
+            "start": 5420,
+            "end": 5425
+          },
+          {
+            "start": 5429,
+            "end": 5430
+          },
+          {
+            "start": 5432,
+            "end": 5432
+          },
+          {
+            "start": 5435,
+            "end": 5436
+          },
+          {
+            "start": 5440,
+            "end": 5441
+          },
+          {
+            "start": 5443,
+            "end": 5443
+          },
+          {
+            "start": 5446,
+            "end": 5456
+          },
+          {
+            "start": 5460,
+            "end": 5461
+          },
+          {
+            "start": 5463,
+            "end": 5463
+          },
+          {
+            "start": 5467,
+            "end": 5467
+          },
+          {
+            "start": 5469,
+            "end": 5469
+          },
+          {
+            "start": 5471,
+            "end": 5471
+          },
+          {
+            "start": 5474,
+            "end": 5474
+          },
+          {
+            "start": 5476,
+            "end": 5476
+          },
+          {
+            "start": 5478,
+            "end": 5478
+          },
+          {
+            "start": 5481,
+            "end": 5481
+          },
+          {
+            "start": 5483,
+            "end": 5483
+          },
+          {
+            "start": 5487,
+            "end": 5487
+          },
+          {
+            "start": 5489,
+            "end": 5489
+          },
+          {
+            "start": 5493,
+            "end": 5493
+          },
+          {
+            "start": 5495,
+            "end": 5495
+          },
+          {
+            "start": 5499,
+            "end": 5499
+          },
+          {
+            "start": 5501,
+            "end": 5501
+          },
+          {
+            "start": 5506,
+            "end": 5506
+          },
+          {
+            "start": 5508,
+            "end": 5508
+          },
+          {
+            "start": 5510,
+            "end": 5510
+          },
+          {
+            "start": 5513,
+            "end": 5513
+          },
+          {
+            "start": 5515,
+            "end": 5515
+          },
+          {
+            "start": 5517,
+            "end": 5517
+          },
+          {
+            "start": 5521,
+            "end": 5522
+          },
+          {
+            "start": 5740,
+            "end": 5740
+          },
+          {
+            "start": 5747,
+            "end": 5748
+          },
+          {
+            "start": 5894,
+            "end": 5894
+          },
+          {
+            "start": 5898,
+            "end": 5899
+          },
+          {
+            "start": 6028,
+            "end": 6028
+          },
+          {
+            "start": 6030,
+            "end": 6030
+          },
+          {
+            "start": 6032,
+            "end": 6036
+          },
+          {
+            "start": 6353,
+            "end": 6353
+          },
+          {
+            "start": 6355,
+            "end": 6358
+          },
+          {
+            "start": 7841,
+            "end": 7841
+          },
+          {
+            "start": 7845,
+            "end": 7845
+          },
+          {
+            "start": 7861,
+            "end": 7861
+          },
+          {
+            "start": 7864,
+            "end": 7864
+          },
+          {
+            "start": 7867,
+            "end": 7867
+          },
+          {
+            "start": 7869,
+            "end": 7869
+          },
+          {
+            "start": 7872,
+            "end": 7873
+          },
+          {
+            "start": 7875,
+            "end": 7876
+          },
+          {
+            "start": 7878,
+            "end": 7878
+          },
+          {
+            "start": 7893,
+            "end": 7893
+          },
+          {
+            "start": 7899,
+            "end": 7899
+          },
+          {
+            "start": 8341,
+            "end": 8341
+          },
+          {
+            "start": 8346,
+            "end": 8346
+          },
+          {
+            "start": 8348,
+            "end": 8348
+          },
+          {
+            "start": 8354,
+            "end": 8354
+          },
+          {
+            "start": 8364,
+            "end": 8364
+          },
+          {
+            "start": 8366,
+            "end": 8366
+          },
+          {
+            "start": 8559,
+            "end": 8559
+          },
+          {
+            "start": 8561,
+            "end": 8561
+          }
+        ],
+        "before_hash": "cfb149d5a46c0a751fa36be480e7a37b4313b6af0592ff415a5d2450285ac1a2",
+        "after_hash": "f76861713c7d2f6980af6b38deccf7e1369cd8e5859642334b76072e1f42cc2f"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "ranges": [
+          {
+            "start": 145,
+            "end": 147
+          }
+        ],
+        "before_hash": "05a6926bfede9a663e7870edeba0cd12a2e829fc50a6f7a7d325df749cc0a2f2",
+        "after_hash": "fd804e4e50f441867d6f77370bff4b5a7f5829263ea5f764844973088cea5f8d"
+      },
+      {
+        "file": "src/app/components/AIAssistPanel.tsx",
+        "ranges": [
+          {
+            "start": 64,
+            "end": 64
+          },
+          {
+            "start": 88,
+            "end": 88
+          },
+          {
+            "start": 96,
+            "end": 98
+          },
+          {
+            "start": 141,
+            "end": 141
+          },
+          {
+            "start": 143,
+            "end": 143
+          },
+          {
+            "start": 166,
+            "end": 166
+          },
+          {
+            "start": 169,
+            "end": 169
+          }
+        ],
+        "before_hash": "83868f2eec62ce5bbcddbb53cbf1f617a12db1f8a9766047041adf5ef49db739",
+        "after_hash": "a171ebab356d558a13a007e8391d44a408fc7c80b59e23e6c65d8e91ca8b9840"
+      },
+      {
+        "file": "src/app/components/ide/AIResponseFormatter.tsx",
+        "ranges": [
+          {
+            "start": 29,
+            "end": 37
+          },
+          {
+            "start": 162,
+            "end": 162
+          },
+          {
+            "start": 166,
+            "end": 166
+          },
+          {
+            "start": 251,
+            "end": 253
+          },
+          {
+            "start": 348,
+            "end": 348
+          },
+          {
+            "start": 377,
+            "end": 377
+          },
+          {
+            "start": 390,
+            "end": 390
+          },
+          {
+            "start": 402,
+            "end": 402
+          },
+          {
+            "start": 416,
+            "end": 416
+          },
+          {
+            "start": 435,
+            "end": 435
+          },
+          {
+            "start": 457,
+            "end": 457
+          },
+          {
+            "start": 471,
+            "end": 471
+          },
+          {
+            "start": 485,
+            "end": 485
+          },
+          {
+            "start": 496,
+            "end": 496
+          },
+          {
+            "start": 517,
+            "end": 517
+          },
+          {
+            "start": 525,
+            "end": 525
+          },
+          {
+            "start": 533,
+            "end": 533
+          },
+          {
+            "start": 538,
+            "end": 538
+          },
+          {
+            "start": 542,
+            "end": 542
+          },
+          {
+            "start": 578,
+            "end": 579
+          }
+        ],
+        "before_hash": "c993a5a1b24b4428921f2c278dbf12f62bc92d8523df9314eda4d942a457d9da",
+        "after_hash": "f44dba92a7fff765d18162cedf317c0573b33c4cc8362c7d6923fe4e130834f8"
+      },
+      {
+        "file": "src/app/components/ide/IDELayoutContext.tsx",
+        "ranges": [
+          {
+            "start": 30,
+            "end": 30
+          }
+        ],
+        "before_hash": "4395475e965e3d02b2460866b1b1ef6f2ecb40b637541b1940c7844c6d1f3dca",
+        "after_hash": "575e327c778638d792dfa5ff1d4d5c48188dd60250c3b3e02888a6b970f27ba5"
+      },
+      {
+        "file": "src/app/components/ModelSettings.tsx",
+        "ranges": [
+          {
+            "start": 51,
+            "end": 51
+          },
+          {
+            "start": 59,
+            "end": 59
+          },
+          {
+            "start": 367,
+            "end": 367
+          },
+          {
+            "start": 369,
+            "end": 369
+          }
+        ],
+        "before_hash": "866a3e9eaf4ccbae608a58ce26da3b773ed9e698cddcd30bbe0d27187370e6ba",
+        "after_hash": "b60993d527e3b9db912e9414f41ba10dad94a84e52f5307032be84160bb9e889"
+      },
+      {
+        "file": "src/app/components/PerformancePanel.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 311
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "22616d7785166acd5b559141998c39e214bf7761c6a9cee2c282c880d9cfc1ee"
+      },
+      {
+        "file": "src/app/components/StatDetailPanel.tsx",
+        "ranges": [
+          {
+            "start": 13,
+            "end": 13
+          },
+          {
+            "start": 17,
+            "end": 17
+          },
+          {
+            "start": 31,
+            "end": 31
+          },
+          {
+            "start": 47,
+            "end": 74
+          },
+          {
+            "start": 76,
+            "end": 78
+          },
+          {
+            "start": 227,
+            "end": 227
+          },
+          {
+            "start": 305,
+            "end": 307
+          }
+        ],
+        "before_hash": "561155193f868f9d9e05eb35e8867570f506e62c429e903cdcddb9f6a18e1e74",
+        "after_hash": "76518e770daca457c996455e0eb76314b623078528040f9288baef555c2f0ead"
+      },
+      {
+        "file": "src/app/components/UnifiedDataPanel.tsx",
+        "ranges": [
+          {
+            "start": 381,
+            "end": 381
+          }
+        ],
+        "before_hash": "bcf8371302a289a2063f5d8c043491ea006237962b7031da6a1c2b63d56b4480",
+        "after_hash": "c3e015abd5a4d7c4dd1666ce33adefe6467e6945cbef9d2399eaf9c2f4981bc0"
+      },
+      {
+        "file": "src/app/hooks/useDebounce.ts",
+        "ranges": [
+          {
+            "start": 30,
+            "end": 30
+          }
+        ],
+        "before_hash": "bd19338ef62d81c5a52cea3baf4004f84ba3a116f6c249949f0c253dde17f84f",
+        "after_hash": "af0a1fd9b9f3bc263c7596ec43d176e651e10f92bfd986e4e95ab749a464fe6b"
+      },
+      {
+        "file": "src/app/lib/ui-utils.ts",
+        "ranges": [
+          {
+            "start": 48,
+            "end": 48
+          },
+          {
+            "start": 67,
+            "end": 67
+          }
+        ],
+        "before_hash": "655ec925d9a35a1043429639e5a3ff14773a9e4f9bf18e62d7cdfbc1a9a5814f",
+        "after_hash": "cdfcefbc7818c0d2bf87aa0a83e64bb6cf06b5b964b86d6bc07997b7b59a43d4"
+      },
+      {
+        "file": "src/app/store/crdt-collab-store.ts",
+        "ranges": [
+          {
+            "start": 26,
+            "end": 28
+          },
+          {
+            "start": 30,
+            "end": 30
+          }
+        ],
+        "before_hash": "4954628906b7e195b650d3f5dc7b7bd75549a4e756e50802fcaa1b28b695816d",
+        "after_hash": "50928179dc903f06c481414e8a78ff1882263bdffc5b1e5660c572226fb0b256"
+      },
+      {
+        "file": "src/app/store/self-media-store.tsx",
+        "ranges": [
+          {
+            "start": 149,
+            "end": 149
+          },
+          {
+            "start": 161,
+            "end": 161
+          }
+        ],
+        "before_hash": "f1dc633eb1e8ed48dc64bc9d1e6d27f0222b295a03cfa925df0975d6775aec73",
+        "after_hash": "fa0898c553a18955529e0a0a217a27bbf4aafaaedc3eb82202c1365522497da5"
+      },
+      {
+        "file": "src/app/utils/audio-engine.ts",
+        "ranges": [
+          {
+            "start": 432,
+            "end": 432
+          }
+        ],
+        "before_hash": "22f9e0f78914058426ef351874d3dbd42ed8043fbc97c71be5b0aa43298b114a",
+        "after_hash": "929b90e90223d07c0b2a31ac7eb6f46e1a6a082c7f779a0b6fcd022dfe3e9c5d"
+      },
+      {
+        "file": "src/test/setup.ts",
+        "ranges": [
+          {
+            "start": 79,
+            "end": 79
+          }
+        ],
+        "before_hash": "53960fa6908c4cfd6d578d78b36eadd25f3a265e34bd06595cfb52362546a858",
+        "after_hash": "a356dfdbf50288f1bd50663f22a3c1d01f673b784b6101d5abc4b2dc7b37c160"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-10-29T23:45:24.414Z",
+    "completed_at": "2026-10-29T23:45:25.519Z",
+    "duration_ms": 1105,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 1105,
+    "peakMemoryBytes": 208519168,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 16,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 2,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [
+    {
+      "finding_id": "mimosa-508837c37c14fc871fc043d2",
+      "file": "package.json",
+      "line": 114,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-10-29T23:45:25.519Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "0910b9236241b3496cf79b74fb74c2272bd3fc89ae70845b483c058d96784e77",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-3fe6b03bc0f376223914b13f",
+      "file": "package.json",
+      "line": 115,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-10-29T23:45:25.519Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "7c8682ed04942975c646447120fecbcaed8f71b5d346fe339b65ff773a321b33",
+        "runtime_oracle": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "mimosa-508837c37c14fc871fc043d2",
+      "file": "package.json",
+      "line": 114,
+      "end_line": 114,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "package.json",
+          "line": 114,
+          "evidence_hash": "0910b9236241b3496cf79b74fb74c2272bd3fc89ae70845b483c058d96784e77",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-3fe6b03bc0f376223914b13f",
+      "file": "package.json",
+      "line": 115,
+      "end_line": 115,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "package.json",
+          "line": 115,
+          "evidence_hash": "7c8682ed04942975c646447120fecbcaed8f71b5d346fe339b65ff773a321b33",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    }
+  ],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261029T234525519Z-40008-e4e4401523e4.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261029T234525519Z-40008-e4e4401523e4.json"
+  }
+}

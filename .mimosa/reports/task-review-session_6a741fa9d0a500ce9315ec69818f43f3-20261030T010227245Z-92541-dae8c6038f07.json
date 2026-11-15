@@ -1,0 +1,273 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261030T010227245Z-92541-dae8c6038f07",
+  "run_status": "completed",
+  "errors": [],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "complete",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 376,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 9
+    },
+    "change_tracking": {
+      "touched_observed": 8,
+      "touched_retained": 8,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 9,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 9,
+      "selected_files": 9,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 9,
+      "scanned_files": 9,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {},
+    "reasons": [],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-10-30T01:02:27.245Z",
+  "session_id": "session_6a741fa9d0a500ce9315ec69818f43f3",
+  "target": ".",
+  "revision": "f19efe7ab4771c91dda84e7d05871c304de4c29f",
+  "rules_version": "unavailable",
+  "diff_hash": "1bc46be5c6c1f87a0ff34303dc5516970df6b104670e5520f28a3a17fcafc82d",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 9,
+    "changed_files": [
+      {
+        "file": "src/app/components/__tests__/ErrorBoundary.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 75
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "4767b14d7258ba1195dfd775909c019c5081b2e8de7c0816a7770d462fd3d167"
+      },
+      {
+        "file": "src/app/components/__tests__/settings-model.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 48
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "a9c1ae0897c726da0d73b5c504b2ac09680ade16a464087b2482ea99bf06255f"
+      },
+      {
+        "file": "src/app/components/ErrorBoundary.tsx",
+        "ranges": [
+          {
+            "start": 46,
+            "end": 47
+          },
+          {
+            "start": 49,
+            "end": 52
+          }
+        ],
+        "before_hash": "b89f107b0b279deb005972c4445265da5f534b1ea918f68c1fa83a216a9da40f",
+        "after_hash": "c8a38ee54c919458a023a283a1f3955fe151cb6a8b2b791c01be85b703c63506"
+      },
+      {
+        "file": "src/app/hooks/__tests__/useChatSession.test.tsx",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 59
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "f25da27d0db9a1a355266eabb3f217fa1206d7c4805fec1a03a59faf0b9488af"
+      },
+      {
+        "file": "src/app/services/__tests__/mcp-client.test.ts",
+        "ranges": [
+          {
+            "start": 34,
+            "end": 34
+          },
+          {
+            "start": 80,
+            "end": 88
+          }
+        ],
+        "before_hash": "7b68c4708d416e40e3cd58102e34a0fa19b02e69eccff4ac69e87e1990701a5f",
+        "after_hash": "ec669cecdf75c405d06d91d3ab4cbda7307daf0b6c9f5f88ef3424136f976640"
+      },
+      {
+        "file": "src/app/services/mcp-client.ts",
+        "ranges": [
+          {
+            "start": 36,
+            "end": 37
+          },
+          {
+            "start": 73,
+            "end": 73
+          },
+          {
+            "start": 77,
+            "end": 83
+          },
+          {
+            "start": 86,
+            "end": 87
+          }
+        ],
+        "before_hash": "12ea03b4ff1aa8f525915abd82c79bcf6980994f51efabd202299e4b5b9d9f90",
+        "after_hash": "65c7f8bb62485be31de7bc16ba74fe8e56e5e08f6583a31e834a7c1b00b59d0a"
+      },
+      {
+        "file": "src/app/store/webgpu-inference-store.ts",
+        "ranges": [
+          {
+            "start": 388,
+            "end": 388
+          }
+        ],
+        "before_hash": "fc993c09e58750ac156a9cc9d28b2baee2faea3a9ab89e54b8b5d7f79a0baaa0",
+        "after_hash": "1c2f51cedc2e34bc8bb43029dd3976bd7f6dbe5b31269e65f48242b8c55c7ef7"
+      },
+      {
+        "file": "src/components/Chat/__tests__/CodeBlockWrap.test.ts",
+        "ranges": [
+          {
+            "start": 9,
+            "end": 11
+          },
+          {
+            "start": 17,
+            "end": 17
+          },
+          {
+            "start": 28,
+            "end": 37
+          },
+          {
+            "start": 42,
+            "end": 43
+          },
+          {
+            "start": 50,
+            "end": 51
+          },
+          {
+            "start": 54,
+            "end": 54
+          },
+          {
+            "start": 57,
+            "end": 58
+          },
+          {
+            "start": 64,
+            "end": 65
+          },
+          {
+            "start": 72,
+            "end": 73
+          },
+          {
+            "start": 78,
+            "end": 79
+          },
+          {
+            "start": 83,
+            "end": 84
+          }
+        ],
+        "before_hash": "65138e705a6e1ce0877fc728eacd0400fafd1173863a49c62fb92c52ad12f7dc",
+        "after_hash": "20c7dc95a9588628f35bb68e2928917c7bfd1ef8c0e0c9eba29106c91a20a03c"
+      },
+      {
+        "file": "vitest.config.ts",
+        "ranges": [
+          {
+            "start": 34,
+            "end": 132
+          }
+        ],
+        "before_hash": "60634d7b2a4769764df6bc4c25383a49eba9e9320cb510141419a8471836f701",
+        "after_hash": "66831cc137050fd5efede16bdedd00daabea639bffa2dda6aa6772a83c4e4b8a"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-10-30T01:02:26.656Z",
+    "completed_at": "2026-10-30T01:02:27.245Z",
+    "duration_ms": 589,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "complete",
+    "latencyMs": 589,
+    "peakMemoryBytes": 191397888,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 9,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3-20261030T010227245Z-92541-dae8c6038f07.json",
+    "latest_report": ".mimosa/reports/task-review-session_6a741fa9d0a500ce9315ec69818f43f3.json",
+    "history_summary": ".mimosa/history/run-20261030T010227245Z-92541-dae8c6038f07.json"
+  }
+}
