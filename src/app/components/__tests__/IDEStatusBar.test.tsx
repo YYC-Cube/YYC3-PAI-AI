@@ -14,7 +14,6 @@ vi.mock('../store/editor-prefs', () => ({
 }))
 
 import { IDEStatusBar } from '../IDEStatusBar'
-import { ideStore } from '../../store/ide-store'
 
 beforeEach(() => {
   localStorage.clear()
