@@ -25,7 +25,7 @@ const renderBar = () =>
       selectedFile="App.tsx"
       viewMode="edit"
       fullscreenPreview={false}
-      lastAutoSave={Date.now()}
+      lastAutoSave={new Date().toLocaleTimeString()}
       onApplyPreset={() => {}}
     />,
   )
@@ -39,7 +39,7 @@ describe('IDEStatusBar（IDE 状态栏）', () => {
 
   it('布局预设菜单：点击展开 → 选择项回调 onApplyPreset → 关闭', () => {
     const onApplyPreset = vi.fn()
-    const { container } = render(<IDEStatusBar {...{ selectedFile: 'a.ts', viewMode: 'edit', fullscreenPreview: false, lastAutoSave: 0, onApplyPreset }} />)
+    const { container } = render(<IDEStatusBar {...{ selectedFile: 'a.ts', viewMode: 'edit', fullscreenPreview: false, lastAutoSave: null, onApplyPreset }} />)
     const presetBtn = container.querySelector('.relative button') as HTMLButtonElement
     fireEvent.click(presetBtn)
     // 菜单展开后出现预设项（点击第一个非宿主按钮）
@@ -63,7 +63,7 @@ describe('IDEStatusBar（IDE 状态栏）', () => {
         selectedFile="a.ts"
         viewMode="preview"
         fullscreenPreview={false}
-        lastAutoSave={0}
+        lastAutoSave={null}
         onApplyPreset={() => {}}
       />,
     )
