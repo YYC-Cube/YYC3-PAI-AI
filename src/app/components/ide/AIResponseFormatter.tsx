@@ -247,8 +247,10 @@ export function EnhancedMarkdown({
     })
   }, [])
 
-  let h1Counter = 0
-  const components = useMemo(() => ({
+  const components = useMemo(() => {
+    // h1 渲染序号稳定 id（同一文档渲染内从 1 递增；deps 变更重建时归零重新计数）
+    let h1Counter = 0
+    return {
     // react-markdown 组件映射的最小 props 形状（历史 any ×18 全部收敛）
 
     code({ inline, className: cls, children, ...props }: MDCompProps) {
@@ -557,7 +559,7 @@ export function EnhancedMarkdown({
         </p>
       )
     },
-  }), [tokens, copiedSections, expandedSections, handleCopy, toggleSection, onFeedback])
+  }}, [tokens, copiedSections, expandedSections, handleCopy, toggleSection, onFeedback])
 
   return (
     <div className="enhanced-markdown-container">
