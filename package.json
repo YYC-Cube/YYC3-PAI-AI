@@ -67,7 +67,7 @@
     "dompurify": "^3.4.17",
     "embla-carousel-react": "8.6.0",
     "eslint": "^9.39.5",
-    "eslint-config-prettier": "^9.1.2",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.26",
     "howler": "^2.2.4",
